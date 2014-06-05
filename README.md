@@ -201,7 +201,7 @@ See also the notes on [portability](#portability) below.
 
 For example, on a fresh install of Ubuntu 14.04, install the following packages:
 
-    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev
+    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev python-markdown
 
 Or, on Fedora 20:
 
@@ -223,7 +223,7 @@ To create just the HTML documentation, run
 and then view the resulting `README.html` (which contains the very text you are reading now).
 
 To create Doxygen documentation summarizing all files, classes and functions,
-with some (currently sparse) comments, install the `doxygen` package, and run
+with some (currently sparse) comments, install the `doxygen` and `graphviz` packages, then run
 
     $ make doxy
 
