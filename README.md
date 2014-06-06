@@ -272,7 +272,7 @@ The following flags change the behavior of the compiled code:
  
      In serialization, output raw binary data (instead of decimal, when not set).
 
-*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
+*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: ALT_BN128, BN128, or EDWARDS)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 

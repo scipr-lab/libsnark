@@ -11,7 +11,7 @@ CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -
 
 DEPSRC=depsrc
 DEPINST=depinst
-LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp -lzm
+LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp -lzm -lgtest
 CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM
 DEFAULT_CURVE=BN128
 GTESTDIR=/usr/src/gtest
@@ -54,16 +54,9 @@ DOCS= README.html
 
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-
 # Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
 # See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
-COMPILE_GTEST=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
-ifeq ($(COMPILE_GTEST),1)
-else
-	LDFLAGS += -lgtest
-endif
-
-
+COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
 # For documentation of the following options, see README.md .
 
 ifeq ($(MINDEPS),1)
@@ -110,7 +103,11 @@ else
         CXXFLAGS += -DCURVE_$(CURVE)
 endif
 
-all: $(EXECUTABLES) $(DOCS)
+ifeq ($(strip $(COMPILE_GTEST)),1)
+all: libgtest.a $(EXECUTABLES) doc
+else
+all: $(EXECUTABLES) doc
+endif
 
 doc: $(DOCS)
 
@@ -120,17 +117,14 @@ doc: $(DOCS)
 $(OBJS): %.o: %.cpp
 	$(CXX) -o $@ $< -c -MMD $(CXXFLAGS)
 
-ifeq ($(COMPILE_GTEST),1)
-OBJS += $(DEPINST)/gtest-all.o
-
-$(DEPINST)/gtest-all.o: $(GTESTDIR)/src/gtest-all.cc
-	$(CXX) -o $@ $< $(CXXFLAGS) -I $(GTESTDIR) -c
-endif
+libgtest.a: $(GTESTDIR)/src/gtest-all.cc
+	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include -pthread $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
+	$(AR) -rv $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
 
 src/gadgetlib2/tests/gadgetlib2_test: src/gadgetlib2/tests/adapters_UTEST.cpp src/gadgetlib2/tests/constraint_UTEST.cpp src/gadgetlib2/tests/gadget_UTEST.cpp src/gadgetlib2/tests/protoboard_UTEST.cpp src/gadgetlib2/tests/variable_UTEST.cpp
 
 $(EXECUTABLES): %: %.o $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -pthread -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 $(DOCS): %.html: %.md
 	markdown_py -f $@ $^ -x toc -x extra --noisy
@@ -148,7 +142,8 @@ clean:
 		$(DOCS) \
 		${patsubst %,%.o,${EXECUTABLES}} \
 		${patsubst %.cpp,%.d,${SRCS}} \
-	rm -fr doxygen/
+	$(RM) -fr doxygen/ \
+	$(RM) $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
 
 # Clean all, including locally-compiled dependencies
 clean-all: clean
