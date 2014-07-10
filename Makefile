@@ -118,7 +118,7 @@ $(OBJS): %.o: %.cpp
 	$(CXX) -o $@ $< -c -MMD $(CXXFLAGS)
 
 libgtest.a: $(GTESTDIR)/src/gtest-all.cc
-	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include -pthread $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
+	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
 	$(AR) -rv $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
 
 src/gadgetlib2/tests/gadgetlib2_test: src/gadgetlib2/tests/adapters_UTEST.cpp src/gadgetlib2/tests/constraint_UTEST.cpp src/gadgetlib2/tests/gadget_UTEST.cpp src/gadgetlib2/tests/protoboard_UTEST.cpp src/gadgetlib2/tests/variable_UTEST.cpp
