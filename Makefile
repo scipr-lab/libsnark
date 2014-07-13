@@ -130,7 +130,7 @@ $(EXECUTABLES): %: %.o $(OBJS)
 
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)
-	ar cr $@ $^
+	$(AR) cr $@ $^
 lib:	libsnark.a
 else
 libsnark.so: $(OBJS)
@@ -154,6 +154,7 @@ clean:
 		$(DOCS) \
 		${patsubst %,%.o,${EXECUTABLES}} \
 		${patsubst %.cpp,%.d,${SRCS}} \
+		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
 	$(RM) $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
 
