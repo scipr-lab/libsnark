@@ -71,6 +71,8 @@ endif
 
 ifeq ($(STATIC),1)
 	CXXFLAGS += -static -DSTATIC
+else
+	CXXFLAGS += -fPIC
 endif
 
 ifeq ($(PROFILE_OP_COUNTS),1)
@@ -126,6 +128,16 @@ src/gadgetlib2/tests/gadgetlib2_test: src/gadgetlib2/tests/adapters_UTEST.cpp sr
 $(EXECUTABLES): %: %.o $(OBJS)
 	$(CXX) -pthread -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
+ifeq ($(STATIC),1)
+libsnark.a: $(OBJS)
+	ar cr $@ $^
+lib:	libsnark.a
+else
+libsnark.so: $(OBJS)
+	$(CXX) -o $@ $^ -shared $(CXXFLAGS) $(LDFLAGS)
+lib:	libsnark.so
+endif
+
 $(DOCS): %.html: %.md
 	markdown_py -f $@ $^ -x toc -x extra --noisy
 #	TODO: Would be nice to enable "-x smartypants" but Ubuntu 12.04 doesn't support that.
@@ -149,4 +161,4 @@ clean:
 clean-all: clean
 	rm -fr $(DEPSRC) $(DEPINST)
 
-.PHONY: all clean clean-all doc doxy
+.PHONY: all clean clean-all doc doxy lib

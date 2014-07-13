@@ -229,6 +229,14 @@ with some (currently sparse) comments, install the `doxygen` and `graphviz` pack
 
 (this may take a few minutes). Then view the resulting `doxygen/index.html`.
 
+To build the shared object library `libsnark.so`, run:
+
+    $ make lib
+
+To build the static library `libsnark.a`, run:
+
+    $ make lib STATIC=1
+
 
 --------------------------------------------------------------------------------
 Tutorials
