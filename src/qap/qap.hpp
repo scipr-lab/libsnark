@@ -22,6 +22,19 @@
 
 namespace libsnark {
 
+/*
+ Interfaces for constructing a QAP ("Quadratic Arithmetic Program") from a R1CS ("Rank-1 Constraint System").
+
+ The implementation follows, extends, and optimizes the basic approach described in Appendix E of:
+
+ "SNARKs for C: Verifying Program Executions Succinctly and in Zero Knowledge"
+ Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin, Eran Tromer, and Madars Virza
+ CRYPTO 2013
+ http://eprint.iacr.org/2013/507
+
+*/
+
+
 template<typename FieldT>
 struct ABCH_eval_at_t {
     std::vector<FieldT> At, Bt, Ct, Ht;

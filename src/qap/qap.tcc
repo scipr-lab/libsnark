@@ -71,12 +71,13 @@ ABCH_eval_at_t<FieldT> qap_instance_map(const r1cs_constraint_system<FieldT> &cs
     res.Ct[2] = Z;
 
     /*
-     account for the additional constraint \sum_i input_i * 0 = 0,
+     account for the additional constraint (1 + \sum_{i=1}^{qap_num_inputs} (i+1) * input_i) * 0 = 0,
      needed for soundness in input consistency
     */
-    for (size_t i = 0; i < qap_num_inputs + 1; ++i)
+
+    for (size_t i = 0; i <= qap_num_inputs; ++i)
     {
-        res.At[3+i] += u[0];
+        res.At[3+i] += u[0] * FieldT(i+1);
     }
 
     /* account for all other constraints */
@@ -190,10 +191,12 @@ std::vector<FieldT> qap_witness_map(const r1cs_constraint_system<FieldT> &cs,
     std::vector<FieldT> aA(qap_degree, FieldT::zero()), aB(qap_degree, FieldT::zero());
 
     /* soundness patch */
+    /* this accounts for the additional constraint (1 + \sum_{i=1}^{qap_num_inputs} (i+1) * input_i) * 0 = 0 */
+
     aA[0] = FieldT::one();
     for (size_t i = 0; i < qap_num_inputs; ++i)
     {
-        aA[0] += w[i];
+        aA[0] += w[i] * FieldT(i+2);
     }
 
     for (size_t i = 0; i < cs.constraints.size(); ++i)

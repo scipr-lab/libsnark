@@ -28,16 +28,27 @@
 namespace libsnark {
 
 /*
+ Both Lagrange evaluations and FFT/iFFT computations are conducted over
+ specially-chosen subsets S of the field F, for efficiency reasons.
+
  The two functions below provide auxiliary functionality for:
  - computing the size of S (given a desired lower bound on its size)
  - accessing individual elements of S
- //TODO: Clarify. Which functions does the above talk about?
 */
 
+/*
+ LAGRANGE POLYNOMIALS
+
+ The descriptions below make use of the definition of a *Lagrange polynomial*.
+ Given a field F, a subset S=(a_i)_i of F, and an index idx in {0,...,|S-1|},
+ the idx-th Lagrange polynomial (wrt to subset S) is defined to be
+   L_{idx,S}(z) := prod_{k \neq idx} (z - a_k) / prod_{k \neq idx} (a_idx - a_k)
+ Note that, by construction,
+   L_{idx,S}(a_idx) = 1 and L_{idx,S}(a_j) = 0 for all j \neq idx.
+*/
 
 template<typename FieldT>
 class evaluation_domain {
-private:
 public:
     const size_t m;
     evaluation_domain(const size_t m) : m(m) {};
