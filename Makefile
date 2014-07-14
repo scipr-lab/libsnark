@@ -130,17 +130,36 @@ $(EXECUTABLES): %: %.o $(OBJS)
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)
 	$(AR) cr $@ $^
-lib:	libsnark.a
+LIBOBJ=libsnark.a
 else
 libsnark.so: $(OBJS)
 	$(CXX) -o $@ $^ -shared $(CXXFLAGS) $(LDFLAGS)
-lib:	libsnark.so
+LIBOBJ=libsnark.so
 endif
+
+lib:	$(LIBOBJ)
+
 
 $(DOCS): %.html: %.md
 	markdown_py -f $@ $^ -x toc -x extra --noisy
 #	TODO: Would be nice to enable "-x smartypants" but Ubuntu 12.04 doesn't support that.
 #	TODO: switch to redcarpet, to produce same output as GitHub's processing of README.md. But what about TOC?
+
+ifeq ($(PREFIX),)
+install:
+	$(error Please provide PREFIX. E.g. make install PREFIX=/usr)
+else
+HEADERS_SRC=$(shell find src -name '*.hpp' -o -name '*.tcc')
+HEADERS_DEST=$(patsubst src/%,$(PREFIX)/include/libsnark/%,$(HEADERS_SRC))
+
+$(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
+	install -D $< $@
+
+install: lib $(HEADERS_DEST)
+	install -D $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
+	cp -rv $(DEPINST)/lib $(PREFIX)
+	cp -rv $(DEPINST)/include $(PREFIX)
+endif
 
 doxy:
 	doxygen doxygen.conf
