@@ -15,7 +15,6 @@ cd $DEPSRC
 [ ! -d xbyak ] && git clone git://github.com/herumi/xbyak.git
 [ ! -d ate-pairing ] && git clone git://github.com/herumi/ate-pairing.git
 cd ate-pairing
-git checkout support_snark
 #git checkout .  # undo our patches if already applied
 # git apply ../../patches/ate-pairing-change-curve.diff
 # make clean
