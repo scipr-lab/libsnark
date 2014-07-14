@@ -45,6 +45,7 @@ public:
 
     void to_affine_coordinates();
     void to_special();
+    bool is_special() const;
 
     bool is_zero() const;
 
@@ -56,7 +57,7 @@ public:
     alt_bn128_G2 operator-(const alt_bn128_G2 &other) const;
 
     alt_bn128_G2 add(const alt_bn128_G2 &other) const;
-    alt_bn128_G2 add_special(const alt_bn128_G2 &other) const;
+    alt_bn128_G2 fast_add_special(const alt_bn128_G2 &other) const;
     alt_bn128_G2 dbl() const;
     alt_bn128_G2 mul_by_q() const;
 

@@ -217,7 +217,7 @@ edwards_G2 edwards_G2::add(const edwards_G2 &other) const
     return edwards_G2(X3, Y3, Z3);
 }
 
-edwards_G2 edwards_G2::add_special(const edwards_G2 &other) const
+edwards_G2 edwards_G2::fast_add_special(const edwards_G2 &other) const
 {
 #ifdef PROFILE_OP_COUNTS
     this->add_cnt++;

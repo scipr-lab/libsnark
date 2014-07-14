@@ -129,6 +129,11 @@ void bn128_G2::to_special()
     this->to_affine_coordinates();
 }
 
+bool bn128_G2::is_special() const
+{
+    return (this->is_zero() || this->coord[2] == 1);
+}
+
 bool bn128_G2::is_zero() const
 {
     return coord[2].isZero();
@@ -223,7 +228,7 @@ bn128_G2 bn128_G2::add(const bn128_G2 &other) const
     return result;
 }
 
-bn128_G2 bn128_G2::add_special(const bn128_G2 &other) const
+bn128_G2 bn128_G2::fast_add_special(const bn128_G2 &other) const
 {
     if (this->is_zero())
     {
@@ -238,57 +243,76 @@ bn128_G2 bn128_G2::add_special(const bn128_G2 &other) const
     // no need to handle points of order 2,4
     // (they cannot exist in a prime-order subgroup)
 
-    // handle double case, and then all the rest
-    if (this->operator==(other))
+#ifdef DEBUG
+    assert(other.is_special());
+#endif
+
+    // check for doubling case
+
+    // using Jacobian coordinates so:
+    // (X1:Y1:Z1) = (X2:Y2:Z2)
+    // iff
+    // X1/Z1^2 == X2/Z2^2 and Y1/Z1^3 == Y2/Z2^3
+    // iff
+    // X1 * Z2^2 == X2 * Z1^2 and Y1 * Z2^3 == Y2 * Z1^3
+
+    // we know that Z2 = 1
+
+    bn::Fp2 Z1Z1;
+    bn::Fp2::square(Z1Z1, this->coord[2]);
+    const bn::Fp2 &U1 = this->coord[0];
+    bn::Fp2 U2;
+    bn::Fp2::mul(U2, other.coord[0], Z1Z1);
+    bn::Fp2 Z1_cubed;
+    bn::Fp2::mul(Z1_cubed, this->coord[2], Z1Z1);
+
+    const bn::Fp2 &S1 = this->coord[1];
+    bn::Fp2 S2;
+    bn::Fp2::mul(S2, other.coord[1], Z1_cubed); // S2 = Y2*Z1*Z1Z1
+
+    if (U1 == U2 && S1 == S2)
     {
+        // dbl case; nothing of above can be reused
         return this->dbl();
     }
-    else
-    {
-        bn128_G2 result;
 
-        // NOTE: does not handle O and pts of order 2,4
-        // http://www.hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-0.html#addition-madd-2007-bl
-        bn::Fp2 Z1Z1, U2, S2, H, HH, I, J, r, V, tmp;
-        // Z1Z1 = Z1^2
-        bn::Fp2::square(Z1Z1, this->coord[2]);
-        // U2 = X2*Z1Z1
-        bn::Fp2::mul(U2, other.coord[0], Z1Z1);
-        // S2 = Y2*Z1*Z1Z1
-        bn::Fp2::mul(tmp, other.coord[1], this->coord[2]);
-        bn::Fp2::mul(S2, tmp, Z1Z1);
-        // H = U2-X1
-        bn::Fp2::sub(H, U2, this->coord[0]);
-        // HH = H^2
-        bn::Fp2::square(HH, H);
-        // I = 4*HH
-        bn::Fp2::add(tmp, HH, HH);
-        bn::Fp2::add(I, tmp, tmp);
-        // J = H*I
-        bn::Fp2::mul(J, H, I);
-        // r = 2*(S2-Y1)
-        bn::Fp2::sub(tmp, S2, this->coord[1]);
-        bn::Fp2::add(r, tmp, tmp);
-        // V = X1*I
-        bn::Fp2::mul(V, this->coord[0], I);
-        // X3 = r^2-J-2*V
-        bn::Fp2::square(result.coord[0], r);
-        bn::Fp2::sub(result.coord[0], result.coord[0], J);
-        bn::Fp2::sub(result.coord[0], result.coord[0], V);
-        bn::Fp2::sub(result.coord[0], result.coord[0], V);
-        // Y3 = r*(V-X3)-2*Y1*J
-        bn::Fp2::sub(tmp, V, result.coord[0]);
-        bn::Fp2::mul(result.coord[1], r, tmp);
-        bn::Fp2::mul(tmp, this->coord[1], J);
-        bn::Fp2::sub(result.coord[1], result.coord[1], tmp);
-        bn::Fp2::sub(result.coord[1], result.coord[1], tmp);
-        // Z3 = (Z1+H)^2-Z1Z1-HH
-        bn::Fp2::add(tmp, this->coord[2], H);
-        bn::Fp2::square(result.coord[2], tmp);
-        bn::Fp2::sub(result.coord[2], result.coord[2], Z1Z1);
-        bn::Fp2::sub(result.coord[2], result.coord[2], HH);
-        return result;
-    }
+#ifdef PROFILE_OP_COUNTS
+    this->add_cnt++;
+#endif
+
+    bn128_G2 result;
+    bn::Fp2 H, HH, I, J, r, V, tmp;
+    // H = U2-X1
+    bn::Fp2::sub(H, U2, this->coord[0]);
+    // HH = H^2
+    bn::Fp2::square(HH, H);
+    // I = 4*HH
+    bn::Fp2::add(tmp, HH, HH);
+    bn::Fp2::add(I, tmp, tmp);
+    // J = H*I
+    bn::Fp2::mul(J, H, I);
+    // r = 2*(S2-Y1)
+    bn::Fp2::sub(tmp, S2, this->coord[1]);
+    bn::Fp2::add(r, tmp, tmp);
+    // V = X1*I
+    bn::Fp2::mul(V, this->coord[0], I);
+    // X3 = r^2-J-2*V
+    bn::Fp2::square(result.coord[0], r);
+    bn::Fp2::sub(result.coord[0], result.coord[0], J);
+    bn::Fp2::sub(result.coord[0], result.coord[0], V);
+    bn::Fp2::sub(result.coord[0], result.coord[0], V);
+    // Y3 = r*(V-X3)-2*Y1*J
+    bn::Fp2::sub(tmp, V, result.coord[0]);
+    bn::Fp2::mul(result.coord[1], r, tmp);
+    bn::Fp2::mul(tmp, this->coord[1], J);
+    bn::Fp2::sub(result.coord[1], result.coord[1], tmp);
+    bn::Fp2::sub(result.coord[1], result.coord[1], tmp);
+    // Z3 = (Z1+H)^2-Z1Z1-HH
+    bn::Fp2::add(tmp, this->coord[2], H);
+    bn::Fp2::square(result.coord[2], tmp);
+    bn::Fp2::sub(result.coord[2], result.coord[2], Z1Z1);
+    bn::Fp2::sub(result.coord[2], result.coord[2], HH);
+    return result;
 }
 
 bn128_G2 bn128_G2::dbl() const

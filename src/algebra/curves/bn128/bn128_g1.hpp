@@ -41,6 +41,7 @@ public:
 
     void to_affine_coordinates();
     void to_special();
+    bool is_special() const;
 
     bool is_zero() const;
 
@@ -52,7 +53,7 @@ public:
     bn128_G1 operator-(const bn128_G1 &other) const;
 
     bn128_G1 add(const bn128_G1 &other) const;
-    bn128_G1 add_special(const bn128_G1 &other) const;
+    bn128_G1 fast_add_special(const bn128_G1 &other) const;
     bn128_G1 dbl() const;
 
     bool is_well_formed() const;

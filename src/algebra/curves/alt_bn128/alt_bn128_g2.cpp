@@ -91,6 +91,11 @@ void alt_bn128_G2::to_special()
     this->to_affine_coordinates();
 }
 
+bool alt_bn128_G2::is_special() const
+{
+    return (this->is_zero() || this->Z == alt_bn128_Fq2::one());
+}
+
 bool alt_bn128_G2::is_zero() const
 {
     return (this->Z.is_zero());
@@ -258,8 +263,12 @@ alt_bn128_G2 alt_bn128_G2::add(const alt_bn128_G2 &other) const
     return alt_bn128_G2(X3, Y3, Z3);
 }
 
-alt_bn128_G2 alt_bn128_G2::add_special(const alt_bn128_G2 &other) const
+alt_bn128_G2 alt_bn128_G2::fast_add_special(const alt_bn128_G2 &other) const
 {
+#ifdef DEBUG
+    assert(other.is_special());
+#endif
+
     // handle special cases having to do with O
     if (this->is_zero())
     {
@@ -274,36 +283,53 @@ alt_bn128_G2 alt_bn128_G2::add_special(const alt_bn128_G2 &other) const
     // no need to handle points of order 2,4
     // (they cannot exist in a prime-order subgroup)
 
-    // handle double case, and then all the rest
-    if (this->operator==(other))
+    // check for doubling case
+
+    // using Jacobian coordinates so:
+    // (X1:Y1:Z1) = (X2:Y2:Z2)
+    // iff
+    // X1/Z1^2 == X2/Z2^2 and Y1/Z1^3 == Y2/Z2^3
+    // iff
+    // X1 * Z2^2 == X2 * Z1^2 and Y1 * Z2^3 == Y2 * Z1^3
+
+    // we know that Z2 = 1
+
+    const alt_bn128_Fq2 Z1Z1 = (this->Z).squared();
+
+    const alt_bn128_Fq2 &U1 = this->X;
+    const alt_bn128_Fq2 U2 = other.X * Z1Z1;
+
+    const alt_bn128_Fq2 Z1_cubed = (this->Z) * Z1Z1;
+
+    const alt_bn128_Fq2 &S1 = (this->Y);                // S1 = Y1 * Z2 * Z2Z2
+    const alt_bn128_Fq2 S2 = (other.Y) * Z1_cubed;      // S2 = Y2 * Z1 * Z1Z1
+
+    if (U1 == U2 && S1 == S2)
     {
+        // dbl case; nothing of above can be reused
         return this->dbl();
     }
-    else
-    {
-#ifdef PROFILE_OP_COUNTS
-        this->add_cnt++;
-#endif
-        // NOTE: does not handle O and pts of order 2,4
-        // http://www.hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-0.html#addition-madd-2007-bl
-        alt_bn128_Fq2 Z1Z1 = (this->Z).squared();               // Z1Z1 = Z1^2
-        alt_bn128_Fq2 U2 = (other.X) * Z1Z1;                    // U2 = X2*Z1Z1
-        alt_bn128_Fq2 S2 = (other.Y) * (this->Z) * Z1Z1;        // S2 = Y2*Z1*Z1Z1
-        alt_bn128_Fq2 H = U2-(this->X);                         // H = U2-X1
-        alt_bn128_Fq2 HH = H.squared() ;                        // HH = H&2
-        alt_bn128_Fq2 I = HH+HH;                                // I = 4*HH
-        I = I + I;
-        alt_bn128_Fq2 J = H*I;                                  // J = H*I
-        alt_bn128_Fq2 r = S2-(this->Y);                         // r = 2*(S2-Y1)
-        r = r + r;
-        alt_bn128_Fq2 V = (this->X) * I ;                       // V = X1*I
-        alt_bn128_Fq2 X3 = r.squared()-J-V-V;                   // X3 = r^2-J-2*V
-        alt_bn128_Fq2 Y3 = (this->Y)*J;                         // Y3 = r*(V-X3)-2*Y1*J
-        Y3 = r*(V-X3) - Y3 - Y3;
-        alt_bn128_Fq2 Z3 = ((this->Z)+H).squared() - Z1Z1 - HH; // Z3 = (Z1+H)^2-Z1Z1-HH
 
-        return alt_bn128_G2(X3, Y3, Z3);
-    }
+#ifdef PROFILE_OP_COUNTS
+    this->add_cnt++;
+#endif
+
+    // NOTE: does not handle O and pts of order 2,4
+    // http://www.hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-0.html#addition-madd-2007-bl
+    alt_bn128_Fq2 H = U2-(this->X);                         // H = U2-X1
+    alt_bn128_Fq2 HH = H.squared() ;                        // HH = H&2
+    alt_bn128_Fq2 I = HH+HH;                                // I = 4*HH
+    I = I + I;
+    alt_bn128_Fq2 J = H*I;                                  // J = H*I
+    alt_bn128_Fq2 r = S2-(this->Y);                         // r = 2*(S2-Y1)
+    r = r + r;
+    alt_bn128_Fq2 V = (this->X) * I ;                       // V = X1*I
+    alt_bn128_Fq2 X3 = r.squared()-J-V-V;                   // X3 = r^2-J-2*V
+    alt_bn128_Fq2 Y3 = (this->Y)*J;                         // Y3 = r*(V-X3)-2*Y1*J
+    Y3 = r*(V-X3) - Y3 - Y3;
+    alt_bn128_Fq2 Z3 = ((this->Z)+H).squared() - Z1Z1 - HH; // Z3 = (Z1+H)^2-Z1Z1-HH
+
+    return alt_bn128_G2(X3, Y3, Z3);
 }
 
 alt_bn128_G2 alt_bn128_G2::dbl() const

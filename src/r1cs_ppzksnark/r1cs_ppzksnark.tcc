@@ -587,27 +587,27 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     enter_block("Compute the proof");
 
     enter_block("Compute answer to A-query", false);
-    g_A = g_A + kc_multi_exp_with_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
-                                                                          pk.A_query,
-                                                                          4, 4+qap_num_vars,
-                                                                          w.begin(), w.begin()+qap_num_vars,
-                                                                          chunks, true);
+    g_A = g_A + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
+                                                                               pk.A_query,
+                                                                               4, 4+qap_num_vars,
+                                                                               w.begin(), w.begin()+qap_num_vars,
+                                                                               chunks, true);
     leave_block("Compute answer to A-query", false);
 
     enter_block("Compute answer to B-query", false);
-    g_B = g_B + kc_multi_exp_with_add_special<G2<ppT>, G1<ppT>, Fr<ppT> >(empty_kc2,
-                                                                          pk.B_query,
-                                                                          4, 4+qap_num_vars,
-                                                                          w.begin(), w.begin()+qap_num_vars,
-                                                                          chunks, true);
+    g_B = g_B + kc_multi_exp_with_fast_add_special<G2<ppT>, G1<ppT>, Fr<ppT> >(empty_kc2,
+                                                                               pk.B_query,
+                                                                               4, 4+qap_num_vars,
+                                                                               w.begin(), w.begin()+qap_num_vars,
+                                                                               chunks, true);
     leave_block("Compute answer to B-query", false);
 
     enter_block("Compute answer to C-query", false);
-    g_C = g_C + kc_multi_exp_with_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
-                                                                          pk.C_query,
-                                                                          4, 4+qap_num_vars,
-                                                                          w.begin(), w.begin()+qap_num_vars,
-                                                                          chunks, true);
+    g_C = g_C + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
+                                                                               pk.C_query,
+                                                                               4, 4+qap_num_vars,
+                                                                               w.begin(), w.begin()+qap_num_vars,
+                                                                               chunks, true);
     leave_block("Compute answer to C-query", false);
 
     enter_block("Compute answer to H-query", false);
@@ -618,10 +618,10 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     leave_block("Compute answer to H-query", false);
 
     enter_block("Compute answer to K-query", false);
-    g_K = g_K + multi_exp_with_add_special<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(),
-                                                              pk.K_query.begin()+4, pk.K_query.begin()+4+qap_num_vars,
-                                                              w.begin(), w.begin()+qap_num_vars,
-                                                              chunks, true);
+    g_K = g_K + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(),
+                                                                   pk.K_query.begin()+4, pk.K_query.begin()+4+qap_num_vars,
+                                                                   w.begin(), w.begin()+qap_num_vars,
+                                                                   chunks, true);
     leave_block("Compute answer to K-query", false);
 
     leave_block("Compute the proof");

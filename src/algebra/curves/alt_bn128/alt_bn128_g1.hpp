@@ -42,6 +42,7 @@ public:
 
     void to_affine_coordinates();
     void to_special();
+    bool is_special() const;
 
     bool is_zero() const;
 
@@ -53,7 +54,7 @@ public:
     alt_bn128_G1 operator-(const alt_bn128_G1 &other) const;
 
     alt_bn128_G1 add(const alt_bn128_G1 &other) const;
-    alt_bn128_G1 add_special(const alt_bn128_G1 &other) const;
+    alt_bn128_G1 fast_add_special(const alt_bn128_G1 &other) const;
     alt_bn128_G1 dbl() const;
 
     bool is_well_formed() const;

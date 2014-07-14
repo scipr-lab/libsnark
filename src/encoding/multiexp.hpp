@@ -47,7 +47,7 @@ T multi_exp(const T &neutral,
                const bool use_multiexp=false);
 
 template<typename T1, typename T2, typename FieldT>
-knowledge_commitment<T1, T2> kc_multi_exp_with_add_special(const knowledge_commitment<T1, T2> &neutral,
+knowledge_commitment<T1, T2> kc_multi_exp_with_fast_add_special(const knowledge_commitment<T1, T2> &neutral,
                                                            const knowledge_commitment_vector<T1, T2> &vec,
                                                            const size_t min_idx,
                                                            const size_t max_idx,
@@ -57,7 +57,7 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_add_special(const knowledge_commi
                                                            const bool use_multiexp=false);
 
 template<typename T, typename FieldT>
-T multi_exp_with_add_special(const T &neutral,
+T multi_exp_with_fast_add_special(const T &neutral,
                              typename std::vector<T>::const_iterator vec_start,
                              typename std::vector<T>::const_iterator vec_end,
                              typename std::vector<FieldT>::const_iterator scalar_start,

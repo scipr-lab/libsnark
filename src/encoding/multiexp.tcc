@@ -411,7 +411,7 @@ T multi_exp(const T &neutral,
 }
 
 template<typename T1, typename T2, typename FieldT>
-knowledge_commitment<T1, T2> kc_multi_exp_with_add_special(const knowledge_commitment<T1, T2> &neutral,
+knowledge_commitment<T1, T2> kc_multi_exp_with_fast_add_special(const knowledge_commitment<T1, T2> &neutral,
                                                            const knowledge_commitment_vector<T1, T2> &vec,
                                                            const size_t min_idx,
                                                            const size_t max_idx,
@@ -452,8 +452,8 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_add_special(const knowledge_commi
             else if (scalar == one)
             {
 #ifdef USE_ADD_SPECIAL
-                acc.g = acc.g.add_special(value_it->g);
-                acc.h = acc.h.add_special(value_it->h);
+                acc.g = acc.g.fast_add_special(value_it->g);
+                acc.h = acc.h.fast_add_special(value_it->h);
 #else
                 acc.g = acc.g + value_it->g;
                 acc.h = acc.h + value_it->h;
@@ -485,7 +485,7 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_add_special(const knowledge_commi
 }
 
 template<typename T, typename FieldT>
-T multi_exp_with_add_special(const T &neutral,
+T multi_exp_with_fast_add_special(const T &neutral,
                              typename std::vector<T>::const_iterator vec_start,
                              typename std::vector<T>::const_iterator vec_end,
                              typename std::vector<FieldT>::const_iterator scalar_start,
@@ -518,7 +518,7 @@ T multi_exp_with_add_special(const T &neutral,
         else if (*scalar_it == one)
         {
 #ifdef USE_ADD_SPECIAL
-            acc = acc.add_special(*value_it);
+            acc = acc.fast_add_special(*value_it);
 #else
             acc = acc + (*value_it);
 #endif
@@ -884,7 +884,9 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t exp_size,
     {
         tmp[i] = kc_batch_exp_internal<T1, T2, FieldT>(exp_size, T1_window, T2_window, T1_table, T2_table, T1_coeff, T2_coeff, v,
                                                        chunk_pos[i], chunk_pos[i+1], is_sparse, i == chunks - 1 ? last_chunk : chunk_size);
+#ifdef USE_ADD_SPECIAL
         kc_batch_to_special<T1, T2>(tmp[i].values);
+#endif
     }
 
     if (chunks == 1)
