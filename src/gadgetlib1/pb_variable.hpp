@@ -80,8 +80,49 @@ public:
     pb_linear_combination(const pb_variable<FieldT> &var);
 
     void assign(protoboard<FieldT> &pb, const linear_combination<FieldT> &lc);
+    void evaluate(protoboard<FieldT> &pb) const;
+
+    bool is_constant() const;
+    FieldT constant_term() const;
 };
 
+template<typename FieldT>
+class pb_linear_combination_array : private std::vector<pb_linear_combination<FieldT> >
+{
+    typedef std::vector<pb_linear_combination<FieldT> > contents;
+public:
+    using typename contents::iterator;
+    using typename contents::const_iterator;
+    using typename contents::reverse_iterator;
+    using typename contents::const_reverse_iterator;
+
+    using contents::begin;
+    using contents::end;
+    using contents::rbegin;
+    using contents::rend;
+    using contents::emplace_back;
+    using contents::insert;
+    using contents::reserve;
+    using contents::size;
+    using contents::empty;
+    using contents::operator[];
+
+    pb_linear_combination_array() : contents() {};
+    pb_linear_combination_array(const pb_variable_array<FieldT> &arr) { for (auto &v : arr) this->emplace_back(pb_linear_combination<FieldT>(v)); };
+    pb_linear_combination_array(size_t count, const pb_linear_combination<FieldT> &value) : contents(count, value) {};
+    pb_linear_combination_array(typename contents::const_iterator first, typename contents::const_iterator last) : contents(first, last) {};
+    pb_linear_combination_array(typename contents::const_reverse_iterator first, typename contents::const_reverse_iterator last) : contents(first, last) {};
+
+    void fill_with_field_elements(protoboard<FieldT> &pb, const std::vector<FieldT>& vals) const;
+    void fill_with_bits(protoboard<FieldT> &pb, const bit_vector& bits) const;
+    void fill_with_bits_of_ulong(protoboard<FieldT> &pb, const unsigned long i) const;
+    void fill_with_bits_of_field_element(protoboard<FieldT> &pb, const FieldT &r) const;
+
+    std::vector<FieldT> get_vals(const protoboard<FieldT> &pb) const;
+    bit_vector get_bits(const protoboard<FieldT> &pb) const;
+
+    FieldT get_field_element_from_bits(protoboard<FieldT> &pb) const;
+};
 
 } // libsnark
 #include "gadgetlib1/pb_variable.tcc"

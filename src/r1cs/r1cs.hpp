@@ -25,8 +25,15 @@
 
 namespace libsnark {
 
+/*
+ Interfaces for the language R1CS ("rank-1 constraint systems").
+ An instance of the language is specified by a list of equations over a field <FieldT>,
+ and each equation looks like:
+      < A, (1,X) > * < B , (1,X) > = < C, (1,X) >
+ where A,B,C are vectors over <FieldT>, and X is a vector of variables.
+*/
 
-    template<typename FieldT>
+template<typename FieldT>
 using r1cs_variable_assignment = std::vector<FieldT>;
 
 
@@ -54,9 +61,9 @@ public:
                     const linear_combination<FieldT> &b,
                     const linear_combination<FieldT> &c);
 
-    r1cs_constraint(const std::initializer_list<linear_term<FieldT> > A,
-                    const std::initializer_list<linear_term<FieldT> > B,
-                    const std::initializer_list<linear_term<FieldT> > C);
+    r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > A,
+                    const std::initializer_list<linear_combination<FieldT> > B,
+                    const std::initializer_list<linear_combination<FieldT> > C);
 
     bool operator==(const r1cs_constraint<FieldT> &other) const;
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const r1cs_constraint<FieldT> &c);
@@ -101,6 +108,8 @@ public:
     bool operator==(const r1cs_constraint_system<FieldT> &other) const;
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const r1cs_constraint_system<FieldT> &cs);
     friend std::istream& operator>> <FieldT>(std::istream &in, r1cs_constraint_system<FieldT> &cs);
+
+    void report_statistics() const;
 };
 
 

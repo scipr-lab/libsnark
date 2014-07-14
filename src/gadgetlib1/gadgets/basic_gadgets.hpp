@@ -27,12 +27,12 @@ class packing_gadget : public gadget<FieldT> {
 private:
     /* no internal variables */
 public:
-    const pb_variable_array<FieldT> bits;
-    const pb_variable<FieldT> packed;
+    const pb_linear_combination_array<FieldT> bits;
+    const pb_linear_combination<FieldT> packed;
 
     packing_gadget(protoboard<FieldT> &pb,
-                   const pb_variable_array<FieldT> &bits,
-                   const pb_variable<FieldT> &packed,
+                   const pb_linear_combination_array<FieldT> &bits,
+                   const pb_linear_combination<FieldT> &packed,
                    const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), bits(bits), packed(packed) {}
 
@@ -48,16 +48,16 @@ class multipacking_gadget : public gadget<FieldT> {
 private:
     std::vector<packing_gadget<FieldT> > packers;
 public:
-    const pb_variable_array<FieldT> bits;
-    const pb_variable_array<FieldT> packed_vars;
+    const pb_linear_combination_array<FieldT> bits;
+    const pb_linear_combination_array<FieldT> packed_vars;
 
     const size_t chunk_size;
     const size_t num_chunks;
     // const size_t last_chunk_size;
 
     multipacking_gadget(protoboard<FieldT> &pb,
-                        const pb_variable_array<FieldT> &bits,
-                        const pb_variable_array<FieldT> &packed_vars,
+                        const pb_linear_combination_array<FieldT> &bits,
+                        const pb_linear_combination_array<FieldT> &packed_vars,
                         const size_t chunk_size,
                         const std::string &annotation_prefix="");
     void generate_r1cs_constraints(const bool enforce_bitness);

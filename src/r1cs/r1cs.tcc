@@ -44,13 +44,22 @@ r1cs_constraint<FieldT>::r1cs_constraint(const linear_combination<FieldT> &a,
 }
 
 template<typename FieldT>
-r1cs_constraint<FieldT>::r1cs_constraint(const std::initializer_list<linear_term<FieldT> > A,
-                                         const std::initializer_list<linear_term<FieldT> > B,
-                                         const std::initializer_list<linear_term<FieldT> > C)
+r1cs_constraint<FieldT>::r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > A,
+                                         const std::initializer_list<linear_combination<FieldT> > B,
+                                         const std::initializer_list<linear_combination<FieldT> > C)
 {
-    a.terms.insert(a.terms.begin(), A.begin(), A.end());
-    b.terms.insert(b.terms.begin(), B.begin(), B.end());
-    c.terms.insert(c.terms.begin(), C.begin(), C.end());
+    for (auto lc_A : A)
+    {
+        a.terms.insert(a.terms.end(), lc_A.terms.begin(), lc_A.terms.end());
+    }
+    for (auto lc_B : B)
+    {
+        b.terms.insert(b.terms.end(), lc_B.terms.begin(), lc_B.terms.end());
+    }
+    for (auto lc_C : C)
+    {
+        c.terms.insert(c.terms.end(), lc_C.terms.begin(), lc_C.terms.end());
+    }
 }
 
 template<typename FieldT>
@@ -299,6 +308,34 @@ std::istream& operator>>(std::istream &in, r1cs_constraint_system<FieldT> &cs)
     }
 
     return in;
+}
+
+template<typename FieldT>
+void r1cs_constraint_system<FieldT>::report_statistics() const
+{
+#ifdef DEBUG
+    for (size_t i = 0; i < constraints.size(); ++i)
+    {
+        auto &constr = constraints[i];
+        bool a_is_const = true;
+        for (auto &t : constr.a.terms)
+        {
+            a_is_const = a_is_const && (t.index == 0);
+        }
+
+        bool b_is_const = true;
+        for (auto &t : constr.b.terms)
+        {
+            b_is_const = b_is_const && (t.index == 0);
+        }
+
+        if (a_is_const || b_is_const)
+        {
+            auto it = constraint_annotations.find(i);
+            printf("%s\n", (it == constraint_annotations.end() ? FORMAT("", "constraint_%zu", i) : it->second).c_str());
+        }
+    }
+#endif
 }
 
 } // libsnark

@@ -34,17 +34,15 @@ void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitnes
 {
     FieldT twoi = FieldT::one(); // will hold 2^i entering each iteration
 
-    linear_combination<FieldT> a, b, c;
+    linear_combination<FieldT> lc;
 
-    a.add_term(ONE);
     for (size_t i = 0; i < bits.size(); ++i)
     {
-        b.add_term(bits[i], twoi);
+        lc = lc + bits[i] * twoi;
         twoi = twoi + twoi;
     }
-    c.add_term(packed);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " packing_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, lc, packed), FMT(this->annotation_prefix, " packing_constraint"));
 
     if (enforce_bitness)
     {
@@ -58,19 +56,19 @@ void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitnes
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_packed()
 {
-    bits.fill_with_bits_of_field_element(this->pb, this->pb.val(packed));
+    bits.fill_with_bits_of_field_element(this->pb, this->pb.lc_val(packed));
 }
 
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_bits()
 {
-    this->pb.val(packed) = bits.get_field_element_from_bits(this->pb);
+    this->pb.lc_val(packed) = bits.get_field_element_from_bits(this->pb);
 }
 
 template<typename FieldT>
 multipacking_gadget<FieldT>::multipacking_gadget(protoboard<FieldT> &pb,
-                                                 const pb_variable_array<FieldT> &bits,
-                                                 const pb_variable_array<FieldT> &packed_vars,
+                                                 const pb_linear_combination_array<FieldT> &bits,
+                                                 const pb_linear_combination_array<FieldT> &packed_vars,
                                                  const size_t chunk_size,
                                                  const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), bits(bits), packed_vars(packed_vars),
@@ -81,8 +79,8 @@ multipacking_gadget<FieldT>::multipacking_gadget(protoboard<FieldT> &pb,
     assert(packed_vars.size() == num_chunks);
     for (size_t i = 0; i < num_chunks; ++i)
     {
-        packers.emplace_back(packing_gadget<FieldT>(this->pb, pb_variable_array<FieldT>(bits.begin() + i * chunk_size,
-                                                                                        bits.begin() + std::min((i+1) * chunk_size, bits.size())),
+        packers.emplace_back(packing_gadget<FieldT>(this->pb, pb_linear_combination_array<FieldT>(bits.begin() + i * chunk_size,
+                                                                                                  bits.begin() + std::min((i+1) * chunk_size, bits.size())),
                                                     packed_vars[i], FMT(this->annotation_prefix, " packers_%zu", i)));
     }
 }
