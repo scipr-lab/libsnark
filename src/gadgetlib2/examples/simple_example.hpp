@@ -1,16 +1,15 @@
 /** @file
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef SIMPLE_EXAMPLE_HPP_
 #define SIMPLE_EXAMPLE_HPP_
 
 #include "common/types.hpp"
-#include "r1cs_ppzksnark/examples/r1cs_examples.hpp"
+#include "r1cs/examples/r1cs_examples.hpp"
 
 namespace libsnark {
 

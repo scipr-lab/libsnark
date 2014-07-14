@@ -1,5 +1,5 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Declaration of evaluation domains, and functions to select and use them.
 
  Both Lagrange evaluations and FFT/iFFT computations are conducted over
@@ -14,12 +14,11 @@
  Note that, by construction:
  \f[   \forall j \neq idx: L_{idx,S}(a_{idx}) = 1  \text{ and }  L_{idx,S}(a_j) = 0   \f]
 
- (*******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef EVALUATION_DOMAIN_HPP_
 #define EVALUATION_DOMAIN_HPP_

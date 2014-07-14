@@ -1,5 +1,5 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Profiling program that exercises the ppzkSNARK (first generator, then prover,
  then verifier) on a synthetic R1CS instance.
 
@@ -17,12 +17,11 @@
 
  does the same but now the input consists of 10 bytes.
 
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #include <algorithm>
 #include <cstdio>

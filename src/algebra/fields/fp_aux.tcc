@@ -1,15 +1,14 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Assembly code snippets for F[p] finite field arithmetic, used by fp.tcc .
  Specific to x86-64, and used only if USE_ASM is defined.
  On other architectures or without USE_ASM, fp.tcc uses a portable
  C++ implementation instead.
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef FP_AUX_TCC_
 #define FP_AUX_TCC_

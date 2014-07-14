@@ -1,5 +1,5 @@
 /** @file
- *******************************************************************************
+ *****************************************************************************
  Declaration of interfaces for constructing a QAP ("Quadratic Arithmetic Program")
  from a R1CS ("Rank-1 Constraint System").
 
@@ -9,12 +9,11 @@
  Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin, Eran Tromer, and Madars Virza,
  CRYPTO 2013,
  <http://eprint.iacr.org/2013/507>
- *******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef QAP_HPP_
 #define QAP_HPP_

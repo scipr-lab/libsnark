@@ -1,5 +1,5 @@
 /** @file
- *******************************************************************************
+ *****************************************************************************
  Declaration of interfaces for a ppzkSNARK for R1CS.
 
  This includes:
@@ -24,12 +24,11 @@
  Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
  USENIX Security 2014,
  <http://eprint.iacr.org/2013/879>
- *******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef R1CS_PPZKSNARK_HPP_
 #define R1CS_PPZKSNARK_HPP_

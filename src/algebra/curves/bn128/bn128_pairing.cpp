@@ -6,11 +6,10 @@
  This code is based on the ate-pairing pairing code (https://github.com/herumi/ate-pairing),
  split into offline and online stages.
  ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * Uses portions of ate-pairing <https://github.com/herumi/ate-pairing> by
- *             Shigeo Mitsunari, Tadanori Teruya.
+ *             MITSUNARI Shigeo and TERUYA Tadanori
  * @copyright  modified new BSD License (http://opensource.org/licenses/BSD-3-Clause)
  *             (see LICENSE file)
  *******************************************************************************/

@@ -1,13 +1,12 @@
 /** @file
- *******************************************************************************
+ *****************************************************************************
  Macros for quick construction of interface and factory classes for non field
  agnostic gadgets.
- *******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_GADGETMACROS_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_GADGETMACROS_HPP_

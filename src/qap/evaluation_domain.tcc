@@ -1,5 +1,5 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Implementation of functions to select and use evaluation domains.
 
  See evaluation-domain.hpp .
@@ -8,12 +8,12 @@
  - "basic radix-2": S has size m = 2^k and consists of the m-th roots of unity
  - "extended radix-2": S has size m = 2^{k+1} and consists of "the m-th roots of unity" union "a coset"
  - "step radix-2": S has size m = 2^k + 2^r and consists of "the 2^k-th roots of unity" union "a coset of 2^r-th roots of unity"
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef EVALUATION_DOMAIN_TCC_
 #define EVALUATION_DOMAIN_TCC_

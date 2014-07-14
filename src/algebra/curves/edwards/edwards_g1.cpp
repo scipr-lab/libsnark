@@ -1,10 +1,9 @@
 /** @file
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #include "algebra/curves/edwards/edwards_g1.hpp"
 
@@ -155,21 +154,10 @@ edwards_G1 edwards_G1::operator+(const edwards_G1 &other) const
 
     if (other.is_zero())
     {
-        return *this;
+        return (*this);
     }
 
-    // no need to handle points of order 2,4
-    // (they cannot exist in a prime-order subgroup)
-
-    // handle double case, and then all the rest
-    if (this->operator==(other))
-    {
-        return this->dbl();
-    }
-    else
-    {
-        return this->add(other);
-    }
+    return this->add(other);
 }
 
 edwards_G1 edwards_G1::operator-() const
@@ -205,7 +193,7 @@ edwards_G1 edwards_G1::add(const edwards_G1 &other) const
     return edwards_G1(X3, Y3, Z3);
 }
 
-edwards_G1 edwards_G1::add_special(const edwards_G1 &other) const
+edwards_G1 edwards_G1::fast_add_special(const edwards_G1 &other) const
 {
 #ifdef PROFILE_OP_COUNTS
     this->add_cnt++;
@@ -272,6 +260,8 @@ edwards_G1 edwards_G1::dbl() const
 
 bool edwards_G1::is_well_formed() const
 {
+    /* Note that point at infinity is the only special case we must check as
+       inverted representation does no cover points (0, +-c) and (+-c, 0). */
     if (this->is_zero())
     {
         return true;

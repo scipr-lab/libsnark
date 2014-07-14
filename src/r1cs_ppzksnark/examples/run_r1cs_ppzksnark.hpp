@@ -1,13 +1,12 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Declaration of high-level example code that runs the ppzkSNARK
  (generator, prover, and verifier) for a given R1CS example.
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef RUN_R1CS_PPZKSNARK_HPP_
 #define RUN_R1CS_PPZKSNARK_HPP_

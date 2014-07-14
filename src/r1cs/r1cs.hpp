@@ -1,17 +1,16 @@
 /** @file
- *******************************************************************************
+ *****************************************************************************
  Declaration of interfaces for the language R1CS ("rank-1 constraint systems").
 
  An instance of the language is specified by a list of equations over a field <FieldT>,
  and each equation looks like:
         < A, (1,X) > * < B , (1,X) > = < C, (1,X) >
  where A,B,C are vectors over <FieldT>, and X is a vector of variables.
- *******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef R1CS_HPP_
 #define R1CS_HPP_

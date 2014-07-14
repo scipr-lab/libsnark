@@ -1,12 +1,11 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Declaration of arithmetic in the finite field F[(p^2)^3]
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef FP6_3OVER2_HPP_
 #define FP6_3OVER2_HPP_

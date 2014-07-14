@@ -1,16 +1,15 @@
 /** @file
- *******************************************************************************
+ *****************************************************************************
  Declaration of the Constraint class.
 
  A constraint is an algebraic equation which can be either satisfied by an assignment,
  (the equation is true with that assignment) or unsatisfied. For instance the rank-1
  constraint (X * Y = 15) is satisfied by {X=5 Y=3} or {X=3 Y=5}
- *******************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_CONSTRAINT_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_CONSTRAINT_HPP_

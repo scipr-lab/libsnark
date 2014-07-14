@@ -5,16 +5,10 @@ libsnark: a C++ library for zkSNARK proofs
 Authors
 --------------------------------------------------------------------------------
 
-The libsnark library is developed by the [SCIPR Lab] project,
+The libsnark library is developed by the [SCIPR Lab] project and contributors
 and is released under the MIT License (see the [LICENSE] file).
 
-Copyright (c) 2012-2014
-    Eli Ben-Sasson,
-    Alessandro Chiesa,
-    Daniel Genkin,
-    Shaul Kfir,
-    Eran Tromer,
-    Madars Virza.
+Copyright (c) 2012-2014 SCIPR Lab and contributors (see AUTHORS file).
 
 --------------------------------------------------------------------------------
 [TOC]
@@ -470,3 +464,4 @@ References
 
 [LICENSE]: LICENSE (LICENSE file in top directory of libsnark distribution)
 
+[AUTHORS]: AUTHORS (AUTHORS file in top directory of libsnark distribution)

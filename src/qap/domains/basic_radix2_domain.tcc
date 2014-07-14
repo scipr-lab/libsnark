@@ -1,13 +1,12 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Implementation of the  "basic radix-2" evaluation domain.
  S has size m = 2^k and consists of the m-th roots of unity.
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #ifndef BASIC_RADIX2_DOMAIN_TCC_
 #define BASIC_RADIX2_DOMAIN_TCC_

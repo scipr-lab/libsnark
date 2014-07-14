@@ -1,13 +1,12 @@
 /** @file
- ********************************************************************************
+ *****************************************************************************
  Implementation of functions for profiling code blocks.
  Reports time, op counts, memory usage etc.
- ********************************************************************************
- * @authors    Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin,
- *             Shaul Kfir, Eran Tromer, Madars Virza.
- * This file is part of libsnark, developed by SCIPR Lab <http://scipr-lab.org>.
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
- *******************************************************************************/
+ *****************************************************************************/
 
 #include "common/profiling.hpp"
 #include <cassert>
