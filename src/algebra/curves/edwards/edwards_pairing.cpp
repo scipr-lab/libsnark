@@ -359,30 +359,27 @@ edwards_tate_G1_precomp edwards_tate_precompute_G1(const edwards_G1& P)
     extended_edwards_G1_projective R = P_ext;
 
     bool found_one = false;
-    for (long i = edwards_r_limbs-1; i >= 0; --i)
+    for (long i = edwards_modulus_r.max_bits(); i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = edwards_modulus_r.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = edwards_modulus_r.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               edwards_modulus_r (skipping leading zeros) in MSB to LSB
-               order */
-            edwards_Fq_conic_coefficients cc;
-            doubling_step_for_miller_loop(R, cc);
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           edwards_modulus_r (skipping leading zeros) in MSB to LSB
+           order */
+        edwards_Fq_conic_coefficients cc;
+        doubling_step_for_miller_loop(R, cc);
+        result.push_back(cc);
+
+        if (bit)
+        {
+            mixed_addition_step_for_miller_loop(P_ext, R, cc);
             result.push_back(cc);
-
-            if (bit)
-            {
-                mixed_addition_step_for_miller_loop(P_ext, R, cc);
-                result.push_back(cc);
-            }
         }
     }
 
@@ -399,33 +396,30 @@ edwards_Fq6 edwards_tate_miller_loop(const edwards_tate_G1_precomp &prec_P,
 
     bool found_one = false;
     size_t idx = 0;
-    for (long i = edwards_r_limbs-1; i >= 0; --i)
+    for (long i = edwards_modulus_r.max_bits()-1; i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = edwards_modulus_r.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = edwards_modulus_r.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               edwards_modulus_r (skipping leading zeros) in MSB to LSB
-               order */
-            edwards_Fq_conic_coefficients cc = prec_P[idx++];
-            edwards_Fq6 g_RR_at_Q = edwards_Fq6(edwards_Fq3(cc.c_XZ, edwards_Fq(0l), edwards_Fq(0l)) + cc.c_XY * prec_Q.y0,
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           edwards_modulus_r (skipping leading zeros) in MSB to LSB
+           order */
+        edwards_Fq_conic_coefficients cc = prec_P[idx++];
+        edwards_Fq6 g_RR_at_Q = edwards_Fq6(edwards_Fq3(cc.c_XZ, edwards_Fq(0l), edwards_Fq(0l)) + cc.c_XY * prec_Q.y0,
+                                            cc.c_ZZ * prec_Q.eta);
+        f = f.squared() * g_RR_at_Q;
+        if (bit)
+        {
+            cc = prec_P[idx++];
+
+            edwards_Fq6 g_RP_at_Q = edwards_Fq6(edwards_Fq3(cc.c_XZ, edwards_Fq(0l), edwards_Fq(0l)) + cc.c_XY * prec_Q.y0,
                                                 cc.c_ZZ * prec_Q.eta);
-            f = f.squared() * g_RR_at_Q;
-            if (bit)
-            {
-                cc = prec_P[idx++];
-
-                edwards_Fq6 g_RP_at_Q = edwards_Fq6(edwards_Fq3(cc.c_XZ, edwards_Fq(0l), edwards_Fq(0l)) + cc.c_XY * prec_Q.y0,
-                                                    cc.c_ZZ * prec_Q.eta);
-                f = f * g_RP_at_Q;
-            }
+            f = f * g_RP_at_Q;
         }
     }
     leave_block("Call to edwards_tate_miller_loop");
@@ -606,26 +600,23 @@ edwards_ate_G2_precomp edwards_ate_precompute_G2(const edwards_G2& Q)
     extended_edwards_G2_projective R = Q_ext;
 
     bool found_one = false;
-    for (long i = edwards_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits()-1; i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            edwards_Fq3_conic_coefficients cc;
-            doubling_step_for_flipped_miller_loop(R, cc);
+        edwards_Fq3_conic_coefficients cc;
+        doubling_step_for_flipped_miller_loop(R, cc);
+        result.push_back(cc);
+        if (bit)
+        {
+            mixed_addition_step_for_flipped_miller_loop(Q_ext, R, cc);
             result.push_back(cc);
-            if (bit)
-            {
-                mixed_addition_step_for_flipped_miller_loop(Q_ext, R, cc);
-                result.push_back(cc);
-            }
         }
     }
 
@@ -643,33 +634,30 @@ edwards_Fq6 edwards_ate_miller_loop(const edwards_ate_G1_precomp &prec_P,
 
     bool found_one = false;
     size_t idx = 0;
-    for (long i = edwards_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits()-1; i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               edwards_param_p (skipping leading zeros) in MSB to LSB
-               order */
-            edwards_Fq3_conic_coefficients cc = prec_Q[idx++];
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           edwards_param_p (skipping leading zeros) in MSB to LSB
+           order */
+        edwards_Fq3_conic_coefficients cc = prec_Q[idx++];
 
-            edwards_Fq6 g_RR_at_P = edwards_Fq6(prec_P.P_XY * cc.c_XY + prec_P.P_XZ * cc.c_XZ,
-                                                prec_P.P_ZZplusYZ * cc.c_ZZ);
-            f = f.squared() * g_RR_at_P;
-            if (bit)
-            {
-                cc = prec_Q[idx++];
-                edwards_Fq6 g_RQ_at_P = edwards_Fq6(prec_P.P_ZZplusYZ * cc.c_ZZ,
-                                                    prec_P.P_XY * cc.c_XY + prec_P.P_XZ * cc.c_XZ);
-                f = f * g_RQ_at_P;
-            }
+        edwards_Fq6 g_RR_at_P = edwards_Fq6(prec_P.P_XY * cc.c_XY + prec_P.P_XZ * cc.c_XZ,
+                                            prec_P.P_ZZplusYZ * cc.c_ZZ);
+        f = f.squared() * g_RR_at_P;
+        if (bit)
+        {
+            cc = prec_Q[idx++];
+            edwards_Fq6 g_RQ_at_P = edwards_Fq6(prec_P.P_ZZplusYZ * cc.c_ZZ,
+                                                prec_P.P_XY * cc.c_XY + prec_P.P_XZ * cc.c_XZ);
+            f = f * g_RQ_at_P;
         }
     }
     leave_block("Call to edwards_ate_miller_loop");
@@ -689,43 +677,40 @@ edwards_Fq6 edwards_ate_double_miller_loop(const edwards_ate_G1_precomp &prec_P1
 
     bool found_one = false;
     size_t idx = 0;
-    for (long i = edwards_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits()-1; i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               edwards_param_p (skipping leading zeros) in MSB to LSB
-               order */
-            edwards_Fq3_conic_coefficients cc1 = prec_Q1[idx];
-            edwards_Fq3_conic_coefficients cc2 = prec_Q2[idx];
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           edwards_param_p (skipping leading zeros) in MSB to LSB
+           order */
+        edwards_Fq3_conic_coefficients cc1 = prec_Q1[idx];
+        edwards_Fq3_conic_coefficients cc2 = prec_Q2[idx];
+        ++idx;
+
+        edwards_Fq6 g_RR_at_P1 = edwards_Fq6(prec_P1.P_XY * cc1.c_XY + prec_P1.P_XZ * cc1.c_XZ,
+                                             prec_P1.P_ZZplusYZ * cc1.c_ZZ);
+
+        edwards_Fq6 g_RR_at_P2 = edwards_Fq6(prec_P2.P_XY * cc2.c_XY + prec_P2.P_XZ * cc2.c_XZ,
+                                             prec_P2.P_ZZplusYZ * cc2.c_ZZ);
+        f = f.squared() * g_RR_at_P1 * g_RR_at_P2;
+
+        if (bit)
+        {
+            cc1 = prec_Q1[idx];
+            cc2 = prec_Q2[idx];
             ++idx;
-
-            edwards_Fq6 g_RR_at_P1 = edwards_Fq6(prec_P1.P_XY * cc1.c_XY + prec_P1.P_XZ * cc1.c_XZ,
-                                                 prec_P1.P_ZZplusYZ * cc1.c_ZZ);
-
-            edwards_Fq6 g_RR_at_P2 = edwards_Fq6(prec_P2.P_XY * cc2.c_XY + prec_P2.P_XZ * cc2.c_XZ,
-                                                 prec_P2.P_ZZplusYZ * cc2.c_ZZ);
-            f = f.squared() * g_RR_at_P1 * g_RR_at_P2;
-
-            if (bit)
-            {
-                cc1 = prec_Q1[idx];
-                cc2 = prec_Q2[idx];
-                ++idx;
-                edwards_Fq6 g_RQ_at_P1 = edwards_Fq6(prec_P1.P_ZZplusYZ * cc1.c_ZZ,
-                                                     prec_P1.P_XY * cc1.c_XY + prec_P1.P_XZ * cc1.c_XZ);
-                edwards_Fq6 g_RQ_at_P2 = edwards_Fq6(prec_P2.P_ZZplusYZ * cc2.c_ZZ,
-                                                     prec_P2.P_XY * cc2.c_XY + prec_P2.P_XZ * cc2.c_XZ);
-                f = f * g_RQ_at_P1 * g_RQ_at_P2;
-            }
+            edwards_Fq6 g_RQ_at_P1 = edwards_Fq6(prec_P1.P_ZZplusYZ * cc1.c_ZZ,
+                                                 prec_P1.P_XY * cc1.c_XY + prec_P1.P_XZ * cc1.c_XZ);
+            edwards_Fq6 g_RQ_at_P2 = edwards_Fq6(prec_P2.P_ZZplusYZ * cc2.c_ZZ,
+                                                 prec_P2.P_XY * cc2.c_XY + prec_P2.P_XZ * cc2.c_XZ);
+            f = f * g_RQ_at_P1 * g_RQ_at_P2;
         }
     }
     leave_block("Call to edwards_ate_double_miller_loop");

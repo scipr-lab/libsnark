@@ -323,26 +323,23 @@ alt_bn128_ate_G2_precomp alt_bn128_ate_precompute_G2(const alt_bn128_G2& Q)
     bool found_one = false;
     alt_bn128_ate_ell_coeffs c;
 
-    for (long i = alt_bn128_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits(); i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            doubling_step_for_flipped_miller_loop(two_inv, R, c);
+        doubling_step_for_flipped_miller_loop(two_inv, R, c);
+        result.coeffs.push_back(c);
+
+        if (bit)
+        {
+            mixed_addition_step_for_flipped_miller_loop(Qcopy, R, c);
             result.coeffs.push_back(c);
-
-            if (bit)
-            {
-                mixed_addition_step_for_flipped_miller_loop(Qcopy, R, c);
-                result.coeffs.push_back(c);
-            }
         }
     }
 
@@ -380,33 +377,30 @@ alt_bn128_Fq12 alt_bn128_ate_miller_loop(const alt_bn128_ate_G1_precomp &prec_P,
     const bigint<alt_bn128_Fr::num_limbs> &loop_count = alt_bn128_ate_loop_count;
     alt_bn128_ate_ell_coeffs c;
 
-    for (long i = alt_bn128_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits(); i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
-
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               alt_bn128_param_p (skipping leading zeros) in MSB to LSB
-               order */
-
-            c = prec_Q.coeffs[idx++];
-            f = f.squared();
-            f = f.mul_by_024(c.ell_0, prec_P.PY * c.ell_VW, prec_P.PX * c.ell_VV);
-
-            if (bit)
-            {
-                c = prec_Q.coeffs[idx++];
-                f = f.mul_by_024(c.ell_0, prec_P.PY * c.ell_VW, prec_P.PX * c.ell_VV);
-            }
-
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
         }
+
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           alt_bn128_param_p (skipping leading zeros) in MSB to LSB
+           order */
+
+        c = prec_Q.coeffs[idx++];
+        f = f.squared();
+        f = f.mul_by_024(c.ell_0, prec_P.PY * c.ell_VW, prec_P.PX * c.ell_VV);
+
+        if (bit)
+        {
+            c = prec_Q.coeffs[idx++];
+            f = f.mul_by_024(c.ell_0, prec_P.PY * c.ell_VW, prec_P.PX * c.ell_VV);
+        }
+
     }
 
     if (alt_bn128_ate_is_loop_count_neg)
@@ -437,40 +431,37 @@ alt_bn128_Fq12 alt_bn128_ate_double_miller_loop(const alt_bn128_ate_G1_precomp &
     size_t idx = 0;
 
     const bigint<alt_bn128_Fr::num_limbs> &loop_count = alt_bn128_ate_loop_count;
-    for (long i = alt_bn128_Fr::num_limbs-1; i >= 0; --i)
+    for (long i = loop_count.max_bits(); i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
         {
-            const bool bit = loop_count.data[i] & (1ul<<j);
-            if (!found_one)
-            {
-                /* this skips the MSB itself */
-                found_one |= bit;
-                continue;
-            }
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
 
-            /* code below gets executed for all bits (EXCEPT the MSB itself) of
-               alt_bn128_param_p (skipping leading zeros) in MSB to LSB
-               order */
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           alt_bn128_param_p (skipping leading zeros) in MSB to LSB
+           order */
 
+        alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
+        alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
+        ++idx;
+
+        f = f.squared();
+
+        f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
+        f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
+
+        if (bit)
+        {
             alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
             alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
             ++idx;
 
-            f = f.squared();
-
             f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
             f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
-
-            if (bit)
-            {
-                alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
-                alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
-                ++idx;
-
-                f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
-                f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
-            }
         }
     }
 

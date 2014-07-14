@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include "algebra/fields/fp_aux.tcc"
+#include "common/field_utils.hpp"
 
 namespace libsnark {
 
@@ -503,54 +504,16 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::operator*=(const Fp_model<n,modulus>& 
 template<mp_size_t n, const bigint<n>& modulus>
 Fp_model<n,modulus>& Fp_model<n,modulus>::operator^=(const unsigned long pow)
 {
-    Fp_model<n,modulus> res = Fp_model<n,modulus>::one();
-
-    bool found_one = false;
-    for (long j = 8*sizeof(unsigned long) - 1; j >= 0; --j)
-    {
-        if (found_one)
-        {
-            res *= res;
-        }
-
-        if (pow & (1ul<<j))
-        {
-            found_one = true;
-            res *= (*this);
-        }
-    }
-
-    *this = res;
-
-    return *this;
+    (*this) = power<Fp_model<n, modulus> >(*this, pow);
+    return (*this);
 }
 
 template<mp_size_t n, const bigint<n>& modulus>
 template<mp_size_t m>
 Fp_model<n,modulus>& Fp_model<n,modulus>::operator^=(const bigint<m> pow)
 {
-    Fp_model<n,modulus> res = Fp_model<n,modulus>::one();
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res *= res;
-            }
-
-            if (pow.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res *= (*this);
-            }
-        }
-    }
-
-    (*this) = res;
-    return *this;
+    (*this) = power<Fp_model<n, modulus>, m>(*this, pow);
+    return (*this);
 }
 
 template<mp_size_t n, const bigint<n>& modulus>

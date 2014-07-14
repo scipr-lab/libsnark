@@ -10,6 +10,7 @@
 #include <iostream>
 #include <vector>
 #include "algebra/curves/bn128/bn128_init.hpp"
+#include "common/curve_utils.hpp"
 #include "bn.h"
 
 namespace libsnark {
@@ -72,33 +73,13 @@ public:
 template<mp_size_t m>
 bn128_G2 operator*(const bigint<m> &lhs, const bn128_G2 &rhs)
 {
-    bn128_G2 res;
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res = res.dbl();
-            }
-
-            if (lhs.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res = res + rhs;
-            }
-        }
-    }
-
-    return res;
+    return scalar_mul<bn128_G2, m>(rhs, lhs);
 }
 
 template<mp_size_t m, const bigint<m>& modulus_p>
 bn128_G2 operator*(const Fp_model<m, modulus_p> &lhs, const bn128_G2 &rhs)
 {
-    return (lhs.as_bigint()) * rhs;
+    return scalar_mul<bn128_G2, m>(rhs, lhs.as_bigint());
 }
 
 template<typename T>

@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "common/utils.hpp"
+#include "algebra/fields/bigint.hpp"
 
 namespace libsnark {
 
@@ -50,6 +51,12 @@ T naive_plain_exp(const T &neutral,
 
 template<typename FieldT>
 void batch_invert(std::vector<FieldT> &vec);
+
+template<typename FieldT, mp_size_t m>
+FieldT power(const FieldT &base, const bigint<m> &exponent);
+
+template<typename FieldT>
+FieldT power(const FieldT &base, const unsigned long exponent);
 
 } // libsnark
 #include "common/field_utils.tcc"

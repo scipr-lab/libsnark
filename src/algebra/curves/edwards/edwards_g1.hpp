@@ -9,7 +9,7 @@
 #define EDWARDS_G1_HPP_
 #include <vector>
 #include "algebra/curves/edwards/edwards_init.hpp"
-#include "common/field_utils.hpp"
+#include "common/curve_utils.hpp"
 
 namespace libsnark {
 
@@ -76,33 +76,13 @@ public:
 template<mp_size_t m>
 edwards_G1 operator*(const bigint<m> &lhs, const edwards_G1 &rhs)
 {
-    edwards_G1 res;
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res = res.dbl();
-            }
-
-            if (lhs.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res = res + rhs;
-            }
-        }
-    }
-
-    return res;
+    return scalar_mul<edwards_G1, m>(rhs, lhs);
 }
 
 template<mp_size_t m, const bigint<m>& modulus_p>
 edwards_G1 operator*(const Fp_model<m,modulus_p> &lhs, const edwards_G1 &rhs)
 {
-    return (lhs.as_bigint()) * rhs;
+    return scalar_mul<edwards_G1, m>(rhs, lhs.as_bigint());
 }
 
 std::ostream& operator<<(std::ostream& out, const std::vector<edwards_G1> &v);

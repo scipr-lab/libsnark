@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 #include "algebra/curves/edwards/edwards_init.hpp"
-#include "common/field_utils.hpp"
+#include "common/curve_utils.hpp"
 
 namespace libsnark {
 
@@ -82,33 +82,13 @@ public:
 template<mp_size_t m>
 edwards_G2 operator*(const bigint<m> &lhs, const edwards_G2 &rhs)
 {
-    edwards_G2 res;
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res = res.dbl();
-            }
-
-            if (lhs.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res = res + rhs;
-            }
-        }
-    }
-
-    return res;
+    return scalar_mul<edwards_G2, m>(rhs, lhs);
 }
 
 template<mp_size_t m, const bigint<m>& modulus_p>
 edwards_G2 operator*(const Fp_model<m, modulus_p> &lhs, const edwards_G2 &rhs)
 {
-    return (lhs.as_bigint()) * rhs;
+   return scalar_mul<edwards_G2, m>(rhs, lhs.as_bigint());
 }
 
 template<typename T>

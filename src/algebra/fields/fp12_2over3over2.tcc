@@ -322,27 +322,7 @@ Fp12_2over3over2_model<n,modulus> Fp12_2over3over2_model<n,modulus>::mul_by_024(
 template<mp_size_t n, const bigint<n>& modulus, mp_size_t m>
 Fp12_2over3over2_model<n, modulus> operator^(const Fp12_2over3over2_model<n, modulus> &self, const bigint<m> &exponent)
 {
-    Fp12_2over3over2_model<n, modulus> res = Fp12_2over3over2_model<n, modulus>::one();
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res = res.squared();
-            }
-
-            if (exponent.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res = res * self;
-            }
-        }
-    }
-
-    return res;
+    return power<Fp12_2over3over2_model<n, modulus> >(self, exponent);
 }
 
 template<mp_size_t n, const bigint<n>& modulus, mp_size_t m, const bigint<m>& exp_modulus>

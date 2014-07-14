@@ -10,6 +10,8 @@
 #ifndef FP3_TCC_
 #define FP3_TCC_
 
+#include "common/field_utils.hpp"
+
 namespace libsnark {
 
 template<mp_size_t n, const bigint<n>& modulus>
@@ -201,27 +203,7 @@ template<mp_size_t n, const bigint<n>& modulus>
 template<mp_size_t m>
 Fp3_model<n,modulus> Fp3_model<n,modulus>::operator^(const bigint<m> &pow) const
 {
-    Fp3_model<n,modulus> res = Fp3_model<n,modulus>::one();
-
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
-    {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
-        {
-            if (found_one)
-            {
-                res = res * res;
-            }
-
-            if (pow.data[i] & (1ul<<j))
-            {
-                found_one = true;
-                res = res * (*this);
-            }
-        }
-    }
-
-    return res;
+    return power<Fp3_model<n, modulus> >(*this, pow);
 }
 
 template<mp_size_t n, const bigint<n>& modulus>
