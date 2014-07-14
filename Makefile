@@ -45,7 +45,7 @@ SRCS= \
         src/algebra/curves/edwards/edwards_pp.cpp
 
 EXECUTABLES= \
-	src/r1cs_ppzksnark/examples/profile_r1cs_ppzksnark \
+	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
 	src/gadgetlib2/examples/tutorial \
 	src/gadgetlib2/tests/gadgetlib2_test
 

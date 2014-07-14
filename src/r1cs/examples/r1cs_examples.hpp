@@ -51,6 +51,6 @@ r1cs_example<FieldT> gen_r1cs_example_binary_input(const size_t num_constraints,
 
 } // libsnark
 
-#include "r1cs_ppzksnark/examples/r1cs_examples.tcc"
+#include "r1cs/examples/r1cs_examples.tcc"
 
 #endif // R1CS_EXAMPLES_HPP_

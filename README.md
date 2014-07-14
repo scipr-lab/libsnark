@@ -49,7 +49,7 @@ A prover who knows the witness for the NP statement (i.e., a satisfying input/as
 
 These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also knows as
 _succinct non-interactive computationally-sound zero-knowledge proofs of knowledge_).
-For formal definitions and theoretical discussions about these, see 
+For formal definitions and theoretical discussions about these, see
 \[BCCT12], \[BCIOP13], and the references therein.
 
 The libsnark library currently provides a C++ implementation of:
@@ -105,7 +105,7 @@ options:
    an instantiation based on a Barreto-Naehrig curve, providing 128 bits of
    security. The underlying curve implementation is a patched and wrapped version
    of \[ate-pairing].
-   
+
     *   This implementation uses dynamically-generated machine code for the curve
         arithmetic. Some modern systems disallow execution of code on the heap, and
         will thus block this implementation.
@@ -115,7 +115,7 @@ options:
         run `sudo setsebool -P allow_execheap 1` to allow execution,
         or use `make CURVE=ALT_BN128` instead.
 
-    *   The \[ate-pairing] code, and our patch to it, are licensed under a 
+    *   The \[ate-pairing] code, and our patch to it, are licensed under a
         "modified new BSD License", as opposed to libsnark's MIT license.
 
 * "alt_bn128":
@@ -150,7 +150,7 @@ We advise new uses of libsnark to use gadgetlib2, unless the template features o
 gadgetlib1 are specifically required. In the future, we plan to bring the template
 features to gadgetlib2 as well. Note that (consequentially) the constraint library
 interface and its implementation are in flux, and future versions of libsnark are
-likely to break compatibility. 
+likely to break compatibility.
 
 
 --------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ libsnark includes a tutorial, and some usage examples, for the high-level API.
 
 * `src/gadgetlib1/examples1` contains a simple example for constructing a constraint system using gadgetlib1. gadgetlib1 was the predecessor to gadgetlib2 and shares similar design methodologies.
 
-* `r1cs_ppzksnark/examples/profile_r1cs_ppzksnark.cpp` constructs a simple constraint system and runs the ppzksnark. See below for how to run it.
+* `r1cs_ppzksnark/examples/demo_r1cs_ppzksnark.cpp` constructs a simple constraint system and runs the ppzksnark. See below for how to run it.
 
 
 --------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ Executing profiling example
 
 The command
 
-     $ src/r1cs_ppzksnark/examples/profile_r1cs_ppzksnark 1000 10 Fr
+     $ src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark 1000 10 Fr
 
 exercises the ppzkSNARK (first generator, then prover, then verifier) on an R1CS instance with 1000 equations and an input consisting of 10 field elements.
 
@@ -259,7 +259,7 @@ exercises the ppzkSNARK (first generator, then prover, then verifier) on an R1CS
 
 The command
 
-     $ src/r1cs_ppzksnark/examples/profile_r1cs_ppzksnark 1000 10 bytes
+     $ src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark 1000 10 bytes
 
 does the same but now the input consists of 10 bytes.
 
@@ -271,10 +271,10 @@ Build options
 The following flags change the behavior of the compiled code:
 
 *    define `BINARY_OUTPUT`
- 
+
      In serialization, output raw binary data (instead of decimal, when not set).
 
-*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: ALT_BN128, BN128, or EDWARDS)
+*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
@@ -374,7 +374,7 @@ The directory structure of the libsnark library is as follows:
 
     Some of these module directories have the following subdirectories:
 
-    *   
+    *
 
         * .../examples --- example code and tutorials for this module
         * .../tests --- unit tests for this module
@@ -417,46 +417,46 @@ optimal window sizes.
 References
 --------------------------------------------------------------------------------
 
-\[BCCT12] [   
+\[BCCT12] [
   _From extractable collision resistance to succinct non-Interactive arguments of knowledge, and back again_
-](http://eprint.iacr.org/2011/443)   
-  Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer   
+](http://eprint.iacr.org/2011/443)
+  Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer
   ITCS 2012
 
 
-\[BCGTV13] [   
+\[BCGTV13] [
   _SNARKs for C: Verifying Program Executions Succinctly and in Zero Knowledge_
-](http://eprint.iacr.org/2013/507),   
-  Eli Ben-Sasson and Alessandro Chiesa and Daniel Genkin and Eran Tromer, Madars Virza,   
+](http://eprint.iacr.org/2013/507),
+  Eli Ben-Sasson and Alessandro Chiesa and Daniel Genkin and Eran Tromer, Madars Virza,
   CRYPTO 2013
 
-\[BCIOP13] [   
+\[BCIOP13] [
   _Succinct Non-Interactive Arguments via Linear Interactive Proofs_
-](http://eprint.iacr.org/2012/718)   
-  Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth   
+](http://eprint.iacr.org/2012/718)
+  Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth
   TCC 2013
 
-\[BCTV14] [   
+\[BCTV14] [
   _Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture_
-](http://eprint.iacr.org/2013/879)   
-  Eli Ben-Sasson and Alessandro Chiesa and Eran Tromer, Madars Virza   
+](http://eprint.iacr.org/2013/879)
+  Eli Ben-Sasson and Alessandro Chiesa and Eran Tromer, Madars Virza
   USENIX Security 2014
 
-\[GGPR13] [   
+\[GGPR13] [
   _Quadratic span programs and succinct NIZKs without PCPs_
-](http://eprint.iacr.org/2012/215)   
-  Rosario Gennaro, Craig Gentry, Bryan Parno, Mariana Raykova   
+](http://eprint.iacr.org/2012/215)
+  Rosario Gennaro, Craig Gentry, Bryan Parno, Mariana Raykova
   EUROCRYPT 2013
 
-\[ate-pairing] [   
+\[ate-pairing] [
   _High-Speed Software Implementation of the Optimal Ate Pairing over Barreto-Naehrig Curves_
-](https://github.com/herumi/ate-pairing)   
-  Shigeo Mitsunari, Tadanori Teruya
+](https://github.com/herumi/ate-pairing)
+  MITSUNARI Shigeo, TERUYA Tadanori
 
-\[PGHR13] [   
+\[PGHR13] [
   _Pinocchio: Nearly Practical Verifiable Computation_
-](http://eprint.iacr.org/2013/279)   
-  Bryan Parno, Craig Gentry, Jon Howell, Mariana Raykova   
+](http://eprint.iacr.org/2013/279)
+  Bryan Parno, Craig Gentry, Jon Howell, Mariana Raykova
   IEEE S&P 2013
 
 

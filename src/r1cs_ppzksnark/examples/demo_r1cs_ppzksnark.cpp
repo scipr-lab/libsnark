@@ -32,7 +32,7 @@
 #include "common/types.hpp"
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "r1cs_ppzksnark/examples/r1cs_examples.hpp"
+#include "r1cs/examples/r1cs_examples.hpp"
 #include "r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp"
 
 using namespace libsnark;
