@@ -159,10 +159,11 @@ bool bn128_G2::operator==(const bn128_G2 &other) const
         return false;
     }
 
-    bn::Fp2::mul(Z1sq, Z1sq, this->coord[2]);
-    bn::Fp2::mul(Z2sq, Z2sq, other.coord[2]);
-    bn::Fp2::mul(lhs, Z2sq, this->coord[1]);
-    bn::Fp2::mul(rhs, Z1sq, other.coord[1]);
+    bn::Fp2 Z1cubed, Z2cubed;
+    bn::Fp2::mul(Z1cubed, Z1sq, this->coord[2]);
+    bn::Fp2::mul(Z2cubed, Z2sq, other.coord[2]);
+    bn::Fp2::mul(lhs, Z2cubed, this->coord[1]);
+    bn::Fp2::mul(rhs, Z1cubed, other.coord[1]);
 
     return (lhs == rhs);
 }

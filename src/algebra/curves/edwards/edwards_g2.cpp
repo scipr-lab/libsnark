@@ -178,21 +178,10 @@ edwards_G2 edwards_G2::operator+(const edwards_G2 &other) const
 
     if (other.is_zero())
     {
-        return *this;
+        return (*this);
     }
 
-    // no need to handle points of order 2,4
-    // (they cannot exist in a prime-order subgroup)
-
-    // handle double case, and then all the rest
-    if (this->operator==(other))
-    {
-        return this->dbl();
-    }
-    else
-    {
-        return this->add(other);
-    }
+    return this->add(other);
 }
 
 edwards_G2 edwards_G2::operator-() const
@@ -303,6 +292,8 @@ edwards_G2 edwards_G2::mul_by_q() const
 
 bool edwards_G2::is_well_formed() const
 {
+    /* Note that point at infinity is the only special case we must check as
+       inverted representation does no cover points (0, +-c) and (+-c, 0). */
     if (this->is_zero())
     {
         return true;
