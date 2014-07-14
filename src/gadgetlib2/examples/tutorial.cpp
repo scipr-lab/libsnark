@@ -170,11 +170,11 @@ void NAND_Gadget::generateConstraints() {
     for (const auto& input : inputs_) {
         enforceBooleanity(input); // This adds a constraint of the form: input * (1 - input) == 0
     }
-    enforceBooleanity(output_);
 }
 
 void NAND_Gadget::generateWitness() {
-    // First we can assert that all input values are indeed boolean:
+    // First we can assert that all input values are indeed boolean. The purpose of this assertion
+    // is simply to print a clear error message, it is not security critical.
     // Notice the method val() which returns a reference to the current assignment for a variable
     for (const auto& input : inputs_) {
         GADGETLIB_ASSERT(val(input) == 0 || val(input) == 1, "NAND input is not boolean");
@@ -227,9 +227,13 @@ TEST(Examples, NAND_Gadget) {
 
 /*
     Another example showing the use of DualVariable. A DualVariable is a variable which holds both
-    a bitwise representation of a word and a packed representation. If the word is short enough
+    a bitwise representation of a word and a packed representation (e.g. both the packed value {42}
+    and the unpacked value {1,0,1,0,1,0}). If the word is short enough
     (for example any integer smaller than the prime characteristic) then the packed representation
-    will be stored in 1 field element.
+    will be stored in 1 field element. 'word' in this context means a set of bits, it is a
+    convention which means we expect some semantic ability to decompose the packed value into its
+    bits.
+    The use of DualVariables is for efficiency reasons. More on this at the end of this example.
     In this example we will construct a gadget which recieves as input a packed integer value
     called 'hash', and a 'difficulty' level in bits, and constructs a circuit validating that the
     first 'difficulty' bits of 'hash' are '0'. For simplicity we will assume 'hash' is always 64
@@ -290,7 +294,8 @@ GadgetPtr HashDifficultyEnforcer_Gadget::create(ProtoboardPtr pb,
 void HashDifficultyEnforcer_Gadget::generateConstraints() {
     // enforce that both representations are equal
     hashValueUnpacker_->generateConstraints();
-    // add constraints asserting that the first 'difficultyBits' bits of 'hashValue' equal 0
+    // add constraints asserting that the first 'difficultyBits' bits of 'hashValue' equal 0. Note
+    // endianness, unpacked()[0] is LSB and unpacked()[63] is MSB
     for (size_t i = 0; i < difficultyBits_; ++i) {
         addUnaryConstraint(hashValue_.unpacked()[63 - i], GADGETLIB2_FMT("hashValue[%u] == 0", 63 - i));
     }
@@ -303,6 +308,13 @@ void HashDifficultyEnforcer_Gadget::generateWitness() {
     // difficulty constraint, and notify the user with an error otherwise. As this is a tutorial, 
     // we'll let invalid values pass through so that we can see how isSatisfied() returns false.
 }
+
+// Remember we pointed out that DualVariables are used for efficiency reasons. Now is the time to
+// elaborate on this. As you've seen, we needed a bit representation in order to check the first
+// bits of hashValue. But hashValue may be used in many other places, for instance we may want to
+// check equality with another value. Checking equality on a packed representation will 'cost' us
+// 1 constraint, while checking equality on the unpacked value will 'cost' us 64 constraints. This
+// translates heavily into proof construction time and memory in the ppzkSNARK proof system.
 
 TEST(Examples, HashDifficultyEnforcer_Gadget) {
     initPublicParamsFromDefaultPp();
@@ -332,7 +344,15 @@ TEST(Examples, HashDifficultyEnforcer_Gadget) {
 
     This is a field specific gadget, as we will use the '+' operator freely. The addition
     operation works as expected over integers while in prime characteristic fields but not so in
-    extension fields.
+    extension fields. If you are not familiar with extension fields, don't worry about it. Simply
+    be aware that + and * behave differently in different fields and don't necessarily give the
+    integer values you would expect.
+
+    The library design supports multiple field constructs due to different applied use cases. Some
+    cryptogragraphic applications may need extension fields while others may need prime fields
+    but with constraints which are not rank-1 and yet others may need boolean circuits. The library
+    was designed so that high level gadgets can be reused by implementing only the low level for
+    a new field or constraint structure.
 
     Later we will supply a recipe for creation of such field specfic gadgets with agnostic
     interfaces. We use a few conventions here in order to ease the process by using macros.
