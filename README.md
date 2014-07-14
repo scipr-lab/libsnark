@@ -8,7 +8,7 @@ Authors
 The libsnark library is developed by the [SCIPR Lab] project and contributors
 and is released under the MIT License (see the [LICENSE] file).
 
-Copyright (c) 2012-2014 SCIPR Lab and contributors (see AUTHORS file).
+Copyright (c) 2012-2014 SCIPR Lab and contributors (see [AUTHORS] file).
 
 --------------------------------------------------------------------------------
 [TOC]
@@ -221,7 +221,7 @@ with some (currently sparse) comments, install the `doxygen` and `graphviz` pack
 
     $ make doxy
 
-(this may take a few minutes). Then view the resulting `doxygen/index.html`.
+(this may take a few minutes). Then view the resulting [`doxygen/index.html`](doxygen/index.html).
 
 To build the shared object library `libsnark.so`, run:
 
@@ -310,7 +310,7 @@ The following flags change the behavior of the compiled code:
 
 *   define `USE_ASM` (on by default)
 
-    Use unrolled assembly routines for Fp arithmetic and faster heap in
+    Use unrolled assembly routines for F[p] arithmetic and faster heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
 *   `make PERFORMANCE=1`
@@ -345,6 +345,10 @@ with respect to portability. Specifically:
 5. libsnark requires a C++ compiler with good C++11 support.  It has been
    tested with g++ 4.7, g++ 4.8, and clang 3.4.
 
+6. On x86-64, we by default use highly optimized assembly implementations for some
+   operations (see `USE_ASM` above). On other architectures we fall back to a
+   portable C++ implementation, which is slower.
+
 Tested configurations include:
 
 * Debian jessie with g++ 4.7 on x86-64
@@ -374,12 +378,11 @@ The directory structure of the libsnark library is as follows:
 
     Some of these module directories have the following subdirectories:
 
-    *
+    * ...
+        * examples/ --- example code and tutorials for this module
+        * tests/ --- unit tests for this module
 
-        * .../examples --- example code and tutorials for this module
-        * .../tests --- unit tests for this module
-
-    In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples` and `src/gadgetlib2/examples`.
+    In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples/` and `src/gadgetlib2/examples/`.
 
 * patches/ --- directory for patches for external code
   (currently: a patch for \[ate-pairing] for changing the curve)
@@ -406,7 +409,7 @@ on the size of the multiexponentiation instance *and* the platform.
 On our benchmarking platform (a 3.40 GHz Intel Core i7-4770 CPU), we have
 computed for each curve optimal windows, provided as
 "fixed_base_exp_window_table" initialization sequences, for each curve; see
-X_init.cpp for X=edwards,bn128,alt_bn128.
+`X_init.cpp` for X=edwards,bn128,alt_bn128.
 
 Performance on other platforms may not be optimal (but probably not be far off).
 Future releases of the libsnark library will include a tool that generates
