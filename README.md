@@ -102,9 +102,10 @@ options:
    an instantiation based on an Edwards curve, providing 80 bits of security.
 
 * "bn128":
-   an instantiation based on a Barreto-Naehrig curve, providing 128 bits of
-   security. The underlying curve implementation is a patched and wrapped version
-   of \[ate-pairing].
+   an instantiation based on a Barreto-Naehrig curve, providing 128
+   bits of security. The underlying curve implementation is
+   \[ate-pairing], which has incorporated our patch that changes the
+   BN curve to one suitable for SNARK applications.
 
     *   This implementation uses dynamically-generated machine code for the curve
         arithmetic. Some modern systems disallow execution of code on the heap, and
@@ -115,8 +116,8 @@ options:
         run `sudo setsebool -P allow_execheap 1` to allow execution,
         or use `make CURVE=ALT_BN128` instead.
 
-    *   The \[ate-pairing] code, and our patch to it, are licensed under a
-        "modified new BSD License", as opposed to libsnark's MIT license.
+    *   The \[ate-pairing] code is licensed under a "modified new BSD
+        License", as opposed to libsnark's MIT license.
 
 * "alt_bn128":
    an alternative to "bn128", somewhat slower but avoids dynamic code generation.
@@ -201,8 +202,8 @@ Or, on Fedora 20:
 
     $ sudo yum install gcc-c++ make git gmp-devel procps-ng-devel gtest-devel python-markdown
 
-Run the following, to fetch \[ate-pairing] from its Github repo and patch it to use our
-specialized BN curve. (Required only when using the default bn128 curve.)
+Run the following, to fetch \[ate-pairing] from its Github repo and
+compile it. (Required only when using the default bn128 curve.)
 
     $ ./prepare-depends.sh
 
@@ -383,9 +384,6 @@ The directory structure of the libsnark library is as follows:
         * tests/ --- unit tests for this module
 
     In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples/` and `src/gadgetlib2/examples/`.
-
-* patches/ --- directory for patches for external code
-  (currently: a patch for \[ate-pairing] for changing the curve)
 
 * depsrc/ --- created by `prepare_depends.sh` for retrieved sourcecode and local builds of external code
   (currently: \[ate-pairing], and its dependency xbyak).

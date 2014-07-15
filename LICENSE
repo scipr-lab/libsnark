@@ -27,10 +27,9 @@ All files, with the exceptions below, are released under the MIT License:
 
 EXCEPTIONS:
 
-The following files include code portions from the ate-pairing library
+The following file includes code portions from the ate-pairing library
 <https://github.com/herumi/ate-pairing> by MITSUNARI Shigeo and TERUYA Tadanori:
 - src/algebra/curves/bn128/bn128_pairing.cpp
-- patches/ate-pairing-change-curve.diff
 They are therefore licensed under the same license as ate-pairing, namely
 "modified new BSD License <http://opensource.org/licenses/BSD-3-Clause>".
 That referenced web page specifies the following license:
