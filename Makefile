@@ -11,7 +11,7 @@ CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -
 DEPSRC=depsrc
 DEPINST=depinst
 LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp -lzm -lgtest
-CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM
+CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM -DBN_SUPPORT_SNARK
 DEFAULT_CURVE=BN128
 GTESTDIR=/usr/src/gtest
 
