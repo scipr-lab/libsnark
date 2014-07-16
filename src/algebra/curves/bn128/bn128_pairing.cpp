@@ -197,124 +197,14 @@ std::istream& operator>>(std::istream &in, bn128_ate_G2_precomp &prec_Q)
 
 void doubling_step_for_flipped_miller_loop(Fp2 *current, bn128_ate_ell_coeffs &l)
 {
-    Fp2 t0, t1, t2, t3, t4, t5;
-    Fp2Dbl T0, T1, T2;
-    // X1, Y1, Z1 == current[0], current[1], current[2]
-
-    // # 1
-    Fp2::square(t0, current[2]);
-    Fp2::mul(t4, current[0], current[1]);
-    Fp2::square(t1, current[1]);
-    // # 2
-    Fp2::add(t3, t0, t0);
-    Fp2::divBy2(t4, t4);
-    Fp2::add(t5, t0, t1);
-    // # 3
-    t0 += t3;
-    // # 4
-    // (a + bu) * binv_xi
-    Fp2::mul(t2, t0, bn::ParamT<Fp2>::b_invxi);
-    //Fp::add(t2.a_, t0.a_, t0.b_);
-    //Fp::sub(t2.b_, t0.b_, t0.a_);
-    // # 5
-    Fp2::square(t0, current[0]);
-    Fp2::add(t3, t2, t2);
-    // ## 6
-    t3 += t2;
-    Fp2::addNC(l.c_, t0, t0); // v^2 term
-    // ## 7
-    Fp2::sub(current[0], t1, t3);
-    Fp2::addNC(l.c_, l.c_, t0);
-    t3 += t1;
-    // # 8
-    current[0] *= t4;
-    Fp2::divBy2(t3, t3);
-    // ## 9
-    Fp2Dbl::square(T0, t3);
-    Fp2Dbl::square(T1, t2);
-    // # 10
-    Fp2Dbl::addNC(T2, T1, T1);
-    Fp2::add(t3, current[1], current[2]);
-    // # 11
-    Fp2Dbl::add(T2, T2, T1);
-    Fp2::square(t3, t3);
-    // # 12
-    t3 -= t5;
-    // # 13
-    T0 -= T2;
-    // # 14
-    Fp2Dbl::mod(current[1], T0);
-    Fp2::mul(current[2], t1, t3);
-    t2 -= t1;
-    // # 15
-    Fp2::mul_xi(l.a_, t2);
-    Fp2::neg(l.b_, t3);
-
-    /*
-      The following P-dependent finalization is factored out:
-
-      Fp2::mul_Fp_0(l.c_, l.c_, P[0]);
-      Fp2::mul_Fp_0(l.b_, l.b_, P[1]);
-    */
+	Fp6::pointDblLineEvalWithoutP(l, current);
 }
 
 void mixed_addition_step_for_flipped_miller_loop(const Fp2* Q,
                                                  Fp2 *R,
                                                  bn128_ate_ell_coeffs &l)
 {
-    Fp2 t1, t2, t3, t4;
-    Fp2Dbl T1, T2;
-    // # 1
-    Fp2::mul(t1, R[2], Q[0]);
-    Fp2::mul(t2, R[2], Q[1]);
-    // # 2
-    Fp2::sub(t1, R[0], t1);
-    Fp2::sub(t2, R[1], t2);
-    // # 3
-    Fp2::square(t3, t1);
-    // # 4
-    Fp2::mul(R[0], t3, R[0]);
-    Fp2::square(t4, t2);
-    // # 5
-    t3 *= t1;
-    t4 *= R[2];
-    // # 6
-    t4 += t3;
-    // # 7
-    t4 -= R[0];
-    // # 8
-    t4 -= R[0];
-    // # 9
-    R[0] -= t4;
-    // # 10
-    Fp2Dbl::mulOpt1(T1, t2, R[0]);
-    Fp2Dbl::mulOpt1(T2, t3, R[1]);
-    // # 11
-    Fp2Dbl::sub(T2, T1, T2);
-    // # 12
-    Fp2Dbl::mod(R[1], T2);
-    Fp2::mul(R[0], t1, t4);
-    Fp2::mul(R[2], t3, R[2]);
-    // # 13
-    Fp2::neg(l.c_, t2);
-    // # 15
-    Fp2Dbl::mulOpt1(T1, t2, Q[0]);
-    Fp2Dbl::mulOpt1(T2, t1, Q[1]);
-    // # 16
-    Fp2Dbl::sub(T1, T1, T2);
-    // # 17
-    Fp2Dbl::mod(t2, T1);
-    // ### @note: Be careful, below fomulas are typo.
-    // # 18
-    Fp2::mul_xi(l.a_, t2);
-    // # 19
-    l.b_ = t1;
-    /*
-      The following P-dependent finalization is factored out:
-
-      Fp2::mul_Fp_0(l.c_, l.c_, P[0]);
-      Fp2::mul_Fp_0(l.b_, l.b_, P[1]);
-    */
+	Fp6::pointAddLineEvalWithoutP(l, R, Q);
 }
 
 bn128_ate_G1_precomp bn128_ate_precompute_G1(const bn128_G1& P)
