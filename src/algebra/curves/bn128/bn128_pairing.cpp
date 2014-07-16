@@ -223,51 +223,7 @@ bn128_ate_G2_precomp bn128_ate_precompute_G2(const bn128_G2& Q)
     enter_block("Call to bn128_ate_precompute_G2");
 
     bn128_ate_G2_precomp result;
-    bn::ecop::NormalizeJac(result.Q, Q.coord);
-
-    Fp2 T[3];
-    T[0] = result.Q[0];
-    T[1] = result.Q[1];
-    T[2] = Fp2(1);
-
-    Fp6 d;
-    doubling_step_for_flipped_miller_loop(T, d);
-    result.coeffs.emplace_back(d);
-
-    Fp6 e;
-    assert(Param::siTbl[1] == 1);
-    mixed_addition_step_for_flipped_miller_loop(result.Q, T, e);
-    result.coeffs.emplace_back(e);
-
-    bn::Fp6 l;
-    // 844kclk
-    for (size_t i = 2; i < Param::siTblNum; i++) {
-        doubling_step_for_flipped_miller_loop(T, l);
-        result.coeffs.emplace_back(l);
-
-        if (Param::siTbl[i]) {
-            mixed_addition_step_for_flipped_miller_loop(result.Q, T, l);
-            result.coeffs.emplace_back(l);
-        }
-    }
-
-    // addition step
-    Fp2 Q1[2];
-    bn::ecop::FrobEndOnTwist_1(Q1, result.Q);
-    Fp2 Q2[2];
-    bn::ecop::FrobEndOnTwist_2(Q2, result.Q);
-    Fp2::neg(Q2[1], Q2[1]);
-    // @memo z < 0
-    if (0)
-    {
-        bn::Fp2::neg(T[1], T[1]);
-    }
-
-    mixed_addition_step_for_flipped_miller_loop(Q1, T, d);
-    result.coeffs.emplace_back(d);
-
-    mixed_addition_step_for_flipped_miller_loop(Q2, T, e);
-    result.coeffs.emplace_back(e);
+	bn::experimental::precomputeG2(result.coeffs, result.Q, Q.coord);
 
     leave_block("Call to bn128_ate_precompute_G2");
     return result;
@@ -277,54 +233,8 @@ bn128_Fq12 bn128_ate_miller_loop(const bn128_ate_G1_precomp &prec_P,
                                  const bn128_ate_G2_precomp &prec_Q)
 {
     bn128_Fq12 f;
-    size_t idx = 0;
-
-    Fp6 d = prec_Q.coeffs[idx++];
-    Fp2::mul_Fp_0(d.c_, d.c_, prec_P.P[0]);
-    Fp2::mul_Fp_0(d.b_, d.b_, prec_P.P[1]);
-
-    Fp6 e = prec_Q.coeffs[idx++];
-    assert(Param::siTbl[1] == 1);
-    Fp2::mul_Fp_0(e.c_, e.c_, prec_P.P[0]);
-    Fp2::mul_Fp_0(e.b_, e.b_, prec_P.P[1]);
-
-    Fp12::Dbl::mul_Fp2_024_Fp2_024(f.elem, d, e);
-    bn::Fp6 l;
-    for (size_t i = 2; i < Param::siTblNum; i++) {
-        l = prec_Q.coeffs[idx++];
-        Fp12::square(f.elem);
-
-        Fp2::mul_Fp_0(l.c_, l.c_, prec_P.P[0]);
-        Fp2::mul_Fp_0(l.b_, l.b_, prec_P.P[1]);
-
-        Fp12::Dbl::mul_Fp2_024(f.elem, l);
-
-        if (Param::siTbl[i]) {
-            l = prec_Q.coeffs[idx++];
-            Fp2::mul_Fp_0(l.c_, l.c_, prec_P.P[0]);
-            Fp2::mul_Fp_0(l.b_, l.b_, prec_P.P[1]);
-            Fp12::Dbl::mul_Fp2_024(f.elem, l);
-        }
-    }
-
-    // @memo z < 0
-    if (0)
-    {
-        Fp6::neg(f.elem.b_, f.elem.b_);
-    }
-    Fp12 ft;
-
-    d = prec_Q.coeffs[idx++];
-    Fp2::mul_Fp_0(d.c_, d.c_, prec_P.P[0]);
-    Fp2::mul_Fp_0(d.b_, d.b_, prec_P.P[1]);
-
-    e = prec_Q.coeffs[idx++];
-    Fp2::mul_Fp_0(e.c_, e.c_, prec_P.P[0]);
-    Fp2::mul_Fp_0(e.b_, e.b_, prec_P.P[1]);
-
-    Fp12::Dbl::mul_Fp2_024_Fp2_024(ft, d, e); // 2.7k
-    Fp12::mul(f.elem, f.elem, ft); // 6.4k
-    return f;
+	bn::experimental::millerLoop(f.elem, prec_Q.coeffs, prec_P.P);
+	return f;
 }
 
 bn128_Fq12 bn128_double_ate_miller_loop(const bn128_ate_G1_precomp &prec_P1,
