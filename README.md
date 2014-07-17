@@ -116,9 +116,6 @@ options:
         run `sudo setsebool -P allow_execheap 1` to allow execution,
         or use `make CURVE=ALT_BN128` instead.
 
-    *   The \[ate-pairing] code is licensed under a "modified new BSD
-        License", as opposed to libsnark's MIT license.
-
 * "alt_bn128":
    an alternative to "bn128", somewhat slower but avoids dynamic code generation.
 
