@@ -165,7 +165,7 @@ bn128_ate_G2_precomp bn128_ate_precompute_G2(const bn128_G2& Q)
     enter_block("Call to bn128_ate_precompute_G2");
 
     bn128_ate_G2_precomp result;
-    bn::experimental::precomputeG2(result.coeffs, result.Q, Q.coord);
+    bn::components::precomputeG2(result.coeffs, result.Q, Q.coord);
 
     leave_block("Call to bn128_ate_precompute_G2");
     return result;
@@ -175,7 +175,7 @@ bn128_Fq12 bn128_ate_miller_loop(const bn128_ate_G1_precomp &prec_P,
                                  const bn128_ate_G2_precomp &prec_Q)
 {
     bn128_Fq12 f;
-    bn::experimental::millerLoop(f.elem, prec_Q.coeffs, prec_P.P);
+    bn::components::millerLoop(f.elem, prec_Q.coeffs, prec_P.P);
     return f;
 }
 
@@ -185,7 +185,7 @@ bn128_Fq12 bn128_double_ate_miller_loop(const bn128_ate_G1_precomp &prec_P1,
                                         const bn128_ate_G2_precomp &prec_Q2)
 {
     bn128_Fq12 f;
-    bn::experimental::millerLoop2(f.elem, prec_Q1.coeffs, prec_P1.P, prec_Q2.coeffs, prec_P2.P);
+    bn::components::millerLoop2(f.elem, prec_Q1.coeffs, prec_P1.P, prec_Q2.coeffs, prec_P2.P);
     return f;
 }
 
