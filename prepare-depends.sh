@@ -1,5 +1,5 @@
 #!/bin/sh
-# This script fetches, builds and locally installes the external ate-pairing library (and its dependency, xbyak)
+# This script fetches, builds and locally installs the external ate-pairing library (and its dependency, xbyak)
 
 set -x -e
 
