@@ -10,17 +10,19 @@ CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -
 
 DEPSRC=depsrc
 DEPINST=depinst
-LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp -lzm -lgtest
-CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM -DBN_SUPPORT_SNARK
+LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp
+CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM
 DEFAULT_CURVE=BN128
-GTESTDIR=/usr/src/gtest
+
+ifneq ($(NO_GTEST),1)
+	GTESTDIR=/usr/src/gtest
+# Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
+# See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
+	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
+	LDLIBS += -lgtest
+endif
 
 SRCS= \
-	src/algebra/curves/alt_bn128/alt_bn128_g1.cpp \
-	src/algebra/curves/alt_bn128/alt_bn128_g2.cpp \
-	src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
-	src/algebra/curves/alt_bn128/alt_bn128_pairing.cpp \
-	src/algebra/curves/alt_bn128/alt_bn128_pp.cpp \
 	src/common/profiling.cpp \
 	src/common/utils.cpp \
 	src/gadgetlib2/examples/simple_example.cpp \
@@ -31,31 +33,21 @@ SRCS= \
 	src/gadgetlib2/integration.cpp \
 	src/gadgetlib2/pp.cpp \
 	src/gadgetlib2/protoboard.cpp \
-	src/gadgetlib2/variable.cpp \
-        src/algebra/curves/bn128/bn128_g1.cpp \
-        src/algebra/curves/bn128/bn128_g2.cpp \
-        src/algebra/curves/bn128/bn128_gt.cpp \
-        src/algebra/curves/bn128/bn128_init.cpp \
-        src/algebra/curves/bn128/bn128_pairing.cpp \
-        src/algebra/curves/bn128/bn128_pp.cpp \
-        src/algebra/curves/edwards/edwards_g1.cpp \
-        src/algebra/curves/edwards/edwards_g2.cpp \
-        src/algebra/curves/edwards/edwards_init.cpp \
-        src/algebra/curves/edwards/edwards_pairing.cpp \
-        src/algebra/curves/edwards/edwards_pp.cpp
+	src/gadgetlib2/variable.cpp
 
 EXECUTABLES= \
-	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
-	src/gadgetlib2/examples/tutorial \
-	src/gadgetlib2/tests/gadgetlib2_test
+	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark
+
+ifneq ($(NO_GTEST),1)
+	EXECUTABLES += \
+		src/gadgetlib2/examples/tutorial \
+		src/gadgetlib2/tests/gadgetlib2_test
+endif
 
 DOCS= README.html
 
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-# Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
-# See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
-COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
 # For documentation of the following options, see README.md .
 
 ifeq ($(MINDEPS),1)
@@ -99,9 +91,41 @@ ifeq ($(PERFORMANCE),1)
 endif
 
 ifeq ($(CURVE),)
-        CXXFLAGS += -DCURVE_$(DEFAULT_CURVE)
-else
-        CXXFLAGS += -DCURVE_$(CURVE)
+	CURVE = $(DEFAULT_CURVE)
+endif
+CXXFLAGS += -DCURVE_$(CURVE)
+
+ifeq ($(CURVE),EDWARDS)
+endif
+
+ifeq ($(CURVE),BN128)
+	SRCS += \
+	        src/algebra/curves/bn128/bn128_g1.cpp \
+		src/algebra/curves/bn128/bn128_g2.cpp \
+	        src/algebra/curves/bn128/bn128_gt.cpp \
+		src/algebra/curves/bn128/bn128_init.cpp \
+	        src/algebra/curves/bn128/bn128_pairing.cpp \
+		src/algebra/curves/bn128/bn128_pp.cpp
+	CXXFLAGS += -DBN_SUPPORT_SNARK
+	LDLIBS += -lzm
+endif
+
+ifeq ($(CURVE),ALT_BN128)
+	SRCS += \
+		src/algebra/curves/alt_bn128/alt_bn128_g1.cpp \
+		src/algebra/curves/alt_bn128/alt_bn128_g2.cpp \
+		src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
+		src/algebra/curves/alt_bn128/alt_bn128_pairing.cpp \
+		src/algebra/curves/alt_bn128/alt_bn128_pp.cpp
+endif
+
+ifeq ($(CURVE),EDWARDS)
+	SRCS += \
+	        src/algebra/curves/edwards/edwards_g1.cpp \
+	        src/algebra/curves/edwards/edwards_g2.cpp \
+	        src/algebra/curves/edwards/edwards_init.cpp \
+	        src/algebra/curves/edwards/edwards_pairing.cpp \
+	        src/algebra/curves/edwards/edwards_pp.cpp
 endif
 
 ifeq ($(strip $(COMPILE_GTEST)),1)
@@ -125,7 +149,7 @@ libgtest.a: $(GTESTDIR)/src/gtest-all.cc
 src/gadgetlib2/tests/gadgetlib2_test: src/gadgetlib2/tests/adapters_UTEST.cpp src/gadgetlib2/tests/constraint_UTEST.cpp src/gadgetlib2/tests/gadget_UTEST.cpp src/gadgetlib2/tests/protoboard_UTEST.cpp src/gadgetlib2/tests/variable_UTEST.cpp
 
 $(EXECUTABLES): %: %.o $(OBJS)
-	$(CXX) -pthread -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)

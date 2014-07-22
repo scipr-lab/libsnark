@@ -290,6 +290,10 @@ The following flags change the behavior of the compiled code:
      Rely on a minimum amount of external libraries (at the cost of some functionality).
      In particular, do not rely on boost::program_options and libprocps.
 
+*   `make NO_GTEST=1`
+
+     Do not link against GTest. gadgetlib2 tutorial and test suite won't be compiled if this option is enabled.
+
 *   `make MULTICORE=1`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
