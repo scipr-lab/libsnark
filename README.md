@@ -119,6 +119,9 @@ options:
 * "alt_bn128":
    an alternative to "bn128", somewhat slower but avoids dynamic code generation.
 
+Note that bn128 requires an x86-64 CPU while the other curve choices
+should be architecture-independent; see [portability](#portability).
+
 
 --------------------------------------------------------------------------------
 Gadget libraries
@@ -229,6 +232,10 @@ To build the static library `libsnark.a`, run:
 
     $ make lib STATIC=1
 
+As for Cygwin, it should suffice to install g++ and libgmp using the graphical installer and use:
+
+    $ make MINDEPS=1 NO_GTEST=1
+
 
 --------------------------------------------------------------------------------
 Tutorials
@@ -292,7 +299,7 @@ The following flags change the behavior of the compiled code:
 
 *   `make NO_GTEST=1`
 
-     Do not link against GTest. gadgetlib2 tutorial and test suite won't be compiled if this option is enabled.
+     Do not link against GTest. The tutorial and test suite of gadgetlib2 tutorial won't be compiled if this option is enabled.
 
 *   `make MULTICORE=1`
 
@@ -344,7 +351,7 @@ with respect to portability. Specifically:
    a 32-bit system, and vice versa.
    (The decimal serialization routines have no such limitation.)
 
-5. libsnark requires a C++ compiler with good C++11 support.  It has been
+5. libsnark requires a C++ compiler with good C++11 support. It has been
    tested with g++ 4.7, g++ 4.8, and clang 3.4.
 
 6. On x86-64, we by default use highly optimized assembly implementations for some
@@ -357,6 +364,9 @@ Tested configurations include:
 * Debian jessie with clang 3.4 on x86-64
 * Fedora 20 with g++ 4.8.2 on x86-64
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
+* Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
+* Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with MINDEPS=1 and NO_GTEST=1, for EDWARDS and ALT_BN128 curve choices
 
 
 --------------------------------------------------------------------------------
