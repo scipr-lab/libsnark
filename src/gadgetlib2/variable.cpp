@@ -10,6 +10,7 @@
 #include <climits>
 #include <iostream>
 #include <set>
+#include <stdexcept>
 #include <vector>
 #include "variable.hpp"
 #include "pp.hpp"
