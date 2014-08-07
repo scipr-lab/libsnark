@@ -8,13 +8,14 @@ DEPINST=./depinst
 
 # rm -fr $DEPINST
 mkdir -p $DEPINST
-DEPINST=`readlink -f $DEPINST`  # remember absolute path
-
 mkdir -p $DEPSRC
+
 cd $DEPSRC
 [ ! -d xbyak ] && git clone git://github.com/herumi/xbyak.git
 [ ! -d ate-pairing ] && git clone git://github.com/herumi/ate-pairing.git
 cd ate-pairing
 make -j SUPPORT_SNARK=1
-cp -rv include $DEPINST/
-cp -rv lib $DEPINST/
+cd ..
+cd ..
+cp -rv $DEPSRC/ate-pairing/include $DEPINST/
+cp -rv $DEPSRC/ate-pairing/lib $DEPINST/

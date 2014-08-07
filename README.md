@@ -190,9 +190,10 @@ The libsnark library relies on the following:
 - libprocps for reporting memory usage
 - GTest for some of the unit tests
 
-So far we have tested these only on Linux, though porting to Windows via Cygwin
-should be straightforward (if you do so, please send us the instructions).
-See also the notes on [portability](#portability) below.
+So far we have tested these only on Linux, though we have been able to make the library work,
+with some features disabled (such as memory profiling or GTest tests), on Windows via Cygwin
+and on Mac OS X. (If you succeed in achieving more complete ports of the library, please
+let us know!) See also the notes on [portability](#portability) below.
 
 For example, on a fresh install of Ubuntu 14.04, install the following packages:
 
@@ -206,6 +207,10 @@ Run the following, to fetch \[ate-pairing] from its Github repo and
 compile it. (Required only when using the default bn128 curve.)
 
     $ ./prepare-depends.sh
+
+If not using bn128 option the depinst directory, referred to in Makefile, needs to be created manually:
+
+    $ mkdir -p depinst/include depinst/src
 
 Then, to compile the library, tests, profiling harness and documentation, run:
 
@@ -236,6 +241,12 @@ As for Cygwin, it should suffice to install g++ and libgmp using the graphical i
 
     $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
 
+As for Mac OS X, it should suffice to install GMP from MacPorts (`port install gmp`) and use:
+
+    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
+
+MacPorts does not write its libraries into standard system folders, so you might need to explicitly provide the paths to the header files and libraries by appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line above.
+Similarly, to pass the paths to ate-pairing you would run `INC_DIR=-I/opt/local/include LIB_DIR=-L/opt/local/lib ./prepare-depends.sh` instead of `./prepare-depends.sh` above.
 
 --------------------------------------------------------------------------------
 Tutorials
@@ -370,6 +381,7 @@ Tested configurations include:
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
 * Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1, for EDWARDS and ALT_BN128 curve choices
+* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1
 
 
 --------------------------------------------------------------------------------

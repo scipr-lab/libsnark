@@ -80,7 +80,7 @@ void ErrorHandling::fatalError(const ::std::stringstream& msg) {
 }
 
 void ErrorHandling::printStacktrace() {
-#ifdef __GNUC__
+#ifdef __linux__
     std::cerr << "Stack trace (pipe through c++filt to demangle identifiers):" << std::endl;
     const int maxFrames = 100;
     void* frames[maxFrames];
