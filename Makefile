@@ -10,8 +10,10 @@ CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -
 
 DEPSRC=depsrc
 DEPINST=depinst
-LDLIBS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib -L . -lgmpxx -lgmp
-CXXFLAGS += -I $(DEPINST)/include -I src -I . -DUSE_ASM
+
+LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
+LDLIBS += -lgmpxx -lgmp
+CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM
 DEFAULT_CURVE=BN128
 
 ifneq ($(NO_GTEST),1)
@@ -19,7 +21,7 @@ ifneq ($(NO_GTEST),1)
 # Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
 # See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
 	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
-	LDLIBS += -lgtest
+	LDLIBS += -lgtest -lpthread
 endif
 
 SRCS= \
