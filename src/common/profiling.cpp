@@ -198,7 +198,10 @@ void enter_block(const std::string &msg, const bool indent)
     {
         return;
     }
+
+#ifdef MULTICORE
 #pragma omp critical
+#endif
     {
         op_profiling_enter(msg);
 
@@ -244,7 +247,10 @@ void leave_block(const std::string &msg, const bool indent)
     {
         return;
     }
+
+#ifdef MULTICORE
 #pragma omp critical
+#endif
     {
         if (indent)
         {

@@ -6,7 +6,7 @@
 #* @copyright  MIT license (see LICENSE file)
 #*******************************************************************************/
 
-CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -mtune=native -std=c++11 -fopenmp
+CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -mtune=native -std=c++11
 
 DEPSRC=depsrc
 DEPINST=depinst
@@ -69,7 +69,7 @@ ifeq ($(PROFILE_OP_COUNTS),1)
 endif
 
 ifeq ($(MULTICORE),1)
-	CXXFLAGS += -DMULTICORE
+	CXXFLAGS += -DMULTICORE -fopenmp
 endif
 
 ifeq ($(CPPDEBUG),1)

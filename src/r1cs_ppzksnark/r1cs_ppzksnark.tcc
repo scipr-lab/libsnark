@@ -19,7 +19,6 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
-#include <omp.h>
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"

@@ -85,7 +85,9 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
         tmp[j].resize(1u<<(log_m-log_cpus), FieldT::zero());
     }
 
+#ifdef MULTICORE
     #pragma omp parallel for
+#endif
     for (size_t j = 0; j < num_cpus; ++j)
     {
         const FieldT omega_j = omega^j;
@@ -109,7 +111,9 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
     enter_block("Execute FFTs");
     const FieldT omega_num_cpus = omega^num_cpus;
 
+#ifdef MULTICORE
     #pragma omp parallel for
+#endif
     for (size_t j = 0; j < num_cpus; ++j)
     {
         _basic_serial_radix2_FFT(tmp[j], omega_num_cpus);
@@ -118,7 +122,9 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
 
     enter_block("Re-shuffle outputs");
 
+#ifdef MULTICORE
     #pragma omp parallel for
+#endif
     for (size_t i = 0; i < num_cpus; ++i)
     {
         for (size_t j = 0; j < 1u<<(log_m - log_cpus); ++j)
