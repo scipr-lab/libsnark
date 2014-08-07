@@ -48,8 +48,8 @@ DOCS= README.html
 
 # For documentation of the following options, see README.md .
 
-ifeq ($(MINDEPS),1)
-	CXXFLAGS += -DMINDEPS
+ifeq ($(NO_PROCPS),1)
+	CXXFLAGS += -DNO_PROCPS
 else
 	LDLIBS += -lprocps
 endif
@@ -165,9 +165,11 @@ lib:	$(LIBOBJ)
 
 
 $(DOCS): %.html: %.md
+ifneq ($(NO_DOCS),1)
 	markdown_py -f $@ $^ -x toc -x extra --noisy
 #	TODO: Would be nice to enable "-x smartypants" but Ubuntu 12.04 doesn't support that.
 #	TODO: switch to redcarpet, to produce same output as GitHub's processing of README.md. But what about TOC?
+endif
 
 ifeq ($(PREFIX),)
 install:

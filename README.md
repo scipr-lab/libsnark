@@ -234,7 +234,7 @@ To build the static library `libsnark.a`, run:
 
 As for Cygwin, it should suffice to install g++ and libgmp using the graphical installer and use:
 
-    $ make MINDEPS=1 NO_GTEST=1
+    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
 
 
 --------------------------------------------------------------------------------
@@ -292,10 +292,13 @@ The following flags change the behavior of the compiled code:
 
     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
-*   `make MINDEPS=1`
+*   `make NO_DOCS=1`
 
-     Rely on a minimum amount of external libraries (at the cost of some functionality).
-     In particular, do not rely on boost::program_options and libprocps.
+     Do not generate HTML documentation, e.g. on platforms where Markdown is not easily available.
+
+*   `make NO_PROCPS=1`
+
+     Do not link against libprocps. This disables memory profiling.
 
 *   `make NO_GTEST=1`
 
@@ -366,7 +369,7 @@ Tested configurations include:
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
-* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with MINDEPS=1 and NO_GTEST=1, for EDWARDS and ALT_BN128 curve choices
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1, for EDWARDS and ALT_BN128 curve choices
 
 
 --------------------------------------------------------------------------------

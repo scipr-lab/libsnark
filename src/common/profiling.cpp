@@ -16,7 +16,7 @@
 #include <vector>
 #include "common/types.hpp"
 
-#ifndef MINDEPS
+#ifndef NO_PROCPS
 #include <proc/readproc.h>
 #endif
 
@@ -275,7 +275,7 @@ double get_time()
 
 void print_mem(const std::string &s)
 {
-#ifndef MINDEPS
+#ifndef NO_PROCPS
     struct proc_t usage;
     look_up_our_self(&usage);
     if (s.empty())
@@ -287,7 +287,7 @@ void print_mem(const std::string &s)
         printf("* Peak vsize (physical memory+swap) in mebibytes (%s): %lu\n", s.c_str(), usage.vsize >> 20);
     }
 #else
-    printf("* Memory profiling not supported in MINDEPS mode\n");
+    printf("* Memory profiling not supported in NO_PROCPS mode\n");
 #endif
 }
 
