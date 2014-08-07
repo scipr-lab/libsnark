@@ -36,7 +36,6 @@ void print_cumulative_op_counts(const bool only_fq=false);
 void enter_block(const std::string &msg, const bool indent=true);
 void leave_block(const std::string &msg, const bool indent=true);
 
-double get_time();
 void print_mem(const std::string &s = "");
 void print_compilation_info();
 

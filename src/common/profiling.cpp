@@ -10,7 +10,7 @@
 
 #include "common/profiling.hpp"
 #include <cassert>
-#include <ctime>
+#include <chrono>
 #include <cstdio>
 #include <list>
 #include <vector>
@@ -22,32 +22,23 @@
 
 namespace libsnark {
 
-timespec start_time, last_time;
-
-int64_t nsec_diff(timespec stop, timespec start)
-{
-    return
-        1000000000LL * (stop.tv_sec - start.tv_sec) +
-        stop.tv_nsec - start.tv_nsec;
-}
-
 long long get_nsec_time()
 {
-    timespec cur;
-    clock_gettime(CLOCK_REALTIME, &cur);
-    return 1000000000LL * cur.tv_sec + cur.tv_nsec;
+    auto timepoint = std::chrono::high_resolution_clock::now();
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(timepoint.time_since_epoch()).count();
 }
+
+long long start_time, last_time;
 
 void start_profiling()
 {
     printf("Reset time counters for profiling\n");
 
-    clock_gettime(CLOCK_REALTIME, &start_time);
-    last_time = start_time;
+    last_time = start_time = get_nsec_time();
 }
 
 std::map<std::string, size_t> invocation_counts;
-std::map<std::string, timespec> enter_times;
+std::map<std::string, long long> enter_times;
 std::map<std::string, long long> last_times;
 std::map<std::string, long long> cumulative_times;
 std::map<std::pair<std::string, std::string>, long long> op_counts;
@@ -144,11 +135,10 @@ void print_time(const char* msg)
         return;
     }
 
-    timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
+    long long t = get_nsec_time();
 
     printf("%-35s\t[%0.4fs]\t(%0.4fs from start)",
-           msg, nsec_diff(t, last_time) * 1e-9, nsec_diff(t, start_time) * 1e-9);
+           msg, (t - last_time) * 1e-9, (t - start_time) * 1e-9);
 
 #ifdef PROFILE_OP_COUNTS
     print_op_profiling(msg);
@@ -190,8 +180,7 @@ void enter_block(const std::string &msg, const bool indent)
     }
 
     block_names.emplace_back(msg);
-    timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
+    long long t = get_nsec_time();
     enter_times[msg] = t;
 
     if (inhibit_profiling_info)
@@ -207,7 +196,7 @@ void enter_block(const std::string &msg, const bool indent)
 
         print_indent();
         printf("(enter) %-35s\t[0s]\t(%0.4fs from start)\n",
-               msg.c_str(), nsec_diff(t, start_time) * 1e-9);
+               msg.c_str(), (t - start_time) * 1e-9);
         fflush(stdout);
 
         if (indent)
@@ -231,10 +220,9 @@ void leave_block(const std::string &msg, const bool indent)
 
     ++invocation_counts[msg];
 
-    timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
-    last_times[msg] = nsec_diff(t, enter_times[msg]);
-    cumulative_times[msg] += nsec_diff(t, enter_times[msg]);
+    long long t = get_nsec_time();
+    last_times[msg] = (t - enter_times[msg]);
+    cumulative_times[msg] += (t - enter_times[msg]);
 
 #ifdef PROFILE_OP_COUNTS
     for (std::pair<std::string, long long*> p : op_data_points)
@@ -259,18 +247,11 @@ void leave_block(const std::string &msg, const bool indent)
 
         print_indent();
         printf("(leave) %-35s\t[%0.4fs]\t(%0.4fs from start)",
-               msg.c_str(), nsec_diff(t, enter_times[msg]) * 1e-9, nsec_diff(t, start_time) * 1e-9);
+               msg.c_str(), (t - enter_times[msg]) * 1e-9, (t - start_time) * 1e-9);
         print_op_profiling(msg);
         printf("\n");
         fflush(stdout);
     }
-}
-
-double get_time()
-{
-    timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
-    return nsec_diff(t, start_time) * 1e-9;
 }
 
 void print_mem(const std::string &s)
