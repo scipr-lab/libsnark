@@ -46,8 +46,6 @@ endif
 
 DOCS= README.html
 
-OBJS=$(patsubst %.cpp,%.o,$(SRCS))
-
 # For documentation of the following options, see README.md .
 
 ifeq ($(MINDEPS),1)
@@ -127,6 +125,8 @@ ifeq ($(CURVE),EDWARDS)
 	        src/algebra/curves/edwards/edwards_pairing.cpp \
 	        src/algebra/curves/edwards/edwards_pp.cpp
 endif
+
+OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
 ifeq ($(strip $(COMPILE_GTEST)),1)
 all: libgtest.a $(EXECUTABLES) doc
