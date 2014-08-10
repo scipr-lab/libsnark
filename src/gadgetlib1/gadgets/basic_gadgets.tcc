@@ -32,24 +32,42 @@ template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitness)
 /* adds constraint result = \sum  bits[i] * 2^i */
 {
-    FieldT twoi = FieldT::one(); // will hold 2^i entering each iteration
-
-    linear_combination<FieldT> lc;
-
-    for (size_t i = 0; i < bits.size(); ++i)
+    if (!enforce_bitness)
     {
-        lc = lc + bits[i] * twoi;
-        twoi = twoi + twoi;
-    }
+        FieldT twoi = FieldT::one(); // will hold 2^i entering each iteration
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, lc, packed), FMT(this->annotation_prefix, " packing_constraint"));
+        linear_combination<FieldT> lc;
 
-    if (enforce_bitness)
-    {
         for (size_t i = 0; i < bits.size(); ++i)
+        {
+            lc = lc + bits[i] * twoi;
+            twoi = twoi + twoi;
+        }
+
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, lc, packed), FMT(this->annotation_prefix, " packing_constraint"));
+    }
+    else
+    {
+        for (size_t i = 1; i < bits.size(); ++i)
         {
             generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], FMT(this->annotation_prefix, " bitness_%zu", i));
         }
+
+        /*
+          x_0 = packed - (2 * x_1 + 4 * x_2 + ...)
+         */
+
+        FieldT twoi = FieldT(2); // will hold 2^i entering each iteration
+
+        linear_combination<FieldT> lc = packed;
+
+        for (size_t i = 1; i < bits.size(); ++i)
+        {
+            lc = lc - bits[i] * twoi;
+            twoi = twoi + twoi;
+        }
+
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(lc, 1-lc, 0), FMT(this->annotation_prefix, " packing_constraint"));
     }
 }
 

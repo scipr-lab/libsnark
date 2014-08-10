@@ -106,6 +106,7 @@ public:
     using contents::size;
     using contents::empty;
     using contents::operator[];
+    using contents::resize;
 
     pb_linear_combination_array() : contents() {};
     pb_linear_combination_array(const pb_variable_array<FieldT> &arr) { for (auto &v : arr) this->emplace_back(pb_linear_combination<FieldT>(v)); };
