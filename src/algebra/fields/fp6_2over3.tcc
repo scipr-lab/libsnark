@@ -10,6 +10,7 @@
 #ifndef FP6_2OVER3_TCC_
 #define FP6_2OVER3_TCC_
 #include "common/field_utils.hpp"
+#include "common/wnaf.hpp"
 
 namespace libsnark {
 
@@ -84,6 +85,23 @@ Fp6_2over3_model<n,modulus> Fp6_2over3_model<n,modulus>::operator*(const Fp6_2ov
     const my_Fp3 &B = other.c1, &A = other.c0,
                  &b = this->c1, &a = this->c0;
     const my_Fp3 aA = a*A;
+    const my_Fp3 bB = b*B;
+    const my_Fp3 beta_bB = Fp6_2over3_model<n,modulus>::mul_by_non_residue(bB);
+
+    return Fp6_2over3_model<n,modulus>(aA + beta_bB,
+                                       (a+b)*(A+B) - aA  - bB);
+}
+
+template<mp_size_t n, const bigint<n>& modulus>
+Fp6_2over3_model<n,modulus> Fp6_2over3_model<n,modulus>::mul_by_2345(const Fp6_2over3_model<n,modulus> &other) const
+{
+    /* Devegili OhEig Scott Dahab --- Multiplication and Squaring on Pairing-Friendly Fields.pdf; Section 3 (Karatsuba) */
+    assert(other.c0.c0.is_zero());
+    assert(other.c0.c1.is_zero());
+
+    const my_Fp3 &B = other.c1, &A = other.c0,
+                 &b = this->c1, &a = this->c0;
+    const my_Fp3 aA = my_Fp3(a.c1 * A.c2 * non_residue, a.c2 * A.c2 * non_residue, a.c0 * A.c2);
     const my_Fp3 bB = b*B;
     const my_Fp3 beta_bB = Fp6_2over3_model<n,modulus>::mul_by_non_residue(bB);
 
@@ -196,21 +214,29 @@ template<mp_size_t m>
 Fp6_2over3_model<n, modulus> Fp6_2over3_model<n,modulus>::cyclotomic_exp(const bigint<m> &exponent) const
 {
     Fp6_2over3_model<n,modulus> res = Fp6_2over3_model<n,modulus>::one();
+    Fp6_2over3_model<n,modulus> this_inverse = this->unitary_inverse();
 
-    bool found_one = false;
-    for (long i = m-1; i >= 0; --i)
+    bool found_nonzero = false;
+    std::vector<long> NAF = find_wNAF(1, exponent);
+
+    for (long i = NAF.size() - 1; i >= 0; --i)
     {
-        for (long j = GMP_NUMB_BITS - 1; j >= 0; --j)
+        if (found_nonzero)
         {
-            if (found_one)
-            {
-                res = res.cyclotomic_squared();
-            }
+            res = res.cyclotomic_squared();
+        }
 
-            if (exponent.data[i] & (1ul<<j))
+        if (NAF[i] != 0)
+        {
+            found_nonzero = true;
+
+            if (NAF[i] > 0)
             {
-                found_one = true;
                 res = res * (*this);
+            }
+            else
+            {
+                res = res * this_inverse;
             }
         }
     }

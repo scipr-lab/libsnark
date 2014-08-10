@@ -8,6 +8,7 @@
 #ifndef MULTIEXP_HPP_
 #define MULTIEXP_HPP_
 
+#include "common/wnaf.hpp"
 #include "encoding/knowledge_commitment.hpp"
 
 namespace libsnark {
@@ -15,15 +16,6 @@ namespace libsnark {
 /*
  Multi-exponentiation algorithms.
 */
-
-template<mp_size_t n>
-std::vector<long> find_wNAF(const size_t w, const bigint<n> &exp);
-
-template<typename T, mp_size_t n>
-T fixed_window_wnaf_exp(const size_t window, const T &neutral, const T &base, const bigint<n> &scalar);
-
-template<typename T, mp_size_t n>
-T opt_window_wnaf_exp(const T &neutral, const T &base, const bigint<n> &scalar, const size_t scalar_bits);
 
 template<typename T1, typename T2, mp_size_t n>
 knowledge_commitment<T1,T2> opt_window_wnaf_exp(const knowledge_commitment<T1,T2> &neutral,

@@ -51,6 +51,7 @@ public:
     Fp6_2over3_model operator+(const Fp6_2over3_model &other) const;
     Fp6_2over3_model operator-(const Fp6_2over3_model &other) const;
     Fp6_2over3_model operator*(const Fp6_2over3_model &other) const;
+    Fp6_2over3_model mul_by_2345(const Fp6_2over3_model &other) const;
     Fp6_2over3_model operator-() const;
     Fp6_2over3_model squared() const;
     Fp6_2over3_model inverse() const;
