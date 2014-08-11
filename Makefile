@@ -159,7 +159,7 @@ libsnark.a: $(OBJS)
 LIBOBJ=libsnark.a
 else
 libsnark.so: $(OBJS)
-	$(CXX) -o $@ $^ -shared $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -o $@ $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 LIBOBJ=libsnark.so
 endif
 
