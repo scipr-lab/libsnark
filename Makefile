@@ -181,10 +181,12 @@ HEADERS_SRC=$(shell find src -name '*.hpp' -o -name '*.tcc')
 HEADERS_DEST=$(patsubst src/%,$(PREFIX)/include/libsnark/%,$(HEADERS_SRC))
 
 $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
-	install -D $< $@
+	mkdir -p $(shell dirname $@)
+	cp $< $@
 
 install: lib $(HEADERS_DEST)
-	install -D $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
+	mkdir -p $(PREFIX)/lib
+	cp $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
 	cp -rv $(DEPINST)/lib $(PREFIX)
 	cp -rv $(DEPINST)/include $(PREFIX)
 endif
