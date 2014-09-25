@@ -175,7 +175,7 @@ Known issues include the following:
   which may be an issue in some applications.
 
 * Randomness is retrieved from /dev/urandom, but this should be changed to
-  /dev/random (or an external randomness source) when creating long-term
+  an external, high-quality randomness source when creating long-term
   proving/verification keys.
 
 
