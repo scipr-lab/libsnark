@@ -174,9 +174,10 @@ Known issues include the following:
   and memory usage. These form timing and cache-contention side channels,
   which may be an issue in some applications.
 
-* Randomness is retrieved from /dev/urandom, but this should be changed to
-  /dev/random (or an external randomness source) when creating long-term
-  proving/verification keys.
+* Randomness is retrieved from /dev/urandom, but this should be
+  changed to a carefully considered (depending on system and threat
+  model) external, high-quality randomness source when creating
+  long-term proving/verification keys.
 
 
 --------------------------------------------------------------------------------
