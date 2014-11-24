@@ -415,12 +415,12 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
     pk.print_size();
     vk.print_size();
 
-    return r1cs_ppzksnark_keypair<ppT>(std::move(vk), std::move(pk));
+    return r1cs_ppzksnark_keypair<ppT>(std::move(pk), std::move(vk));
 }
 
 template <typename ppT>
 r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key<ppT> &pk,
-                                      const r1cs_variable_assignment<Fr<ppT> > &w)
+                                                const r1cs_variable_assignment<Fr<ppT> > &w)
 {
     enter_block("Call to r1cs_ppzksnark_prover");
 

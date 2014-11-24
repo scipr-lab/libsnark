@@ -246,12 +246,15 @@ public:
     r1cs_ppzksnark_proving_key<ppT> pk;
     r1cs_ppzksnark_verification_key<ppT> vk;
 
-    r1cs_ppzksnark_keypair() {};
-    r1cs_ppzksnark_keypair(r1cs_ppzksnark_keypair<ppT> &&other) = default;
-    r1cs_ppzksnark_keypair(r1cs_ppzksnark_verification_key<ppT> &&vk, r1cs_ppzksnark_proving_key<ppT> &&pk) :
+    r1cs_ppzksnark_keypair() = default;
+    r1cs_ppzksnark_keypair(const r1cs_ppzksnark_keypair<ppT> &other) = default;
+    r1cs_ppzksnark_keypair(r1cs_ppzksnark_proving_key<ppT> &&pk,
+                           r1cs_ppzksnark_verification_key<ppT> &&vk) :
         pk(std::move(pk)),
         vk(std::move(vk))
     {}
+
+    r1cs_ppzksnark_keypair(r1cs_ppzksnark_keypair<ppT> &&other) = default;
 };
 
 
