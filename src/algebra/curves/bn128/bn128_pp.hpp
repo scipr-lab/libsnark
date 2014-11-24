@@ -20,7 +20,7 @@ class bn128_pp {
 };
 
 template<>
-class pp_selector<bn128_pp> {
+class EC_pp_selector<bn128_pp> {
 public:
     typedef bn128_Fr Fp_type;
     typedef bn128_G1 G1_type;

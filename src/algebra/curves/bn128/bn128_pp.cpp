@@ -80,4 +80,5 @@ bn128_GT reduced_pairing<bn128_pp>(const bn128_G1 &P,
     leave_block("Call to reduced_pairing<bn128_pp>");
     return result;
 }
+
 } // libsnark

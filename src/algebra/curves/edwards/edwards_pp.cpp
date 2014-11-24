@@ -63,4 +63,5 @@ edwards_Fq6 reduced_pairing<edwards_pp>(const edwards_G1 &P,
 {
     return edwards_reduced_pairing(P, Q);
 }
+
 } // libsnark

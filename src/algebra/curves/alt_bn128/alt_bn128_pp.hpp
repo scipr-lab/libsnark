@@ -1,9 +1,9 @@
 /** @file
- *****************************************************************************
- * @author     This file is part of libsnark, developed by SCIPR Lab
- *             and contributors (see AUTHORS).
- * @copyright  MIT license (see LICENSE file)
- *****************************************************************************/
+*****************************************************************************
+* @author     This file is part of libsnark, developed by SCIPR Lab
+*             and contributors (see AUTHORS).
+* @copyright  MIT license (see LICENSE file)
+*****************************************************************************/
 
 #ifndef ALT_BN128_PP_HPP_
 #define ALT_BN128_PP_HPP_
@@ -19,7 +19,7 @@ class alt_bn128_pp {
 };
 
 template<>
-class pp_selector<alt_bn128_pp> {
+class EC_pp_selector<alt_bn128_pp> {
 public:
     typedef alt_bn128_Fr Fp_type;
     typedef alt_bn128_G1 G1_type;
@@ -46,23 +46,22 @@ alt_bn128_G2_precomp precompute_G2<alt_bn128_pp>(const alt_bn128_G2 &Q);
 
 template<>
 alt_bn128_Fq12 miller_loop<alt_bn128_pp>(const alt_bn128_G1_precomp &prec_P,
-                              const alt_bn128_G2_precomp &prec_Q);
+                                         const alt_bn128_G2_precomp &prec_Q);
 
 template<>
 alt_bn128_Fq12 double_miller_loop<alt_bn128_pp>(const alt_bn128_G1_precomp &prec_P1,
-                                     const alt_bn128_G2_precomp &prec_Q1,
-                                     const alt_bn128_G1_precomp &prec_P2,
-                                     const alt_bn128_G2_precomp &prec_Q2);
+                                                const alt_bn128_G2_precomp &prec_Q1,
+                                                const alt_bn128_G1_precomp &prec_P2,
+                                                const alt_bn128_G2_precomp &prec_Q2);
 
 /* the following are used in test files */
 
 template<>
 alt_bn128_Fq12 pairing<alt_bn128_pp>(const alt_bn128_G1 &P,
-                          const alt_bn128_G2 &Q);
+                                     const alt_bn128_G2 &Q);
 
 template<>
 alt_bn128_Fq12 reduced_pairing<alt_bn128_pp>(const alt_bn128_G1 &P,
-                                  const alt_bn128_G2 &Q);
-
+                                             const alt_bn128_G2 &Q);
 } // libsnark
 #endif // ALT_BN128_PP_HPP_

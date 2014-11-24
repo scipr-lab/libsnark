@@ -19,7 +19,7 @@ class edwards_pp {
 };
 
 template<>
-class pp_selector<edwards_pp> {
+class EC_pp_selector<edwards_pp> {
 public:
     typedef edwards_Fr Fp_type;
     typedef edwards_G1 G1_type;
