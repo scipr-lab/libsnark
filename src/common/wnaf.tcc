@@ -1,5 +1,11 @@
 /** @file
  *****************************************************************************
+
+ Implementation of interfaces for wNAF ("weighted Non-Adjacent Form") exponentiation routines.
+
+ See wnaf.hpp .
+
+ *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
@@ -11,21 +17,21 @@
 namespace libsnark {
 
 template<mp_size_t n>
-std::vector<long> find_wNAF(const size_t w, const bigint<n> &exp)
+std::vector<long> find_wnaf(const size_t window_size, const bigint<n> &scalar)
 {
-    const size_t length = exp.max_bits(); // upper bound
+    const size_t length = scalar.max_bits(); // upper bound
     std::vector<long> res(length+1);
-    bigint<n> c = exp;
+    bigint<n> c = scalar;
     long j = 0;
     while (!c.is_zero())
     {
         long u;
         if ((c.data[0] & 1) == 1)
         {
-            u = c.data[0] % (1u << (w+1));
-            if (u > (1 << w))
+            u = c.data[0] % (1u << (window_size+1));
+            if (u > (1 << window_size))
             {
-                u = u - (1 << (w+1));
+                u = u - (1 << (window_size+1));
             }
 
             if (u > 0)
@@ -51,19 +57,19 @@ std::vector<long> find_wNAF(const size_t w, const bigint<n> &exp)
 }
 
 template<typename T, mp_size_t n>
-T fixed_window_wnaf_exp(const size_t window, const T &neutral, const T &base, const bigint<n> &scalar)
+T fixed_window_wnaf_exp(const size_t window_size, const T &base, const bigint<n> &scalar)
 {
-    std::vector<long> naf = find_wNAF(window, scalar);
-    std::vector<T> table(1u<<(window-1));
+    std::vector<long> naf = find_wnaf(window_size, scalar);
+    std::vector<T> table(1u<<(window_size-1));
     T tmp = base;
     T dbl = base.dbl();
-    for (size_t i = 0; i < 1u<<(window-1); ++i)
+    for (size_t i = 0; i < 1u<<(window_size-1); ++i)
     {
         table[i] = tmp;
         tmp = tmp + dbl;
     }
 
-    T res = neutral;
+    T res = T::zero();
     bool found_nonzero = false;
     for (long i = naf.size()-1; i >= 0; --i)
     {
@@ -90,7 +96,7 @@ T fixed_window_wnaf_exp(const size_t window, const T &neutral, const T &base, co
 }
 
 template<typename T, mp_size_t n>
-T opt_window_wnaf_exp(const T &neutral, const T &base, const bigint<n> &scalar, const size_t scalar_bits)
+T opt_window_wnaf_exp(const T &base, const bigint<n> &scalar, const size_t scalar_bits)
 {
     size_t best = 0;
     for (long i = T::wnaf_window_table.size() - 1; i >= 0; --i)
@@ -104,7 +110,7 @@ T opt_window_wnaf_exp(const T &neutral, const T &base, const bigint<n> &scalar, 
 
     if (best > 0)
     {
-        return fixed_window_wnaf_exp(best, neutral, base, scalar);
+        return fixed_window_wnaf_exp(best, base, scalar);
     }
     else
     {

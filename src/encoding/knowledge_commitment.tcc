@@ -1,5 +1,13 @@
 /** @file
  *****************************************************************************
+
+ Implementation of interfaces for:
+ - a knowledge commitment, and
+ - a knowledge commitment vector.
+
+ See knowledge_commitment.hpp .
+
+ *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
@@ -8,15 +16,24 @@
 #ifndef KNOWLEDGE_COMMITMENT_TCC_
 #define KNOWLEDGE_COMMITMENT_TCC_
 
-#include "encoding/knowledge_commitment.hpp"
-#include <algorithm>
-
 namespace libsnark {
 
 template<typename T1, typename T2>
 knowledge_commitment<T1,T2>::knowledge_commitment(const T1 &g, const T2 &h) :
     g(g), h(h)
 {
+}
+
+template<typename T1, typename T2>
+knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::zero()
+{
+    return knowledge_commitment<T1,T2>(T1::zero(), T2::zero());
+}
+
+template<typename T1, typename T2>
+knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::one()
+{
+    return knowledge_commitment<T1,T2>(T1::one(), T2::one());
 }
 
 template<typename T1, typename T2>
@@ -47,25 +64,18 @@ knowledge_commitment<T1,T2> operator*(const Fp_model<m, modulus_p> &lhs, const k
 }
 
 template<typename T1, typename T2>
-knowledge_commitment<T1, T2> knowledge_commitment_vector<T1,T2>::get_value(const size_t idx) const
+void knowledge_commitment<T1,T2>::print() const
 {
-    if (!is_sparse)
-    {
-        return values[idx];
-    }
-    else
-    {
-        auto it = std::lower_bound(indices.begin(), indices.end(), idx);
-        return (it != indices.end() && *it == idx) ? values[it - indices.begin()] : knowledge_commitment<T1,T2>(T1(),T2());
-    }
+    printf("knowledge_commitment.g:\n");
+    g.print();
+    printf("knowledge_commitment.h:\n");
+    h.print();
 }
 
 template<typename T1, typename T2>
-bool knowledge_commitment_vector<T1,T2>::operator==(const knowledge_commitment_vector<T1,T2> &other) const
+size_t knowledge_commitment<T1,T2>::size_in_bits()
 {
-    return (this->values == other.values &&
-            this->indices == other.indices &&
-            this->is_sparse == other.is_sparse);
+        return T1::size_in_bits() + T2::size_in_bits();
 }
 
 template<typename T1,typename T2>
@@ -84,63 +94,6 @@ std::istream& operator>>(std::istream& in, knowledge_commitment<T1,T2> &kc)
     return in;
 }
 
-template<typename T1,typename T2>
-std::ostream& operator<<(std::ostream& out, const knowledge_commitment_vector<T1,T2> &v)
-{
-    out << (v.is_sparse ? 1 : 0) << "\n";
-    out << v.original_size << "\n";
-    out << v.indices.size() << "\n";
-    for (const size_t& i : v.indices)
-    {
-        out << i << "\n";
-    }
-
-    out << v.values.size() << "\n";
-    for (const knowledge_commitment<T1,T2>& t : v.values)
-    {
-        out << t << OUTPUT_NEWLINE;
-    }
-
-    return out;
-}
-
-template<typename T1,typename T2>
-std::istream& operator>>(std::istream& in, knowledge_commitment_vector<T1,T2> &v)
-{
-    int i;
-    in >> i;
-    v.is_sparse = (i == 1);
-
-    in >> v.original_size;
-    consume_newline(in);
-
-    size_t s;
-    in >> s;
-    v.indices.resize(s);
-    for (size_t i = 0; i < s; ++i)
-    {
-        in >> v.indices[i];
-        consume_newline(in);
-    }
-
-    v.values.clear();
-    in >> s;
-    consume_newline(in);
-    v.values.reserve(s);
-
-    for (size_t i = 0; i < s; ++i)
-    {
-        T1 t1;
-        T2 t2;
-        in >> t1;
-        consume_OUTPUT_SEPARATOR(in);
-        in >> t2;
-        consume_OUTPUT_NEWLINE(in);
-        v.values.emplace_back(knowledge_commitment<T1,T2>(t1,t2));
-    }
-
-    return in;
-}
-
 } // libsnark
+
 #endif // KNOWLEDGE_COMMITMENT_TCC_

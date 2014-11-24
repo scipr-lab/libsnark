@@ -43,8 +43,7 @@ template<typename FieldT>
 FieldT convert_bit_vector_to_field_element(const bit_vector &v);
 
 template<typename T, typename FieldT>
-T naive_plain_exp(const T &neutral,
-                  typename std::vector<T>::const_iterator vec_start,
+T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
                   typename std::vector<T>::const_iterator vec_end,
                   typename std::vector<FieldT>::const_iterator scalar_start,
                   typename std::vector<FieldT>::const_iterator scalar_end);

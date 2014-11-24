@@ -45,5 +45,10 @@ std::string FORMAT(const std::string &prefix, const char* format, ...);
 void serialize_bit_vector(std::ostream &out, const bit_vector &v);
 void deserialize_bit_vector(std::istream &in, bit_vector &v);
 
+template<typename T>
+size_t size_in_bits(const std::vector<T> &v);
+
 } // libsnark
+
+#include "common/utils.tcc" /* note that utils has a templatized part (utils.tcc) and non-templatized part (utils.cpp) */
 #endif // UTILS_HPP_

@@ -217,7 +217,7 @@ Fp6_2over3_model<n, modulus> Fp6_2over3_model<n,modulus>::cyclotomic_exp(const b
     Fp6_2over3_model<n,modulus> this_inverse = this->unitary_inverse();
 
     bool found_nonzero = false;
-    std::vector<long> NAF = find_wNAF(1, exponent);
+    std::vector<long> NAF = find_wnaf(1, exponent);
 
     for (long i = NAF.size() - 1; i >= 0; --i)
     {

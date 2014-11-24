@@ -36,6 +36,7 @@
 #include <memory>
 
 #include "algebra/curves/public_params.hpp"
+#include "encoding/accumulation_vector.hpp"
 #include "encoding/knowledge_commitment.hpp"
 #include "r1cs/r1cs.hpp"
 
@@ -58,9 +59,9 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proving_key<ppT> &pk);
 template<typename ppT>
 class r1cs_ppzksnark_proving_key {
 public:
-    G1G1_knowledge_commitment_vector<ppT> A_query;
-    G2G1_knowledge_commitment_vector<ppT> B_query;
-    G1G1_knowledge_commitment_vector<ppT> C_query;
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > A_query;
+    knowledge_commitment_vector<G2<ppT>, G1<ppT> > B_query;
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > C_query;
     G1_vector<ppT> H_query;
     G1_vector<ppT> K_query;
 
@@ -70,12 +71,12 @@ public:
     r1cs_ppzksnark_proving_key<ppT>& operator=(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(r1cs_ppzksnark_proving_key<ppT> &&other) = default;
-    r1cs_ppzksnark_proving_key(G1G1_knowledge_commitment_vector<ppT> &&A_query,
-                     G2G1_knowledge_commitment_vector<ppT> &&B_query,
-                     G1G1_knowledge_commitment_vector<ppT> &&C_query,
-                     G1_vector<ppT> &&H_query,
-                     G1_vector<ppT> &&K_query,
-                     r1cs_constraint_system<Fr<ppT> > &&constraint_system) :
+    r1cs_ppzksnark_proving_key(knowledge_commitment_vector<G1<ppT>, G1<ppT> > &&A_query,
+                               knowledge_commitment_vector<G2<ppT>, G1<ppT> > &&B_query,
+                               knowledge_commitment_vector<G1<ppT>, G1<ppT> > &&C_query,
+                               G1_vector<ppT> &&H_query,
+                               G1_vector<ppT> &&K_query,
+                               r1cs_constraint_system<Fr<ppT> > &&constraint_system) :
         A_query(std::move(A_query)),
         B_query(std::move(B_query)),
         C_query(std::move(C_query)),
@@ -86,27 +87,27 @@ public:
 
     size_t G1_size() const
     {
-        return 2*(A_query.original_size + C_query.original_size) + B_query.original_size + H_query.size() + K_query.size();
+        return 2*(A_query.domain_size() + C_query.domain_size()) + B_query.domain_size() + H_query.size() + K_query.size();
     }
 
     size_t G2_size() const
     {
-        return B_query.original_size;
+        return B_query.domain_size();
     }
 
     size_t G1_sparse_size() const
     {
-        return 2*(A_query.sparse_size() + C_query.sparse_size()) + B_query.sparse_size() + H_query.size() + K_query.size();
+        return 2*(A_query.size() + C_query.size()) + B_query.size() + H_query.size() + K_query.size();
     }
 
     size_t G2_sparse_size() const
     {
-        return B_query.sparse_size();
+        return B_query.size();
     }
 
     size_t size_in_bits() const
     {
-        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + G1<ppT>::size_in_bits() * (H_query.size() + K_query.size()) + 2 * 8 * sizeof(size_t);
+        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + libsnark::size_in_bits(H_query) + libsnark::size_in_bits(K_query);
     }
 
     void print_size() const
@@ -123,53 +124,6 @@ public:
     friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_proving_key<ppT> &pk);
 };
 
-/********************** Input-consistency query  ********************************/
-
-template<typename ppT>
-class r1cs_ppzksnark_IC_query;
-
-template<typename ppT>
-std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_IC_query<ppT> &pk);
-
-template<typename ppT>
-std::istream& operator>>(std::istream &in, r1cs_ppzksnark_IC_query<ppT> &pk);
-
-/**
- * An input-consistency (IC) query for R1CS ppzkSNARK (used inside r1cs_ppzksnark_verification_key)
- */
-template<typename ppT>
-class r1cs_ppzksnark_IC_query {
-public:
-    G1<ppT> base;
-
-    std::vector<size_t> pos;
-    G1_vector<ppT> encoded_terms;
-
-    r1cs_ppzksnark_IC_query() = default;
-    r1cs_ppzksnark_IC_query(const G1<ppT> &encoded_IC_base,const G1_vector<ppT> &v) :
-        base(encoded_IC_base), encoded_terms(v)
-    {
-        pos.reserve(encoded_terms.size());
-
-        for (size_t i = 0; i < encoded_terms.size(); ++i)
-        {
-            pos.emplace_back(i);
-        }
-    }
-
-    size_t input_size() const { return pos.size(); }
-    size_t G1_size() const { return (1 + pos.size()); }
-    /* this assumes that IC_query_terms form a contiguous vector, so we only need 2 * 8 * sizeof(size_t) bits to encode them (first + size) */
-    size_t sparse_size_in_bits() const { return G1<ppT>::size_in_bits() * this->G1_size() + 2 * 8 * sizeof(size_t) ; }
-    size_t dense_size_in_bits() const { return G1<ppT>::size_in_bits() * this->G1_size(); }
-    r1cs_ppzksnark_IC_query accumulate(const typename Fr_vector<ppT>::const_iterator w_begin,
-                             const typename Fr_vector<ppT>::const_iterator w_end,
-                             const size_t offset) const;
-
-    bool operator==(const r1cs_ppzksnark_IC_query<ppT> &other) const;
-    friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_IC_query<ppT> &q);
-    friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_IC_query<ppT> &q);
-};
 
 /***************************** Verification key **************************/
 
@@ -196,17 +150,17 @@ public:
     G2<ppT> gamma_beta_g2;
     G2<ppT> rC_Z_g2;
 
-    std::shared_ptr<r1cs_ppzksnark_IC_query<ppT> > encoded_IC_query;
+    accumulation_vector<G1<ppT> > encoded_IC_query;
 
     r1cs_ppzksnark_verification_key() = default;
     r1cs_ppzksnark_verification_key(const G2<ppT> &alphaA_g2,
-                          const G1<ppT> &alphaB_g1,
-                          const G2<ppT> &alphaC_g2,
-                          const G2<ppT> &gamma_g2,
-                          const G1<ppT> &gamma_beta_g1,
-                          const G2<ppT> &gamma_beta_g2,
-                          const G2<ppT> &rC_Z_g2,
-                          r1cs_ppzksnark_IC_query<ppT>* eIC) :
+                                    const G1<ppT> &alphaB_g1,
+                                    const G2<ppT> &alphaC_g2,
+                                    const G2<ppT> &gamma_g2,
+                                    const G1<ppT> &gamma_beta_g1,
+                                    const G2<ppT> &gamma_beta_g2,
+                                    const G2<ppT> &rC_Z_g2,
+                                    const accumulation_vector<G1<ppT> > &eIC) :
         alphaA_g2(alphaA_g2),
         alphaB_g1(alphaB_g1),
         alphaC_g2(alphaC_g2),
@@ -219,7 +173,7 @@ public:
 
     size_t G1_size() const
     {
-        return 2 + encoded_IC_query->G1_size();
+        return 2 + encoded_IC_query.size();
     }
 
     size_t G2_size() const
@@ -227,22 +181,16 @@ public:
         return 5;
     }
 
-    size_t sparse_size_in_bits() const
+    size_t size_in_bits() const
     {
-        return 2 * G1<ppT>::size_in_bits() + 5 * G2<ppT>::size_in_bits() + encoded_IC_query->sparse_size_in_bits();
-    }
-
-    size_t dense_size_in_bits() const
-    {
-        return 2 * G1<ppT>::size_in_bits() + 5 * G2<ppT>::size_in_bits() + encoded_IC_query->dense_size_in_bits();
+        return G1_size() * G1<ppT>::size_in_bits() + G2_size() * G2<ppT>::size_in_bits() + encoded_IC_query.size_in_bits();
     }
 
     void print_size() const
     {
         print_indent(); printf("* G1 elements in VK: %zu\n", this->G1_size());
         print_indent(); printf("* G2 elements in VK: %zu\n", this->G2_size());
-        print_indent(); printf("* Dense VK size in bits: %zu\n", this->dense_size_in_bits());
-        print_indent(); printf("* Sparse VK size in bits: %zu\n", this->sparse_size_in_bits());
+        print_indent(); printf("* VK size in bits: %zu\n", this->size_in_bits());
     }
 
     bool operator==(const r1cs_ppzksnark_verification_key<ppT> &other) const;
@@ -280,7 +228,7 @@ public:
     G1_precomp<ppT> vk_gamma_beta_g1_precomp;
     G2_precomp<ppT> vk_gamma_beta_g2_precomp;
 
-    std::shared_ptr<r1cs_ppzksnark_IC_query<ppT> > encoded_IC_query;
+    accumulation_vector<G1<ppT> > encoded_IC_query;
 
     bool operator==(const r1cs_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
@@ -328,9 +276,9 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proof<ppT> &pk);
 template<typename ppT>
 class r1cs_ppzksnark_proof {
 public:
-    G1G1_knowledge_commitment<ppT> g_A;
-    G2G1_knowledge_commitment<ppT> g_B;
-    G1G1_knowledge_commitment<ppT> g_C;
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_A;
+    knowledge_commitment<G2<ppT>, G1<ppT> > g_B;
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_C;
     G1<ppT> g_H;
     G1<ppT> g_K;
 
@@ -346,11 +294,11 @@ public:
         this->g_H = G1<ppT>::one();
         this->g_K = G1<ppT>::one();
     }
-    r1cs_ppzksnark_proof(G1G1_knowledge_commitment<ppT> &&g_A,
-               G2G1_knowledge_commitment<ppT> &&g_B,
-               G1G1_knowledge_commitment<ppT> &&g_C,
-               G1<ppT> &&g_H,
-               G1<ppT> &&g_K) :
+    r1cs_ppzksnark_proof(knowledge_commitment<G1<ppT>, G1<ppT> > &&g_A,
+                         knowledge_commitment<G2<ppT>, G1<ppT> > &&g_B,
+                         knowledge_commitment<G1<ppT>, G1<ppT> > &&g_C,
+                         G1<ppT> &&g_H,
+                         G1<ppT> &&g_K) :
         g_A(std::move(g_A)),
         g_B(std::move(g_B)),
         g_C(std::move(g_C)),
@@ -370,7 +318,7 @@ public:
 
     size_t size_in_bits() const
     {
-        return 7 * G1<ppT>::size_in_bits() + 1 * G2<ppT>::size_in_bits();
+        return G1_size() * G1<ppT>::size_in_bits() + G2_size() * G2<ppT>::size_in_bits();
     }
 
     void print_size() const

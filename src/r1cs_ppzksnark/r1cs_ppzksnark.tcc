@@ -23,146 +23,10 @@
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "encoding/multiexp.hpp"
-#include "qap/qap.hpp"
+#include "encoding/kc_multiexp.hpp"
 #include "r1cs_to_qap/r1cs_to_qap.hpp"
 
 namespace libsnark {
-
-template<typename ppT>
-r1cs_ppzksnark_IC_query<ppT> r1cs_ppzksnark_IC_query<ppT>::accumulate(const typename Fr_vector<ppT>::const_iterator w_begin,
-                                                  const typename Fr_vector<ppT>::const_iterator w_end,
-                                                  const size_t offset) const
-{
-    enter_block("Call to r1cs_ppzksnark_IC_query::accumulate");
-    r1cs_ppzksnark_IC_query<ppT> result;
-    result.base = this->base;
-
-    const size_t w_size = w_end - w_begin;
-    bool in_block = false;
-    size_t first_pos = -1, last_pos = -1; // g++ -flto emits unitialized warning, even though in_block guards for such cases.
-
-    for (size_t i = 0; i < pos.size(); ++i)
-    {
-        const bool matching_pos = (offset <= pos[i] && pos[i] < offset + w_size);
-        // printf("i = %zu, pos[i] = %zu, offset = %zu, w_size = %zu\n", i, pos[i], offset, w_size);
-        bool copy_over;
-
-        if (in_block)
-        {
-            if (matching_pos && last_pos == i-1)
-            {
-                // block can be extended, do it
-                last_pos = i;
-                copy_over = false;
-            }
-            else
-            {
-                // block ends here
-                in_block = false;
-                copy_over = true;
-
-#ifdef DEBUG
-                print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", pos[first_pos], pos[last_pos]);
-#endif
-                result.base = result.base + multi_exp<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(),
-                                                                         encoded_terms.begin() + first_pos,
-                                                                         encoded_terms.begin() + last_pos + 1,
-                                                                         w_begin + (pos[first_pos] - offset),
-                                                                         w_begin + (pos[last_pos] - offset) + 1,
-                                                                         1, true);
-            }
-        }
-        else
-        {
-            if (matching_pos)
-            {
-                // block can be started
-                first_pos = i;
-                last_pos = i;
-                in_block = true;
-                copy_over = false;
-            }
-            else
-            {
-                copy_over = true;
-            }
-        }
-
-        if (copy_over)
-        {
-            result.pos.emplace_back(pos[i]);
-            result.encoded_terms.emplace_back(encoded_terms[i]);
-        }
-    }
-
-    if (in_block)
-    {
-#ifdef DEBUG
-        print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", pos[first_pos], pos[last_pos]);
-#endif
-        result.base = result.base + multi_exp<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(),
-                                                                 encoded_terms.begin() + first_pos,
-                                                                 encoded_terms.begin() + last_pos + 1,
-                                                                 w_begin + (pos[first_pos] - offset),
-                                                                 w_begin + (pos[last_pos] - offset) + 1,
-                                                                 1, true);
-    }
-
-    leave_block("Call to r1cs_ppzksnark_IC_query::accumulate");
-    return result;
-}
-
-template<typename ppT>
-bool r1cs_ppzksnark_IC_query<ppT>::operator==(const r1cs_ppzksnark_IC_query<ppT> &other) const
-{
-    return (this->base == other.base &&
-            this->pos == other.pos &&
-            this->encoded_terms == other.encoded_terms);
-}
-
-template<typename ppT>
-std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_IC_query<ppT> &q)
-{
-    out << q.base << OUTPUT_NEWLINE;
-
-    out << q.pos.size() << "\n";
-    for (size_t i = 0; i < q.pos.size(); ++i)
-    {
-        out << q.pos[i] << "\n";
-        out << q.encoded_terms[i] << OUTPUT_NEWLINE;
-    }
-
-    return out;
-}
-
-template<typename ppT>
-std::istream& operator>>(std::istream &in, r1cs_ppzksnark_IC_query<ppT> &q)
-{
-    in >> q.base;
-    consume_OUTPUT_NEWLINE(in);
-
-    size_t s;
-    in >> s;
-
-    q.pos.resize(0);
-    q.encoded_terms.resize(0);
-    consume_newline(in);
-
-    for (size_t i = 0; i < s; ++i)
-    {
-        size_t idx;
-        in >> idx;
-        consume_newline(in);
-
-        G1<ppT> g;
-        in >> g;
-        consume_OUTPUT_NEWLINE(in);
-        q.pos.emplace_back(idx);
-        q.encoded_terms.emplace_back(g);
-    }
-
-    return in;
-}
 
 template<typename ppT>
 bool r1cs_ppzksnark_proving_key<ppT>::operator==(const r1cs_ppzksnark_proving_key<ppT> &other) const
@@ -211,7 +75,7 @@ bool r1cs_ppzksnark_verification_key<ppT>::operator==(const r1cs_ppzksnark_verif
             this->gamma_beta_g1 == other.gamma_beta_g1 &&
             this->gamma_beta_g2 == other.gamma_beta_g2 &&
             this->rC_Z_g2 == other.rC_Z_g2 &&
-            *(this->encoded_IC_query) == *(other.encoded_IC_query));
+            this->encoded_IC_query == other.encoded_IC_query);
 }
 
 template<typename ppT>
@@ -224,7 +88,7 @@ std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_verification_ke
     out << vk.gamma_beta_g1 << OUTPUT_NEWLINE;
     out << vk.gamma_beta_g2 << OUTPUT_NEWLINE;
     out << vk.rC_Z_g2 << OUTPUT_NEWLINE;
-    out << *(vk.encoded_IC_query) << OUTPUT_NEWLINE;
+    out << vk.encoded_IC_query << OUTPUT_NEWLINE;
 
     return out;
 }
@@ -246,9 +110,7 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_verification_key<ppT> 
     consume_OUTPUT_NEWLINE(in);
     in >> vk.rC_Z_g2;
     consume_OUTPUT_NEWLINE(in);
-    r1cs_ppzksnark_IC_query<ppT>* icq = new r1cs_ppzksnark_IC_query<ppT>;
-    in >> *icq;
-    vk.encoded_IC_query.reset(icq);
+    in >> vk.encoded_IC_query;
     consume_OUTPUT_NEWLINE(in);
 
     return in;
@@ -265,7 +127,7 @@ bool r1cs_ppzksnark_processed_verification_key<ppT>::operator==(const r1cs_ppzks
             this->vk_gamma_g2_precomp == other.vk_gamma_g2_precomp &&
             this->vk_gamma_beta_g1_precomp == other.vk_gamma_beta_g1_precomp &&
             this->vk_gamma_beta_g2_precomp == other.vk_gamma_beta_g2_precomp &&
-            *(this->encoded_IC_query) == *(other.encoded_IC_query));
+            this->encoded_IC_query == other.encoded_IC_query);
 }
 
 template<typename ppT>
@@ -279,7 +141,7 @@ std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_processed_verif
     out << pvk.vk_gamma_g2_precomp << OUTPUT_NEWLINE;
     out << pvk.vk_gamma_beta_g1_precomp << OUTPUT_NEWLINE;
     out << pvk.vk_gamma_beta_g2_precomp << OUTPUT_NEWLINE;
-    out << *(pvk.encoded_IC_query) << OUTPUT_NEWLINE;
+    out << pvk.encoded_IC_query << OUTPUT_NEWLINE;
 
     return out;
 }
@@ -303,9 +165,7 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_processed_verification
     consume_OUTPUT_NEWLINE(in);
     in >> pvk.vk_gamma_beta_g2_precomp;
     consume_OUTPUT_NEWLINE(in);
-    r1cs_ppzksnark_IC_query<ppT>* icq = new r1cs_ppzksnark_IC_query<ppT>;
-    in >> *icq;
-    pvk.encoded_IC_query.reset(icq);
+    in >> pvk.encoded_IC_query;
     consume_OUTPUT_NEWLINE(in);
 
     return in;
@@ -368,7 +228,8 @@ r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy
     {
         v.emplace_back(Fr<ppT>::random_element() * G1<ppT>::one());
     }
-    result.encoded_IC_query.reset(new r1cs_ppzksnark_IC_query<ppT>(base, v));
+
+    result.encoded_IC_query = accumulation_vector<G1<ppT> >(v);
 
     return result;
 }
@@ -473,36 +334,36 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 #endif
 
     enter_block("Generating G1 multiexp table");
-    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::num_bits, G1<ppT>::zero(), g1_window, G1<ppT>::one());
+    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::num_bits, g1_window, G1<ppT>::one());
     leave_block("Generating G1 multiexp table");
 
     enter_block("Generating G2 multiexp table");
-    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::num_bits, G2<ppT>::zero(), g2_window, G2<ppT>::one());
+    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::num_bits, g2_window, G2<ppT>::one());
     leave_block("Generating G2 multiexp table");
 
     enter_block("Generate R1CS proving key");
 
     enter_block("Generate knowledge commitments");
     enter_block("Compute the A-query", false);
-    G1G1_knowledge_commitment_vector<ppT> encoded_A_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, true, chunks);
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > A_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, chunks);
     leave_block("Compute the A-query", false);
 
     enter_block("Compute the B-query", false);
-    G2G1_knowledge_commitment_vector<ppT> encoded_B_query = kc_batch_exp(Fr<ppT>::num_bits, g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, true, chunks);
+    knowledge_commitment_vector<G2<ppT>, G1<ppT> > B_query = kc_batch_exp(Fr<ppT>::num_bits, g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, chunks);
     leave_block("Compute the B-query", false);
 
     enter_block("Compute the C-query", false);
-    G1G1_knowledge_commitment_vector<ppT> encoded_C_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, true, chunks);
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > C_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, chunks);
     leave_block("Compute the C-query", false);
 
     enter_block("Compute the H-query", false);
-    G1_vector<ppT> encoded_H_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Ht);
+    G1_vector<ppT> H_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Ht);
     leave_block("Compute the H-query", false);
 
     enter_block("Compute the K-query", false);
-    G1_vector<ppT> encoded_K_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Kt);
+    G1_vector<ppT> K_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Kt);
 #ifdef USE_ADD_SPECIAL
-    batch_to_special<G1<ppT> >(encoded_K_query);
+    batch_to_special<G1<ppT> >(K_query);
 #endif
     leave_block("Compute the K-query", false);
 
@@ -527,30 +388,29 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
     {
         multiplied_IC_coefficients.emplace_back(rA * IC_coefficients[i]);
     }
-    G1_vector<ppT> encoded_IC_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, multiplied_IC_coefficients);
+    G1_vector<ppT> encoded_IC_values = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, multiplied_IC_coefficients);
 
     leave_block("Encode IC query for R1CS verification key");
     leave_block("Generate R1CS verification key");
 
     leave_block("Call to r1cs_ppzksnark_generator");
 
-    r1cs_ppzksnark_IC_query<ppT>* icptr = new r1cs_ppzksnark_IC_query<ppT>;
-    *icptr = r1cs_ppzksnark_IC_query<ppT>(encoded_IC_base, encoded_IC_query);
+    accumulation_vector<G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
 
     r1cs_ppzksnark_verification_key<ppT> vk = r1cs_ppzksnark_verification_key<ppT>(alphaA_g2,
-                                                               alphaB_g1,
-                                                               alphaC_g2,
-                                                               gamma_g2,
-                                                               gamma_beta_g1,
-                                                               gamma_beta_g2,
-                                                               rC_Z_g2,
-                                                               icptr);
-    r1cs_ppzksnark_proving_key<ppT> pk = r1cs_ppzksnark_proving_key<ppT>(std::move(encoded_A_query),
-                                                     std::move(encoded_B_query),
-                                                     std::move(encoded_C_query),
-                                                     std::move(encoded_H_query),
-                                                     std::move(encoded_K_query),
-                                                     std::move(cs_copy));
+                                                                                   alphaB_g1,
+                                                                                   alphaC_g2,
+                                                                                   gamma_g2,
+                                                                                   gamma_beta_g1,
+                                                                                   gamma_beta_g2,
+                                                                                   rC_Z_g2,
+                                                                                   encoded_IC_query);
+    r1cs_ppzksnark_proving_key<ppT> pk = r1cs_ppzksnark_proving_key<ppT>(std::move(A_query),
+                                                                         std::move(B_query),
+                                                                         std::move(C_query),
+                                                                         std::move(H_query),
+                                                                         std::move(K_query),
+                                                                         std::move(cs_copy));
 
     pk.print_size();
     vk.print_size();
@@ -576,17 +436,15 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     const qap_witness<Fr<ppT> > qap_wit = r1cs_to_qap_witness_map(pk.constraint_system, w, d1, d2, d3);
     leave_block("Compute the polynomial H");
 
-    G1G1_knowledge_commitment<ppT> empty_kc1(G1<ppT>::zero(), G1<ppT>::zero());
-    G2G1_knowledge_commitment<ppT> empty_kc2(G2<ppT>::zero(), G1<ppT>::zero());
 #ifdef DEBUG
     const Fr<ppT> t = Fr<ppT>::random_element();
     qap_instance_evaluation<Fr<ppT> > qap_inst = r1cs_to_qap_instance_map_with_evaluation(pk.constraint_system, t);
     assert(qap_inst.is_satisfied(qap_wit));
 #endif
 
-    G1G1_knowledge_commitment<ppT> g_A = (d1*pk.A_query.get_value(0))+pk.A_query.get_value(3);
-    G2G1_knowledge_commitment<ppT> g_B = (d2*pk.B_query.get_value(1))+pk.B_query.get_value(3);
-    G1G1_knowledge_commitment<ppT> g_C = (d3*pk.C_query.get_value(2))+pk.C_query.get_value(3);
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_A = pk.A_query[0] + qap_wit.d1*pk.A_query[qap_wit.num_vars+1];
+    knowledge_commitment<G2<ppT>, G1<ppT> > g_B = pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_vars+1];
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_C = pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_vars+1];
 
     G1<ppT> g_H = G1<ppT>::zero();
     G1<ppT> g_K = pk.K_query[0] + qap_wit.d1*pk.K_query[qap_wit.num_vars+1] + qap_wit.d2*pk.K_query[qap_wit.num_vars+2] + qap_wit.d3*pk.K_query[qap_wit.num_vars+3];
@@ -612,37 +470,34 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     enter_block("Compute the proof");
 
     enter_block("Compute answer to A-query", false);
-    g_A = g_A + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
-                                                                               pk.A_query,
+    g_A = g_A + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.A_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
     leave_block("Compute answer to A-query", false);
 
     enter_block("Compute answer to B-query", false);
-    g_B = g_B + kc_multi_exp_with_fast_add_special<G2<ppT>, G1<ppT>, Fr<ppT> >(empty_kc2,
-                                                                               pk.B_query,
+    g_B = g_B + kc_multi_exp_with_fast_add_special<G2<ppT>, G1<ppT>, Fr<ppT> >(pk.B_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
     leave_block("Compute answer to B-query", false);
 
     enter_block("Compute answer to C-query", false);
-    g_C = g_C + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(empty_kc1,
-                                                                               pk.C_query,
+    g_C = g_C + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.C_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
     leave_block("Compute answer to C-query", false);
 
     enter_block("Compute answer to H-query", false);
-    g_H = g_H + multi_exp<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(), pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree+1,
+    g_H = g_H + multi_exp<G1<ppT>, Fr<ppT> >(pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree+1,
                                              qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree+1,
                                              chunks, true);
     leave_block("Compute answer to H-query", false);
 
     enter_block("Compute answer to K-query", false);
-    g_K = g_K + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(G1<ppT>::zero(), pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_vars,
+    g_K = g_K + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_vars,
                                                                    qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                    chunks, true);
     leave_block("Compute answer to K-query", false);
@@ -651,11 +506,7 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
 
     leave_block("Call to r1cs_ppzksnark_prover");
 
-    r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_proof<ppT>(std::move(g_A),
-                                         std::move(g_B),
-                                         std::move(g_C),
-                                         std::move(g_H),
-                                         std::move(g_K));
+    r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_proof<ppT>(std::move(g_A), std::move(g_B), std::move(g_C), std::move(g_H), std::move(g_K));
     proof.print_size();
 
     return proof;
@@ -689,12 +540,12 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
                                             const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_online_verifier_weak_IC");
-    assert(pvk.encoded_IC_query->input_size() >= input.size());
+    assert(pvk.encoded_IC_query.domain_size() >= input.size());
 
     enter_block("Compute input-dependent part of A");
-    r1cs_ppzksnark_IC_query<ppT> accumulated_IC = pvk.encoded_IC_query->accumulate(input.begin(), input.end(), 0);
-    assert(accumulated_IC.pos.empty());
-    G1<ppT> acc = accumulated_IC.base;
+    const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(input.begin(), input.end(), 0);
+    assert(accumulated_IC.is_fully_accumulated());
+    const G1<ppT> &acc = accumulated_IC.first;
     leave_block("Compute input-dependent part of A");
 
     bool result = true;
@@ -818,9 +669,9 @@ bool r1cs_ppzksnark_online_verifier_strong_IC(const r1cs_ppzksnark_processed_ver
     bool result = true;
     enter_block("Call to r1cs_ppzksnark_online_verifier_strong_IC");
 
-    if (pvk.encoded_IC_query->input_size() != input.size())
+    if (pvk.encoded_IC_query.domain_size() != input.size())
     {
-        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", input.size(), pvk.encoded_IC_query->input_size());
+        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", input.size(), pvk.encoded_IC_query.domain_size());
         result = false;
     }
     else
