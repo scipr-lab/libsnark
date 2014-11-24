@@ -1,7 +1,10 @@
 /** @file
  *****************************************************************************
- Implementation of the "extended radix-2" evaluation domain.
- S has size m = 2^{k+1} and consists of "the m-th roots of unity" union "a coset".
+
+ Implementation of interfaces for the "extended radix-2" evaluation domain.
+
+ See extended_radix2_domain.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -10,7 +13,7 @@
 
 #ifndef EXTENDED_RADIX2_DOMAIN_TCC_
 
-#include "qap/domains/basic_radix2_domain_aux.hpp"
+#include "evaluation_domain/domains/basic_radix2_domain_aux.hpp"
 
 namespace libsnark {
 
@@ -18,7 +21,9 @@ template<typename FieldT>
 extended_radix2_domain<FieldT>::extended_radix2_domain(const size_t m) : evaluation_domain<FieldT>(m)
 {
     assert(m > 1);
+
     const size_t logm = log2(m);
+
     assert(logm == FieldT::s + 1);
 
     small_m = m/2;
@@ -171,4 +176,5 @@ void extended_radix2_domain<FieldT>::divide_by_Z_on_coset(std::vector<FieldT> &P
 }
 
 } // libsnark
+
 #endif // EXTENDED_RADIX2_DOMAIN_TCC_

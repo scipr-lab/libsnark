@@ -1,7 +1,10 @@
 /** @file
  *****************************************************************************
- Implementation of the  "step radix-2" evaluation domain.
- S has size m = 2^k + 2^r and consists of "the 2^k-th roots of unity" union "a coset of 2^r-th roots of unity".
+
+ Implementation of interfaces for the "step radix-2" evaluation domain.
+
+ See step_radix2_domain.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -10,7 +13,7 @@
 
 #ifndef STEP_RADIX2_DOMAIN_TCC_
 
-#include "qap/domains/basic_radix2_domain_aux.hpp"
+#include "evaluation_domain/domains/basic_radix2_domain_aux.hpp"
 
 namespace libsnark {
 
@@ -18,8 +21,10 @@ template<typename FieldT>
 step_radix2_domain<FieldT>::step_radix2_domain(const size_t m) : evaluation_domain<FieldT>(m)
 {
     assert(m > 1);
+
     big_m = 1u<<(log2(m)-1);
     small_m = m - big_m;
+
     assert(small_m == 1u<<log2(small_m));
 
     omega = get_root_of_unity<FieldT>(1u<<log2(m)); // rounded!
@@ -238,4 +243,5 @@ void step_radix2_domain<FieldT>::divide_by_Z_on_coset(std::vector<FieldT> &P)
 }
 
 } // libsnark
+
 #endif // STEP_RADIX2_DOMAIN_TCC_

@@ -1,7 +1,10 @@
 /** @file
  *****************************************************************************
- Implementation of the  "basic radix-2" evaluation domain.
- S has size m = 2^k and consists of the m-th roots of unity.
+
+ Implementation of interfaces for the "basic radix-2" evaluation domain.
+
+ See basic_radix2_domain.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -11,7 +14,7 @@
 #ifndef BASIC_RADIX2_DOMAIN_TCC_
 #define BASIC_RADIX2_DOMAIN_TCC_
 
-#include "qap/domains/basic_radix2_domain_aux.hpp"
+#include "evaluation_domain/domains/basic_radix2_domain_aux.hpp"
 
 namespace libsnark {
 
@@ -97,4 +100,5 @@ void basic_radix2_domain<FieldT>::divide_by_Z_on_coset(std::vector<FieldT> &P)
 }
 
 } // libsnark
+
 #endif // BASIC_RADIX2_DOMAIN_TCC_

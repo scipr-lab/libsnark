@@ -1,5 +1,11 @@
 /** @file
  *****************************************************************************
+
+ Implementation of interfaces for auxiliary functions for the "basic radix-2" evaluation domain.
+
+ See basic_radix2_domain_aux.hpp .
+
+ *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
@@ -13,8 +19,8 @@
 #include <omp.h>
 #endif
 #include "common/field_utils.hpp"
-#include "common/utils.hpp"
 #include "common/profiling.hpp"
+#include "common/utils.hpp"
 
 namespace libsnark {
 
@@ -24,10 +30,12 @@ namespace libsnark {
 #define _basic_radix2_FFT _basic_serial_radix2_FFT
 #endif
 
+/*
+ Below we make use of pseudocode from [CLRS 2n Ed, pp. 864].
+ Also, note that it's the caller's responsibility to multiply by 1/N.
+ */
 template<typename FieldT>
 void _basic_serial_radix2_FFT(std::vector<FieldT> &a, const FieldT &omega)
-// using pseudocode from [CLRS 2n Ed, pp. 864]
-// it is caller's responsibility to scale back by 1/N
 {
     const size_t n = a.size(), logn = log2(n);
     assert(n == (1u << logn));
@@ -185,16 +193,18 @@ std::vector<FieldT> _basic_radix2_lagrange_coeffs(const size_t m, const FieldT &
 
     std::vector<FieldT> u(m, FieldT::zero());
 
-    // if t happens to equal one of the roots of unity in S={omega^{0},...,omega^{m-1}}
-    // then just output 1 at the right place, and 0 elsewhere
+    /*
+     If t equals one of the roots of unity in S={omega^{0},...,omega^{m-1}}
+     then output 1 at the right place, and 0 elsewhere
+     */
+
     if ((t^m) == (FieldT::one()))
     {
         FieldT omega_i = FieldT::one();
         for (size_t i = 0; i < m; ++i)
         {
-            if (omega_i == t)
+            if (omega_i == t) // i.e., t equals omega^i
             {
-                // we know that \omega^i = t, therefore by definition:
                 u[i] = FieldT::one();
                 return u;
             }
@@ -203,12 +213,14 @@ std::vector<FieldT> _basic_radix2_lagrange_coeffs(const size_t m, const FieldT &
         }
     }
 
-    // else, if t does not equal any of the roots of unity in S
-    // compute each L_{i,S}(t) as Z_{S}(t) * v_i / (t-\omega^i)
-    // where:
-    // - Z_{S}(t) = \prod_j (t-\omega^j) = (t^m-1)
-    // - v_i = 1 / \prod_{j \neq i} (\omega^i-\omega^j)
-    // Below we use the fact that v_{0} = 1/m and v_{i+1} = \omega * v_i.
+    /*
+     Otherwise, if t does not equal any of the roots of unity in S,
+     then compute each L_{i,S}(t) as Z_{S}(t) * v_i / (t-\omega^i)
+     where:
+     - Z_{S}(t) = \prod_{j} (t-\omega^j) = (t^m-1), and
+     - v_{i} = 1 / \prod_{j \neq i} (\omega^i-\omega^j).
+     Below we use the fact that v_{0} = 1/m and v_{i+1} = \omega * v_{i}.
+     */
 
     const FieldT Z = (t^m)-FieldT::one();
     FieldT l = Z * FieldT(m).inverse();
@@ -224,4 +236,5 @@ std::vector<FieldT> _basic_radix2_lagrange_coeffs(const size_t m, const FieldT &
 }
 
 } // libsnark
+
 #endif // BASIC_RADIX2_DOMAIN_AUX_TCC_

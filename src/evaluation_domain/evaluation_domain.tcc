@@ -1,13 +1,14 @@
 /** @file
  *****************************************************************************
- Implementation of functions to select and use evaluation domains.
 
- See evaluation-domain.hpp .
+ Imeplementation of interfaces for evaluation domains.
 
- We currently implement, and select among, three types of domains S:
- - "basic radix-2": S has size m = 2^k and consists of the m-th roots of unity
- - "extended radix-2": S has size m = 2^{k+1} and consists of "the m-th roots of unity" union "a coset"
- - "step radix-2": S has size m = 2^k + 2^r and consists of "the 2^k-th roots of unity" union "a coset of 2^r-th roots of unity"
+ See evaluation_domain.hpp .
+
+ We currently implement, and select among, three types of domains:
+ - "basic radix-2": the domain has size m = 2^k and consists of the m-th roots of unity
+ - "extended radix-2": the domain has size m = 2^{k+1} and consists of "the m-th roots of unity" union "a coset"
+ - "step radix-2": the domain has size m = 2^k + 2^r and consists of "the 2^k-th roots of unity" union "a coset of 2^r-th roots of unity"
 
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
@@ -20,9 +21,9 @@
 
 #include <cassert>
 #include "common/field_utils.hpp"
-#include "qap/domains/basic_radix2_domain.hpp"
-#include "qap/domains/extended_radix2_domain.hpp"
-#include "qap/domains/step_radix2_domain.hpp"
+#include "evaluation_domain/domains/basic_radix2_domain.hpp"
+#include "evaluation_domain/domains/extended_radix2_domain.hpp"
+#include "evaluation_domain/domains/step_radix2_domain.hpp"
 
 namespace libsnark {
 
@@ -114,4 +115,5 @@ FieldT lagrange_eval(const size_t m, const std::vector<FieldT> domain, const Fie
 }
 
 } // libsnark
+
 #endif // EVALUATION_DOMAIN_TCC_

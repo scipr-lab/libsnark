@@ -15,7 +15,7 @@
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "qap/evaluation_domain.hpp"
+#include "evaluation_domain/evaluation_domain.hpp"
 
 namespace libsnark {
 
