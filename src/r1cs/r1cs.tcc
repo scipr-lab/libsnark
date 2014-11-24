@@ -1,8 +1,13 @@
 /** @file
  *****************************************************************************
- Implementation of interfaces for the language R1CS ("rank-1 constraint systems").
 
- See r1cs.hpp.
+ Declaration of interfaces for:
+ - a R1CS constraint,
+ - a R1CS variable assignment, and
+ - a R1CS constraint system.
+
+ See r1cs.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -240,8 +245,12 @@ void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
         non_zero_A_count += touched_by_A[i] ? 1 : 0;
         non_zero_B_count += touched_by_B[i] ? 1 : 0;
     }
-    print_indent(); printf("* Non-zero A-count (estimate): %zu\n", non_zero_A_count);
-    print_indent(); printf("* Non-zero B-count (estimate): %zu\n", non_zero_B_count);
+
+    if (!inhibit_profiling_info)
+    {
+        print_indent(); printf("* Non-zero A-count (estimate): %zu\n", non_zero_A_count);
+        print_indent(); printf("* Non-zero B-count (estimate): %zu\n", non_zero_B_count);
+    }
     leave_block("Estimate densities");
 
     if (non_zero_B_count > non_zero_A_count)

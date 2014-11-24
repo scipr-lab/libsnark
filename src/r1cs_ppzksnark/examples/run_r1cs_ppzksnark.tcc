@@ -1,7 +1,9 @@
 /** @file
  *****************************************************************************
- Implementation of high-level example code that runs the ppzkSNARK
- (generator, prover, and verifier) for a given R1CS example.
+
+ Implementation of functionality that runs the R1CS ppzkSNARK for
+ a given R1CS example.
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -17,18 +19,20 @@
 
 #include "common/profiling.hpp"
 
-/* 
-    This is an example of all stages of running a SNARK.
-    Note that in a real life scenario, we would have 3 different entities (mangled into one in this
-    test):
-    (1) Generator: Creates the constraints and runs SNARK generator to create a proving key and a
-    verification key.
-    (2) Prover  : Creates the witness and runs the SNARK prover using the proving key.
-    (3) Verifier: Runs the SNARK verifier using the verification key and the proof.
-*/
-
 namespace libsnark {
 
+/**
+ * The code below provides an example of all stages of running a R1CS ppzkSNARK.
+ *
+ * Of course, in a real-life scenario, we would have three distinct entities,
+ * mangled into one in the demonstration below. The three entities are as follows.
+ * (1) The "generator", which runs the ppzkSNARK generator on input a given
+ *     constraint system CS to create a proving and a verification key for CS.
+ * (2) The "prover", which runs the ppzkSNARK prover on input the proving key,
+ *     a primary input for CS, and an auxiliary input for CS.
+ * (3) The "verifier", which runs the ppzkSNARK verifier on input the verification key,
+ *     a primary input for CS, and a proof.
+ */
 template<typename ppT>
 bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
                         const bool test_serialization)
@@ -77,4 +81,5 @@ bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
 }
 
 } // libsnark
+
 #endif // RUN_R1CS_PPZKSNARK_TCC_

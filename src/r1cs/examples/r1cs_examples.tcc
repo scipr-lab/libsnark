@@ -1,5 +1,12 @@
 /** @file
  *****************************************************************************
+
+ Implementation of functions to sample R1CS examples with prescribed parameters
+ (according to some distribution).
+
+ See r1cs_examples.hpp .
+
+ *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
@@ -9,30 +16,33 @@
 #define R1CS_EXAMPLES_TCC_
 
 #include <cassert>
+
 #include "common/utils.hpp"
 
 namespace libsnark {
 
-/* NOTE: all examples here actually generate one constraint less to account for soundness constraint in QAP */
-
 template<typename FieldT>
-r1cs_example<FieldT> gen_r1cs_example_Fr_input(const size_t num_constraints,
-                                               const size_t num_inputs)
+r1cs_example<FieldT> generate_r1cs_example_with_field_input(const size_t num_constraints,
+                                                            const size_t num_inputs)
 {
-    const size_t new_num_constraints = num_constraints - 1;
-    assert(num_inputs <= new_num_constraints + 2);
+    enter_block("Call to generate_r1cs_example_with_field_input");
 
-    r1cs_constraint_system<FieldT> q;
-    r1cs_variable_assignment<FieldT> va;
-    q.num_inputs = num_inputs;
-    q.num_vars = 2 + new_num_constraints;
+    assert(num_inputs <= num_constraints + 2);
 
-    FieldT a = FieldT::random_element(), b = FieldT::random_element();
-    va.push_back(a); va.push_back(b);
+    r1cs_constraint_system<FieldT> cs;
+    cs.num_inputs = num_inputs;
+    cs.num_vars = 2 + num_constraints;
 
-    for (size_t i = 0; i < new_num_constraints-1; ++i)
+    r1cs_variable_assignment<FieldT> witness;
+    FieldT a = FieldT::random_element();
+    FieldT b = FieldT::random_element();
+    witness.push_back(a);
+    witness.push_back(b);
+
+    for (size_t i = 0; i < num_constraints-1; ++i)
     {
         linear_combination<FieldT> A, B, C;
+
         if (i % 2)
         {
             // a * b = c
@@ -40,7 +50,7 @@ r1cs_example<FieldT> gen_r1cs_example_Fr_input(const size_t num_constraints,
             B.add_term(i+2, 1);
             C.add_term(i+3, 1);
             FieldT tmp = a*b;
-            va.push_back(tmp);
+            witness.push_back(tmp);
             a = b; b = tmp;
         }
         else
@@ -51,48 +61,59 @@ r1cs_example<FieldT> gen_r1cs_example_Fr_input(const size_t num_constraints,
             A.add_term(i+2, 1);
             C.add_term(i+3, 1);
             FieldT tmp = a+b;
-            va.push_back(tmp);
+            witness.push_back(tmp);
             a = b; b = tmp;
         }
 
-        q.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+        cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
     }
 
     linear_combination<FieldT> A, B, C;
     FieldT fin = FieldT::zero();
-    for (size_t i = 1; i < q.num_vars; ++i)
+    for (size_t i = 1; i < cs.num_vars; ++i)
     {
         A.add_term(i, 1);
         B.add_term(i, 1);
-        fin = fin + va[i-1];
+        fin = fin + witness[i-1];
     }
-    C.add_term(q.num_vars, 1);
-    q.add_constraint(r1cs_constraint<FieldT>(A, B, C));
-    va.push_back(fin.squared());
+    C.add_term(cs.num_vars, 1);
+    cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+    witness.push_back(fin.squared());
 
-    r1cs_variable_assignment<FieldT> input(va.begin(), va.begin() + num_inputs);
-    return r1cs_example<FieldT>(std::move(q), std::move(input), std::move(va), num_inputs);
+    /* sanity checks */
+    assert(cs.num_vars == witness.size());
+    assert(cs.num_vars >= num_inputs);
+    assert(cs.num_inputs == num_inputs);
+    assert(cs.constraints.size() == num_constraints);
+    assert(cs.is_satisfied(witness));
+
+    r1cs_variable_assignment<FieldT> input(witness.begin(), witness.begin() + num_inputs);
+
+    leave_block("Call to generate_r1cs_example_with_field_input");
+
+    return r1cs_example<FieldT>(std::move(cs), std::move(input), std::move(witness));
 }
 
 template<typename FieldT>
-r1cs_example<FieldT> gen_r1cs_example_binary_input(const size_t num_constraints,
-                                                   const size_t num_inputs)
+r1cs_example<FieldT> generate_r1cs_example_with_binary_input(const size_t num_constraints,
+                                                             const size_t num_inputs)
 {
-    const size_t new_num_constraints = num_constraints - 1;
+    enter_block("Call to generate_r1cs_example_with_binary_input");
+
     assert(num_inputs >= 1);
 
-    r1cs_constraint_system<FieldT> q;
-    r1cs_variable_assignment<FieldT> va;
-    q.num_inputs = num_inputs;
-    q.num_vars = num_inputs + new_num_constraints;
+    r1cs_constraint_system<FieldT> cs;
+    cs.num_inputs = num_inputs;
+    cs.num_vars = num_inputs + num_constraints;
 
+    r1cs_variable_assignment<FieldT> witness;
     for (size_t i = 0; i < num_inputs; ++i)
     {
-        va.push_back(FieldT(std::rand() % 2));
+        witness.push_back(FieldT(std::rand() % 2));
     }
 
     size_t lastvar = num_inputs-1;
-    for (size_t i = 0; i < new_num_constraints; ++i)
+    for (size_t i = 0; i < num_constraints; ++i)
     {
         ++lastvar;
         const size_t u = (i == 0 ? std::rand() % num_inputs : std::rand() % i);
@@ -116,14 +137,24 @@ r1cs_example<FieldT> gen_r1cs_example_binary_input(const size_t num_constraints,
         }
         C.add_term(lastvar+1, -FieldT::one());
 
-        q.add_constraint(r1cs_constraint<FieldT>(A, B, C));
-        va.push_back(va[u] + va[v] - va[u] * va[v] - va[u] * va[v]);
+        cs.add_constraint(r1cs_constraint<FieldT>(A, B, C));
+        witness.push_back(witness[u] + witness[v] - witness[u] * witness[v] - witness[u] * witness[v]);
     }
-    assert(va.size() == q.num_vars);
 
-    r1cs_variable_assignment<FieldT> input(va.begin(), va.begin() + num_inputs);
-    return r1cs_example<FieldT>(std::move(q), std::move(input), std::move(va), num_inputs);
+    /* sanity checks */
+    assert(cs.num_vars == witness.size());
+    assert(cs.num_vars >= num_inputs);
+    assert(cs.num_inputs == num_inputs);
+    assert(cs.constraints.size() == num_constraints);
+    assert(cs.is_satisfied(witness));
+
+    r1cs_variable_assignment<FieldT> input(witness.begin(), witness.begin() + num_inputs);
+
+    leave_block("Call to generate_r1cs_example_with_binary_input");
+
+    return r1cs_example<FieldT>(std::move(cs), std::move(input), std::move(witness));
 }
 
 } // libsnark
+
 #endif // R1CS_EXAMPLES_TCC

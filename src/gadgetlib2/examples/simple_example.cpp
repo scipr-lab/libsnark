@@ -51,7 +51,7 @@ r1cs_example<Fr<default_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const 
     assert(cs.is_valid());
     assert(cs.is_satisfied(va));
 
-    return r1cs_example<FieldT>(cs, input, va, cs.num_inputs);
+    return r1cs_example<FieldT>(cs, input, va);
 }
 
 } // libsnark

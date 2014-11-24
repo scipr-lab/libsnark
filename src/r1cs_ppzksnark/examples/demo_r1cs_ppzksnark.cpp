@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
     }
 
     enter_block("Generate R1CS example");
-    r1cs_example<Fr<default_pp> > example = gen_r1cs_example_Fr_input<Fr<default_pp> >(num_constraints, input_size);
+    r1cs_example<Fr<default_pp> > example = generate_r1cs_example_with_field_input<Fr<default_pp> >(num_constraints, input_size);
     leave_block("Generate R1CS example");
 
     print_header("(enter) Profile R1CS ppzkSNARK");
