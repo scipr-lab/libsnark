@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
     leave_block("Generate USCS example");
 
     print_header("(enter) Profile USCS ppzkSNARK");
-    const bool test_serialization = false;
+    const bool test_serialization = true;
     run_uscs_ppzksnark<default_pp>(example, test_serialization);
     print_header("(leave) Profile USCS ppzkSNARK");
 }

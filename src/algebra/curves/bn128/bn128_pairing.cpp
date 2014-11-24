@@ -8,6 +8,8 @@
  * @copyright  MIT license (see LICENSE file)
  *******************************************************************************/
 
+#include <sstream>
+
 #include "algebra/curves/bn128/bn128_pairing.hpp"
 #include "common/profiling.hpp"
 #include "algebra/curves/bn128/bn128_init.hpp"
@@ -16,13 +18,6 @@
 #include "algebra/curves/bn128/bn128_gt.hpp"
 
 namespace libsnark {
-
-typedef bn::Fp Fp;
-typedef bn::Fp2 Fp2;
-typedef bn::Fp2Dbl Fp2Dbl;
-typedef bn::ParamT<Fp2> Param;
-typedef bn::Fp6T<bn::Fp2> Fp6;
-typedef bn::Fp12T<bn::Fp6> Fp12;
 
 bool bn128_ate_G1_precomp::operator==(const bn128_ate_G1_precomp &other) const
 {
@@ -60,10 +55,27 @@ std::istream& operator>>(std::istream &in, bn128_ate_G1_precomp &prec_P)
 
 bool bn128_ate_G2_precomp::operator==(const bn128_ate_G2_precomp &other) const
 {
-    return (this->Q[0] == other.Q[0] &&
-            this->Q[1] == other.Q[1] &&
-            this->Q[2] == other.Q[2] &&
-            this->coeffs == other.coeffs);
+    if (!(this->Q[0] == other.Q[0] &&
+          this->Q[1] == other.Q[1] &&
+          this->Q[2] == other.Q[2] &&
+          this->coeffs.size() == other.coeffs.size()))
+    {
+        return false;
+    }
+
+    /* work around for upstream serialization bug */
+    for (size_t i = 0; i < this->coeffs.size(); ++i)
+    {
+        std::stringstream this_ss, other_ss;
+        this_ss << this->coeffs[i];
+        other_ss << other.coeffs[i];
+        if (this_ss.str() != other_ss.str())
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 std::ostream& operator<<(std::ostream &out, const bn128_ate_G2_precomp &prec_Q)

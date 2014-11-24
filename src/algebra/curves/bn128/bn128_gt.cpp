@@ -46,11 +46,25 @@ bn128_GT bn128_GT::one()
 
 std::ostream& operator<<(std::ostream &out, const bn128_GT &g)
 {
+#ifndef BINARY_OUTPUT
+    out << g.elem.a_ << OUTPUT_SEPARATOR << g.elem.b_;
+#else
+    out.write((char*) &g.elem.a_, sizeof(g.elem.a_));
+    out.write((char*) &g.elem.b_, sizeof(g.elem.b_));
+#endif
     return out;
 }
 
 std::istream& operator>>(std::istream &in, bn128_GT &g)
 {
+#ifndef BINARY_OUTPUT
+    in >> g.elem.a_;
+    consume_OUTPUT_SEPARATOR(in);
+    in >> g.elem.b_;
+#else
+    in.read((char*) &g.elem.a_, sizeof(g.elem.a_));
+    in.read((char*) &g.elem.b_, sizeof(g.elem.b_));
+#endif
     return in;
 }
 } // libsnark
