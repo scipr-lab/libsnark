@@ -38,7 +38,8 @@ SRCS= \
 	src/gadgetlib2/variable.cpp
 
 EXECUTABLES= \
-	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark
+	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
+	src/uscs_ppzksnark/examples/demo_uscs_ppzksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \
