@@ -29,18 +29,6 @@
 namespace libsnark {
 
 template<typename FieldT>
-FieldT padded_inner_product(const linear_combination<FieldT> &r, const r1cs_variable_assignment<FieldT> &w)
-{
-    FieldT acc = FieldT::zero();
-    for (size_t i = 0; i < r.terms.size(); ++i)
-    {
-        acc += (r.terms[i].index == 0 ? FieldT::one() : w[r.terms[i].index-1]) * r.terms[i].coeff;
-    }
-    return acc;
-}
-
-
-template<typename FieldT>
 r1cs_constraint<FieldT>::r1cs_constraint(const linear_combination<FieldT> &a,
                                          const linear_combination<FieldT> &b,
                                          const linear_combination<FieldT> &c) :
@@ -96,42 +84,15 @@ std::istream& operator>>(std::istream &in, r1cs_constraint<FieldT> &c)
 }
 
 template<typename FieldT>
-bool valid_vector(const linear_combination<FieldT> &r, const size_t num_vars)
-{
-    if (r.terms.empty())
-    {
-        return false;
-    }
-
-    std::set<var_index_t> s;
-    for (size_t i = 0; i < r.terms.size(); ++i)
-    {
-        size_t idx = r.terms[i].index;
-
-        if (idx > num_vars)
-        {
-            return false;
-        }
-
-        if (s.find(idx) != s.end())
-        {
-            return false;
-        }
-        s.insert(idx);
-    }
-    return true;
-}
-
-template<typename FieldT>
 bool r1cs_constraint_system<FieldT>::is_valid() const
 {
     if (this->num_inputs > this->num_vars) return false;
 
     for (size_t c = 0; c < constraints.size(); ++c)
     {
-        if (!(valid_vector(constraints[c].a, this->num_vars) &&
-              valid_vector(constraints[c].b, this->num_vars) &&
-              valid_vector(constraints[c].c, this->num_vars)))
+        if (!(constraints[c].a.is_valid(this->num_vars) &&
+              constraints[c].b.is_valid(this->num_vars) &&
+              constraints[c].c.is_valid(this->num_vars)))
         {
             return false;
         }
@@ -141,38 +102,12 @@ bool r1cs_constraint_system<FieldT>::is_valid() const
 }
 
 template<typename FieldT>
-void dump_product(const linear_combination<FieldT> &s, const r1cs_variable_assignment<FieldT> &w,
-                  const std::map<size_t, std::string> &variable_annotations)
+void dump_r1cs_constraint(const r1cs_constraint<FieldT> &c, const r1cs_variable_assignment<FieldT> &w,
+                          const std::map<size_t, std::string> &variable_annotations)
 {
-    for (size_t i = 0; i < s.terms.size(); ++i)
-    {
-        if (s.terms[i].index == 0)
-        {
-            printf("    1 * ");
-            s.terms[i].coeff.print();
-        }
-        else
-        {
-            printf("    x_%zu * ", s.terms[i].index);
-            s.terms[i].coeff.print();
-
-            auto it = variable_annotations.find(s.terms[i].index);
-            printf("    where x_%zu (%s) was assigned value ", s.terms[i].index,
-                   (it == variable_annotations.end() ? "no annotation" : it->second.c_str()));
-            w[s.terms[i].index-1].print();
-            printf("      i.e. negative of ");
-            (-w[s.terms[i].index-1]).print();
-        }
-    }
-}
-
-template<typename FieldT>
-void dump_constraint(const r1cs_constraint<FieldT> &c, const r1cs_variable_assignment<FieldT> &w,
-                     const std::map<size_t, std::string> &variable_annotations)
-{
-    printf("terms for a:\n"); dump_product(c.a, w, variable_annotations);
-    printf("terms for b:\n"); dump_product(c.b, w, variable_annotations);
-    printf("terms for c:\n"); dump_product(c.c, w, variable_annotations);
+    printf("terms for a:\n"); c.a.print_with_assignment(w, variable_annotations);
+    printf("terms for b:\n"); c.b.print_with_assignment(w, variable_annotations);
+    printf("terms for c:\n"); c.c.print_with_assignment(w, variable_annotations);
 }
 
 template<typename FieldT>
@@ -182,9 +117,9 @@ bool r1cs_constraint_system<FieldT>::is_satisfied(const r1cs_variable_assignment
 
     for (size_t c = 0; c < constraints.size(); ++c)
     {
-        FieldT ares = padded_inner_product(constraints[c].a, w);
-        FieldT bres = padded_inner_product(constraints[c].b, w);
-        FieldT cres = padded_inner_product(constraints[c].c, w);
+        FieldT ares = constraints[c].a.evaluate(w);
+        FieldT bres = constraints[c].b.evaluate(w);
+        FieldT cres = constraints[c].c.evaluate(w);
         if (!(ares*bres == cres))
         {
 #ifdef DEBUG
@@ -194,7 +129,7 @@ bool r1cs_constraint_system<FieldT>::is_satisfied(const r1cs_variable_assignment
             printf("<b,(1,x)> = "); bres.print();
             printf("<c,(1,x)> = "); cres.print();
             printf("constraint was:\n");
-            dump_constraint(constraints[c], w, variable_annotations);
+            dump_r1cs_constraint(constraints[c], w, variable_annotations);
 #endif // DEBUG
             return false;
         }

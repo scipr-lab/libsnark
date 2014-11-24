@@ -201,8 +201,8 @@ std::vector<FieldT> qap_witness_map(const r1cs_constraint_system<FieldT> &cs,
 
     for (size_t i = 0; i < cs.constraints.size(); ++i)
     {
-        aA[i+1] += padded_inner_product(cs.constraints[i].a, w);
-        aB[i+1] += padded_inner_product(cs.constraints[i].b, w);
+        aA[i+1] += cs.constraints[i].a.evaluate(w);
+        aB[i+1] += cs.constraints[i].b.evaluate(w);
     }
     leave_block("Compute evaluation of polynomials A, B on set S");
 
@@ -252,7 +252,7 @@ std::vector<FieldT> qap_witness_map(const r1cs_constraint_system<FieldT> &cs,
     std::vector<FieldT> aC(qap_degree, FieldT::zero());
     for (size_t i = 0; i < cs.constraints.size(); ++i)
     {
-        aC[i+1] += padded_inner_product(cs.constraints[i].c, w);
+        aC[i+1] += cs.constraints[i].c.evaluate(w);
     }
     leave_block("Compute evaluation of polynomial C on set S");
 

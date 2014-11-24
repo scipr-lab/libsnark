@@ -1,5 +1,12 @@
 /** @file
  *****************************************************************************
+
+ Declaration of interfaces for:
+ - a variable (i.e., x_i),
+ - a linear term (i.e., a_i * x_i), and
+ - a linear combination (i.e., sum_i a_i * x_i).
+
+ *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
@@ -9,6 +16,7 @@
 #define VARIABLE_HPP_
 
 #include <cstddef>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -23,10 +31,15 @@ class linear_term;
 template<typename FieldT>
 class linear_combination;
 
+/********************************* Variable **********************************/
+
+/**
+ * A variable represents a formal expresison of the form "x_{index}".
+ */
 template<typename FieldT>
 class variable {
 public:
-    // corresponds to the variable "x_{index}"
+
     var_index_t index;
 
     variable(const var_index_t index = 0) : index(index) {};
@@ -60,10 +73,15 @@ linear_combination<FieldT> operator-(const integer_coeff_t i, const variable<Fie
 template<typename FieldT>
 linear_combination<FieldT> operator-(const FieldT &el, const variable<FieldT> &var);
 
+/****************************** Linear term **********************************/
+
+/**
+ * A linear term represents a formal expression of the form "coeff * x_{index}".
+ */
 template<typename FieldT>
 class linear_term {
 public:
-    // corresponds to the linear term "coeff * x_{index}"
+
     var_index_t index;
     FieldT coeff;
 
@@ -98,6 +116,7 @@ linear_combination<FieldT> operator-(const integer_coeff_t i, const linear_term<
 template<typename FieldT>
 linear_combination<FieldT> operator-(const FieldT &el, const linear_term<FieldT> &lt);
 
+/***************************** Linear combination ****************************/
 
 template<typename FieldT>
 class linear_combination;
@@ -106,10 +125,13 @@ std::ostream& operator<<(std::ostream &out, const linear_combination<FieldT> &sv
 template<typename FieldT>
 std::istream& operator>>(std::istream &in, linear_combination<FieldT> &sv);
 
+/**
+ * A linear combination represents a formal expression of the form "sum_i coeff_i * x_{index_i}".
+ */
 template<typename FieldT>
 class linear_combination {
 public:
-    // a list of linear terms
+
     std::vector<linear_term<FieldT> > terms;
 
     linear_combination() {};
@@ -124,35 +146,47 @@ public:
 
     void add_term(const linear_term<FieldT> &v);
 
+    FieldT evaluate(const std::vector<FieldT> &va) const;
+
     linear_combination<FieldT> operator*(const integer_coeff_t i) const;
     linear_combination<FieldT> operator*(const FieldT &el) const;
 
     linear_combination<FieldT> operator+(const linear_combination<FieldT> &other) const;
+
     linear_combination<FieldT> operator-(const linear_combination<FieldT> &other) const;
     linear_combination<FieldT> operator-() const;
 
     bool operator==(const linear_combination<FieldT> &other) const;
+
+    bool is_valid(const size_t num_vars) const;
+
+    void print(const std::map<size_t, std::string> &variable_annotations = std::map<size_t, std::string>()) const;
+    void print_with_assignment(const std::vector<FieldT> &v, const std::map<size_t, std::string> &variable_annotations = std::map<size_t, std::string>()) const;
+
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const linear_combination<FieldT> &sv);
     friend std::istream& operator>> <FieldT>(std::istream &in, linear_combination<FieldT> &sv);
 };
 
 template<typename FieldT>
 linear_combination<FieldT> operator*(const integer_coeff_t i, const linear_combination<FieldT> &lc);
+
 template<typename FieldT>
 linear_combination<FieldT> operator*(const FieldT &el, const linear_combination<FieldT> &lc);
 
 template<typename FieldT>
 linear_combination<FieldT> operator+(const integer_coeff_t i, const linear_combination<FieldT> &lc);
+
 template<typename FieldT>
 linear_combination<FieldT> operator+(const FieldT &el, const linear_combination<FieldT> &lc);
 
 template<typename FieldT>
 linear_combination<FieldT> operator-(const integer_coeff_t i, const linear_combination<FieldT> &lc);
+
 template<typename FieldT>
 linear_combination<FieldT> operator-(const FieldT &el, const linear_combination<FieldT> &lc);
 
-
 } // libsnark
+
 #include "variable/variable.tcc"
 
 #endif // VARIABLE_HPP_
