@@ -40,6 +40,7 @@ SRCS= \
 	src/tbcs/tbcs.cpp
 
 EXECUTABLES= \
+	src/bacs_ppzksnark/examples/demo_bacs_ppzksnark \
 	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
 	src/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark \
 	src/uscs_ppzksnark/examples/demo_uscs_ppzksnark
