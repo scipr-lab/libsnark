@@ -152,26 +152,6 @@ FieldT convert_bit_vector_to_field_element(const bit_vector &v)
     return res;
 }
 
-template<typename T, typename FieldT>
-T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
-                  typename std::vector<T>::const_iterator vec_end,
-                  typename std::vector<FieldT>::const_iterator scalar_start,
-                  typename std::vector<FieldT>::const_iterator scalar_end)
-{
-    T result(T::zero());
-
-    typename std::vector<T>::const_iterator vec_it;
-    typename std::vector<FieldT>::const_iterator scalar_it;
-
-    for (vec_it = vec_start, scalar_it = scalar_start; vec_it != vec_end; ++vec_it, ++scalar_it)
-    {
-        result = result + (*vec_it) * (*scalar_it);
-    }
-    assert(scalar_it == scalar_end);
-
-    return result;
-}
-
 template<typename FieldT>
 void batch_invert(std::vector<FieldT> &vec)
 {
@@ -195,35 +175,6 @@ void batch_invert(std::vector<FieldT> &vec)
         vec[i] = acc_inverse * prod[i];
         acc_inverse = acc_inverse * old_el;
     }
-}
-
-template<typename FieldT, mp_size_t m>
-FieldT power(const FieldT &base, const bigint<m> &exponent)
-{
-    FieldT result = FieldT::one();
-
-    bool found_one = false;
-    for (long i = exponent.max_bits() - 1; i >= 0; --i)
-    {
-        if (found_one)
-        {
-            result = result * result;
-        }
-
-        if (exponent.test_bit(i))
-        {
-            found_one = true;
-            result = result * base;
-        }
-    }
-
-    return result;
-}
-
-template<typename FieldT>
-FieldT power(const FieldT &base, const unsigned long exponent)
-{
-    return power<FieldT>(base, bigint<1>(exponent));
 }
 
 } // libsnark

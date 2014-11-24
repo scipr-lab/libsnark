@@ -42,20 +42,8 @@ bit_vector convert_field_element_to_bit_vector(const FieldT &el, const size_t bi
 template<typename FieldT>
 FieldT convert_bit_vector_to_field_element(const bit_vector &v);
 
-template<typename T, typename FieldT>
-T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
-                  typename std::vector<T>::const_iterator vec_end,
-                  typename std::vector<FieldT>::const_iterator scalar_start,
-                  typename std::vector<FieldT>::const_iterator scalar_end);
-
 template<typename FieldT>
 void batch_invert(std::vector<FieldT> &vec);
-
-template<typename FieldT, mp_size_t m>
-FieldT power(const FieldT &base, const bigint<m> &exponent);
-
-template<typename FieldT>
-FieldT power(const FieldT &base, const unsigned long exponent);
 
 } // libsnark
 #include "algebra/fields/field_utils.tcc"

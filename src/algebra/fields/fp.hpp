@@ -11,6 +11,7 @@
 #define FP_HPP_
 
 #include "algebra/fields/bigint.hpp"
+#include "algebra/exponentiation/exponentiation.hpp"
 
 namespace libsnark {
 
