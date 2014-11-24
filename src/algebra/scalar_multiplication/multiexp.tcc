@@ -108,7 +108,8 @@ template<typename T, typename FieldT>
 T naive_exp(typename std::vector<T>::const_iterator vec_start,
             typename std::vector<T>::const_iterator vec_end,
             typename std::vector<FieldT>::const_iterator scalar_start,
-            typename std::vector<FieldT>::const_iterator scalar_end)
+            typename std::vector<FieldT>::const_iterator scalar_end,
+            const bool use_wnaf)
 {
     T result(T::zero());
 
@@ -118,7 +119,14 @@ T naive_exp(typename std::vector<T>::const_iterator vec_start,
     for (vec_it = vec_start, scalar_it = scalar_start; vec_it != vec_end; ++vec_it, ++scalar_it)
     {
         bigint<FieldT::num_limbs> scalar_bigint = scalar_it->as_bigint();
-        result = result + opt_window_wnaf_exp(*vec_it, scalar_bigint, scalar_bigint.num_bits());
+        if (use_wnaf)
+        {
+            result = result + opt_window_wnaf_exp(*vec_it, scalar_bigint, scalar_bigint.num_bits());
+        }
+        else
+        {
+            result = result + scalar_bigint * (*vec_it);
+        }
     }
     assert(scalar_it == scalar_end);
 
