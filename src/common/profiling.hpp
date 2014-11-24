@@ -27,9 +27,13 @@ void print_indent();
 
 extern bool inhibit_profiling_info;
 extern bool inhibit_profiling_counters;
+extern std::map<std::string, size_t> invocation_counts;
 extern std::map<std::string, long long> last_times;
 extern std::map<std::string, long long> cumulative_times;
 
+void clear_profiling_counters();
+
+void print_cumulative_time_entry(const std::string &key, const long long factor=1);
 void print_cumulative_times(const long long factor=1);
 void print_cumulative_op_counts(const bool only_fq=false);
 

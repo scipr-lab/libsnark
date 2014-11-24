@@ -67,12 +67,27 @@ std::list<std::pair<std::string, long long*> > op_data_points = {
 bool inhibit_profiling_info = false;
 bool inhibit_profiling_counters = false;
 
+void clear_profiling_counters()
+{
+    invocation_counts.clear();
+    last_times.clear();
+    cumulative_times.clear();
+}
+
+void print_cumulative_time_entry(const std::string &key, const long long factor)
+{
+    const double total_ms = (cumulative_times.at(key) * 1e-6);
+    const size_t cnt = invocation_counts.at(key);
+    const double avg_ms = total_ms / cnt;
+    printf("   %-45s: %12.5fms = %lld * %0.5fms (%zu invocations, %0.5fms = %lld * %0.5fms per invocation)\n", key.c_str(), total_ms, factor, total_ms/factor, cnt, avg_ms, factor, avg_ms/factor);
+}
+
 void print_cumulative_times(const long long factor)
 {
     printf("Dumping times:\n");
     for (auto& kv : cumulative_times)
     {
-        printf("   %-45s: %8.5fms\n", kv.first.c_str(), (kv.second * 1e-6) / factor);
+        print_cumulative_time_entry(kv.first, factor);
     }
 }
 
