@@ -175,31 +175,6 @@ bigint<n>& bigint<n>::randomize()
     return (*this);
 }
 
-inline void consume_newline(std::istream &in)
-{
-    char c;
-    in.read(&c, 1);
-}
-
-inline void consume_OUTPUT_NEWLINE(std::istream &in)
-{
-#ifdef BINARY_OUTPUT
-    // nothing to consume
-#else
-    char c;
-    in.read(&c, 1);
-#endif
-}
-
-inline void consume_OUTPUT_SEPARATOR(std::istream &in)
-{
-#ifdef BINARY_OUTPUT
-    // nothing to consume
-#else
-    char c;
-    in.read(&c, 1);
-#endif
-}
 
 template<mp_size_t n>
 std::ostream& operator<<(std::ostream &out, const bigint<n> &b)

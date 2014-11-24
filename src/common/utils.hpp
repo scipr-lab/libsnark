@@ -45,16 +45,5 @@ std::string FORMAT(const std::string &prefix, const char* format, ...);
 void serialize_bit_vector(std::ostream &out, const bit_vector &v);
 void deserialize_bit_vector(std::istream &in, bit_vector &v);
 
-template<typename T>
-T reserialize(const T &obj)
-{
-    std::stringstream ss;
-    ss << obj;
-    T tmp;
-    ss >> tmp;
-    assert(obj == tmp);
-    return tmp;
-}
-
 } // libsnark
 #endif // UTILS_HPP_
