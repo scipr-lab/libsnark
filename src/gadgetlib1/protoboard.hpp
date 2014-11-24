@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 #include "gadgetlib1/pb_variable.hpp"
-#include "r1cs/r1cs.hpp"
+#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "common/utils.hpp"
 
 namespace libsnark {

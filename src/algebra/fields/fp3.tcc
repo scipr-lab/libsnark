@@ -10,7 +10,7 @@
 #ifndef FP3_TCC_
 #define FP3_TCC_
 
-#include "common/field_utils.hpp"
+#include "algebra/fields/field_utils.hpp"
 
 namespace libsnark {
 

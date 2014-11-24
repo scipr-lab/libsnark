@@ -9,7 +9,7 @@
 #define INTEGRATION_HPP_
 
 #include "common/types.hpp"
-#include "r1cs/r1cs.hpp"
+#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "gadgetlib2/protoboard.hpp"
 
 namespace libsnark {

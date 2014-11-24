@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include "common/utils.hpp"
-#include "variable/variable.hpp"
+#include "relations/variable.hpp"
 
 namespace libsnark {
 

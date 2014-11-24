@@ -36,14 +36,14 @@ SRCS= \
 	src/gadgetlib2/pp.cpp \
 	src/gadgetlib2/protoboard.cpp \
 	src/gadgetlib2/variable.cpp \
-	src/tbcs/examples/tbcs_examples.cpp \
-	src/tbcs/tbcs.cpp
+	src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
+	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp
 
 EXECUTABLES= \
-	src/bacs_ppzksnark/examples/demo_bacs_ppzksnark \
-	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
-	src/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark \
-	src/uscs_ppzksnark/examples/demo_uscs_ppzksnark
+	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/demo_bacs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/demo_uscs_ppzksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \

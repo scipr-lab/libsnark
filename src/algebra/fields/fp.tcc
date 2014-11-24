@@ -15,7 +15,7 @@
 #include <cmath>
 
 #include "algebra/fields/fp_aux.tcc"
-#include "common/field_utils.hpp"
+#include "algebra/fields/field_utils.hpp"
 
 namespace libsnark {
 

@@ -9,7 +9,7 @@
 
 #ifndef FP6_3OVER2_TCC_
 #define FP6_3OVER2_TCC_
-#include "common/field_utils.hpp"
+#include "algebra/fields/field_utils.hpp"
 
 namespace libsnark {
 

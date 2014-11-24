@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 #include "algebra/curves/edwards/edwards_init.hpp"
-#include "common/curve_utils.hpp"
+#include "algebra/curves/curve_utils.hpp"
 
 namespace libsnark {
 

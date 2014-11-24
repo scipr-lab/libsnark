@@ -8,7 +8,7 @@
 #ifndef BN128_GT_HPP_
 #define BN128_GT_HPP_
 #include "algebra/fields/fp.hpp"
-#include "common/field_utils.hpp"
+#include "algebra/fields/field_utils.hpp"
 #include <iostream>
 #include "bn.h"
 

@@ -9,7 +9,7 @@
 #define ALT_BN128_G2_HPP_
 #include <vector>
 #include "algebra/curves/alt_bn128/alt_bn128_init.hpp"
-#include "common/curve_utils.hpp"
+#include "algebra/curves/curve_utils.hpp"
 
 namespace libsnark {
 
