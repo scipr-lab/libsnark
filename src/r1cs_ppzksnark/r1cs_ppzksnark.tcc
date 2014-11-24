@@ -1,13 +1,15 @@
 /** @file
- *****************************************************************************
- Implementation of interfaces for a ppzkSNARK for R1CS.
+*****************************************************************************
 
- See r1cs_ppzksnark.hpp .
- *****************************************************************************
- * @author     This file is part of libsnark, developed by SCIPR Lab
- *             and contributors (see AUTHORS).
- * @copyright  MIT license (see LICENSE file)
- *****************************************************************************/
+Implementation of interfaces for a ppzkSNARK for R1CS.
+
+See r1cs_ppzksnark.hpp .
+
+*****************************************************************************
+* @author     This file is part of libsnark, developed by SCIPR Lab
+*             and contributors (see AUTHORS).
+* @copyright  MIT license (see LICENSE file)
+*****************************************************************************/
 
 #ifndef R1CS_PPZKSNARK_TCC_
 #define R1CS_PPZKSNARK_TCC_

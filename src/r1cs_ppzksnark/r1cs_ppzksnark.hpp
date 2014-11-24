@@ -1,5 +1,6 @@
 /** @file
  *****************************************************************************
+
  Declaration of interfaces for a ppzkSNARK for R1CS.
 
  This includes:
@@ -13,17 +14,29 @@
  - verifier algorithm (with strong or weak input consistency)
  - online verifier algorithm (with strong or weak input consistency)
 
+ The implementation instantiates (a modification of) the protocol of \[PGHR13],
+ by following extending, and optimizing the approach described in \[BCTV14].
+
+
  Acronyms:
+
  - R1CS = "Rank-1 Constraint Systems"
  - ppzkSNARK = "PreProcessing Zero-Knowledge Succinct Non-interactive ARgument of Knowledge"
 
- The implementation follows, extends, and optimizes the basic approach described in \[BCTV14].
+ References:
 
  \[BCTV14]:
  "Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture",
  Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
  USENIX Security 2014,
  <http://eprint.iacr.org/2013/879>
+
+ \[PGHR13]:
+ "Pinocchio: Nearly practical verifiable computation",
+ Bryan Parno, Craig Gentry, Jon Howell, Mariana Raykova,
+ IEEE S&P 2013,
+ <https://eprint.iacr.org/2013/279>
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -54,7 +67,7 @@ template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proving_key<ppT> &pk);
 
 /**
- * A proving key for the R1CS ppzkSNARK
+ * A proving key for the R1CS ppzkSNARK.
  */
 template<typename ppT>
 class r1cs_ppzksnark_proving_key {
@@ -125,7 +138,7 @@ public:
 };
 
 
-/***************************** Verification key **************************/
+/******************************* Verification key ****************************/
 
 template<typename ppT>
 class r1cs_ppzksnark_verification_key;
@@ -137,7 +150,7 @@ template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * A verification key for R1CS ppzkSNARK
+ * A verification key for the R1CS ppzkSNARK.
  */
 template<typename ppT>
 class r1cs_ppzksnark_verification_key {
@@ -200,21 +213,24 @@ public:
     static r1cs_ppzksnark_verification_key<ppT> dummy_verification_key(const size_t input_size);
 };
 
-/************************* Processed verification key **************************/
+
+/************************ Processed verification key *************************/
 
 template<typename ppT>
 class r1cs_ppzksnark_processed_verification_key;
 
 template<typename ppT>
-std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &vk);
+std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
 
 template<typename ppT>
-std::istream& operator>>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &vk);
+std::istream& operator>>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
 
 /**
- * A processed verification key for R1CS ppzkSNARK.
- * This key contains preprocessed information about the verification key,
- * to speed up its use in verification (as explained in \[BCTV14]).
+ * A processed verification key for the R1CS ppzkSNARK.
+ *
+ * Compared to a (non-processed) verification key, a processed verification key
+ * contains a small constant amount of additional pre-computed information that
+ * enables a faster verification time.
  */
 template<typename ppT>
 class r1cs_ppzksnark_processed_verification_key {
@@ -235,10 +251,11 @@ public:
     friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
 };
 
-/********************************* Key pair ********************************/
+
+/********************************** Key pair *********************************/
 
 /**
- * A pair of proving key and verification key for the R1CS ppzkSNARK
+ * A key pair for the R1CS ppzkSNARK, which consists of a proving key and a verification key.
  */
 template<typename ppT>
 class r1cs_ppzksnark_keypair {
@@ -258,23 +275,23 @@ public:
 };
 
 
-/******************************* Proof ******************************/
+/*********************************** Proof ***********************************/
 
 template<typename ppT>
 class r1cs_ppzksnark_proof;
 
 template<typename ppT>
-std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_proof<ppT> &pk);
+std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_proof<ppT> &proof);
 
 template<typename ppT>
-std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proof<ppT> &pk);
+std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A proof in the R1CS ppZKSNARK.
- * Internally the proof has a structure, but externally you just opaquely
- * produce, de/serailize and verify it.
- * We expose some information about the size of the internal structure,
- * for statistics.
+ * A proof for the R1CS ppZKSNARK.
+ *
+ * While the proof has a structure, externally one merely opaquely produces,
+ * seralizes/deserializes, and verifies proofs. We only expose some information
+ * about the structure for statistics purposes.
  */
 template<typename ppT>
 class r1cs_ppzksnark_proof {
@@ -345,79 +362,91 @@ public:
     friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_proof<ppT> &proof);
 };
 
-/********************** Main algorithms of the R1CS ppzkSNARK *******************/
+
+/***************************** Main algorithms *******************************/
 
 /**
- * R1CS ppZKSNARK generator algorithm.
- * This algorithm produces the proving and verification keys. It needs to be
- * ran just once per constraint system.
+ * A generator algorithm for the R1CS ppZKSNARK.
+ *
+ * Given a R1CS constraint system CS, this algorithm produces proving and verification keys for CS.
  */
 template<typename ppT>
 r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_system<Fr<ppT> > &cs);
 
-
 /**
- * R1CS ppZKSNARK prover algorithm.
- * It proves a particular statement, expressed as an R1CS, using a witness
- * (an assignment that satisfies the R1CS). It produces a proof string,
- * to be passed to the verifier.
+ * A prover algorithm for the R1CS ppZKSNARK.
+ *
+ * Given a R1CS primary input X and a R1CS auxiliary input Y, this algorithm
+ * produces a proof (of knowledge) that attests to the following statement:
+ *               ``there exists Y such that CS(X,Y)=0''.
+ * Above, CS is the R1CS constraint system that was given as input to the generator algorithm.
  */
 template<typename ppT>
 r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key<ppT> &pk,
-                                      const r1cs_variable_assignment<Fr<ppT> > &witness);
+                                                const r1cs_variable_assignment<Fr<ppT> > &witness);
 
+/*
+ Below are four variants of verifier algorithm for the R1CS ppZKSNARK.
 
-/* Several variants of the verifier algorithm: */
+ These are the four cases that arise from the following two choices:
+
+ (1) The verifier accepts a (non-processed) verification key or, instead, a processed verification key.
+     In the latter case, we call the algorithm an "online verifier".
+
+ (2) The verifier checks for "weak" input consistency or, instead, "strong" input consistency.
+     Strong input consistency requires that |primary_input| = CS.num_inputs, whereas
+     weak input consistency requires that |primary_input| <= CS.num_inputs (and
+     the primary input is implicitly padded with zeros up to length CS.num_inputs).
+ */
 
 /**
- * R1CS ppzkSNARK verifier algorithm (given an un-processed verification key),
- * with "weak" input consistency.
- *
- * Weak input consistency guarantees that input' := input || 0^{n-|input|}
- * can be extended to a satisfiable assignment for the R1CS from which vk
- * was created. (Here, n denotes the number of inputs to the R1CS.)
-*/
+ * A verifier algorithm for the R1CS ppZKSNARK that:
+ * (1) accepts a non-processed verification key, and
+ * (2) has weak input consistency.
+ */
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
                                      const r1cs_variable_assignment<Fr<ppT> > &input,
                                      const r1cs_ppzksnark_proof<ppT> &proof);
+
 /**
- * R1CS ppzkSNARK verifier algorithm (given an un-processed verification key),
- * with "strong" input consistency.
- *
- * Strong input consistency requires input to contain n field elements, i.e.,
- * disallows input to be padded with 0's up to length n.
-*/
+ * A verifier algorithm for the R1CS ppZKSNARK that:
+ * (1) accepts a non-processed verification key, and
+ * (2) has strong input consistency.
+ */
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_strong_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
                                        const r1cs_variable_assignment<Fr<ppT> > &input,
                                        const r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
- * Converts an (un-processed) verification key into a processed verification key,
- * to make subsequent "online" verification faster.
+ * Convert a (non-processed) verification key into a processed verification key.
  */
 template<typename ppT>
 r1cs_ppzksnark_processed_verification_key<ppT> r1cs_ppzksnark_verifier_process_vk(const r1cs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * R1CS ppzkSNARK online verifier algorithm (given a processed verification key),
- * with "weak" input consistency.
-*/
+ * A verifier algorithm for the R1CS ppZKSNARK that:
+ * (1) accepts a processed verification key, and
+ * (2) has weak input consistency.
+ */
 template<typename ppT>
 bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
                                             const r1cs_variable_assignment<Fr<ppT> > &input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
+
 /**
- * R1CS ppzkSNARK online verifier algorithm (given a processed verification key),
- * with "strong" input consistency.
-*/
+ * A verifier algorithm for the R1CS ppZKSNARK that:
+ * (1) accepts a processed verification key, and
+ * (2) has strong input consistency.
+ */
 template<typename ppT>
 bool r1cs_ppzksnark_online_verifier_strong_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
                                               const r1cs_variable_assignment<Fr<ppT> > &input,
                                               const r1cs_ppzksnark_proof<ppT> &proof);
 
 } // libsnark
+
 #include "r1cs_ppzksnark/r1cs_ppzksnark.tcc"
 
 #endif // R1CS_PPZKSNARK_HPP_
