@@ -66,6 +66,22 @@ public:
 };
 
 template<typename FieldT>
+class field_vector_copy_gadget : public gadget<FieldT> {
+public:
+    const pb_variable_array<FieldT> source;
+    const pb_variable_array<FieldT> target;
+    const pb_variable<FieldT> do_copy;
+
+    field_vector_copy_gadget(protoboard<FieldT> &pb,
+                             const pb_variable_array<FieldT> &source,
+                             const pb_variable_array<FieldT> &target,
+                             const pb_variable<FieldT> &do_copy,
+                             const std::string &annotation_prefix="");
+    void generate_r1cs_constraints();
+    void generate_r1cs_witness();
+};
+
+template<typename FieldT>
 class bit_vector_copy_gadget : public gadget<FieldT> {
 public:
     const pb_variable_array<FieldT> source_bits;
@@ -77,6 +93,7 @@ public:
 
     std::shared_ptr<multipacking_gadget<FieldT> > pack_source;
     std::shared_ptr<multipacking_gadget<FieldT> > pack_target;
+    std::shared_ptr<field_vector_copy_gadget<FieldT> > copier;
 
     const size_t chunk_size;
     const size_t num_chunks;
@@ -187,15 +204,15 @@ private:
     pb_variable<FieldT> not_all_zeros;
 public:
     const size_t n;
-    const pb_variable<FieldT> A;
-    const pb_variable<FieldT> B;
+    const pb_linear_combination<FieldT> A;
+    const pb_linear_combination<FieldT> B;
     const pb_variable<FieldT> less;
     const pb_variable<FieldT> less_or_eq;
 
     comparison_gadget(protoboard<FieldT>& pb,
                       const size_t n,
-                      const pb_variable<FieldT> &A,
-                      const pb_variable<FieldT> &B,
+                      const pb_linear_combination<FieldT> &A,
+                      const pb_linear_combination<FieldT> &B,
                       const pb_variable<FieldT> &less,
                       const pb_variable<FieldT> &less_or_eq,
                       const std::string &annotation_prefix="") :

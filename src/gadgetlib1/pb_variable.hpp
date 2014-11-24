@@ -49,6 +49,7 @@ public:
     using contents::size;
     using contents::empty;
     using contents::operator[];
+    using contents::resize;
 
     pb_variable_array() : contents() {};
     pb_variable_array(size_t count, const pb_variable<FieldT> &value) : contents(count, value) {};
@@ -114,6 +115,8 @@ public:
     pb_linear_combination_array(typename contents::const_iterator first, typename contents::const_iterator last) : contents(first, last) {};
     pb_linear_combination_array(typename contents::const_reverse_iterator first, typename contents::const_reverse_iterator last) : contents(first, last) {};
 
+    void evaluate(protoboard<FieldT> &pb) const;
+
     void fill_with_field_elements(protoboard<FieldT> &pb, const std::vector<FieldT>& vals) const;
     void fill_with_bits(protoboard<FieldT> &pb, const bit_vector& bits) const;
     void fill_with_bits_of_ulong(protoboard<FieldT> &pb, const unsigned long i) const;
@@ -124,6 +127,9 @@ public:
 
     FieldT get_field_element_from_bits(protoboard<FieldT> &pb) const;
 };
+
+template<typename FieldT>
+linear_combination<FieldT> pb_sum(const pb_variable_array<FieldT> &v);
 
 } // libsnark
 #include "gadgetlib1/pb_variable.tcc"

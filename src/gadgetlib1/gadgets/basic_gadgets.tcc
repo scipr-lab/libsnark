@@ -74,12 +74,14 @@ void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitnes
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_packed()
 {
+    assert(this->pb.lc_val(packed).as_bigint().num_bits() <= bits.size());
     bits.fill_with_bits_of_field_element(this->pb, this->pb.lc_val(packed));
 }
 
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_bits()
 {
+    bits.evaluate(this->pb);
     this->pb.lc_val(packed) = bits.get_field_element_from_bits(this->pb);
 }
 
@@ -137,6 +139,39 @@ size_t multipacking_num_chunks(const size_t num_bits)
 }
 
 template<typename FieldT>
+field_vector_copy_gadget<FieldT>::field_vector_copy_gadget(protoboard<FieldT> &pb,
+                                                           const pb_variable_array<FieldT> &source,
+                                                           const pb_variable_array<FieldT> &target,
+                                                           const pb_variable<FieldT> &do_copy,
+                                                           const std::string &annotation_prefix) :
+gadget<FieldT>(pb, annotation_prefix), source(source), target(target), do_copy(do_copy)
+{
+    assert(source.size() == target.size());
+}
+
+template<typename FieldT>
+void field_vector_copy_gadget<FieldT>::generate_r1cs_constraints()
+{
+    for (size_t i = 0; i < source.size(); ++i)
+    {
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(do_copy, source[i] - target[i], 0),
+                                     FMT(this->annotation_prefix, " copying_check_%zu", i));
+    }
+}
+
+template<typename FieldT>
+void field_vector_copy_gadget<FieldT>::generate_r1cs_witness()
+{
+    if (this->pb.val(do_copy) != FieldT::zero())
+    {
+        for (size_t i = 0; i < source.size(); ++i)
+        {
+            this->pb.val(target[i]) = this->pb.val(source[i]);
+        }
+    }
+}
+
+template<typename FieldT>
 bit_vector_copy_gadget<FieldT>::bit_vector_copy_gadget(protoboard<FieldT> &pb,
                                                        const pb_variable_array<FieldT> &source_bits,
                                                        const pb_variable_array<FieldT> &target_bits,
@@ -153,6 +188,8 @@ bit_vector_copy_gadget<FieldT>::bit_vector_copy_gadget(protoboard<FieldT> &pb,
 
     packed_target.allocate(pb, num_chunks, FMT(annotation_prefix, " packed_target"));
     pack_target.reset(new multipacking_gadget<FieldT>(pb, target_bits, packed_target, chunk_size, FMT(annotation_prefix, " pack_target")));
+
+    copier.reset(new field_vector_copy_gadget<FieldT>(pb, packed_source, packed_target, do_copy, FMT(annotation_prefix, " copier")));
 }
 
 template<typename FieldT>
@@ -161,11 +198,7 @@ void bit_vector_copy_gadget<FieldT>::generate_r1cs_constraints(const bool enforc
     pack_source->generate_r1cs_constraints(enforce_source_bitness);
     pack_target->generate_r1cs_constraints(enforce_target_bitness);
 
-    for (size_t i = 0; i < num_chunks; ++i)
-    {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(do_copy, packed_source[i] - packed_target[i], 0),
-                                     FMT(this->annotation_prefix, " copying_check_%zu", i));
-    }
+    copier->generate_r1cs_constraints();
 }
 
 template<typename FieldT>
@@ -416,8 +449,11 @@ void comparison_gadget<FieldT>::generate_r1cs_constraints()
 template<typename FieldT>
 void comparison_gadget<FieldT>::generate_r1cs_witness()
 {
+    A.evaluate(this->pb);
+    B.evaluate(this->pb);
+
     /* unpack 2^n + B - A into alpha_packed */
-    this->pb.val(alpha_packed) = (FieldT(2)^n) + this->pb.val(B) - this->pb.val(A);
+    this->pb.val(alpha_packed) = (FieldT(2)^n) + this->pb.lc_val(B) - this->pb.lc_val(A);
     pack_alpha->generate_r1cs_witness_from_packed();
 
     /* compute result */

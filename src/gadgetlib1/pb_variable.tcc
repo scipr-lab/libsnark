@@ -192,6 +192,15 @@ FieldT pb_linear_combination<FieldT>::constant_term() const
 }
 
 template<typename FieldT>
+void pb_linear_combination_array<FieldT>::evaluate(protoboard<FieldT> &pb) const
+{
+    for (size_t i = 0; i < this->size(); ++i)
+    {
+        (*this)[i].evaluate(pb);
+    }
+}
+
+template<typename FieldT>
 void pb_linear_combination_array<FieldT>::fill_with_field_elements(protoboard<FieldT> &pb, const std::vector<FieldT>& vals) const
 {
     assert(this->size() == vals.size());
@@ -262,6 +271,18 @@ FieldT pb_linear_combination_array<FieldT>::get_field_element_from_bits(protoboa
         const FieldT v = pb.lc_val((*this)[this->size()-1-i]);
         assert(v == FieldT::zero() || v == FieldT::one());
         result += result + v;
+    }
+
+    return result;
+}
+
+template<typename FieldT>
+linear_combination<FieldT> pb_sum(const pb_variable_array<FieldT> &v)
+{
+    linear_combination<FieldT> result;
+    for (const pb_variable<FieldT> &var : v)
+    {
+        result = result + var;
     }
 
     return result;
