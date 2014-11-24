@@ -27,18 +27,21 @@ endif
 SRCS= \
 	src/common/profiling.cpp \
 	src/common/utils.cpp \
-	src/gadgetlib2/examples/simple_example.cpp \
-	src/gadgetlib2/infrastructure.cpp \
 	src/gadgetlib2/adapters.cpp \
 	src/gadgetlib2/constraint.cpp \
+	src/gadgetlib2/examples/simple_example.cpp \
 	src/gadgetlib2/gadget.cpp \
+	src/gadgetlib2/infrastructure.cpp \
 	src/gadgetlib2/integration.cpp \
 	src/gadgetlib2/pp.cpp \
 	src/gadgetlib2/protoboard.cpp \
-	src/gadgetlib2/variable.cpp
+	src/gadgetlib2/variable.cpp \
+	src/tbcs/examples/tbcs_examples.cpp \
+	src/tbcs/tbcs.cpp
 
 EXECUTABLES= \
 	src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
+	src/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark \
 	src/uscs_ppzksnark/examples/demo_uscs_ppzksnark
 
 ifneq ($(NO_GTEST),1)
