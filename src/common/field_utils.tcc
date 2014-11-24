@@ -106,12 +106,11 @@ template<typename FieldT>
 bit_vector convert_field_element_vector_to_bit_vector(const std::vector<FieldT> &v)
 {
     bit_vector result;
-    result.reserve(v.size());
 
     for (const FieldT &el : v)
     {
-        assert(el == FieldT::one() || el == FieldT::zero());
-        result.push_back(el == FieldT::one());
+        const bit_vector el_bits = convert_field_element_to_bit_vector<FieldT>(el);
+        result.insert(result.end(), el_bits.begin(), el_bits.end());
     }
 
     return result;
