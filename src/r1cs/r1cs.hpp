@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "r1cs/variable.hpp"
+#include "variable/variable.hpp"
 
 namespace libsnark {
 

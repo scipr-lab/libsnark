@@ -153,6 +153,6 @@ linear_combination<FieldT> operator-(const FieldT &el, const linear_combination<
 
 
 } // libsnark
-#include "r1cs/variable.tcc"
+#include "variable/variable.tcc"
 
 #endif // VARIABLE_HPP_
