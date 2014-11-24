@@ -74,7 +74,13 @@ public:
 
     void clear();
 
+    /* Return the standard (not Montgomery) representation of the
+       Field element's requivalence class. I.e. Fp(2).as_bigint()
+        would return bigint(2) */
     bigint<n> as_bigint() const;
+    /* Return the last limb of the standard representation of the
+       field element. E.g. on 64-bit architectures Fp(123).as_ulong()
+       and Fp(2^64+123).as_ulong() would both return 123. */
     unsigned long as_ulong() const;
 
     bool operator==(const Fp_model& other) const;
