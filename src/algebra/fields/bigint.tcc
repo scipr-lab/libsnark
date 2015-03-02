@@ -9,7 +9,6 @@
 
 #ifndef BIGINT_TCC_
 #define BIGINT_TCC_
-#include "algebra/fields/bigint.hpp"
 #include <cassert>
 #include <cstring>
 

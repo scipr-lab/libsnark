@@ -9,7 +9,6 @@
 
 #ifndef FP_TCC_
 #define FP_TCC_
-#include "algebra/fields/fp.hpp"
 #include <cassert>
 #include <cstdlib>
 #include <cmath>
@@ -187,7 +186,7 @@ void Fp_model<n,modulus>::mul_reduce(const bigint<n> &other)
 }
 
 template<mp_size_t n, const bigint<n>& modulus>
-Fp_model<n,modulus>::Fp_model(const bigint<n> b)
+Fp_model<n,modulus>::Fp_model(const bigint<n> &b)
 {
     mpn_copyi(this->mont_repr.data, Rsquared.data, n);
     mul_reduce(b);
@@ -510,7 +509,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::operator^=(const unsigned long pow)
 
 template<mp_size_t n, const bigint<n>& modulus>
 template<mp_size_t m>
-Fp_model<n,modulus>& Fp_model<n,modulus>::operator^=(const bigint<m> pow)
+Fp_model<n,modulus>& Fp_model<n,modulus>::operator^=(const bigint<m> &pow)
 {
     (*this) = power<Fp_model<n, modulus>, m>(*this, pow);
     return (*this);
@@ -546,7 +545,7 @@ Fp_model<n,modulus> Fp_model<n,modulus>::operator^(const unsigned long pow) cons
 
 template<mp_size_t n, const bigint<n>& modulus>
 template<mp_size_t m>
-Fp_model<n,modulus> Fp_model<n,modulus>::operator^(const bigint<m> pow) const
+Fp_model<n,modulus> Fp_model<n,modulus>::operator^(const bigint<m> &pow) const
 {
     Fp_model<n, modulus> r(*this);
     return (r ^= pow);

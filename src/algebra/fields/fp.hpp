@@ -66,7 +66,7 @@ public:
     static bool modulus_is_valid() { return modulus.data[n-1] != 0; } // mpn inverse assumes that highest limb is non-zero
 
     Fp_model() {};
-    Fp_model(const bigint<n> b);
+    Fp_model(const bigint<n> &b);
     Fp_model(const long x, const bool is_unsigned=false);
 
     void set_ulong(const unsigned long x);
@@ -96,7 +96,7 @@ public:
     Fp_model& operator^=(const unsigned long pow);
 
     template<mp_size_t m>
-    Fp_model& operator^=(const bigint<m> pow);
+    Fp_model& operator^=(const bigint<m> &pow);
 
     Fp_model operator+(const Fp_model& other) const;
     Fp_model operator-(const Fp_model& other) const;
@@ -109,7 +109,7 @@ public:
 
     Fp_model operator^(const unsigned long pow) const;
     template<mp_size_t m>
-    Fp_model operator^(const bigint<m> pow) const;
+    Fp_model operator^(const bigint<m> &pow) const;
 
     static size_t size_in_bits() { return num_bits; }
     static size_t capacity() { return num_bits - 1; }
