@@ -61,7 +61,7 @@ public:
     edwards_G2 operator-(const edwards_G2 &other) const;
 
     edwards_G2 add(const edwards_G2 &other) const;
-    edwards_G2 fast_add_special(const edwards_G2 &other) const;
+    edwards_G2 mixed_add(const edwards_G2 &other) const;
     edwards_G2 dbl() const;
     edwards_G2 mul_by_q() const;
 

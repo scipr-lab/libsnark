@@ -263,7 +263,7 @@ alt_bn128_G2 alt_bn128_G2::add(const alt_bn128_G2 &other) const
     return alt_bn128_G2(X3, Y3, Z3);
 }
 
-alt_bn128_G2 alt_bn128_G2::fast_add_special(const alt_bn128_G2 &other) const
+alt_bn128_G2 alt_bn128_G2::mixed_add(const alt_bn128_G2 &other) const
 {
 #ifdef DEBUG
     assert(other.is_special());

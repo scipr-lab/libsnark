@@ -54,7 +54,7 @@ public:
     bn128_G2 operator-(const bn128_G2 &other) const;
 
     bn128_G2 add(const bn128_G2 &other) const;
-    bn128_G2 fast_add_special(const bn128_G2 &other) const;
+    bn128_G2 mixed_add(const bn128_G2 &other) const;
     bn128_G2 dbl() const;
 
     bool is_well_formed() const;

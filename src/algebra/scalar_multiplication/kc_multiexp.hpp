@@ -26,7 +26,7 @@ knowledge_commitment<T1,T2> opt_window_wnaf_exp(const knowledge_commitment<T1,T2
                                                 const bigint<n> &scalar, const size_t scalar_bits);
 
 template<typename T1, typename T2, typename FieldT>
-knowledge_commitment<T1, T2> kc_multi_exp_with_fast_add_special(const knowledge_commitment_vector<T1, T2> &vec,
+knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_commitment_vector<T1, T2> &vec,
                                                                 const size_t min_idx,
                                                                 const size_t max_idx,
                                                                 typename std::vector<FieldT>::const_iterator scalar_start,

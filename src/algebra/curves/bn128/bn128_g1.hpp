@@ -53,7 +53,7 @@ public:
     bn128_G1 operator-(const bn128_G1 &other) const;
 
     bn128_G1 add(const bn128_G1 &other) const;
-    bn128_G1 fast_add_special(const bn128_G1 &other) const;
+    bn128_G1 mixed_add(const bn128_G1 &other) const;
     bn128_G1 dbl() const;
 
     bool is_well_formed() const;

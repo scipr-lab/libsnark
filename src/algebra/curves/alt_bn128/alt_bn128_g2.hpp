@@ -57,7 +57,7 @@ public:
     alt_bn128_G2 operator-(const alt_bn128_G2 &other) const;
 
     alt_bn128_G2 add(const alt_bn128_G2 &other) const;
-    alt_bn128_G2 fast_add_special(const alt_bn128_G2 &other) const;
+    alt_bn128_G2 mixed_add(const alt_bn128_G2 &other) const;
     alt_bn128_G2 dbl() const;
     alt_bn128_G2 mul_by_q() const;
 

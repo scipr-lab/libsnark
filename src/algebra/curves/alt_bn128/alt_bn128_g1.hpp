@@ -54,7 +54,7 @@ public:
     alt_bn128_G1 operator-(const alt_bn128_G1 &other) const;
 
     alt_bn128_G1 add(const alt_bn128_G1 &other) const;
-    alt_bn128_G1 fast_add_special(const alt_bn128_G1 &other) const;
+    alt_bn128_G1 mixed_add(const alt_bn128_G1 &other) const;
     alt_bn128_G1 dbl() const;
 
     bool is_well_formed() const;

@@ -19,7 +19,7 @@ knowledge_commitment<T1,T2> opt_window_wnaf_exp(const knowledge_commitment<T1,T2
 }
 
 template<typename T1, typename T2, typename FieldT>
-knowledge_commitment<T1, T2> kc_multi_exp_with_fast_add_special(const knowledge_commitment_vector<T1, T2> &vec,
+knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_commitment_vector<T1, T2> &vec,
                                                                 const size_t min_idx,
                                                                 const size_t max_idx,
                                                                 typename std::vector<FieldT>::const_iterator scalar_start,
@@ -56,9 +56,9 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_fast_add_special(const knowledge_
         }
         else if (scalar == one)
         {
-#ifdef USE_ADD_SPECIAL
-            acc.g = acc.g.fast_add_special(value_it->g);
-            acc.h = acc.h.fast_add_special(value_it->h);
+#ifdef USE_MIXED_ADDITION
+            acc.g = acc.g.mixed_add(value_it->g);
+            acc.h = acc.h.mixed_add(value_it->h);
 #else
             acc.g = acc.g + value_it->g;
             acc.h = acc.h + value_it->h;
@@ -241,7 +241,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
     {
         tmp[i] = kc_batch_exp_internal<T1, T2, FieldT>(scalar_size, T1_window, T2_window, T1_table, T2_table, T1_coeff, T2_coeff, v,
                                                        chunk_pos[i], chunk_pos[i+1], i == chunks - 1 ? last_chunk : chunk_size);
-#ifdef USE_ADD_SPECIAL
+#ifdef USE_MIXED_ADDITION
         kc_batch_to_special<T1, T2>(tmp[i].values);
 #endif
     }

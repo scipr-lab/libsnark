@@ -42,10 +42,10 @@ T multi_exp(typename std::vector<T>::const_iterator vec_start,
 
 
 /**
- * A variant of multi_exp that takes advantage of the method fast_add_special (instead of the operator '+').
+ * A variant of multi_exp that takes advantage of the method mixed_add (instead of the operator '+').
  */
 template<typename T, typename FieldT>
-T multi_exp_with_fast_add_special(typename std::vector<T>::const_iterator vec_start,
+T multi_exp_with_mixed_addition(typename std::vector<T>::const_iterator vec_start,
                                   typename std::vector<T>::const_iterator vec_end,
                                   typename std::vector<FieldT>::const_iterator scalar_start,
                                   typename std::vector<FieldT>::const_iterator scalar_end,

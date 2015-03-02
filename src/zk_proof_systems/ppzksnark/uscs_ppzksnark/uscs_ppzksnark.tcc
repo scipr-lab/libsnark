@@ -356,14 +356,14 @@ uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key
     enter_block("Compute the proof");
 
     enter_block("Compute V_g1, the 1st component of the proof", false);
-    V_g1 = V_g1 + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
+    V_g1 = V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
                                                                      ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs, ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_vars,
                                                                      chunks,
                                                                      true);
     leave_block("Compute V_g1, the 1st component of the proof", false);
 
     enter_block("Compute alpha_V_g1, the 2nd component of the proof", false);
-    alpha_V_g1 = alpha_V_g1 + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
+    alpha_V_g1 = alpha_V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
                                                                                  ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs, ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_vars,
                                                                                  chunks,
                                                                                  true);

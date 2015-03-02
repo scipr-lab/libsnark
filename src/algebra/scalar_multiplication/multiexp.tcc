@@ -14,7 +14,6 @@
 #ifndef MULTIEXP_TCC_
 #define MULTIEXP_TCC_
 
-#include "algebra/scalar_multiplication/multiexp.hpp"
 #include "algebra/fields/fp_aux.tcc"
 
 #include <algorithm>
@@ -311,7 +310,7 @@ T multi_exp(typename std::vector<T>::const_iterator vec_start,
 }
 
 template<typename T, typename FieldT>
-T multi_exp_with_fast_add_special(typename std::vector<T>::const_iterator vec_start,
+T multi_exp_with_mixed_addition(typename std::vector<T>::const_iterator vec_start,
                                   typename std::vector<T>::const_iterator vec_end,
                                   typename std::vector<FieldT>::const_iterator scalar_start,
                                   typename std::vector<FieldT>::const_iterator scalar_end,
@@ -342,8 +341,8 @@ T multi_exp_with_fast_add_special(typename std::vector<T>::const_iterator vec_st
         }
         else if (*scalar_it == one)
         {
-#ifdef USE_ADD_SPECIAL
-            acc = acc.fast_add_special(*value_it);
+#ifdef USE_MIXED_ADDITION
+            acc = acc.mixed_add(*value_it);
 #else
             acc = acc + (*value_it);
 #endif

@@ -228,7 +228,7 @@ bn128_G1 bn128_G1::add(const bn128_G1 &other) const
     return result;
 }
 
-bn128_G1 bn128_G1::fast_add_special(const bn128_G1 &other) const
+bn128_G1 bn128_G1::mixed_add(const bn128_G1 &other) const
 {
     if (this->is_zero())
     {

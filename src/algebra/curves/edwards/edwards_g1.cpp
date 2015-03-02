@@ -193,7 +193,7 @@ edwards_G1 edwards_G1::add(const edwards_G1 &other) const
     return edwards_G1(X3, Y3, Z3);
 }
 
-edwards_G1 edwards_G1::fast_add_special(const edwards_G1 &other) const
+edwards_G1 edwards_G1::mixed_add(const edwards_G1 &other) const
 {
 #ifdef PROFILE_OP_COUNTS
     this->add_cnt++;
@@ -350,7 +350,7 @@ std::istream& operator>>(std::istream &in, edwards_G1 &g)
     g.Y = tX;
     g.Z = tX * tY;
 
-#ifdef USE_ADD_SPECIAL
+#ifdef USE_MIXED_ADDITION
     g.to_special();
 #endif
 

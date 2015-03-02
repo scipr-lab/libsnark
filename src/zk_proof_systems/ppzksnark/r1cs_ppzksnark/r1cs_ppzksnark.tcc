@@ -361,8 +361,8 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
     leave_block("Compute the H-query", false);
 
     enter_block("Compute the K-query", false);
-    G1_vector<ppT> K_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Kt);
-#ifdef USE_ADD_SPECIAL
+    G1_vector<ppT> K_query = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, Kt);
+#ifdef USE_MIXED_ADDITION
     batch_to_special<G1<ppT> >(K_query);
 #endif
     leave_block("Compute the K-query", false);
@@ -470,21 +470,21 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     enter_block("Compute the proof");
 
     enter_block("Compute answer to A-query", false);
-    g_A = g_A + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.A_query,
+    g_A = g_A + kc_multi_exp_with_mixed_addition<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.A_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
     leave_block("Compute answer to A-query", false);
 
     enter_block("Compute answer to B-query", false);
-    g_B = g_B + kc_multi_exp_with_fast_add_special<G2<ppT>, G1<ppT>, Fr<ppT> >(pk.B_query,
+    g_B = g_B + kc_multi_exp_with_mixed_addition<G2<ppT>, G1<ppT>, Fr<ppT> >(pk.B_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
     leave_block("Compute answer to B-query", false);
 
     enter_block("Compute answer to C-query", false);
-    g_C = g_C + kc_multi_exp_with_fast_add_special<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.C_query,
+    g_C = g_C + kc_multi_exp_with_mixed_addition<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.C_query,
                                                                                1, 1+qap_wit.num_vars,
                                                                                qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                                chunks, true);
@@ -497,7 +497,7 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     leave_block("Compute answer to H-query", false);
 
     enter_block("Compute answer to K-query", false);
-    g_K = g_K + multi_exp_with_fast_add_special<G1<ppT>, Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_vars,
+    g_K = g_K + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_vars,
                                                                    qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
                                                                    chunks, true);
     leave_block("Compute answer to K-query", false);
