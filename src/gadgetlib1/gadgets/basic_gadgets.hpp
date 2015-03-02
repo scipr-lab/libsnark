@@ -129,6 +129,31 @@ public:
                                                            FMT(this->annotation_prefix, " consistency_check")));
     }
 
+    dual_variable_gadget(protoboard<FieldT> &pb,
+                         const pb_variable_array<FieldT> &bits,
+                         const std::string &annotation_prefix="") :
+        gadget<FieldT>(pb, annotation_prefix), bits(bits)
+    {
+        packed.allocate(pb, FMT(this->annotation_prefix, " packed"));
+        consistency_check.reset(new packing_gadget<FieldT>(pb,
+                                                           bits,
+                                                           packed,
+                                                           FMT(this->annotation_prefix, " consistency_check")));
+    }
+
+    dual_variable_gadget(protoboard<FieldT> &pb,
+                         const pb_variable<FieldT> &packed,
+                         const size_t width,
+                         const std::string &annotation_prefix="") :
+        gadget<FieldT>(pb, annotation_prefix), packed(packed)
+    {
+        bits.allocate(pb, width, FMT(this->annotation_prefix, " bits"));
+        consistency_check.reset(new packing_gadget<FieldT>(pb,
+                                                           bits,
+                                                           packed,
+                                                           FMT(this->annotation_prefix, " consistency_check")));
+    }
+
     void generate_r1cs_constraints(const bool enforce_bitness);
     void generate_r1cs_witness_from_packed();
     void generate_r1cs_witness_from_bits();
@@ -246,13 +271,13 @@ private:
     /* S_i = \sum_{k=0}^{i+1} A[i] * B[i] */
     pb_variable_array<FieldT> S;
 public:
-    const pb_variable_array<FieldT> A;
-    const pb_variable_array<FieldT> B;
+    const pb_linear_combination_array<FieldT> A;
+    const pb_linear_combination_array<FieldT> B;
     const pb_variable<FieldT> result;
 
     inner_product_gadget(protoboard<FieldT>& pb,
-                         const pb_variable_array<FieldT> &A,
-                         const pb_variable_array<FieldT> &B,
+                         const pb_linear_combination_array<FieldT> &A,
+                         const pb_linear_combination_array<FieldT> &B,
                          const pb_variable<FieldT> &result,
                          const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), A(A), B(B), result(result)
@@ -283,13 +308,13 @@ public:
 private:
     std::shared_ptr<inner_product_gadget<FieldT> > compute_result;
 public:
-    const pb_variable_array<FieldT> arr;
+    const pb_linear_combination_array<FieldT> arr;
     const pb_variable<FieldT> index;
     const pb_variable<FieldT> result;
     const pb_variable<FieldT> success_flag;
 
     loose_multiplexing_gadget(protoboard<FieldT>& pb,
-                              const pb_variable_array<FieldT> &arr,
+                              const pb_linear_combination_array<FieldT> &arr,
                               const pb_variable<FieldT> &index,
                               const pb_variable<FieldT> &result,
                               const pb_variable<FieldT> &success_flag,
