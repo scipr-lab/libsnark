@@ -683,7 +683,7 @@ Fp_model<n, modulus> Fp_model<n,modulus>::random_element() /// returns random el
         r.mont_repr.randomize();
 
         /* clear all bits higher than MSB of modulus */
-        size_t bitno = GMP_NUMB_BITS * n;
+        size_t bitno = GMP_NUMB_BITS * n - 1;
         while (modulus.test_bit(bitno) == false)
         {
             const std::size_t part = bitno/GMP_NUMB_BITS;
