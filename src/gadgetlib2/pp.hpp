@@ -10,7 +10,7 @@
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_PP_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_PP_HPP_
 
-#include "common/types.hpp"
+#include "common/default_types/ec_pp.hpp"
 
 #include <memory>
 #include <vector>
@@ -26,7 +26,7 @@ namespace gadgetlib2 {
 /*************************************************************************************************/
 
 /* curve-specific public parameters */
-typedef libsnark::Fr<libsnark::default_pp> Fp;
+typedef libsnark::Fr<libsnark::default_ec_pp> Fp;
 
 typedef std::vector<Fp> FpVector;
 

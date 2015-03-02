@@ -490,10 +490,10 @@ TEST(Examples, R1P_VerifyTransactionAmounts_Gadget) {
 TEST(gadgetLib2,Integration) {
     initPublicParamsFromDefaultPp();
     // Create an example constraint system and translate to libsnark format
-    const libsnark::r1cs_example<libsnark::Fr<libsnark::default_pp> > example = libsnark::gen_r1cs_example_from_gadgetlib2_protoboard(100);
+    const libsnark::r1cs_example<libsnark::Fr<libsnark::default_ec_pp> > example = libsnark::gen_r1cs_example_from_gadgetlib2_protoboard(100);
     const bool test_serialization = false;
     // Run ppzksnark. Jump into function for breakdown
-    const bool bit = libsnark::run_r1cs_ppzksnark<libsnark::default_pp>(example, test_serialization);
+    const bool bit = libsnark::run_r1cs_ppzksnark<libsnark::default_ec_pp>(example, test_serialization);
     EXPECT_TRUE(bit);
 };
 

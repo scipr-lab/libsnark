@@ -9,40 +9,33 @@
 
 namespace libsnark {
 
-template<>
-void init_public_params<edwards_pp>()
+void edwards_pp::init_public_params()
 {
     init_edwards_params();
 }
 
-template<>
-edwards_GT final_exponentiation<edwards_pp>(const edwards_Fq6 &elt)
+edwards_GT edwards_pp::final_exponentiation(const edwards_Fq6 &elt)
 {
     return edwards_final_exponentiation(elt);
 }
 
-template<>
-edwards_G1_precomp precompute_G1<edwards_pp>(const edwards_G1 &P)
+edwards_G1_precomp edwards_pp::precompute_G1(const edwards_G1 &P)
 {
     return edwards_precompute_G1(P);
 }
 
-template<>
-edwards_G2_precomp precompute_G2<edwards_pp>(const edwards_G2 &Q)
+edwards_G2_precomp edwards_pp::precompute_G2(const edwards_G2 &Q)
 {
     return edwards_precompute_G2(Q);
 }
 
-
-template<>
-edwards_Fq6 miller_loop<edwards_pp>(const edwards_G1_precomp &prec_P,
+edwards_Fq6 edwards_pp::miller_loop(const edwards_G1_precomp &prec_P,
                                     const edwards_G2_precomp &prec_Q)
 {
     return edwards_miller_loop(prec_P, prec_Q);
 }
 
-template<>
-edwards_Fq6 double_miller_loop<edwards_pp>(const edwards_G1_precomp &prec_P1,
+edwards_Fq6 edwards_pp::double_miller_loop(const edwards_G1_precomp &prec_P1,
                                            const edwards_G2_precomp &prec_Q1,
                                            const edwards_G1_precomp &prec_P2,
                                            const edwards_G2_precomp &prec_Q2)
@@ -50,15 +43,13 @@ edwards_Fq6 double_miller_loop<edwards_pp>(const edwards_G1_precomp &prec_P1,
     return edwards_double_miller_loop(prec_P1, prec_Q1, prec_P2, prec_Q2);
 }
 
-template<>
-edwards_Fq6 pairing<edwards_pp>(const edwards_G1 &P,
+edwards_Fq6 edwards_pp::pairing(const edwards_G1 &P,
                                 const edwards_G2 &Q)
 {
     return edwards_pairing(P, Q);
 }
 
-template<>
-edwards_Fq6 reduced_pairing<edwards_pp>(const edwards_G1 &P,
+edwards_Fq6 edwards_pp::reduced_pairing(const edwards_G1 &P,
                                         const edwards_G2 &Q)
 {
     return edwards_reduced_pairing(P, Q);

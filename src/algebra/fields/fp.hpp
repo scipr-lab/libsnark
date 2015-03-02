@@ -112,6 +112,7 @@ public:
     Fp_model operator^(const bigint<m> pow) const;
 
     static size_t size_in_bits() { return num_bits; }
+    static size_t capacity() { return num_bits - 1; }
     static bigint<n> field_char() { return modulus; }
 
     static Fp_model<n, modulus> zero();

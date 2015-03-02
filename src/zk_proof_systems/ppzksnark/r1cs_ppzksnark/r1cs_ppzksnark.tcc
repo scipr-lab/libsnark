@@ -14,8 +14,6 @@ See r1cs_ppzksnark.hpp .
 #ifndef R1CS_PPZKSNARK_TCC_
 #define R1CS_PPZKSNARK_TCC_
 
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
-
 #include <algorithm>
 #include <cassert>
 #include <functional>
@@ -520,14 +518,14 @@ r1cs_ppzksnark_processed_verification_key<ppT> r1cs_ppzksnark_verifier_process_v
     enter_block("Call to r1cs_ppzksnark_verifier_process_vk");
 
     r1cs_ppzksnark_processed_verification_key<ppT> pvk;
-    pvk.pp_G2_one_precomp        = precompute_G2<ppT>(G2<ppT>::one());
-    pvk.vk_alphaA_g2_precomp     = precompute_G2<ppT>(vk.alphaA_g2);
-    pvk.vk_alphaB_g1_precomp     = precompute_G1<ppT>(vk.alphaB_g1);
-    pvk.vk_alphaC_g2_precomp     = precompute_G2<ppT>(vk.alphaC_g2);
-    pvk.vk_rC_Z_g2_precomp       = precompute_G2<ppT>(vk.rC_Z_g2);
-    pvk.vk_gamma_g2_precomp      = precompute_G2<ppT>(vk.gamma_g2);
-    pvk.vk_gamma_beta_g1_precomp = precompute_G1<ppT>(vk.gamma_beta_g1);
-    pvk.vk_gamma_beta_g2_precomp = precompute_G2<ppT>(vk.gamma_beta_g2);
+    pvk.pp_G2_one_precomp        = ppT::precompute_G2(G2<ppT>::one());
+    pvk.vk_alphaA_g2_precomp     = ppT::precompute_G2(vk.alphaA_g2);
+    pvk.vk_alphaB_g1_precomp     = ppT::precompute_G1(vk.alphaB_g1);
+    pvk.vk_alphaC_g2_precomp     = ppT::precompute_G2(vk.alphaC_g2);
+    pvk.vk_rC_Z_g2_precomp       = ppT::precompute_G2(vk.rC_Z_g2);
+    pvk.vk_gamma_g2_precomp      = ppT::precompute_G2(vk.gamma_g2);
+    pvk.vk_gamma_beta_g1_precomp = ppT::precompute_G1(vk.gamma_beta_g1);
+    pvk.vk_gamma_beta_g2_precomp = ppT::precompute_G2(vk.gamma_beta_g2);
 
     pvk.encoded_IC_query = vk.encoded_IC_query;
 
@@ -565,11 +563,11 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
 
     enter_block("Online pairing computations");
     enter_block("Check knowledge commitment for A is valid");
-    G1_precomp<ppT> proof_g_A_g_precomp      = precompute_G1<ppT>(proof.g_A.g);
-    G1_precomp<ppT> proof_g_A_h_precomp = precompute_G1<ppT>(proof.g_A.h);
-    Fqk<ppT> kc_A_1 = miller_loop<ppT>(proof_g_A_g_precomp,      pvk.vk_alphaA_g2_precomp);
-    Fqk<ppT> kc_A_2 = miller_loop<ppT>(proof_g_A_h_precomp, pvk.pp_G2_one_precomp);
-    GT<ppT> kc_A = final_exponentiation<ppT>(kc_A_1 * kc_A_2.unitary_inverse());
+    G1_precomp<ppT> proof_g_A_g_precomp      = ppT::precompute_G1(proof.g_A.g);
+    G1_precomp<ppT> proof_g_A_h_precomp = ppT::precompute_G1(proof.g_A.h);
+    Fqk<ppT> kc_A_1 = ppT::miller_loop(proof_g_A_g_precomp,      pvk.vk_alphaA_g2_precomp);
+    Fqk<ppT> kc_A_2 = ppT::miller_loop(proof_g_A_h_precomp, pvk.pp_G2_one_precomp);
+    GT<ppT> kc_A = ppT::final_exponentiation(kc_A_1 * kc_A_2.unitary_inverse());
     if (kc_A != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -581,11 +579,11 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     leave_block("Check knowledge commitment for A is valid");
 
     enter_block("Check knowledge commitment for B is valid");
-    G2_precomp<ppT> proof_g_B_g_precomp      = precompute_G2<ppT>(proof.g_B.g);
-    G1_precomp<ppT> proof_g_B_h_precomp = precompute_G1<ppT>(proof.g_B.h);
-    Fqk<ppT> kc_B_1 = miller_loop<ppT>(pvk.vk_alphaB_g1_precomp, proof_g_B_g_precomp);
-    Fqk<ppT> kc_B_2 = miller_loop<ppT>(proof_g_B_h_precomp,    pvk.pp_G2_one_precomp);
-    GT<ppT> kc_B = final_exponentiation<ppT>(kc_B_1 * kc_B_2.unitary_inverse());
+    G2_precomp<ppT> proof_g_B_g_precomp      = ppT::precompute_G2(proof.g_B.g);
+    G1_precomp<ppT> proof_g_B_h_precomp = ppT::precompute_G1(proof.g_B.h);
+    Fqk<ppT> kc_B_1 = ppT::miller_loop(pvk.vk_alphaB_g1_precomp, proof_g_B_g_precomp);
+    Fqk<ppT> kc_B_2 = ppT::miller_loop(proof_g_B_h_precomp,    pvk.pp_G2_one_precomp);
+    GT<ppT> kc_B = ppT::final_exponentiation(kc_B_1 * kc_B_2.unitary_inverse());
     if (kc_B != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -597,11 +595,11 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     leave_block("Check knowledge commitment for B is valid");
 
     enter_block("Check knowledge commitment for C is valid");
-    G1_precomp<ppT> proof_g_C_g_precomp      = precompute_G1<ppT>(proof.g_C.g);
-    G1_precomp<ppT> proof_g_C_h_precomp = precompute_G1<ppT>(proof.g_C.h);
-    Fqk<ppT> kc_C_1 = miller_loop<ppT>(proof_g_C_g_precomp,      pvk.vk_alphaC_g2_precomp);
-    Fqk<ppT> kc_C_2 = miller_loop<ppT>(proof_g_C_h_precomp, pvk.pp_G2_one_precomp);
-    GT<ppT> kc_C = final_exponentiation<ppT>(kc_C_1 * kc_C_2.unitary_inverse());
+    G1_precomp<ppT> proof_g_C_g_precomp      = ppT::precompute_G1(proof.g_C.g);
+    G1_precomp<ppT> proof_g_C_h_precomp = ppT::precompute_G1(proof.g_C.h);
+    Fqk<ppT> kc_C_1 = ppT::miller_loop(proof_g_C_g_precomp,      pvk.vk_alphaC_g2_precomp);
+    Fqk<ppT> kc_C_2 = ppT::miller_loop(proof_g_C_h_precomp, pvk.pp_G2_one_precomp);
+    GT<ppT> kc_C = ppT::final_exponentiation(kc_C_1 * kc_C_2.unitary_inverse());
     if (kc_C != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -615,11 +613,11 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     enter_block("Check QAP divisibility");
     // check that g^((A+acc)*B)=g^(H*\Prod(t-\sigma)+C)
     // equivalently, via pairings, that e(g^(A+acc), g^B) = e(g^H, g^Z) + e(g^C, g^1)
-    G1_precomp<ppT> proof_g_A_g_acc_precomp = precompute_G1<ppT>(proof.g_A.g + acc);
-    G1_precomp<ppT> proof_g_H_precomp       = precompute_G1<ppT>(proof.g_H);
-    Fqk<ppT> QAP_1  = miller_loop<ppT>(proof_g_A_g_acc_precomp,  proof_g_B_g_precomp);
-    Fqk<ppT> QAP_23  = double_miller_loop<ppT>(proof_g_H_precomp, pvk.vk_rC_Z_g2_precomp, proof_g_C_g_precomp, pvk.pp_G2_one_precomp);
-    GT<ppT> QAP = final_exponentiation<ppT>(QAP_1 * QAP_23.unitary_inverse());
+    G1_precomp<ppT> proof_g_A_g_acc_precomp = ppT::precompute_G1(proof.g_A.g + acc);
+    G1_precomp<ppT> proof_g_H_precomp       = ppT::precompute_G1(proof.g_H);
+    Fqk<ppT> QAP_1  = ppT::miller_loop(proof_g_A_g_acc_precomp,  proof_g_B_g_precomp);
+    Fqk<ppT> QAP_23  = ppT::double_miller_loop(proof_g_H_precomp, pvk.vk_rC_Z_g2_precomp, proof_g_C_g_precomp, pvk.pp_G2_one_precomp);
+    GT<ppT> QAP = ppT::final_exponentiation(QAP_1 * QAP_23.unitary_inverse());
     if (QAP != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -631,11 +629,11 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     leave_block("Check QAP divisibility");
 
     enter_block("Check same coefficients were used");
-    G1_precomp<ppT> proof_g_K_precomp = precompute_G1<ppT>(proof.g_K);
-    G1_precomp<ppT> proof_g_A_g_acc_C_precomp = precompute_G1<ppT>((proof.g_A.g + acc) + proof.g_C.g);
-    Fqk<ppT> K_1 = miller_loop<ppT>(proof_g_K_precomp, pvk.vk_gamma_g2_precomp);
-    Fqk<ppT> K_23 = double_miller_loop<ppT>(proof_g_A_g_acc_C_precomp, pvk.vk_gamma_beta_g2_precomp, pvk.vk_gamma_beta_g1_precomp, proof_g_B_g_precomp);
-    GT<ppT> K = final_exponentiation<ppT>(K_1 * K_23.unitary_inverse());
+    G1_precomp<ppT> proof_g_K_precomp = ppT::precompute_G1(proof.g_K);
+    G1_precomp<ppT> proof_g_A_g_acc_C_precomp = ppT::precompute_G1((proof.g_A.g + acc) + proof.g_C.g);
+    Fqk<ppT> K_1 = ppT::miller_loop(proof_g_K_precomp, pvk.vk_gamma_g2_precomp);
+    Fqk<ppT> K_23 = ppT::double_miller_loop(proof_g_A_g_acc_C_precomp, pvk.vk_gamma_beta_g2_precomp, pvk.vk_gamma_beta_g1_precomp, proof_g_B_g_precomp);
+    GT<ppT> K = ppT::final_exponentiation(K_1 * K_23.unitary_inverse());
     if (K != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)

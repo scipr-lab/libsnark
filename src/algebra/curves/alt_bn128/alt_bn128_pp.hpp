@@ -16,10 +16,6 @@
 namespace libsnark {
 
 class alt_bn128_pp {
-};
-
-template<>
-class EC_pp_selector<alt_bn128_pp> {
 public:
     typedef alt_bn128_Fr Fp_type;
     typedef alt_bn128_G1 G1_type;
@@ -30,38 +26,25 @@ public:
     typedef alt_bn128_Fq2 Fqe_type;
     typedef alt_bn128_Fq12 Fqk_type;
     typedef alt_bn128_GT GT_type;
+
+    static const bool has_affine_pairing = false;
+
+    static void init_public_params();
+    static alt_bn128_GT final_exponentiation(const alt_bn128_Fq12 &elt);
+    static alt_bn128_G1_precomp precompute_G1(const alt_bn128_G1 &P);
+    static alt_bn128_G2_precomp precompute_G2(const alt_bn128_G2 &Q);
+    static alt_bn128_Fq12 miller_loop(const alt_bn128_G1_precomp &prec_P,
+                                      const alt_bn128_G2_precomp &prec_Q);
+    static alt_bn128_Fq12 double_miller_loop(const alt_bn128_G1_precomp &prec_P1,
+                                             const alt_bn128_G2_precomp &prec_Q1,
+                                             const alt_bn128_G1_precomp &prec_P2,
+                                             const alt_bn128_G2_precomp &prec_Q2);
+    static alt_bn128_Fq12 pairing(const alt_bn128_G1 &P,
+                                  const alt_bn128_G2 &Q);
+    static alt_bn128_Fq12 reduced_pairing(const alt_bn128_G1 &P,
+                                          const alt_bn128_G2 &Q);
 };
 
-template<>
-void init_public_params<alt_bn128_pp>();
-
-template<>
-alt_bn128_GT final_exponentiation<alt_bn128_pp>(const alt_bn128_Fq12 &elt);
-
-template<>
-alt_bn128_G1_precomp precompute_G1<alt_bn128_pp>(const alt_bn128_G1 &P);
-
-template<>
-alt_bn128_G2_precomp precompute_G2<alt_bn128_pp>(const alt_bn128_G2 &Q);
-
-template<>
-alt_bn128_Fq12 miller_loop<alt_bn128_pp>(const alt_bn128_G1_precomp &prec_P,
-                                         const alt_bn128_G2_precomp &prec_Q);
-
-template<>
-alt_bn128_Fq12 double_miller_loop<alt_bn128_pp>(const alt_bn128_G1_precomp &prec_P1,
-                                                const alt_bn128_G2_precomp &prec_Q1,
-                                                const alt_bn128_G1_precomp &prec_P2,
-                                                const alt_bn128_G2_precomp &prec_Q2);
-
-/* the following are used in test files */
-
-template<>
-alt_bn128_Fq12 pairing<alt_bn128_pp>(const alt_bn128_G1 &P,
-                                     const alt_bn128_G2 &Q);
-
-template<>
-alt_bn128_Fq12 reduced_pairing<alt_bn128_pp>(const alt_bn128_G1 &P,
-                                             const alt_bn128_G2 &Q);
 } // libsnark
+
 #endif // ALT_BN128_PP_HPP_

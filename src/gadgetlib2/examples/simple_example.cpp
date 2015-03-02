@@ -14,9 +14,9 @@
 namespace libsnark {
 
 /* NOTE: all examples here actually generate one constraint less to account for soundness constraint in QAP */
-r1cs_example<Fr<default_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size)
+r1cs_example<Fr<default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size)
 {
-    typedef Fr<default_pp> FieldT;
+    typedef Fr<default_ec_pp> FieldT;
 
     gadgetlib2::initPublicParamsFromDefaultPp();
     // necessary in case a protoboard was built before,  libsnark assumes variable indices always
@@ -42,10 +42,10 @@ r1cs_example<Fr<default_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const 
     // translate constraint system to libsnark format.
     r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(*pb);
     // translate witness to libsnark format
-    const r1cs_variable_assignment<Fr<default_pp> > va = get_variable_assignment_from_gadgetlib2(*pb);
+    const r1cs_variable_assignment<Fr<default_ec_pp> > va = get_variable_assignment_from_gadgetlib2(*pb);
     // in this case the input to the constraint system is exactly the same as the assignment. This
     // may not always be the case (inputs could be a strict subset of the assignment).
-    const r1cs_variable_assignment<Fr<default_pp> > input = va;
+    const r1cs_variable_assignment<Fr<default_ec_pp> > input = va;
     cs.num_inputs = input.size();
 
     assert(cs.is_valid());
@@ -55,4 +55,3 @@ r1cs_example<Fr<default_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const 
 }
 
 } // libsnark
-

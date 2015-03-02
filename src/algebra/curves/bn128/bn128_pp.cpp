@@ -10,33 +10,27 @@
 
 namespace libsnark {
 
-template<>
-void init_public_params<bn128_pp>()
+void bn128_pp::init_public_params()
 {
     init_bn128_params();
 }
 
-template<>
-bn128_GT final_exponentiation<bn128_pp>(const bn128_GT &elt)
+bn128_GT bn128_pp::final_exponentiation(const bn128_GT &elt)
 {
     return bn128_final_exponentiation(elt);
 }
 
-template<>
-bn128_ate_G1_precomp precompute_G1<bn128_pp>(const bn128_G1 &P)
+bn128_ate_G1_precomp bn128_pp::precompute_G1(const bn128_G1 &P)
 {
     return bn128_ate_precompute_G1(P);
 }
 
-template<>
-bn128_ate_G2_precomp precompute_G2<bn128_pp>(const bn128_G2 &Q)
+bn128_ate_G2_precomp bn128_pp::precompute_G2(const bn128_G2 &Q)
 {
     return bn128_ate_precompute_G2(Q);
 }
 
-
-template<>
-bn128_Fq12 miller_loop<bn128_pp>(const bn128_ate_G1_precomp &prec_P,
+bn128_Fq12 bn128_pp::miller_loop(const bn128_ate_G1_precomp &prec_P,
                                  const bn128_ate_G2_precomp &prec_Q)
 {
     enter_block("Call to miller_loop<bn128_pp>");
@@ -45,8 +39,7 @@ bn128_Fq12 miller_loop<bn128_pp>(const bn128_ate_G1_precomp &prec_P,
     return result;
 }
 
-template<>
-bn128_Fq12 double_miller_loop<bn128_pp>(const bn128_ate_G1_precomp &prec_P1,
+bn128_Fq12 bn128_pp::double_miller_loop(const bn128_ate_G1_precomp &prec_P1,
                                         const bn128_ate_G2_precomp &prec_Q1,
                                         const bn128_ate_G1_precomp &prec_P2,
                                         const bn128_ate_G2_precomp &prec_Q2)
@@ -57,26 +50,24 @@ bn128_Fq12 double_miller_loop<bn128_pp>(const bn128_ate_G1_precomp &prec_P1,
     return result;
 }
 
-template<>
-bn128_Fq12 pairing<bn128_pp>(const bn128_G1 &P,
+bn128_Fq12 bn128_pp::pairing(const bn128_G1 &P,
                              const bn128_G2 &Q)
 {
     enter_block("Call to pairing<bn128_pp>");
-    bn128_ate_G1_precomp prec_P = precompute_G1<bn128_pp>(P);
-    bn128_ate_G2_precomp prec_Q = precompute_G2<bn128_pp>(Q);
+    bn128_ate_G1_precomp prec_P = bn128_pp::precompute_G1(P);
+    bn128_ate_G2_precomp prec_Q = bn128_pp::precompute_G2(Q);
 
-    bn128_Fq12 result = miller_loop<bn128_pp>(prec_P, prec_Q);
+    bn128_Fq12 result = bn128_pp::miller_loop(prec_P, prec_Q);
     leave_block("Call to pairing<bn128_pp>");
     return result;
 }
 
-template<>
-bn128_GT reduced_pairing<bn128_pp>(const bn128_G1 &P,
+bn128_GT bn128_pp::reduced_pairing(const bn128_G1 &P,
                                    const bn128_G2 &Q)
 {
     enter_block("Call to reduced_pairing<bn128_pp>");
-    const bn128_Fq12 f = pairing<bn128_pp>(P, Q);
-    const bn128_GT result = final_exponentiation<bn128_pp>(f);
+    const bn128_Fq12 f = bn128_pp::pairing(P, Q);
+    const bn128_GT result = bn128_pp::final_exponentiation(f);
     leave_block("Call to reduced_pairing<bn128_pp>");
     return result;
 }

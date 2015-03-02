@@ -4,6 +4,9 @@ depinst/
 depsrc/
 README.html
 doxygen/
-src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark
 src/gadgetlib2/examples/tutorial
 src/gadgetlib2/tests/gadgetlib2_test
+src/zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/demo_bacs_ppzksnark
+src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark
+src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark
+src/zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/demo_uscs_ppzksnark

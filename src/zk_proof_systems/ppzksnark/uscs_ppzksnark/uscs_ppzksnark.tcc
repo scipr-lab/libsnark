@@ -12,8 +12,6 @@
 #ifndef USCS_PPZKSNARK_TCC_
 #define USCS_PPZKSNARK_TCC_
 
-#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.hpp"
-
 #include <algorithm>
 #include <cassert>
 #include <functional>
@@ -403,14 +401,14 @@ uscs_ppzksnark_processed_verification_key<ppT> uscs_ppzksnark_verifier_process_v
 
     uscs_ppzksnark_processed_verification_key<ppT> pvk;
 
-    pvk.pp_G1_one_precomp         = precompute_G1<ppT>(G1<ppT>::one());
-    pvk.pp_G2_one_precomp         = precompute_G2<ppT>(G2<ppT>::one());
+    pvk.pp_G1_one_precomp         = ppT::precompute_G1(G1<ppT>::one());
+    pvk.pp_G2_one_precomp         = ppT::precompute_G2(G2<ppT>::one());
 
-    pvk.vk_tilde_g2_precomp       = precompute_G2<ppT>(vk.tilde_g2);
-    pvk.vk_alpha_tilde_g2_precomp = precompute_G2<ppT>(vk.alpha_tilde_g2);
-    pvk.vk_Z_g2_precomp           = precompute_G2<ppT>(vk.Z_g2);
+    pvk.vk_tilde_g2_precomp       = ppT::precompute_G2(vk.tilde_g2);
+    pvk.vk_alpha_tilde_g2_precomp = ppT::precompute_G2(vk.alpha_tilde_g2);
+    pvk.vk_Z_g2_precomp           = ppT::precompute_G2(vk.Z_g2);
 
-    pvk.pairing_of_g1_and_g2      = miller_loop<ppT>(pvk.pp_G1_one_precomp,pvk.pp_G2_one_precomp);
+    pvk.pairing_of_g1_and_g2      = ppT::miller_loop(pvk.pp_G1_one_precomp,pvk.pp_G2_one_precomp);
 
     pvk.encoded_IC_query = vk.encoded_IC_query;
 
@@ -449,11 +447,11 @@ bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verif
     enter_block("Online pairing computations");
 
     enter_block("Check knowledge commitment for V is valid");
-    G1_precomp<ppT> proof_V_g1_with_acc_precomp = precompute_G1<ppT>(proof.V_g1 + acc);
-    G2_precomp<ppT> proof_V_g2_precomp = precompute_G2<ppT>(proof.V_g2);
-    Fqk<ppT> V_1 = miller_loop<ppT>(proof_V_g1_with_acc_precomp,    pvk.pp_G2_one_precomp);
-    Fqk<ppT> V_2 = miller_loop<ppT>(pvk.pp_G1_one_precomp, proof_V_g2_precomp);
-    GT<ppT> V = final_exponentiation<ppT>(V_1 * V_2.unitary_inverse());
+    G1_precomp<ppT> proof_V_g1_with_acc_precomp = ppT::precompute_G1(proof.V_g1 + acc);
+    G2_precomp<ppT> proof_V_g2_precomp = ppT::precompute_G2(proof.V_g2);
+    Fqk<ppT> V_1 = ppT::miller_loop(proof_V_g1_with_acc_precomp,    pvk.pp_G2_one_precomp);
+    Fqk<ppT> V_2 = ppT::miller_loop(pvk.pp_G1_one_precomp, proof_V_g2_precomp);
+    GT<ppT> V = ppT::final_exponentiation(V_1 * V_2.unitary_inverse());
     if (V != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -465,10 +463,10 @@ bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verif
     leave_block("Check knowledge commitment for V is valid");
 
     enter_block("Check SSP divisibility"); // i.e., check that V^2=H*Z+1
-    G1_precomp<ppT> proof_H_g1_precomp = precompute_G1<ppT>(proof.H_g1);
-    Fqk<ppT> SSP_1  = miller_loop<ppT>(proof_V_g1_with_acc_precomp,  proof_V_g2_precomp);
-    Fqk<ppT> SSP_2  = miller_loop<ppT>(proof_H_g1_precomp, pvk.vk_Z_g2_precomp);
-    GT<ppT> SSP = final_exponentiation<ppT>(SSP_1.unitary_inverse() * SSP_2 * pvk.pairing_of_g1_and_g2);
+    G1_precomp<ppT> proof_H_g1_precomp = ppT::precompute_G1(proof.H_g1);
+    Fqk<ppT> SSP_1  = ppT::miller_loop(proof_V_g1_with_acc_precomp,  proof_V_g2_precomp);
+    Fqk<ppT> SSP_2  = ppT::miller_loop(proof_H_g1_precomp, pvk.vk_Z_g2_precomp);
+    GT<ppT> SSP = ppT::final_exponentiation(SSP_1.unitary_inverse() * SSP_2 * pvk.pairing_of_g1_and_g2);
     if (SSP != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
@@ -480,11 +478,11 @@ bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verif
     leave_block("Check SSP divisibility");
 
     enter_block("Check same coefficients were used");
-    G1_precomp<ppT> proof_V_g1_precomp = precompute_G1<ppT>(proof.V_g1);
-    G1_precomp<ppT> proof_alpha_V_g1_precomp = precompute_G1<ppT>(proof.alpha_V_g1);
-    Fqk<ppT> alpha_V_1 = miller_loop<ppT>(proof_V_g1_precomp, pvk.vk_alpha_tilde_g2_precomp);
-    Fqk<ppT> alpha_V_2 = miller_loop<ppT>(proof_alpha_V_g1_precomp, pvk.vk_tilde_g2_precomp);
-    GT<ppT> alpha_V = final_exponentiation<ppT>(alpha_V_1 * alpha_V_2.unitary_inverse());
+    G1_precomp<ppT> proof_V_g1_precomp = ppT::precompute_G1(proof.V_g1);
+    G1_precomp<ppT> proof_alpha_V_g1_precomp = ppT::precompute_G1(proof.alpha_V_g1);
+    Fqk<ppT> alpha_V_1 = ppT::miller_loop(proof_V_g1_precomp, pvk.vk_alpha_tilde_g2_precomp);
+    Fqk<ppT> alpha_V_2 = ppT::miller_loop(proof_alpha_V_g1_precomp, pvk.vk_tilde_g2_precomp);
+    GT<ppT> alpha_V = ppT::final_exponentiation(alpha_V_1 * alpha_V_2.unitary_inverse());
     if (alpha_V != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)

@@ -14,7 +14,7 @@
 #include <cstdio>
 #include <list>
 #include <vector>
-#include "common/types.hpp"
+#include "common/default_types/ec_pp.hpp"
 
 #ifndef NO_PROCPS
 #include <proc/readproc.h>
@@ -49,18 +49,18 @@ std::vector<std::string> block_names;
 
 std::list<std::pair<std::string, long long*> > op_data_points = {
 #ifdef PROFILE_OP_COUNTS
-    std::make_pair("Fradd", &Fr<default_pp>::add_cnt),
-    std::make_pair("Frsub", &Fr<default_pp>::sub_cnt),
-    std::make_pair("Frmul", &Fr<default_pp>::mul_cnt),
-    std::make_pair("Frinv", &Fr<default_pp>::inv_cnt),
-    std::make_pair("Fqadd", &Fq<default_pp>::add_cnt),
-    std::make_pair("Fqsub", &Fq<default_pp>::sub_cnt),
-    std::make_pair("Fqmul", &Fq<default_pp>::mul_cnt),
-    std::make_pair("Fqinv", &Fq<default_pp>::inv_cnt),
-    std::make_pair("G1add", &G1<default_pp>::add_cnt),
-    std::make_pair("G1dbl", &G1<default_pp>::dbl_cnt),
-    std::make_pair("G2add", &G2<default_pp>::add_cnt),
-    std::make_pair("G2dbl", &G2<default_pp>::dbl_cnt)
+    std::make_pair("Fradd", &Fr<default_ec_pp>::add_cnt),
+    std::make_pair("Frsub", &Fr<default_ec_pp>::sub_cnt),
+    std::make_pair("Frmul", &Fr<default_ec_pp>::mul_cnt),
+    std::make_pair("Frinv", &Fr<default_ec_pp>::inv_cnt),
+    std::make_pair("Fqadd", &Fq<default_ec_pp>::add_cnt),
+    std::make_pair("Fqsub", &Fq<default_ec_pp>::sub_cnt),
+    std::make_pair("Fqmul", &Fq<default_ec_pp>::mul_cnt),
+    std::make_pair("Fqinv", &Fq<default_ec_pp>::inv_cnt),
+    std::make_pair("G1add", &G1<default_ec_pp>::add_cnt),
+    std::make_pair("G1dbl", &G1<default_ec_pp>::dbl_cnt),
+    std::make_pair("G2add", &G2<default_ec_pp>::add_cnt),
+    std::make_pair("G2dbl", &G2<default_ec_pp>::dbl_cnt)
 #endif
 };
 

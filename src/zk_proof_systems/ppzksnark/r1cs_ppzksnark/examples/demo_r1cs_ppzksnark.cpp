@@ -5,7 +5,7 @@
 
  The command
 
-     $ src/r1cs_ppzksnark/examples/profile_r1cs_ppzksnark 1000 10 Fr
+     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
 
  exercises the ppzkSNARK (first generator, then prover, then verifier) on an R1CS instance with 1000 equations and an input consisting of 10 field elements.
 
@@ -13,7 +13,7 @@
 
  The command
 
-     $ src/r1cs_ppzksnark/examples/profile_r1cs_ppzksnark 1000 10 bytes
+     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
 
  does the same but now the input consists of 10 bytes.
 
@@ -22,14 +22,10 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-
-#include <algorithm>
-#include <cstdio>
 #include <cassert>
-#include <cstring>
-#include <vector>
+#include <cstdio>
 
-#include "common/types.hpp"
+#include "common/default_types/r1cs_ppzksnark_pp.hpp"
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
@@ -39,7 +35,7 @@ using namespace libsnark;
 
 int main(int argc, const char * argv[])
 {
-    init_public_params<default_pp>();
+    default_r1cs_ppzksnark_pp::init_public_params();
     start_profiling();
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
@@ -60,16 +56,16 @@ int main(int argc, const char * argv[])
         assert(strcmp(argv[3], "Fr") == 0 || strcmp(argv[3], "bytes") == 0);
         if (strcmp(argv[3], "bytes") == 0)
         {
-            input_size = div_ceil(8 * input_size, Fr<default_pp>::num_bits - 1);
+            input_size = div_ceil(8 * input_size, Fr<default_ec_pp>::capacity());
         }
     }
 
     enter_block("Generate R1CS example");
-    r1cs_example<Fr<default_pp> > example = generate_r1cs_example_with_field_input<Fr<default_pp> >(num_constraints, input_size);
+    r1cs_example<Fr<default_r1cs_ppzksnark_pp> > example = generate_r1cs_example_with_field_input<Fr<default_r1cs_ppzksnark_pp> >(num_constraints, input_size);
     leave_block("Generate R1CS example");
 
     print_header("(enter) Profile R1CS ppzkSNARK");
-    const bool test_serialization = false;
-    run_r1cs_ppzksnark<default_pp>(example, test_serialization);
+    const bool test_serialization = true;
+    run_r1cs_ppzksnark<default_r1cs_ppzksnark_pp>(example, test_serialization);
     print_header("(leave) Profile R1CS ppzkSNARK");
 }

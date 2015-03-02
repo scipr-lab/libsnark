@@ -22,8 +22,8 @@ Fp PublicParams::getFp(long x) const {
 PublicParams::~PublicParams() {}
 
 PublicParams initPublicParamsFromDefaultPp() {
-    libsnark::init_public_params<libsnark::default_pp>();
-    const std::size_t log_p = libsnark::Fr<libsnark::default_pp>::num_bits;
+    libsnark::default_ec_pp::init_public_params();
+    const std::size_t log_p = libsnark::Fr<libsnark::default_ec_pp>::size_in_bits();
     return PublicParams(log_p);
 }
 
