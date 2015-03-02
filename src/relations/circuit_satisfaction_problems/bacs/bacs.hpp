@@ -69,6 +69,7 @@ struct bacs_gate {
     friend std::istream& operator>> <FieldT>(std::istream &in, bacs_gate<FieldT> &g);
 };
 
+
 /****************************** BACS inputs **********************************/
 
 /**
@@ -103,7 +104,7 @@ std::istream& operator>>(std::istream &in, bacs_circuit<FieldT> &circuit);
  *
  * NOTE:
  * The 0-th variable (i.e., "x_{0}") always represents the constant 1.
- * Thus, the 0-th variable is not included in num_vars.
+ * Thus, the 0-th variable is not included in num_variables.
  */
 template<typename FieldT>
 class bacs_circuit {
@@ -114,6 +115,10 @@ public:
 
     bacs_circuit() : primary_input_size(0), auxiliary_input_size(0) {}
 
+    size_t num_inputs() const;
+    size_t num_gates() const;
+    size_t num_wires() const;
+
     std::vector<size_t> wire_depths() const;
     size_t depth() const;
 
@@ -123,19 +128,21 @@ public:
 #endif
 
     bool is_valid() const;
+    bool is_satisfied(const bacs_primary_input<FieldT> &primary_input,
+                      const bacs_auxiliary_input<FieldT> &auxiliary_input) const;
 
     bacs_variable_assignment<FieldT> get_all_outputs(const bacs_primary_input<FieldT> &primary_input,
                                                      const bacs_auxiliary_input<FieldT> &auxiliary_input) const;
     bacs_variable_assignment<FieldT> get_all_wires(const bacs_primary_input<FieldT> &primary_input,
                                                    const bacs_auxiliary_input<FieldT> &auxiliary_input) const;
 
-    bool is_satisfied(const bacs_primary_input<FieldT> &primary_input,
-                      const bacs_auxiliary_input<FieldT> &auxiliary_input) const;
-
     void add_gate(const bacs_gate<FieldT> &g);
     void add_gate(const bacs_gate<FieldT> &g, const std::string &annotation);
 
     bool operator==(const bacs_circuit<FieldT> &other) const;
+
+    void print() const;
+    void print_info() const;
 
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const bacs_circuit<FieldT> &circuit);
     friend std::istream& operator>> <FieldT>(std::istream &in, bacs_circuit<FieldT> &circuit);

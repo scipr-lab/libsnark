@@ -1,16 +1,16 @@
 /** @file
-*****************************************************************************
+ *****************************************************************************
 
-Implementation of functions to sample TBCS examples with prescribed parameters
-(according to some distribution).
+ Implementation of functions to sample TBCS examples with prescribed parameters
+ (according to some distribution).
 
-See tbcs_examples.hpp .
+ See tbcs_examples.hpp .
 
-*****************************************************************************
-* @author     This file is part of libsnark, developed by SCIPR Lab
-*             and contributors (see AUTHORS).
-* @copyright  MIT license (see LICENSE file)
-*****************************************************************************/
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
+ * @copyright  MIT license (see LICENSE file)
+ *****************************************************************************/
 
 #include "relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp"
 
@@ -45,11 +45,11 @@ tbcs_example generate_tbcs_example(const size_t primary_input_size,
 
     for (size_t i = 0; i < num_gates; ++i)
     {
-        const size_t num_vars = primary_input_size + auxiliary_input_size + i;
+        const size_t num_variables = primary_input_size + auxiliary_input_size + i;
         tbcs_gate gate;
-        gate.left_wire = std::rand() % (num_vars+1);
-        gate.right_wire = std::rand() % (num_vars+1);
-        gate.output = num_vars+1;
+        gate.left_wire = std::rand() % (num_variables+1);
+        gate.right_wire = std::rand() % (num_variables+1);
+        gate.output = num_variables+1;
 
         if (i >= num_gates - num_outputs)
         {

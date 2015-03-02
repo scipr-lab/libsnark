@@ -22,7 +22,7 @@
 namespace libsnark {
 
 template<typename FieldT>
-linear_combination<FieldT> random_linear_combination(const size_t num_vars)
+linear_combination<FieldT> random_linear_combination(const size_t num_variables)
 {
     const size_t terms = 1 + (std::rand() % 3);
     linear_combination<FieldT> result;
@@ -30,7 +30,7 @@ linear_combination<FieldT> random_linear_combination(const size_t num_vars)
     for (size_t i = 0; i < terms; ++i)
     {
         const FieldT coeff = FieldT(std::rand()); // TODO: replace with FieldT::random_element(), when it becomes faster...
-        result = result + coeff * variable<FieldT>(std::rand() % (num_vars + 1));
+        result = result + coeff * variable<FieldT>(std::rand() % (num_variables + 1));
     }
 
     return result;
@@ -62,11 +62,11 @@ bacs_example<FieldT> generate_bacs_example(const size_t primary_input_size,
 
     for (size_t i = 0; i < num_gates; ++i)
     {
-        const size_t num_vars = primary_input_size + auxiliary_input_size + i;
+        const size_t num_variables = primary_input_size + auxiliary_input_size + i;
         bacs_gate<FieldT> gate;
-        gate.lhs = random_linear_combination<FieldT>(num_vars);
-        gate.rhs = random_linear_combination<FieldT>(num_vars);
-        gate.output = variable<FieldT>(num_vars+1);
+        gate.lhs = random_linear_combination<FieldT>(num_variables);
+        gate.rhs = random_linear_combination<FieldT>(num_variables);
+        gate.output = variable<FieldT>(num_variables+1);
 
         if (i >= num_gates - num_outputs)
         {

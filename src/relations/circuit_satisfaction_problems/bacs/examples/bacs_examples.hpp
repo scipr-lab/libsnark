@@ -47,8 +47,16 @@ struct bacs_example {
 };
 
 /**
- * Generate an BACS example such that:
- * - TODO
+ * Generate a BACS example such that:
+ * - the primary input has size primary_input_size;
+ * - the auxiliary input has size auxiliary_input_size;
+ * - the circuit has num_gates gates;
+ * - the circuit has num_outputs (<= num_gates) output gates.
+ *
+ * This is done by first selecting primary and auxiliary inputs uniformly at random, and then for each gate:
+ * - selecting random left and right wires from primary inputs, auxiliary inputs, and outputs of previous gates,
+ * - selecting random linear combinations for left and right wires, consisting of 1, 2, 3 or 4 terms each, with random coefficients,
+ * - if the gate is an output gate, then adding a random non-output wire to either left or right linear combination, with appropriate coefficient, so that the linear combination evaluates to 0.
  */
 template<typename FieldT>
 bacs_example<FieldT> generate_bacs_example(const size_t primary_input_size,

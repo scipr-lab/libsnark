@@ -20,6 +20,7 @@
 #define BACS_TCC_
 
 #include <algorithm>
+#include "common/profiling.hpp"
 #include "common/utils.hpp"
 
 namespace libsnark {
@@ -35,9 +36,14 @@ void bacs_gate<FieldT>::print(const std::map<size_t, std::string> &variable_anno
 {
     printf("(\n");
     lhs.print(variable_annotations);
-    printf(") * (\n");
+    printf(")\n *\n(\n");
     rhs.print(variable_annotations);
-    printf(")\n");
+    printf(")\n -> \n");
+    auto it = variable_annotations.find(output.index);
+    printf("    x_%zu (%s) (%s)\n",
+           output.index,
+           (it == variable_annotations.end() ? "no annotation" : it->second.c_str()),
+           (is_circuit_output ? "circuit output" : "internal wire"));
 }
 
 template<typename FieldT>
@@ -78,21 +84,41 @@ std::istream& operator>>(std::istream &in, bacs_gate<FieldT> &g)
 }
 
 template<typename FieldT>
+size_t bacs_circuit<FieldT>::num_inputs() const
+{
+    return primary_input_size + auxiliary_input_size;
+}
+
+template<typename FieldT>
+size_t bacs_circuit<FieldT>::num_gates() const
+{
+    return gates.size();
+}
+
+template<typename FieldT>
+size_t bacs_circuit<FieldT>::num_wires() const
+{
+    return num_inputs() + num_gates();
+}
+
+template<typename FieldT>
 std::vector<size_t> bacs_circuit<FieldT>::wire_depths() const
 {
-    std::vector<size_t> depths(primary_input_size+auxiliary_input_size, 1);
+    std::vector<size_t> depths;
+    depths.emplace_back(0);
+    depths.resize(num_inputs() + 1, 1);
 
     for (auto &g: gates)
     {
         size_t max_depth = 0;
-        for (auto &w : g.left_wires)
+        for (auto &t : g.lhs)
         {
-            max_depth = std::max(max_depth, depths[w.wire]);
+            max_depth = std::max(max_depth, depths[t.index]);
         }
 
-        for (auto &w : g.right_wires)
+        for (auto &t : g.rhs)
         {
-            max_depth = std::max(max_depth, depths[w.wire]);
+            max_depth = std::max(max_depth, depths[t.index]);
         }
 
         depths.emplace_back(max_depth + 1);
@@ -111,21 +137,21 @@ size_t bacs_circuit<FieldT>::depth() const
 template<typename FieldT>
 bool bacs_circuit<FieldT>::is_valid() const
 {
-    /*
-      Gates must be sorted topologically sorted, and
-      the output wire of gates[i] must equal num_inputs+i+1.
-      (The '+1' accounts for the constant wire.)
-     */
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-
-    for (size_t i = 0; i < gates.size(); ++i)
+    for (size_t i = 0; i < num_gates(); ++i)
     {
-        if (gates[i].output.index != num_inputs+i+1)
+        /**
+         * The output wire of gates[i] must have index 1+num_inputs+i.
+         * (The '1+' accounts for the the index of the constant wire.)
+         */
+        if (gates[i].output.index != 1+num_inputs()+i)
         {
             return false;
         }
 
-        if (!gates[i].lhs.is_valid(num_inputs) || !gates[i].rhs.is_valid(num_inputs))
+        /**
+         * Gates must be topologically sorted.
+         */
+        if (!gates[i].lhs.is_valid(gates[i].output.index) || !gates[i].rhs.is_valid(gates[i].output.index))
         {
             return false;
         }
@@ -138,13 +164,14 @@ template<typename FieldT>
 bacs_variable_assignment<FieldT> bacs_circuit<FieldT>::get_all_wires(const bacs_primary_input<FieldT> &primary_input,
                                                                      const bacs_auxiliary_input<FieldT> &auxiliary_input) const
 {
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-    bacs_variable_assignment<FieldT> input;
-    input.insert(input.end(), primary_input.begin(), primary_input.end());
-    input.insert(input.end(), auxiliary_input.begin(), auxiliary_input.end());
+    assert(primary_input.size() == primary_input_size);
+    assert(auxiliary_input.size() == auxiliary_input_size);
 
-    assert(input.size() == num_inputs);
-    bacs_variable_assignment<FieldT> result(input);
+    bacs_variable_assignment<FieldT> result;
+    result.insert(result.end(), primary_input.begin(), primary_input.end());
+    result.insert(result.end(), auxiliary_input.begin(), auxiliary_input.end());
+
+    assert(result.size() == num_inputs());
 
     for (auto &g : gates)
     {
@@ -160,13 +187,14 @@ bacs_variable_assignment<FieldT> bacs_circuit<FieldT>::get_all_outputs(const bac
                                                                        const bacs_auxiliary_input<FieldT> &auxiliary_input) const
 {
     const bacs_variable_assignment<FieldT> all_wires = get_all_wires(primary_input, auxiliary_input);
+
     bacs_variable_assignment<FieldT> all_outputs;
 
-    for (size_t i = 0; i < gates.size(); ++i)
+    for (auto &g: gates)
     {
-        if (gates[i].is_circuit_output)
+        if (g.is_circuit_output)
         {
-            all_outputs.emplace_back(all_wires[gates[i].output.index-1]);
+            all_outputs.emplace_back(all_wires[g.output.index-1]);
         }
     }
 
@@ -193,16 +221,14 @@ bool bacs_circuit<FieldT>::is_satisfied(const bacs_primary_input<FieldT> &primar
 template<typename FieldT>
 void bacs_circuit<FieldT>::add_gate(const bacs_gate<FieldT> &g)
 {
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-    assert(g.output.index == num_inputs+gates.size()+1);
+    assert(g.output.index == num_wires()+1);
     gates.emplace_back(g);
 }
 
 template<typename FieldT>
 void bacs_circuit<FieldT>::add_gate(const bacs_gate<FieldT> &g, const std::string &annotation)
 {
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-    assert(g.output.index == num_inputs+gates.size()+1);
+    assert(g.output.index == num_wires()+1);
     gates.emplace_back(g);
 #ifdef DEBUG
     gate_annotations[g.output.index] = annotation;
@@ -238,6 +264,40 @@ std::istream& operator>>(std::istream &in, bacs_circuit<FieldT> &circuit)
     consume_OUTPUT_NEWLINE(in);
 
     return in;
+}
+
+template<typename FieldT>
+void bacs_circuit<FieldT>::print() const
+{
+    print_indent(); printf("General information about the circuit:\n");
+    this->print_info();
+    print_indent(); printf("All gates:\n");
+    for (size_t i = 0; i < gates.size(); ++i)
+    {
+        std::string annotation = "no annotation";
+#ifdef DEBUG
+        auto it = gate_annotations.find(i);
+        if (it != gate_annotations.end())
+        {
+            annotation = it->second;
+        }
+#endif
+        printf("Gate %zu (%s):\n", i, annotation.c_str());
+#ifdef DEBUG
+        gates[i].print(variable_annotations);
+#else
+        gates[i].print();
+#endif
+    }
+}
+
+template<typename FieldT>
+void bacs_circuit<FieldT>::print_info() const
+{
+    print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
+    print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
+    print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
+    print_indent(); printf("* Depth: %zu\n", this->depth());
 }
 
 } // libsnark

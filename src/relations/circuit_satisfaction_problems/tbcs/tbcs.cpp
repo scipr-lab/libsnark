@@ -23,7 +23,10 @@ namespace libsnark {
 
 bool tbcs_gate::evaluate(const tbcs_variable_assignment &input) const
 {
-    // This function is very tricky, see comment in tbcs.hpp
+    /**
+     * This function is very tricky.
+     * See comment in tbcs.hpp .
+     */
 
     const bool X = (left_wire == 0 ? true : input[left_wire - 1]);
     const bool Y = (right_wire == 0 ? true : input[right_wire - 1]);
@@ -33,9 +36,88 @@ bool tbcs_gate::evaluate(const tbcs_variable_assignment &input) const
     return (((int)type) & (1u << pos));
 }
 
+void print_tbcs_wire(const tbcs_wire_t wire, const std::map<size_t, std::string> &variable_annotations)
+{
+    /**
+     * The type tbcs_wire_t does not deserve promotion to a class,
+     * but still benefits from a dedicated printing mechanism.
+     */
+    if (wire == 0)
+    {
+        printf("  1");
+    }
+    else
+    {
+        auto it = variable_annotations.find(wire);
+        printf("    x_%zu (%s)",
+               wire,
+               (it == variable_annotations.end() ? "no annotation" : it->second.c_str()));
+    }
+}
+
 void tbcs_gate::print(const std::map<size_t, std::string> &variable_annotations) const
 {
-    // TODO: should find a clang++ libstd::map debug build bug and fix it together with this (too complicated to explain in a comment)
+    switch (this->type)
+    {
+    case TBCS_GATE_CONSTANT_0:
+        printf("CONSTANT_0");
+        break;
+    case TBCS_GATE_AND:
+        printf("AND");
+        break;
+    case TBCS_GATE_X_AND_NOT_Y:
+        printf("X_AND_NOT_Y");
+        break;
+    case TBCS_GATE_X:
+        printf("X");
+        break;
+    case TBCS_GATE_NOT_X_AND_Y:
+        printf("NOT_X_AND_Y");
+        break;
+    case TBCS_GATE_Y:
+        printf("Y");
+        break;
+    case TBCS_GATE_XOR:
+        printf("XOR");
+        break;
+    case TBCS_GATE_OR:
+        printf("OR");
+        break;
+    case TBCS_GATE_NOR:
+        printf("NOR");
+        break;
+    case TBCS_GATE_EQUIVALENCE:
+        printf("EQUIVALENCE");
+        break;
+    case TBCS_GATE_NOT_Y:
+        printf("NOT_Y");
+        break;
+    case TBCS_GATE_IF_Y_THEN_X:
+        printf("IF_Y_THEN_X");
+        break;
+    case TBCS_GATE_NOT_X:
+        printf("NOT_X");
+        break;
+    case TBCS_GATE_IF_X_THEN_Y:
+        printf("IF_X_THEN_Y");
+        break;
+    case TBCS_GATE_NAND:
+        printf("NAND");
+        break;
+    case TBCS_GATE_CONSTANT_1:
+        printf("CONSTANT_1");
+        break;
+    default:
+        printf("Invalid type");
+    }
+
+    printf("\n(\n");
+    print_tbcs_wire(left_wire, variable_annotations);
+    printf(",\n");
+    print_tbcs_wire(right_wire, variable_annotations);
+    printf("\n) ->\n");
+    print_tbcs_wire(output, variable_annotations);
+    printf(" (%s)\n", is_circuit_output ? "circuit output" : "internal wire");
 }
 
 bool tbcs_gate::operator==(const tbcs_gate &other) const
@@ -76,7 +158,7 @@ std::istream& operator>>(std::istream &in, tbcs_gate &g)
 
 std::vector<size_t> tbcs_circuit::wire_depths() const
 {
-    std::vector<size_t> depths(primary_input_size + auxiliary_input_size, 1);
+    std::vector<size_t> depths(num_inputs(), 1);
 
     for (auto &g: gates)
     {
@@ -84,6 +166,21 @@ std::vector<size_t> tbcs_circuit::wire_depths() const
     }
 
     return depths;
+}
+
+size_t tbcs_circuit::num_inputs() const
+{
+    return primary_input_size + auxiliary_input_size;
+}
+
+size_t tbcs_circuit::num_gates() const
+{
+    return gates.size();
+}
+
+size_t tbcs_circuit::num_wires() const
+{
+    return num_inputs() + num_gates();
 }
 
 size_t tbcs_circuit::depth() const
@@ -94,16 +191,21 @@ size_t tbcs_circuit::depth() const
 
 bool tbcs_circuit::is_valid() const
 {
-    /*
-     Gates must be sorted topologically sorted, and
-     the output wire of gates[i] must equal num_inputs+i+1.
-     (The '+1' accounts for the constant wire.)
-     */
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-
-    for (size_t i = 0; i < gates.size(); ++i)
+    for (size_t i = 0; i < num_gates(); ++i)
     {
-        if (gates[i].output != num_inputs+i+1)
+        /**
+         * The output wire of gates[i] must have index 1+num_inputs+i.
+         * (The '1+' accounts for the the index of the constant wire.)
+         */
+        if (gates[i].output != num_inputs()+i+1)
+        {
+            return false;
+        }
+
+        /**
+         * Gates must be topologically sorted.
+         */
+        if (gates[i].left_wire >= gates[i].output || gates[i].right_wire >= gates[i].output)
         {
             return false;
         }
@@ -117,9 +219,12 @@ tbcs_variable_assignment tbcs_circuit::get_all_wires(const tbcs_primary_input &p
 {
     assert(primary_input.size() == primary_input_size);
     assert(auxiliary_input.size() == auxiliary_input_size);
+
     tbcs_variable_assignment result;
     result.insert(result.end(), primary_input.begin(), primary_input.end());
     result.insert(result.end(), auxiliary_input.begin(), auxiliary_input.end());
+
+    assert(result.size() == num_inputs());
 
     for (auto &g : gates)
     {
@@ -165,15 +270,13 @@ bool tbcs_circuit::is_satisfied(const tbcs_primary_input &primary_input,
 
 void tbcs_circuit::add_gate(const tbcs_gate &g)
 {
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-    assert(g.output == num_inputs+gates.size()+1);
+    assert(g.output == num_wires()+1);
     gates.emplace_back(g);
 }
 
 void tbcs_circuit::add_gate(const tbcs_gate &g, const std::string &annotation)
 {
-    const size_t num_inputs = primary_input_size+auxiliary_input_size;
-    assert(g.output == num_inputs+gates.size()+1);
+    assert(g.output == num_wires()+1);
     gates.emplace_back(g);
 #ifdef DEBUG
     gate_annotations[g.output] = annotation;
@@ -206,6 +309,38 @@ std::istream& operator>>(std::istream &in, tbcs_circuit &circuit)
     consume_OUTPUT_NEWLINE(in);
 
     return in;
+}
+
+void tbcs_circuit::print() const
+{
+    print_indent(); printf("General information about the circuit:\n");
+    this->print_info();
+    print_indent(); printf("All gates:\n");
+    for (size_t i = 0; i < gates.size(); ++i)
+    {
+        std::string annotation = "no annotation";
+#ifdef DEBUG
+        auto it = gate_annotations.find(i);
+        if (it != gate_annotations.end())
+        {
+            annotation = it->second;
+        }
+#endif
+        printf("Gate %zu (%s):\n", i, annotation.c_str());
+#ifdef DEBUG
+        gates[i].print(variable_annotations);
+#else
+        gates[i].print();
+#endif
+    }
+}
+
+void tbcs_circuit::print_info() const
+{
+    print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
+    print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
+    print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
+    print_indent(); printf("* Depth: %zu\n", this->depth());
 }
 
 } // libsnark

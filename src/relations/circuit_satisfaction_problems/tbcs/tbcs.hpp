@@ -17,18 +17,22 @@
 #ifndef TBCS_HPP_
 #define TBCS_HPP_
 
+#include "common/profiling.hpp"
 #include "relations/variable.hpp"
 
 namespace libsnark {
 
-typedef std::vector<bool> tbcs_variable_assignment;
-typedef size_t tbcs_wire_t;
+/*********************** BACS variable assignment ****************************/
 
-typedef tbcs_variable_assignment tbcs_primary_input;
-typedef tbcs_variable_assignment tbcs_auxiliary_input;
+/**
+ * A TBCS variable assignment is a vector of bools.
+ */
+typedef std::vector<bool> tbcs_variable_assignment;
+
 
 /**************************** TBCS gate **************************************/
 
+typedef size_t tbcs_wire_t;
 
 /**
  * Types of TBCS gates (2-input boolean gates).
@@ -99,6 +103,20 @@ public:
     friend std::istream& operator>>(std::istream &in, tbcs_gate &g);
 };
 
+
+/****************************** TBCS inputs **********************************/
+
+/**
+ * A TBCS primary input is a TBCS variable assignment.
+ */
+typedef tbcs_variable_assignment tbcs_primary_input;
+
+/**
+ * A TBCS auxiliary input is a TBCS variable assigment.
+ */
+typedef tbcs_variable_assignment tbcs_auxiliary_input;
+
+
 /************************** TBCS circuit *************************************/
 
 /**
@@ -109,16 +127,19 @@ public:
  *
  * NOTE:
  * The 0-th variable (i.e., "x_{0}") always represents the constant 1.
- * Thus, the 0-th variable is not included in num_vars.
+ * Thus, the 0-th variable is not included in num_variables.
  */
 class tbcs_circuit {
 public:
-    std::vector<tbcs_gate> gates;
-
     size_t primary_input_size;
     size_t auxiliary_input_size;
+    std::vector<tbcs_gate> gates;
 
     tbcs_circuit() : primary_input_size(0), auxiliary_input_size(0) {}
+
+    size_t num_inputs() const;
+    size_t num_gates() const;
+    size_t num_wires() const;
 
     std::vector<size_t> wire_depths() const;
     size_t depth() const;
@@ -128,19 +149,22 @@ public:
     std::map<size_t, std::string> variable_annotations;
 #endif
 
+    bool is_valid() const;
+    bool is_satisfied(const tbcs_primary_input &primary_input,
+                      const tbcs_auxiliary_input &auxiliary_input) const;
+
     tbcs_variable_assignment get_all_wires(const tbcs_primary_input &primary_input,
                                            const tbcs_auxiliary_input &auxiliary_input) const;
     tbcs_variable_assignment get_all_outputs(const tbcs_primary_input &primary_input,
                                              const tbcs_auxiliary_input &auxiliary_input) const;
 
-    bool is_valid() const;
-    bool is_satisfied(const tbcs_primary_input &primary_input,
-                      const tbcs_auxiliary_input &auxiliary_input) const;
-
     void add_gate(const tbcs_gate &g);
     void add_gate(const tbcs_gate &g, const std::string &annotation);
 
     bool operator==(const tbcs_circuit &other) const;
+
+    void print() const;
+    void print_info() const;
 
     friend std::ostream& operator<<(std::ostream &out, const tbcs_circuit &circuit);
     friend std::istream& operator>>(std::istream &in, tbcs_circuit &circuit);
