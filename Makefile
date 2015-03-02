@@ -40,10 +40,14 @@ SRCS= \
 	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp
 
 EXECUTABLES= \
-	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/demo_bacs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/demo_tbcs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/demo_uscs_ppzksnark
+	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \
