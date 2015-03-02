@@ -22,12 +22,12 @@ step_radix2_domain<FieldT>::step_radix2_domain(const size_t m) : evaluation_doma
 {
     assert(m > 1);
 
-    big_m = 1u<<(log2(m)-1);
+    big_m = 1ul<<(log2(m)-1);
     small_m = m - big_m;
 
-    assert(small_m == 1u<<log2(small_m));
+    assert(small_m == 1ul<<log2(small_m));
 
-    omega = get_root_of_unity<FieldT>(1u<<log2(m)); // rounded!
+    omega = get_root_of_unity<FieldT>(1ul<<log2(m)); // rounded!
     big_omega = omega.squared();
     small_omega = get_root_of_unity<FieldT>(small_m);
 }
@@ -48,7 +48,7 @@ void step_radix2_domain<FieldT>::FFT(std::vector<FieldT> &a)
     }
 
     std::vector<FieldT> e(small_m, FieldT::zero());
-    const size_t compr = 1u<<(log2(big_m) - log2(small_m));
+    const size_t compr = 1ul<<(log2(big_m) - log2(small_m));
     for (size_t i = 0; i < small_m; ++i)
     {
         for (size_t j = 0; j < compr; ++j)
@@ -108,7 +108,7 @@ void step_radix2_domain<FieldT>::iFFT(std::vector<FieldT> &a)
         a[i] = U0[i];
     }
 
-    const size_t compr = 1u<<(log2(big_m) - log2(small_m));
+    const size_t compr = 1ul<<(log2(big_m) - log2(small_m));
     for (size_t i = 0; i < small_m; ++i)
     {
         for (size_t j = 1; j < compr; ++j)

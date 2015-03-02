@@ -116,7 +116,7 @@ std::shared_ptr<evaluation_domain<FieldT> > get_evaluation_domain(const size_t m
  * The output is the polynomial L_{idx,S}(z) evaluated at z = t.
  */
 template<typename FieldT>
-FieldT lagrange_eval(const size_t m, const std::vector<FieldT> domain, const FieldT &t, const size_t idx);
+FieldT lagrange_eval(const size_t m, const std::vector<FieldT> &domain, const FieldT &t, const size_t idx);
 
 } // libsnark
 

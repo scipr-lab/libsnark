@@ -56,9 +56,9 @@ std::shared_ptr<evaluation_domain<FieldT> > get_evaluation_domain(const size_t m
     }
     else
     {
-        const size_t big = 1u<<(log2(min_size)-1);
+        const size_t big = 1ul<<(log2(min_size)-1);
         const size_t small = min_size - big;
-        const size_t rounded_small = (1u<<log2(small));
+        const size_t rounded_small = (1ul<<log2(small));
         if (big == rounded_small)
         {
             if (log2(big + rounded_small) < FieldT::s+1)
@@ -92,7 +92,7 @@ std::shared_ptr<evaluation_domain<FieldT> > get_evaluation_domain(const size_t m
 }
 
 template<typename FieldT>
-FieldT lagrange_eval(const size_t m, const std::vector<FieldT> domain, const FieldT &t, const size_t idx)
+FieldT lagrange_eval(const size_t m, const std::vector<FieldT> &domain, const FieldT &t, const size_t idx)
 {
     assert(m == domain.size());
     assert(idx < m);
