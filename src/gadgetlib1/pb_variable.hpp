@@ -65,7 +65,7 @@ public:
     std::vector<FieldT> get_vals(const protoboard<FieldT> &pb) const;
     bit_vector get_bits(const protoboard<FieldT> &pb) const;
 
-    FieldT get_field_element_from_bits(protoboard<FieldT> &pb) const;
+    FieldT get_field_element_from_bits(const protoboard<FieldT> &pb) const;
 };
 
 /* index 0 corresponds to the constant term (used in legacy code) */
@@ -125,11 +125,14 @@ public:
     std::vector<FieldT> get_vals(const protoboard<FieldT> &pb) const;
     bit_vector get_bits(const protoboard<FieldT> &pb) const;
 
-    FieldT get_field_element_from_bits(protoboard<FieldT> &pb) const;
+    FieldT get_field_element_from_bits(const protoboard<FieldT> &pb) const;
 };
 
 template<typename FieldT>
-linear_combination<FieldT> pb_sum(const pb_variable_array<FieldT> &v);
+linear_combination<FieldT> pb_sum(const pb_linear_combination_array<FieldT> &v);
+
+template<typename FieldT>
+linear_combination<FieldT> pb_packing_sum(const pb_linear_combination_array<FieldT> &v);
 
 } // libsnark
 #include "gadgetlib1/pb_variable.tcc"

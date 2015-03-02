@@ -67,7 +67,7 @@ void pb_variable_array<FieldT>::fill_with_bits_of_field_element(protoboard<Field
 template<typename FieldT>
 void pb_variable_array<FieldT>::fill_with_bits_of_ulong(protoboard<FieldT> &pb, const unsigned long i) const
 {
-    this->fill_with_bits_of_field_element(pb, FieldT(i));
+    this->fill_with_bits_of_field_element(pb, FieldT(i, true));
 }
 
 template<typename FieldT>
@@ -95,7 +95,7 @@ bit_vector pb_variable_array<FieldT>::get_bits(const protoboard<FieldT> &pb) con
 }
 
 template<typename FieldT>
-FieldT pb_variable_array<FieldT>::get_field_element_from_bits(protoboard<FieldT> &pb) const
+FieldT pb_variable_array<FieldT>::get_field_element_from_bits(const protoboard<FieldT> &pb) const
 {
     FieldT result = FieldT::zero();
 
@@ -261,7 +261,7 @@ bit_vector pb_linear_combination_array<FieldT>::get_bits(const protoboard<FieldT
 }
 
 template<typename FieldT>
-FieldT pb_linear_combination_array<FieldT>::get_field_element_from_bits(protoboard<FieldT> &pb) const
+FieldT pb_linear_combination_array<FieldT>::get_field_element_from_bits(const protoboard<FieldT> &pb) const
 {
     FieldT result = FieldT::zero();
 
@@ -277,12 +277,26 @@ FieldT pb_linear_combination_array<FieldT>::get_field_element_from_bits(protoboa
 }
 
 template<typename FieldT>
-linear_combination<FieldT> pb_sum(const pb_variable_array<FieldT> &v)
+linear_combination<FieldT> pb_sum(const pb_linear_combination_array<FieldT> &v)
 {
     linear_combination<FieldT> result;
-    for (const pb_variable<FieldT> &var : v)
+    for (auto &term  : v)
     {
-        result = result + var;
+        result = result + term;
+    }
+
+    return result;
+}
+
+template<typename FieldT>
+linear_combination<FieldT> pb_packing_sum(const pb_linear_combination_array<FieldT> &v)
+{
+    linear_combination<FieldT> result;
+    FieldT coeff = FieldT::one();
+    for (auto &term : v)
+    {
+        result = result + coeff * term;
+        coeff += coeff;
     }
 
     return result;
