@@ -1,6 +1,10 @@
 /** @file
  *****************************************************************************
- Implementation of misc. math and serialization utility functions
+
+ Implementation of interfaces for (square-and-multiply) exponentiation.
+
+ See exponentiation.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -20,6 +24,7 @@ FieldT power(const FieldT &base, const bigint<m> &exponent)
     FieldT result = FieldT::one();
 
     bool found_one = false;
+
     for (long i = exponent.max_bits() - 1; i >= 0; --i)
     {
         if (found_one)
@@ -44,4 +49,5 @@ FieldT power(const FieldT &base, const unsigned long exponent)
 }
 
 } // libsnark
+
 #endif // EXPONENTIATION_TCC_
