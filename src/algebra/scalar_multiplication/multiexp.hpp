@@ -22,8 +22,13 @@ template<typename T, typename FieldT>
 T naive_exp(typename std::vector<T>::const_iterator vec_start,
             typename std::vector<T>::const_iterator vec_end,
             typename std::vector<FieldT>::const_iterator scalar_start,
-            typename std::vector<FieldT>::const_iterator scalar_end,
-            const bool use_wnaf=true);
+            typename std::vector<FieldT>::const_iterator scalar_end);
+
+template<typename T, typename FieldT>
+T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
+                  typename std::vector<T>::const_iterator vec_end,
+                  typename std::vector<FieldT>::const_iterator scalar_start,
+                  typename std::vector<FieldT>::const_iterator scalar_end);
 
 /**
  * Naive multi-exponentiation uses a variant of the Bos-Coster algorithm [1],

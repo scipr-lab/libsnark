@@ -162,7 +162,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp_internal(const size_t scalar_si
                                                           const window_table<T2> &T2_table,
                                                           const FieldT &T1_coeff,
                                                           const FieldT &T2_coeff,
-                                                          const std::vector<FieldT> v,
+                                                          const std::vector<FieldT> &v,
                                                           const size_t start_pos,
                                                           const size_t end_pos,
                                                           const size_t expected_size)
@@ -194,7 +194,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
                                                  const FieldT &T1_coeff,
                                                  const FieldT &T2_coeff,
                                                  const std::vector<FieldT> &v,
-                                                 const size_t chunks)
+                                                 const size_t suggested_num_chunks)
 {
     knowledge_commitment_vector<T1, T2> res;
     res.domain_size_ = v.size();
@@ -205,16 +205,18 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
         nonzero += (v[i].is_zero() ? 0 : 1);
     }
 
+    const size_t num_chunks = std::max(1ul, std::min(nonzero, suggested_num_chunks));
+
     if (!inhibit_profiling_info)
     {
         print_indent(); printf("Non-zero coordinate count: %zu/%zu (%0.2f%%)\n", nonzero, v.size(), 100.*nonzero/v.size());
     }
 
-    std::vector<knowledge_commitment_vector<T1, T2> > tmp(chunks);
-    std::vector<size_t> chunk_pos(chunks+1);
+    std::vector<knowledge_commitment_vector<T1, T2> > tmp(num_chunks);
+    std::vector<size_t> chunk_pos(num_chunks+1);
 
-    const size_t chunk_size = nonzero / chunks;
-    const size_t last_chunk = nonzero - chunk_size * (chunks - 1);
+    const size_t chunk_size = nonzero / num_chunks;
+    const size_t last_chunk = nonzero - chunk_size * (num_chunks - 1);
 
     chunk_pos[0] = 0;
 
@@ -224,7 +226,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
     for (size_t i = 0; i < v.size(); ++i)
     {
         cnt += (v[i].is_zero() ? 0 : 1);
-        if (cnt == chunk_size)
+        if (cnt == chunk_size && chunkno < num_chunks)
         {
             chunk_pos[chunkno] = i;
             cnt = 0;
@@ -232,28 +234,28 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
         }
     }
 
-    chunk_pos[chunks] = v.size();
+    chunk_pos[num_chunks] = v.size();
 
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < chunks; ++i)
+    for (size_t i = 0; i < num_chunks; ++i)
     {
         tmp[i] = kc_batch_exp_internal<T1, T2, FieldT>(scalar_size, T1_window, T2_window, T1_table, T2_table, T1_coeff, T2_coeff, v,
-                                                       chunk_pos[i], chunk_pos[i+1], i == chunks - 1 ? last_chunk : chunk_size);
+                                                       chunk_pos[i], chunk_pos[i+1], i == num_chunks - 1 ? last_chunk : chunk_size);
 #ifdef USE_MIXED_ADDITION
         kc_batch_to_special<T1, T2>(tmp[i].values);
 #endif
     }
 
-    if (chunks == 1)
+    if (num_chunks == 1)
     {
         tmp[0].domain_size_ = v.size();
         return tmp[0];
     }
     else
     {
-        for (size_t i = 0; i < chunks; ++i)
+        for (size_t i = 0; i < num_chunks; ++i)
         {
             res.values.insert(res.values.end(), tmp[i].values.begin(), tmp[i].values.end());
             res.indices.insert(res.indices.end(), tmp[i].indices.begin(), tmp[i].indices.end());

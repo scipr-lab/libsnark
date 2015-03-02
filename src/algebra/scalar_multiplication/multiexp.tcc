@@ -107,8 +107,7 @@ template<typename T, typename FieldT>
 T naive_exp(typename std::vector<T>::const_iterator vec_start,
             typename std::vector<T>::const_iterator vec_end,
             typename std::vector<FieldT>::const_iterator scalar_start,
-            typename std::vector<FieldT>::const_iterator scalar_end,
-            const bool use_wnaf)
+            typename std::vector<FieldT>::const_iterator scalar_end)
 {
     T result(T::zero());
 
@@ -118,14 +117,27 @@ T naive_exp(typename std::vector<T>::const_iterator vec_start,
     for (vec_it = vec_start, scalar_it = scalar_start; vec_it != vec_end; ++vec_it, ++scalar_it)
     {
         bigint<FieldT::num_limbs> scalar_bigint = scalar_it->as_bigint();
-        if (use_wnaf)
-        {
-            result = result + opt_window_wnaf_exp(*vec_it, scalar_bigint, scalar_bigint.num_bits());
-        }
-        else
-        {
-            result = result + scalar_bigint * (*vec_it);
-        }
+        result = result + opt_window_wnaf_exp(*vec_it, scalar_bigint, scalar_bigint.num_bits());
+    }
+    assert(scalar_it == scalar_end);
+
+    return result;
+}
+
+template<typename T, typename FieldT>
+T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
+                  typename std::vector<T>::const_iterator vec_end,
+                  typename std::vector<FieldT>::const_iterator scalar_start,
+                  typename std::vector<FieldT>::const_iterator scalar_end)
+{
+    T result(T::zero());
+
+    typename std::vector<T>::const_iterator vec_it;
+    typename std::vector<FieldT>::const_iterator scalar_it;
+
+    for (vec_it = vec_start, scalar_it = scalar_start; vec_it != vec_end; ++vec_it, ++scalar_it)
+    {
+        result = result + (*scalar_it) * (*vec_it);
     }
     assert(scalar_it == scalar_end);
 
@@ -202,7 +214,7 @@ T multi_exp_inner(typename std::vector<T>::const_iterator vec_start,
         const size_t bbits = b.r.num_bits();
         const size_t limit = (abits-bbits >= 20 ? 20 : abits-bbits);
 
-        if (bbits < 1u<<limit)
+        if (bbits < 1ul<<limit)
         {
             /*
               In this case, exponentiating to the power of a is cheaper than
@@ -381,7 +393,7 @@ size_t get_exp_window_size(const size_t num_scalars)
 #ifdef DEBUG
         if (!inhibit_profiling_info)
         {
-            printf("%zu %zu %zu\n", i, num_scalars, T::fixed_base_exp_window_table[i]);
+            printf("%ld %zu %zu\n", i, num_scalars, T::fixed_base_exp_window_table[i]);
         }
 #endif
         if (T::fixed_base_exp_window_table[i] != 0 && num_scalars >= T::fixed_base_exp_window_table[i])
@@ -407,9 +419,9 @@ window_table<T> get_window_table(const size_t scalar_size,
                                  const size_t window,
                                  const T &g)
 {
-    const size_t in_window = 1u<<window;
+    const size_t in_window = 1ul<<window;
     const size_t outerc = (scalar_size+window-1)/window;
-    const size_t last_in_window = 1u<<(scalar_size - (outerc-1)*window);
+    const size_t last_in_window = 1ul<<(scalar_size - (outerc-1)*window);
 #ifdef DEBUG
     if (!inhibit_profiling_info)
     {

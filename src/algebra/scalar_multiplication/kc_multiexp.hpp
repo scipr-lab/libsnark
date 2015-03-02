@@ -46,7 +46,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
                                                  const FieldT &T1_coeff,
                                                  const FieldT &T2_coeff,
                                                  const std::vector<FieldT> &v,
-                                                 const bool is_sparse);
+                                                 const size_t suggested_num_chunks);
 
 } // libsnark
 
