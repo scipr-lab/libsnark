@@ -24,11 +24,21 @@ namespace libsnark {
  * ASSUMPTION: p = 1 (mod 6)
  */
 template<mp_size_t n, const bigint<n>& modulus>
+class Fp6_2over3_model;
+
+template<mp_size_t n, const bigint<n>& modulus>
+std::ostream& operator<<(std::ostream &, const Fp6_2over3_model<n, modulus> &);
+
+template<mp_size_t n, const bigint<n>& modulus>
+std::istream& operator>>(std::istream &, Fp6_2over3_model<n, modulus> &);
+
+template<mp_size_t n, const bigint<n>& modulus>
 class Fp6_2over3_model {
 public:
     typedef Fp_model<n, modulus> my_Fp;
     typedef Fp2_model<n, modulus> my_Fp2;
     typedef Fp3_model<n, modulus> my_Fp3;
+    typedef my_Fp3 my_Fpe;
 
     static my_Fp non_residue;
     static my_Fp Frobenius_coeffs_c1[6]; // non_residue^((modulus^i-1)/6)   for i=0,1,2,3,4,5
@@ -65,8 +75,17 @@ public:
     Fp6_2over3_model cyclotomic_exp(const bigint<m> &exponent) const;
 
     static bigint<n> base_field_char() { return modulus; }
-    static size_t extension_degree() { return 6; }
+    static constexpr size_t extension_degree() { return 6; }
+
+    friend std::ostream& operator<< <n, modulus>(std::ostream &out, const Fp6_2over3_model<n, modulus> &el);
+    friend std::istream& operator>> <n, modulus>(std::istream &in, Fp6_2over3_model<n, modulus> &el);
 };
+
+template<mp_size_t n, const bigint<n>& modulus>
+std::ostream& operator<<(std::ostream& out, const std::vector<Fp6_2over3_model<n, modulus> > &v);
+
+template<mp_size_t n, const bigint<n>& modulus>
+std::istream& operator>>(std::istream& in, std::vector<Fp6_2over3_model<n, modulus> > &v);
 
 template<mp_size_t n, const bigint<n>& modulus>
 Fp6_2over3_model<n, modulus> operator*(const Fp_model<n, modulus> &lhs, const Fp6_2over3_model<n, modulus> &rhs);

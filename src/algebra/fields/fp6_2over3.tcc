@@ -244,6 +244,20 @@ Fp6_2over3_model<n, modulus> Fp6_2over3_model<n,modulus>::cyclotomic_exp(const b
     return res;
 }
 
+template<mp_size_t n, const bigint<n>& modulus>
+std::ostream& operator<<(std::ostream &out, const Fp6_2over3_model<n, modulus> &el)
+{
+    out << el.c0 << OUTPUT_SEPARATOR << el.c1;
+    return out;
+}
+
+template<mp_size_t n, const bigint<n>& modulus>
+std::istream& operator>>(std::istream &in, Fp6_2over3_model<n, modulus> &el)
+{
+    in >> el.c0 >> el.c1;
+    return in;
+}
+
 template<mp_size_t n, const bigint<n>& modulus, mp_size_t m>
 Fp6_2over3_model<n, modulus> operator^(const Fp6_2over3_model<n, modulus> &self, const bigint<m> &exponent)
 {
