@@ -36,6 +36,7 @@
 
 #include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
 #include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -56,19 +57,17 @@ std::istream& operator>>(std::istream &in, bacs_ppzksnark_proving_key<ppT> &pk);
 template<typename ppT>
 class bacs_ppzksnark_proving_key {
 public:
-    typedef Fr<ppT> FieldT;
-
-    bacs_circuit<FieldT> circuit;
+    bacs_ppzksnark_circuit<ppT> circuit;
     r1cs_ppzksnark_proving_key<ppT> r1cs_pk;
 
     bacs_ppzksnark_proving_key() {};
     bacs_ppzksnark_proving_key(const bacs_ppzksnark_proving_key<ppT> &other) = default;
     bacs_ppzksnark_proving_key(bacs_ppzksnark_proving_key<ppT> &&other) = default;
-    bacs_ppzksnark_proving_key(const bacs_circuit<FieldT> &circuit,
+    bacs_ppzksnark_proving_key(const bacs_ppzksnark_circuit<ppT> &circuit,
                                const r1cs_ppzksnark_proving_key<ppT> &r1cs_pk) :
         circuit(circuit), r1cs_pk(r1cs_pk)
     {}
-    bacs_ppzksnark_proving_key(bacs_circuit<FieldT> &&circuit,
+    bacs_ppzksnark_proving_key(bacs_ppzksnark_circuit<ppT> &&circuit,
                                r1cs_ppzksnark_proving_key<ppT> &&r1cs_pk) :
         circuit(std::move(circuit)), r1cs_pk(std::move(r1cs_pk))
     {}
@@ -163,7 +162,7 @@ public:
 /*********************************** Proof ***********************************/
 
 /**
- * A proof for the BACS ppZKSNARK.
+ * A proof for the BACS ppzkSNARK.
  */
 template<typename ppT>
 using bacs_ppzksnark_proof = r1cs_ppzksnark_proof<ppT>;
@@ -172,15 +171,15 @@ using bacs_ppzksnark_proof = r1cs_ppzksnark_proof<ppT>;
 /***************************** Main algorithms *******************************/
 
 /**
- * A generator algorithm for the BACS ppZKSNARK.
+ * A generator algorithm for the BACS ppzkSNARK.
  *
  * Given a BACS circuit C, this algorithm produces proving and verification keys for C.
  */
 template<typename ppT>
-bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_circuit<Fr<ppT> > &circuit);
+bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_ppzksnark_circuit<ppT> &circuit);
 
 /**
- * A prover algorithm for the BACS ppZKSNARK.
+ * A prover algorithm for the BACS ppzkSNARK.
  *
  * Given a BACS primary input X and a BACS auxiliary input Y, this algorithm
  * produces a proof (of knowledge) that attests to the following statement:
@@ -189,11 +188,11 @@ bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_circuit<Fr<ppT> 
  */
 template<typename ppT>
 bacs_ppzksnark_proof<ppT> bacs_ppzksnark_prover(const bacs_ppzksnark_proving_key<ppT> &pk,
-                                                const bacs_primary_input<Fr<ppT> > &primary_input,
-                                                const bacs_auxiliary_input<Fr<ppT> > &auxiliary_input);
+                                                const bacs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const bacs_ppzksnark_auxiliary_input<ppT> &auxiliary_input);
 
 /*
- Below are four variants of verifier algorithm for the BACS ppZKSNARK.
+ Below are four variants of verifier algorithm for the BACS ppzkSNARK.
 
  These are the four cases that arise from the following two choices:
 
@@ -207,23 +206,23 @@ bacs_ppzksnark_proof<ppT> bacs_ppzksnark_prover(const bacs_ppzksnark_proving_key
  */
 
 /**
- * A verifier algorithm for the BACS ppZKSNARK that:
+ * A verifier algorithm for the BACS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool bacs_ppzksnark_verifier_weak_IC(const bacs_ppzksnark_verification_key<ppT> &vk,
-                                     const bacs_primary_input<Fr<ppT> > &primary_input,
+                                     const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                      const bacs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the BACS ppZKSNARK that:
+ * A verifier algorithm for the BACS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool bacs_ppzksnark_verifier_strong_IC(const bacs_ppzksnark_verification_key<ppT> &vk,
-                                       const bacs_primary_input<Fr<ppT> > &primary_input,
+                                       const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                        const bacs_ppzksnark_proof<ppT> &proof);
 
 /**
@@ -233,23 +232,23 @@ template<typename ppT>
 bacs_ppzksnark_processed_verification_key<ppT> bacs_ppzksnark_verifier_process_vk(const bacs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * A verifier algorithm for the BACS ppZKSNARK that:
+ * A verifier algorithm for the BACS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool bacs_ppzksnark_online_verifier_weak_IC(const bacs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const bacs_primary_input<Fr<ppT> > &primary_input,
+                                            const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                             const bacs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the BACS ppZKSNARK that:
+ * A verifier algorithm for the BACS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool bacs_ppzksnark_online_verifier_strong_IC(const bacs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const bacs_primary_input<Fr<ppT> > &primary_input,
+                                              const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                               const bacs_ppzksnark_proof<ppT> &proof);
 
 } // libsnark

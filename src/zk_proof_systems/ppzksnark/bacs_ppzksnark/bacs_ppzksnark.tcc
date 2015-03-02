@@ -48,7 +48,7 @@ std::istream& operator>>(std::istream &in, bacs_ppzksnark_proving_key<ppT> &pk)
 
 
 template<typename ppT>
-bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_circuit<Fr<ppT> > &circuit)
+bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_ppzksnark_circuit<ppT> &circuit)
 {
     typedef Fr<ppT> FieldT;
 
@@ -63,8 +63,8 @@ bacs_ppzksnark_keypair<ppT> bacs_ppzksnark_generator(const bacs_circuit<Fr<ppT> 
 
 template<typename ppT>
 bacs_ppzksnark_proof<ppT> bacs_ppzksnark_prover(const bacs_ppzksnark_proving_key<ppT> &pk,
-                                                const bacs_primary_input<Fr<ppT> > &primary_input,
-                                                const bacs_auxiliary_input<Fr<ppT> > &auxiliary_input)
+                                                const bacs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const bacs_ppzksnark_auxiliary_input<ppT> &auxiliary_input)
 {
     typedef Fr<ppT> FieldT;
 
@@ -88,7 +88,7 @@ bacs_ppzksnark_processed_verification_key<ppT> bacs_ppzksnark_verifier_process_v
 
 template<typename ppT>
 bool bacs_ppzksnark_verifier_weak_IC(const bacs_ppzksnark_verification_key<ppT> &vk,
-                                     const bacs_primary_input<Fr<ppT> > &primary_input,
+                                     const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                      const bacs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to bacs_ppzksnark_verifier_weak_IC");
@@ -101,8 +101,8 @@ bool bacs_ppzksnark_verifier_weak_IC(const bacs_ppzksnark_verification_key<ppT> 
 
 template<typename ppT>
 bool bacs_ppzksnark_verifier_strong_IC(const bacs_ppzksnark_verification_key<ppT> &vk,
-                                     const bacs_primary_input<Fr<ppT> > &primary_input,
-                                     const bacs_ppzksnark_proof<ppT> &proof)
+                                       const bacs_ppzksnark_primary_input<ppT> &primary_input,
+                                       const bacs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to bacs_ppzksnark_verifier_strong_IC");
     const bacs_ppzksnark_processed_verification_key<ppT> pvk = bacs_ppzksnark_verifier_process_vk<ppT>(vk);
@@ -114,7 +114,7 @@ bool bacs_ppzksnark_verifier_strong_IC(const bacs_ppzksnark_verification_key<ppT
 
 template<typename ppT>
 bool bacs_ppzksnark_online_verifier_weak_IC(const bacs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const bacs_primary_input<Fr<ppT> > &primary_input,
+                                            const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                             const bacs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to bacs_ppzksnark_online_verifier_weak_IC");
@@ -126,7 +126,7 @@ bool bacs_ppzksnark_online_verifier_weak_IC(const bacs_ppzksnark_processed_verif
 
 template<typename ppT>
 bool bacs_ppzksnark_online_verifier_strong_IC(const bacs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const bacs_primary_input<Fr<ppT> > &primary_input,
+                                              const bacs_ppzksnark_primary_input<ppT> &primary_input,
                                               const bacs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to bacs_ppzksnark_online_verifier_strong_IC");

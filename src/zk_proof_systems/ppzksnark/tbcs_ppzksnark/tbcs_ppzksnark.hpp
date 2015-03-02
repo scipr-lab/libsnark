@@ -36,6 +36,7 @@
 
 #include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
 #include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.hpp"
+#include "zk_proof_systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -58,17 +59,17 @@ class tbcs_ppzksnark_proving_key {
 public:
     typedef Fr<ppT> FieldT;
 
-    tbcs_circuit circuit;
+    tbcs_ppzksnark_circuit circuit;
     uscs_ppzksnark_proving_key<ppT> uscs_pk;
 
     tbcs_ppzksnark_proving_key() {};
     tbcs_ppzksnark_proving_key(const tbcs_ppzksnark_proving_key<ppT> &other) = default;
     tbcs_ppzksnark_proving_key(tbcs_ppzksnark_proving_key<ppT> &&other) = default;
-    tbcs_ppzksnark_proving_key(const tbcs_circuit &circuit,
+    tbcs_ppzksnark_proving_key(const tbcs_ppzksnark_circuit &circuit,
                                const uscs_ppzksnark_proving_key<ppT> &uscs_pk) :
         circuit(circuit), uscs_pk(uscs_pk)
     {}
-    tbcs_ppzksnark_proving_key(tbcs_circuit &&circuit,
+    tbcs_ppzksnark_proving_key(tbcs_ppzksnark_circuit &&circuit,
                                uscs_ppzksnark_proving_key<ppT> &&uscs_pk) :
         circuit(std::move(circuit)), uscs_pk(std::move(uscs_pk))
     {}
@@ -163,7 +164,7 @@ public:
 /*********************************** Proof ***********************************/
 
 /**
- * A proof for the TBCS ppZKSNARK.
+ * A proof for the TBCS ppzkSNARK.
  */
 template<typename ppT>
 using tbcs_ppzksnark_proof = uscs_ppzksnark_proof<ppT>;
@@ -172,15 +173,15 @@ using tbcs_ppzksnark_proof = uscs_ppzksnark_proof<ppT>;
 /***************************** Main algorithms *******************************/
 
 /**
- * A generator algorithm for the TBCS ppZKSNARK.
+ * A generator algorithm for the TBCS ppzkSNARK.
  *
  * Given a TBCS circuit C, this algorithm produces proving and verification keys for C.
  */
 template<typename ppT>
-tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_circuit &circuit);
+tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_ppzksnark_circuit &circuit);
 
 /**
- * A prover algorithm for the TBCS ppZKSNARK.
+ * A prover algorithm for the TBCS ppzkSNARK.
  *
  * Given a TBCS primary input X and a TBCS auxiliary input Y, this algorithm
  * produces a proof (of knowledge) that attests to the following statement:
@@ -189,11 +190,11 @@ tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_circuit &circuit
  */
 template<typename ppT>
 tbcs_ppzksnark_proof<ppT> tbcs_ppzksnark_prover(const tbcs_ppzksnark_proving_key<ppT> &pk,
-                                                const tbcs_primary_input &primary_input,
-                                                const tbcs_auxiliary_input &auxiliary_input);
+                                                const tbcs_ppzksnark_primary_input &primary_input,
+                                                const tbcs_ppzksnark_auxiliary_input &auxiliary_input);
 
 /*
- Below are four variants of verifier algorithm for the TBCS ppZKSNARK.
+ Below are four variants of verifier algorithm for the TBCS ppzkSNARK.
 
  These are the four cases that arise from the following two choices:
 
@@ -207,23 +208,23 @@ tbcs_ppzksnark_proof<ppT> tbcs_ppzksnark_prover(const tbcs_ppzksnark_proving_key
  */
 
 /**
- * A verifier algorithm for the TBCS ppZKSNARK that:
+ * A verifier algorithm for the TBCS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool tbcs_ppzksnark_verifier_weak_IC(const tbcs_ppzksnark_verification_key<ppT> &vk,
-                                     const tbcs_primary_input &primary_input,
+                                     const tbcs_ppzksnark_primary_input &primary_input,
                                      const tbcs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the TBCS ppZKSNARK that:
+ * A verifier algorithm for the TBCS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool tbcs_ppzksnark_verifier_strong_IC(const tbcs_ppzksnark_verification_key<ppT> &vk,
-                                       const tbcs_primary_input &primary_input,
+                                       const tbcs_ppzksnark_primary_input &primary_input,
                                        const tbcs_ppzksnark_proof<ppT> &proof);
 
 /**
@@ -233,23 +234,23 @@ template<typename ppT>
 tbcs_ppzksnark_processed_verification_key<ppT> tbcs_ppzksnark_verifier_process_vk(const tbcs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * A verifier algorithm for the TBCS ppZKSNARK that:
+ * A verifier algorithm for the TBCS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool tbcs_ppzksnark_online_verifier_weak_IC(const tbcs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const tbcs_primary_input &primary_input,
+                                            const tbcs_ppzksnark_primary_input &primary_input,
                                             const tbcs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the TBCS ppZKSNARK that:
+ * A verifier algorithm for the TBCS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool tbcs_ppzksnark_online_verifier_strong_IC(const tbcs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const tbcs_primary_input &primary_input,
+                                              const tbcs_ppzksnark_primary_input &primary_input,
                                               const tbcs_ppzksnark_proof<ppT> &proof);
 
 } // libsnark

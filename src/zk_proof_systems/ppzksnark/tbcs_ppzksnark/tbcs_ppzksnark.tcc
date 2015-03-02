@@ -48,7 +48,7 @@ std::istream& operator>>(std::istream &in, tbcs_ppzksnark_proving_key<ppT> &pk)
 
 
 template<typename ppT>
-tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_circuit &circuit)
+tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_ppzksnark_circuit &circuit)
 {
     typedef Fr<ppT> FieldT;
 
@@ -63,8 +63,8 @@ tbcs_ppzksnark_keypair<ppT> tbcs_ppzksnark_generator(const tbcs_circuit &circuit
 
 template<typename ppT>
 tbcs_ppzksnark_proof<ppT> tbcs_ppzksnark_prover(const tbcs_ppzksnark_proving_key<ppT> &pk,
-                                                const tbcs_primary_input &primary_input,
-                                                const tbcs_auxiliary_input &auxiliary_input)
+                                                const tbcs_ppzksnark_primary_input &primary_input,
+                                                const tbcs_ppzksnark_auxiliary_input &auxiliary_input)
 {
     typedef Fr<ppT> FieldT;
 
@@ -88,7 +88,7 @@ tbcs_ppzksnark_processed_verification_key<ppT> tbcs_ppzksnark_verifier_process_v
 
 template<typename ppT>
 bool tbcs_ppzksnark_verifier_weak_IC(const tbcs_ppzksnark_verification_key<ppT> &vk,
-                                     const tbcs_primary_input &primary_input,
+                                     const tbcs_ppzksnark_primary_input &primary_input,
                                      const tbcs_ppzksnark_proof<ppT> &proof)
 {
     typedef Fr<ppT> FieldT;
@@ -103,7 +103,7 @@ bool tbcs_ppzksnark_verifier_weak_IC(const tbcs_ppzksnark_verification_key<ppT> 
 
 template<typename ppT>
 bool tbcs_ppzksnark_verifier_strong_IC(const tbcs_ppzksnark_verification_key<ppT> &vk,
-                                       const tbcs_primary_input &primary_input,
+                                       const tbcs_ppzksnark_primary_input &primary_input,
                                        const tbcs_ppzksnark_proof<ppT> &proof)
 {
     typedef Fr<ppT> FieldT;
@@ -118,7 +118,7 @@ bool tbcs_ppzksnark_verifier_strong_IC(const tbcs_ppzksnark_verification_key<ppT
 
 template<typename ppT>
 bool tbcs_ppzksnark_online_verifier_weak_IC(const tbcs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const tbcs_primary_input &primary_input,
+                                            const tbcs_ppzksnark_primary_input &primary_input,
                                             const tbcs_ppzksnark_proof<ppT> &proof)
 {
     typedef Fr<ppT> FieldT;
@@ -132,7 +132,7 @@ bool tbcs_ppzksnark_online_verifier_weak_IC(const tbcs_ppzksnark_processed_verif
 
 template<typename ppT>
 bool tbcs_ppzksnark_online_verifier_strong_IC(const tbcs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const tbcs_primary_input &primary_input,
+                                              const tbcs_ppzksnark_primary_input &primary_input,
                                               const tbcs_ppzksnark_proof<ppT> &proof)
 {
     typedef Fr<ppT> FieldT;
