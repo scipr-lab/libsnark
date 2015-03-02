@@ -20,8 +20,10 @@ namespace libsnark {
 
 typedef std::vector<bool> bit_vector;
 
-/// returns ceil(log2(n)), so 1<<log2(n) is the smallest power of 2, that is not less than n
+/// returns ceil(log2(n)), so 1ul<<log2(n) is the smallest power of 2, that is not less than n
 size_t log2(size_t n);
+
+inline size_t exp2(size_t k) { return 1ul << k; }
 
 size_t to_twos_complement(int i, size_t w);
 int from_twos_complement(size_t i, size_t w);
@@ -31,8 +33,6 @@ bit_vector int_list_to_bits(const std::initializer_list<unsigned long> &l, const
 long long div_ceil(long long x, long long y);
 
 bool is_little_endian();
-
-typedef std::vector<size_t> permutation;
 
 std::string FORMAT(const std::string &prefix, const char* format, ...);
 
@@ -47,6 +47,8 @@ void deserialize_bit_vector(std::istream &in, bit_vector &v);
 
 template<typename T>
 size_t size_in_bits(const std::vector<T> &v);
+
+#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 
 } // libsnark
 

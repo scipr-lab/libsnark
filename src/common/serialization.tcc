@@ -1,11 +1,16 @@
 /** @file
  *****************************************************************************
+
  Implementation of serialization routines.
+
+ See serialization.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
+
 #ifndef SERIALIZATION_TCC_
 #define SERIALIZATION_TCC_
 

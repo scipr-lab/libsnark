@@ -154,7 +154,7 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
             }
             else
             {
-                // block ends here
+                // block has ended here
                 in_block = false;
                 copy_over = true;
 

@@ -16,7 +16,7 @@
 namespace libsnark {
 
 size_t log2(size_t n)
-/* returns ceil(log2(n)), so 1<<log2(n) is the smallest power of 2,
+/* returns ceil(log2(n)), so 1ul<<log2(n) is the smallest power of 2,
    that is not less than n. */
 {
     size_t r = ((n & (n-1)) == 0 ? 0 : 1); // add 1 if n is not power of 2
@@ -32,15 +32,15 @@ size_t log2(size_t n)
 
 size_t to_twos_complement(int i, size_t w)
 {
-    assert(i >= -(1<<(w-1)));
-    assert(i < (1<<(w-1)));
-    return (i >= 0) ? i : i + (1u<<w);
+    assert(i >= -(1l<<(w-1)));
+    assert(i < (1l<<(w-1)));
+    return (i >= 0) ? i : i + (1l<<w);
 }
 
 int from_twos_complement(size_t i, size_t w)
 {
-    assert(i < (1u<<w));
-    return (i < (1u<<(w-1))) ? i : i - (1<<w);
+    assert(i < (1ul<<w));
+    return (i < (1ul<<(w-1))) ? i : i - (1ul<<w);
 }
 
 size_t bitreverse(size_t n, const size_t l)

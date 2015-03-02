@@ -1,14 +1,19 @@
 /** @file
  *****************************************************************************
+
  Declaration of serialization routines and constants.
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
+
 #ifndef SERIALIZATION_HPP_
 #define SERIALIZATION_HPP_
 
+#include <istream>
+#include <ostream>
 #include <vector>
 
 namespace libsnark {

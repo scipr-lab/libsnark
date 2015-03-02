@@ -26,7 +26,7 @@ template<typename T>
 std::istream& operator>>(std::istream &in, accumulation_vector<T> &v);
 
 /**
- * A an accumulation vector comprises an accumulation value and a sparse vector.
+ * An accumulation vector comprises an accumulation value and a sparse vector.
  * The method "accumulate_chunk" allows one to accumlate portions of the sparse
  * vector into the accumualation value.
  */
@@ -41,7 +41,7 @@ public:
     accumulation_vector(accumulation_vector<T> &&other) = default;
     accumulation_vector(T &&first, sparse_vector<T> &&rest) : first(std::move(first)), rest(std::move(rest)) {};
     accumulation_vector(T &&first, std::vector<T> &&v) : first(std::move(first)), rest(std::move(v)) {}
-    accumulation_vector(const std::vector<T> &v) : first(T::zero()), rest(v) {};
+    accumulation_vector(std::vector<T> &&v) : first(T::zero()), rest(std::move(v)) {};
 
     accumulation_vector<T>& operator=(const accumulation_vector<T> &other) = default;
     accumulation_vector<T>& operator=(accumulation_vector<T> &&other) = default;

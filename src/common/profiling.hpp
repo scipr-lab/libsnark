@@ -1,7 +1,10 @@
 /** @file
  *****************************************************************************
+
  Declaration of functions for profiling code blocks.
- Reports time, op counts, memory usage etc.
+
+ Reports time, operation counts, memory usage, and others.
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).

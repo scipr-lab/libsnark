@@ -1,7 +1,10 @@
 /** @file
  *****************************************************************************
+
  Implementation of functions for profiling code blocks.
- Reports time, op counts, memory usage etc.
+
+ See profiling.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
