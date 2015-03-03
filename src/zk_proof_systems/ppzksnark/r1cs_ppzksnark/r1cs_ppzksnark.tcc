@@ -688,13 +688,103 @@ bool r1cs_ppzksnark_online_verifier_strong_IC(const r1cs_ppzksnark_processed_ver
 
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_strong_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                       const r1cs_variable_assignment<Fr<ppT> > &input,
+                                       const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                        const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_verifier_strong_IC");
     r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
-    bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, input, proof);
+    bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof);
     leave_block("Call to r1cs_ppzksnark_verifier_strong_IC");
+    return result;
+}
+
+template<typename ppT>
+bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
+{
+    enter_block("Call to r1cs_ppzksnark_affine_verifier_weak_IC");
+    assert(vk.encoded_IC_query.domain_size() >= primary_input.size());
+
+    affine_ate_G2_precomp<ppT> pvk_pp_G2_one_precomp        = ppT::affine_ate_precompute_G2(G2<ppT>::one());
+    affine_ate_G2_precomp<ppT> pvk_vk_alphaA_g2_precomp     = ppT::affine_ate_precompute_G2(vk.alphaA_g2);
+    affine_ate_G1_precomp<ppT> pvk_vk_alphaB_g1_precomp     = ppT::affine_ate_precompute_G1(vk.alphaB_g1);
+    affine_ate_G2_precomp<ppT> pvk_vk_alphaC_g2_precomp     = ppT::affine_ate_precompute_G2(vk.alphaC_g2);
+    affine_ate_G2_precomp<ppT> pvk_vk_rC_Z_g2_precomp       = ppT::affine_ate_precompute_G2(vk.rC_Z_g2);
+    affine_ate_G2_precomp<ppT> pvk_vk_gamma_g2_precomp      = ppT::affine_ate_precompute_G2(vk.gamma_g2);
+    affine_ate_G1_precomp<ppT> pvk_vk_gamma_beta_g1_precomp = ppT::affine_ate_precompute_G1(vk.gamma_beta_g1);
+    affine_ate_G2_precomp<ppT> pvk_vk_gamma_beta_g2_precomp = ppT::affine_ate_precompute_G2(vk.gamma_beta_g2);
+
+    enter_block("Compute input-dependent part of A");
+    const accumulation_vector<G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    assert(accumulated_IC.is_fully_accumulated());
+    const G1<ppT> &acc = accumulated_IC.first;
+    leave_block("Compute input-dependent part of A");
+
+    bool result = true;
+    enter_block("Check knowledge commitment for A is valid");
+    affine_ate_G1_precomp<ppT> proof_g_A_g_precomp = ppT::affine_ate_precompute_G1(proof.g_A.g);
+    affine_ate_G1_precomp<ppT> proof_g_A_h_precomp = ppT::affine_ate_precompute_G1(proof.g_A.h);
+    Fqk<ppT> kc_A_miller = ppT::affine_ate_e_over_e_miller_loop(proof_g_A_g_precomp, pvk_vk_alphaA_g2_precomp, proof_g_A_h_precomp, pvk_pp_G2_one_precomp);
+    GT<ppT> kc_A = ppT::final_exponentiation(kc_A_miller);
+
+    if (kc_A != GT<ppT>::one())
+    {
+        print_indent(); printf("Knowledge commitment for A query incorrect.\n");
+        result = false;
+    }
+    leave_block("Check knowledge commitment for A is valid");
+
+    enter_block("Check knowledge commitment for B is valid");
+    affine_ate_G2_precomp<ppT> proof_g_B_g_precomp = ppT::affine_ate_precompute_G2(proof.g_B.g);
+    affine_ate_G1_precomp<ppT> proof_g_B_h_precomp = ppT::affine_ate_precompute_G1(proof.g_B.h);
+    Fqk<ppT> kc_B_miller = ppT::affine_ate_e_over_e_miller_loop(pvk_vk_alphaB_g1_precomp, proof_g_B_g_precomp, proof_g_B_h_precomp,    pvk_pp_G2_one_precomp);
+    GT<ppT> kc_B = ppT::final_exponentiation(kc_B_miller);
+    if (kc_B != GT<ppT>::one())
+    {
+        print_indent(); printf("Knowledge commitment for B query incorrect.\n");
+        result = false;
+    }
+    leave_block("Check knowledge commitment for B is valid");
+
+    enter_block("Check knowledge commitment for C is valid");
+    affine_ate_G1_precomp<ppT> proof_g_C_g_precomp = ppT::affine_ate_precompute_G1(proof.g_C.g);
+    affine_ate_G1_precomp<ppT> proof_g_C_h_precomp = ppT::affine_ate_precompute_G1(proof.g_C.h);
+    Fqk<ppT> kc_C_miller = ppT::affine_ate_e_over_e_miller_loop(proof_g_C_g_precomp, pvk_vk_alphaC_g2_precomp, proof_g_C_h_precomp, pvk_pp_G2_one_precomp);
+    GT<ppT> kc_C = ppT::final_exponentiation(kc_C_miller);
+    if (kc_C != GT<ppT>::one())
+    {
+        print_indent(); printf("Knowledge commitment for C query incorrect.\n");
+        result = false;
+    }
+    leave_block("Check knowledge commitment for C is valid");
+
+    enter_block("Check QAP divisibility");
+    affine_ate_G1_precomp<ppT> proof_g_A_g_acc_precomp = ppT::affine_ate_precompute_G1(proof.g_A.g + acc);
+    affine_ate_G1_precomp<ppT> proof_g_H_precomp       = ppT::affine_ate_precompute_G1(proof.g_H);
+    Fqk<ppT> QAP_miller  = ppT::affine_ate_e_times_e_over_e_miller_loop(proof_g_H_precomp, pvk_vk_rC_Z_g2_precomp, proof_g_C_g_precomp, pvk_pp_G2_one_precomp, proof_g_A_g_acc_precomp,  proof_g_B_g_precomp);
+    GT<ppT> QAP = ppT::final_exponentiation(QAP_miller);
+    if (QAP != GT<ppT>::one())
+    {
+        print_indent(); printf("QAP divisibility check failed.\n");
+        result = false;
+    }
+    leave_block("Check QAP divisibility");
+
+    enter_block("Check same coefficients were used");
+    affine_ate_G1_precomp<ppT> proof_g_K_precomp = ppT::affine_ate_precompute_G1(proof.g_K);
+    affine_ate_G1_precomp<ppT> proof_g_A_g_acc_C_precomp = ppT::affine_ate_precompute_G1((proof.g_A.g + acc) + proof.g_C.g);
+    Fqk<ppT> K_miller = ppT::affine_ate_e_times_e_over_e_miller_loop(proof_g_A_g_acc_C_precomp, pvk_vk_gamma_beta_g2_precomp, pvk_vk_gamma_beta_g1_precomp, proof_g_B_g_precomp, proof_g_K_precomp, pvk_vk_gamma_g2_precomp);
+    GT<ppT> K = ppT::final_exponentiation(K_miller);
+    if (K != GT<ppT>::one())
+    {
+        print_indent(); printf("Same-coefficient check failed.\n");
+        result = false;
+    }
+    leave_block("Check same coefficients were used");
+
+    leave_block("Call to r1cs_ppzksnark_affine_verifier_weak_IC");
+
     return result;
 }
 

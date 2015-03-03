@@ -48,27 +48,41 @@ SRCS= \
         src/relations/ram_computations/memory/memory_store_trace.cpp \
         src/relations/ram_computations/memory/ra_memory.cpp \
         src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
-        src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
+        src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp \
+        src/algebra/curves/mnt/mnt4/mnt4_g1.cpp \
+        src/algebra/curves/mnt/mnt4/mnt4_g2.cpp \
+        src/algebra/curves/mnt/mnt4/mnt4_init.cpp \
+        src/algebra/curves/mnt/mnt4/mnt4_pairing.cpp \
+        src/algebra/curves/mnt/mnt4/mnt4_pp.cpp \
+        src/algebra/curves/mnt/mnt46_common.cpp \
+        src/algebra/curves/mnt/mnt6/mnt6_g1.cpp \
+        src/algebra/curves/mnt/mnt6/mnt6_g2.cpp \
+        src/algebra/curves/mnt/mnt6/mnt6_init.cpp \
+        src/algebra/curves/mnt/mnt6/mnt6_pairing.cpp \
+        src/algebra/curves/mnt/mnt6/mnt6_pp.cpp
 
 EXECUTABLES= \
+	src/algebra/curves/tests/test_bilinearity \
+	src/algebra/curves/tests/test_groups \
+	src/algebra/fields/tests/test_fields \
+	src/common/routing_algorithms/profiling/profile_routing_algorithms \
+	src/common/routing_algorithms/tests/test_routing_algorithms \
+	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
 	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
+	src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
-        src/common/routing_algorithms/profiling/profile_routing_algorithms \
-        src/common/routing_algorithms/tests/test_routing_algorithms \
-        src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
-        src/reductions/ram_to_r1cs/examples/demo_arithmetization \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
-        src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \

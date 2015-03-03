@@ -18,10 +18,34 @@
 #include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
 
 #include <sstream>
+#include <type_traits>
 
 #include "common/profiling.hpp"
 
 namespace libsnark {
+
+template<typename ppT>
+typename std::enable_if<ppT::has_affine_pairing, void>::type
+test_affine_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                     const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                     const r1cs_ppzksnark_proof<ppT> &proof,
+                     const bool expected_answer)
+{
+    print_header("R1CS ppzkSNARK Affine Verifier");
+    const bool answer = r1cs_ppzksnark_affine_verifier_weak_IC<ppT>(vk, primary_input, proof);
+    assert(answer == expected_answer);
+}
+
+template<typename ppT>
+typename std::enable_if<!ppT::has_affine_pairing, void>::type
+test_affine_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                     const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                     const r1cs_ppzksnark_proof<ppT> &proof,
+                     const bool expected_answer)
+{
+    print_header("R1CS ppzkSNARK Affine Verifier");
+    printf("Affine verifier is not supported; not testing anything.\n");
+}
 
 /**
  * The code below provides an example of all stages of running a R1CS ppzkSNARK.
@@ -76,6 +100,8 @@ bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
     print_header("R1CS ppzkSNARK Online Verifier");
     const bool ans2 = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
     assert(ans == ans2);
+
+    test_affine_verifier<ppT>(keypair.vk, example.primary_input, proof, ans);
 
     leave_block("Call to run_r1cs_ppzksnark");
 
