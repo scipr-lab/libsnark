@@ -101,8 +101,6 @@ ram_zksnark_verification_key<ram_zksnark_ppT> ram_zksnark_verification_key<ram_z
 template<typename ram_zksnark_ppT>
 ram_zksnark_keypair<ram_zksnark_ppT> ram_zksnark_generator(const ram_zksnark_architecture_params<ram_zksnark_ppT> &ap)
 {
-    const size_t timestamp_length = ram_zksnark_machine_pp<ram_zksnark_ppT>::timestamp_length;
-
     typedef ram_zksnark_machine_pp<ram_zksnark_ppT> ramT;
     typedef ram_zksnark_PCD_pp<ram_zksnark_ppT> pcdT;
     enter_block("Call to ram_zksnark_generator");

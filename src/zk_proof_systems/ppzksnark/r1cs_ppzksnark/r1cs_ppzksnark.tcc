@@ -229,7 +229,7 @@ r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy
         v.emplace_back(Fr<ppT>::random_element() * G1<ppT>::one());
     }
 
-    result.encoded_IC_query = accumulation_vector<G1<ppT> >(std::move(v));
+    result.encoded_IC_query = accumulation_vector<G1<ppT> >(std::move(base), std::move(v));
 
     return result;
 }

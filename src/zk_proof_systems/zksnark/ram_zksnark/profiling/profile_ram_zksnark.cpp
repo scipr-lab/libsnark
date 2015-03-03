@@ -40,7 +40,7 @@ void profile_ram_zksnark_verifier(const tinyram_architecture_params &ap, const s
     ram_zksnark_verification_key<ppT> vk = ram_zksnark_verification_key<ppT>::dummy_verification_key(ap);
 
     enter_block("Verify fake proof");
-    const bool bit = ram_zksnark_verifier<ppT>(vk, example.boot_trace, time_bound, pi);
+    ram_zksnark_verifier<ppT>(vk, example.boot_trace, time_bound, pi);
     leave_block("Verify fake proof");
 }
 

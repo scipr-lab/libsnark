@@ -166,8 +166,6 @@ void route_benes_inner(const size_t dimension,
     assert(permutation.inverse() == permutation_inv);
 #endif
 
-    const size_t mask = benes_cross_edge_mask(dimension, column_idx_start);
-
     if (column_idx_start == column_idx_end)
     {
         /* nothing to route */

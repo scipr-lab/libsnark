@@ -497,8 +497,6 @@ void mnt_e_over_e_miller_loop_gadget<ppT>::generate_r1cs_witness()
     size_t dbl_id = 0;
     size_t f_id = 0;
 
-    bool found_one = false;
-
     const auto &loop_count = pairing_selector<ppT>::pairing_loop_count;
 
     bool found_nonzero = false;
@@ -769,8 +767,6 @@ void mnt_e_times_e_over_e_miller_loop_gadget<ppT>::generate_r1cs_witness()
     size_t add_id = 0;
     size_t dbl_id = 0;
     size_t f_id = 0;
-
-    bool found_one = false;
 
     const auto &loop_count = pairing_selector<ppT>::pairing_loop_count;
 
