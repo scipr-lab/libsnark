@@ -57,7 +57,8 @@ qap_instance_evaluation<FieldT> r1cs_to_qap_instance_map_with_evaluation(const r
  */
 template<typename FieldT>
 qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT> &cs,
-                                            const r1cs_variable_assignment<FieldT> &w,
+                                            const r1cs_primary_input<FieldT> &primary_input,
+                                            const r1cs_auxiliary_input<FieldT> &auxiliary_input,
                                             const FieldT &d1,
                                             const FieldT &d2,
                                             const FieldT &d3);

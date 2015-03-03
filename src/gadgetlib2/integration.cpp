@@ -39,8 +39,11 @@ r1cs_constraint_system<Fr<default_ec_pp> > get_constraint_system_from_gadgetlib2
                                                                 convert_gadgetlib2_linear_combination(std::get<1>(constr)),
                                                                 convert_gadgetlib2_linear_combination(std::get<2>(constr))));
     }
+    //The numbers of variables is the highest index created.
+    //TODO: If there are multiple protoboard, or variables not assigned to a protoboard, then getNextFreeIndex() is *not* the number of variables! See also in get_variable_assignment_from_gadgetlib2.
 
-    result.num_vars = pb.numVars();
+    // TODO: fix integration
+    // result.num_variables = GLA::getNextFreeIndex();
     return result;
 }
 

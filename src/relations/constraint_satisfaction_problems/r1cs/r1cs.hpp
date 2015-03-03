@@ -59,9 +59,9 @@ public:
                     const linear_combination<FieldT> &b,
                     const linear_combination<FieldT> &c);
 
-    r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > A,
-                    const std::initializer_list<linear_combination<FieldT> > B,
-                    const std::initializer_list<linear_combination<FieldT> > C);
+    r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > &A,
+                    const std::initializer_list<linear_combination<FieldT> > &B,
+                    const std::initializer_list<linear_combination<FieldT> > &C);
 
     bool operator==(const r1cs_constraint<FieldT> &other) const;
 
@@ -75,9 +75,16 @@ public:
  * A R1CS variable assignment is a vector of <FieldT> elements that represents
  * a candidate solution to a R1CS constraint system (see below).
  */
-template<typename FieldT>
-using r1cs_variable_assignment = std::vector<FieldT>;
 
+/* TODO: specify that it does *NOT* include the constant 1 */
+template<typename FieldT>
+using r1cs_primary_input = std::vector<FieldT>;
+
+template<typename FieldT>
+using r1cs_auxiliary_input = std::vector<FieldT>;
+
+template<typename FieldT>
+using r1cs_variable_assignment = std::vector<FieldT>; /* note the changed name! (TODO: remove this comment after primary_input transition is complete) */
 
 /************************* R1CS constraint system ****************************/
 
@@ -100,18 +107,21 @@ std::istream& operator>>(std::istream &in, r1cs_constraint_system<FieldT> &cs);
  *
  * NOTE:
  * The 0-th variable (i.e., "x_{0}") always represents the constant 1.
- * Thus, the 0-th variable is not included in num_vars.
+ * Thus, the 0-th variable is not included in num_variables.
  */
 template<typename FieldT>
 class r1cs_constraint_system {
 public:
+    size_t primary_input_size;
+    size_t auxiliary_input_size;
 
     std::vector<r1cs_constraint<FieldT> > constraints;
 
-    size_t num_inputs;
-    size_t num_vars;
+    r1cs_constraint_system() : primary_input_size(0), auxiliary_input_size(0) {}
 
-    r1cs_constraint_system() : num_inputs(0), num_vars(0) {};
+    size_t num_inputs() const;
+    size_t num_variables() const;
+    size_t num_constraints() const;
 
 #ifdef DEBUG
     std::map<size_t, std::string> constraint_annotations;
@@ -119,7 +129,8 @@ public:
 #endif
 
     bool is_valid() const;
-    bool is_satisfied(const r1cs_variable_assignment<FieldT> &va) const;
+    bool is_satisfied(const r1cs_primary_input<FieldT> &primary_input,
+                      const r1cs_auxiliary_input<FieldT> &auxiliary_input) const;
 
     void add_constraint(const r1cs_constraint<FieldT> &c);
     void add_constraint(const r1cs_constraint<FieldT> &c, const std::string &annotation);
@@ -131,7 +142,7 @@ public:
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const r1cs_constraint_system<FieldT> &cs);
     friend std::istream& operator>> <FieldT>(std::istream &in, r1cs_constraint_system<FieldT> &cs);
 
-    void report_statistics() const;
+    void report_linear_constraint_statistics() const;
 };
 
 

@@ -4,6 +4,8 @@
  Implementation of functionality that runs the R1CS ppzkSNARK for
  a given R1CS example.
 
+ See run_r1cs_ppzksnark.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -56,7 +58,7 @@ bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
     }
 
     print_header("R1CS ppzkSNARK Prover");
-    r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_prover<ppT>(keypair.pk, example.witness);
+    r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
     printf("\n"); print_indent(); print_mem("after prover");
 
     if (test_serialization)
@@ -67,12 +69,12 @@ bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
     }
 
     print_header("R1CS ppzkSNARK Verifier");
-    bool ans = r1cs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.input, proof);
+    const bool ans = r1cs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.primary_input, proof);
     printf("\n"); print_indent(); print_mem("after verifier");
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
 
     print_header("R1CS ppzkSNARK Online Verifier");
-    bool ans2 = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.input, proof);
+    const bool ans2 = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
     assert(ans == ans2);
 
     leave_block("Call to run_r1cs_ppzksnark");

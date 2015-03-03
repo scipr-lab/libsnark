@@ -70,7 +70,8 @@ bacs_ppzksnark_proof<ppT> bacs_ppzksnark_prover(const bacs_ppzksnark_proving_key
 
     enter_block("Call to bacs_ppzksnark_prover");
     const r1cs_variable_assignment<FieldT> r1cs_va = bacs_to_r1cs_witness_map<FieldT>(pk.circuit, primary_input, auxiliary_input);
-    const r1cs_ppzksnark_proof<ppT> r1cs_proof = r1cs_ppzksnark_prover<ppT>(pk.r1cs_pk, r1cs_va);
+    const r1cs_auxiliary_input<FieldT> r1cs_ai(r1cs_va.begin() + primary_input.size(), r1cs_va.end()); // TODO: faster to just change bacs_to_r1cs_witness_map into two :(
+    const r1cs_ppzksnark_proof<ppT> r1cs_proof = r1cs_ppzksnark_prover<ppT>(pk.r1cs_pk, primary_input, r1cs_ai);
     leave_block("Call to bacs_ppzksnark_prover");
 
     return r1cs_proof;

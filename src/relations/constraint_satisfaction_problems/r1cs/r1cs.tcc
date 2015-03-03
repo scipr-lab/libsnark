@@ -17,8 +17,6 @@
 #ifndef R1CS_TCC_
 #define R1CS_TCC_
 
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
-
 #include <algorithm>
 #include <cassert>
 #include <set>
@@ -37,9 +35,9 @@ r1cs_constraint<FieldT>::r1cs_constraint(const linear_combination<FieldT> &a,
 }
 
 template<typename FieldT>
-r1cs_constraint<FieldT>::r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > A,
-                                         const std::initializer_list<linear_combination<FieldT> > B,
-                                         const std::initializer_list<linear_combination<FieldT> > C)
+r1cs_constraint<FieldT>::r1cs_constraint(const std::initializer_list<linear_combination<FieldT> > &A,
+                                         const std::initializer_list<linear_combination<FieldT> > &B,
+                                         const std::initializer_list<linear_combination<FieldT> > &C)
 {
     for (auto lc_A : A)
     {
@@ -84,15 +82,34 @@ std::istream& operator>>(std::istream &in, r1cs_constraint<FieldT> &c)
 }
 
 template<typename FieldT>
+size_t r1cs_constraint_system<FieldT>::num_inputs() const
+{
+    return primary_input_size;
+}
+
+template<typename FieldT>
+size_t r1cs_constraint_system<FieldT>::num_variables() const
+{
+    return primary_input_size + auxiliary_input_size;
+}
+
+
+template<typename FieldT>
+size_t r1cs_constraint_system<FieldT>::num_constraints() const
+{
+    return constraints.size();
+}
+
+template<typename FieldT>
 bool r1cs_constraint_system<FieldT>::is_valid() const
 {
-    if (this->num_inputs > this->num_vars) return false;
+    if (this->num_inputs() > this->num_variables()) return false;
 
     for (size_t c = 0; c < constraints.size(); ++c)
     {
-        if (!(constraints[c].a.is_valid(this->num_vars) &&
-              constraints[c].b.is_valid(this->num_vars) &&
-              constraints[c].c.is_valid(this->num_vars)))
+        if (!(constraints[c].a.is_valid(this->num_variables()) &&
+              constraints[c].b.is_valid(this->num_variables()) &&
+              constraints[c].c.is_valid(this->num_variables())))
         {
             return false;
         }
@@ -102,24 +119,31 @@ bool r1cs_constraint_system<FieldT>::is_valid() const
 }
 
 template<typename FieldT>
-void dump_r1cs_constraint(const r1cs_constraint<FieldT> &c, const r1cs_variable_assignment<FieldT> &w,
+void dump_r1cs_constraint(const r1cs_constraint<FieldT> &constraint,
+                          const r1cs_variable_assignment<FieldT> &full_variable_assignment,
                           const std::map<size_t, std::string> &variable_annotations)
 {
-    printf("terms for a:\n"); c.a.print_with_assignment(w, variable_annotations);
-    printf("terms for b:\n"); c.b.print_with_assignment(w, variable_annotations);
-    printf("terms for c:\n"); c.c.print_with_assignment(w, variable_annotations);
+    printf("terms for a:\n"); constraint.a.print_with_assignment(full_variable_assignment, variable_annotations);
+    printf("terms for b:\n"); constraint.b.print_with_assignment(full_variable_assignment, variable_annotations);
+    printf("terms for c:\n"); constraint.c.print_with_assignment(full_variable_assignment, variable_annotations);
 }
 
 template<typename FieldT>
-bool r1cs_constraint_system<FieldT>::is_satisfied(const r1cs_variable_assignment<FieldT> &w) const
+bool r1cs_constraint_system<FieldT>::is_satisfied(const r1cs_primary_input<FieldT> &primary_input,
+                                                  const r1cs_auxiliary_input<FieldT> &auxiliary_input) const
 {
-    assert(w.size() == num_vars);
+    assert(primary_input.size() == num_inputs());
+    assert(primary_input.size() + auxiliary_input.size() == num_variables());
+
+    r1cs_variable_assignment<FieldT> full_variable_assignment = primary_input;
+    full_variable_assignment.insert(full_variable_assignment.end(), auxiliary_input.begin(), auxiliary_input.end());
 
     for (size_t c = 0; c < constraints.size(); ++c)
     {
-        FieldT ares = constraints[c].a.evaluate(w);
-        FieldT bres = constraints[c].b.evaluate(w);
-        FieldT cres = constraints[c].c.evaluate(w);
+        const FieldT ares = constraints[c].a.evaluate(full_variable_assignment);
+        const FieldT bres = constraints[c].b.evaluate(full_variable_assignment);
+        const FieldT cres = constraints[c].c.evaluate(full_variable_assignment);
+
         if (!(ares*bres == cres))
         {
 #ifdef DEBUG
@@ -129,7 +153,7 @@ bool r1cs_constraint_system<FieldT>::is_satisfied(const r1cs_variable_assignment
             printf("<b,(1,x)> = "); bres.print();
             printf("<c,(1,x)> = "); cres.print();
             printf("constraint was:\n");
-            dump_r1cs_constraint(constraints[c], w, variable_annotations);
+            dump_r1cs_constraint(constraints[c], full_variable_assignment, variable_annotations);
 #endif // DEBUG
             return false;
         }
@@ -159,7 +183,7 @@ void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
     enter_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
 
     enter_block("Estimate densities");
-    bit_vector touched_by_A(this->num_vars + 1, false), touched_by_B(this->num_vars + 1, false);
+    bit_vector touched_by_A(this->num_variables() + 1, false), touched_by_B(this->num_variables() + 1, false);
 
     for (size_t i = 0; i < this->constraints.size(); ++i)
     {
@@ -175,7 +199,7 @@ void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
     }
 
     size_t non_zero_A_count = 0, non_zero_B_count = 0;
-    for (size_t i = 0; i < this->num_vars + 1; ++i)
+    for (size_t i = 0; i < this->num_variables() + 1; ++i)
     {
         non_zero_A_count += touched_by_A[i] ? 1 : 0;
         non_zero_B_count += touched_by_B[i] ? 1 : 0;
@@ -209,17 +233,17 @@ template<typename FieldT>
 bool r1cs_constraint_system<FieldT>::operator==(const r1cs_constraint_system<FieldT> &other) const
 {
     return (this->constraints == other.constraints &&
-            this->num_inputs == other.num_inputs &&
-            this->num_vars == other.num_vars);
+            this->primary_input_size == other.primary_input_size &&
+            this->auxiliary_input_size == other.auxiliary_input_size);
 }
 
 template<typename FieldT>
 std::ostream& operator<<(std::ostream &out, const r1cs_constraint_system<FieldT> &cs)
 {
-    out << cs.num_inputs << "\n";
-    out << cs.num_vars << "\n";
+    out << cs.primary_input_size << "\n";
+    out << cs.auxiliary_input_size << "\n";
 
-    out << cs.constraints.size() << "\n";
+    out << cs.num_constraints() << "\n";
     for (const r1cs_constraint<FieldT>& c : cs.constraints)
     {
         out << c;
@@ -231,8 +255,8 @@ std::ostream& operator<<(std::ostream &out, const r1cs_constraint_system<FieldT>
 template<typename FieldT>
 std::istream& operator>>(std::istream &in, r1cs_constraint_system<FieldT> &cs)
 {
-    in >> cs.num_inputs;
-    in >> cs.num_vars;
+    in >> cs.primary_input_size;
+    in >> cs.auxiliary_input_size;
 
     cs.constraints.clear();
 
@@ -255,7 +279,7 @@ std::istream& operator>>(std::istream &in, r1cs_constraint_system<FieldT> &cs)
 }
 
 template<typename FieldT>
-void r1cs_constraint_system<FieldT>::report_statistics() const
+void r1cs_constraint_system<FieldT>::report_linear_constraint_statistics() const
 {
 #ifdef DEBUG
     for (size_t i = 0; i < constraints.size(); ++i)

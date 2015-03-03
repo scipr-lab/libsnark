@@ -34,8 +34,8 @@ r1cs_constraint_system<FieldT> bacs_to_r1cs_instance_map(const bacs_circuit<Fiel
  */
 template<typename FieldT>
 r1cs_variable_assignment<FieldT> bacs_to_r1cs_witness_map(const bacs_circuit<FieldT> &circuit,
-                                                          const bacs_primary_input<FieldT> &primary_input,
-                                                          const bacs_auxiliary_input<FieldT> &auxiliary_input);
+                                                               const bacs_primary_input<FieldT> &primary_input,
+                                                               const bacs_auxiliary_input<FieldT> &auxiliary_input);
 
 } // libsnark
 

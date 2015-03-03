@@ -26,12 +26,12 @@ r1cs_constraint_system<FieldT> bacs_to_r1cs_instance_map(const bacs_circuit<Fiel
     assert(circuit.is_valid());
     r1cs_constraint_system<FieldT> result;
 
-    #ifdef DEBUG
+#ifdef DEBUG
     result.variable_annotations = circuit.variable_annotations;
-    #endif
+#endif
 
-    result.num_inputs = circuit.primary_input_size;
-    result.num_vars = circuit.primary_input_size + circuit.auxiliary_input_size + circuit.gates.size();
+    result.primary_input_size = circuit.primary_input_size;
+    result.auxiliary_input_size = circuit.auxiliary_input_size + circuit.gates.size();
 
     for (auto &g : circuit.gates)
     {
@@ -51,9 +51,9 @@ r1cs_constraint_system<FieldT> bacs_to_r1cs_instance_map(const bacs_circuit<Fiel
         {
             result.constraints.emplace_back(r1cs_constraint<FieldT>(1, g.output, 0));
 
-            #ifdef DEBUG
+#ifdef DEBUG
             result.constraint_annotations[result.constraints.size()-1] = FMT("", "output_%zu_is_circuit_output", g.output.index);
-            #endif
+#endif
         }
     }
 
@@ -64,8 +64,8 @@ r1cs_constraint_system<FieldT> bacs_to_r1cs_instance_map(const bacs_circuit<Fiel
 
 template<typename FieldT>
 r1cs_variable_assignment<FieldT> bacs_to_r1cs_witness_map(const bacs_circuit<FieldT> &circuit,
-                                                          const bacs_primary_input<FieldT> &primary_input,
-                                                          const bacs_auxiliary_input<FieldT> &auxiliary_input)
+                                                               const bacs_primary_input<FieldT> &primary_input,
+                                                               const bacs_auxiliary_input<FieldT> &auxiliary_input)
 {
     enter_block("Call to bacs_to_r1cs_witness_map");
     const r1cs_variable_assignment<FieldT> result = circuit.get_all_wires(primary_input, auxiliary_input);

@@ -52,6 +52,7 @@
 #include "common/data_structures/accumulation_vector.hpp"
 #include "algebra/knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -78,7 +79,7 @@ public:
     G1_vector<ppT> H_query;
     G1_vector<ppT> K_query;
 
-    r1cs_constraint_system<Fr<ppT> > constraint_system;
+    r1cs_ppzksnark_constraint_system<ppT> constraint_system;
 
     r1cs_ppzksnark_proving_key() {};
     r1cs_ppzksnark_proving_key<ppT>& operator=(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
@@ -89,7 +90,7 @@ public:
                                knowledge_commitment_vector<G1<ppT>, G1<ppT> > &&C_query,
                                G1_vector<ppT> &&H_query,
                                G1_vector<ppT> &&K_query,
-                               r1cs_constraint_system<Fr<ppT> > &&constraint_system) :
+                               r1cs_ppzksnark_constraint_system<ppT> &&constraint_system) :
         A_query(std::move(A_query)),
         B_query(std::move(B_query)),
         C_query(std::move(C_query)),
@@ -287,7 +288,7 @@ template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A proof for the R1CS ppZKSNARK.
+ * A proof for the R1CS ppzkSNARK.
  *
  * While the proof has a structure, externally one merely opaquely produces,
  * seralizes/deserializes, and verifies proofs. We only expose some information
@@ -366,15 +367,15 @@ public:
 /***************************** Main algorithms *******************************/
 
 /**
- * A generator algorithm for the R1CS ppZKSNARK.
+ * A generator algorithm for the R1CS ppzkSNARK.
  *
  * Given a R1CS constraint system CS, this algorithm produces proving and verification keys for CS.
  */
 template<typename ppT>
-r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_system<Fr<ppT> > &cs);
+r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constraint_system<ppT> &cs);
 
 /**
- * A prover algorithm for the R1CS ppZKSNARK.
+ * A prover algorithm for the R1CS ppzkSNARK.
  *
  * Given a R1CS primary input X and a R1CS auxiliary input Y, this algorithm
  * produces a proof (of knowledge) that attests to the following statement:
@@ -383,10 +384,11 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
  */
 template<typename ppT>
 r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key<ppT> &pk,
-                                                const r1cs_variable_assignment<Fr<ppT> > &witness);
+                                                const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const r1cs_ppzksnark_auxiliary_input<ppT> &auxiliary_input);
 
 /*
- Below are four variants of verifier algorithm for the R1CS ppZKSNARK.
+ Below are four variants of verifier algorithm for the R1CS ppzkSNARK.
 
  These are the four cases that arise from the following two choices:
 
@@ -400,23 +402,23 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
  */
 
 /**
- * A verifier algorithm for the R1CS ppZKSNARK that:
+ * A verifier algorithm for the R1CS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                     const r1cs_variable_assignment<Fr<ppT> > &input,
+                                     const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                      const r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the R1CS ppZKSNARK that:
+ * A verifier algorithm for the R1CS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_strong_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                       const r1cs_variable_assignment<Fr<ppT> > &input,
+                                       const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                        const r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
@@ -426,24 +428,40 @@ template<typename ppT>
 r1cs_ppzksnark_processed_verification_key<ppT> r1cs_ppzksnark_verifier_process_vk(const r1cs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * A verifier algorithm for the R1CS ppZKSNARK that:
+ * A verifier algorithm for the R1CS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const r1cs_variable_assignment<Fr<ppT> > &input,
+                                            const r1cs_ppzksnark_primary_input<ppT> &input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the R1CS ppZKSNARK that:
+ * A verifier algorithm for the R1CS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool r1cs_ppzksnark_online_verifier_strong_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const r1cs_variable_assignment<Fr<ppT> > &input,
+                                              const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                               const r1cs_ppzksnark_proof<ppT> &proof);
+
+/****************************** Miscellaneous ********************************/
+
+/**
+ * For debugging purposes (of r1cs_ppzksnark_r1cs_ppzksnark_verifier_gadget):
+ *
+ * A verifier algorithm for the R1CS ppzkSNARK that:
+ * (1) accepts a non-processed verification key,
+ * (2) has weak input consistency, and
+ * (3) uses affine coordinates for elliptic-curve computations.
+ */
+template<typename ppT>
+bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof);
+
 
 } // libsnark
 

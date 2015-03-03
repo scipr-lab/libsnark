@@ -39,17 +39,11 @@ qap_instance<FieldT> r1cs_to_qap_instance_map(const r1cs_constraint_system<Field
 {
     enter_block("Call to r1cs_to_qap_instance_map");
 
-    qap_instance<FieldT> res;
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
 
-    res.domain = get_evaluation_domain<FieldT>(cs.constraints.size() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
-
-    res.num_vars = cs.num_vars;
-    res.degree = res.domain->m;
-    res.num_inputs = cs.num_inputs;
-
-    res.A_in_Lagrange_basis.resize(res.num_vars+1);
-    res.B_in_Lagrange_basis.resize(res.num_vars+1);
-    res.C_in_Lagrange_basis.resize(res.num_vars+1);
+    std::vector<std::map<size_t, FieldT> > A_in_Lagrange_basis(cs.num_variables()+1);
+    std::vector<std::map<size_t, FieldT> > B_in_Lagrange_basis(cs.num_variables()+1);
+    std::vector<std::map<size_t, FieldT> > C_in_Lagrange_basis(cs.num_variables()+1);
 
     enter_block("Compute polynomials A, B, C in Lagrange basis");
     /**
@@ -57,28 +51,28 @@ qap_instance<FieldT> r1cs_to_qap_instance_map(const r1cs_constraint_system<Field
      *     (1 + \sum_{i=1}^{num_inputs} (i+1) * input_i) * 0 = 0
      * to ensure soundness of input consistency
      */
-    for (size_t i = 0; i <= res.num_inputs; ++i)
+    for (size_t i = 0; i <= cs.num_inputs(); ++i)
     {
-        res.A_in_Lagrange_basis[i][0] += FieldT(i+1);
+        A_in_Lagrange_basis[i][0] += FieldT(i+1);
     }
     /* process all other constraints */
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
         for (size_t j = 0; j < cs.constraints[i].a.terms.size(); ++j)
         {
-            res.A_in_Lagrange_basis[cs.constraints[i].a.terms[j].index][i+1] +=
-            cs.constraints[i].a.terms[j].coeff;
+            A_in_Lagrange_basis[cs.constraints[i].a.terms[j].index][i+1] +=
+                cs.constraints[i].a.terms[j].coeff;
         }
 
         for (size_t j = 0; j < cs.constraints[i].b.terms.size(); ++j)
         {
-            res.B_in_Lagrange_basis[cs.constraints[i].b.terms[j].index][i+1] +=
-            cs.constraints[i].b.terms[j].coeff;
+            B_in_Lagrange_basis[cs.constraints[i].b.terms[j].index][i+1] +=
+                cs.constraints[i].b.terms[j].coeff;
         }
 
         for (size_t j = 0; j < cs.constraints[i].c.terms.size(); ++j)
         {
-            res.C_in_Lagrange_basis[cs.constraints[i].c.terms[j].index][i+1] +=
+            C_in_Lagrange_basis[cs.constraints[i].c.terms[j].index][i+1] +=
             cs.constraints[i].c.terms[j].coeff;
         }
     }
@@ -86,7 +80,13 @@ qap_instance<FieldT> r1cs_to_qap_instance_map(const r1cs_constraint_system<Field
 
     leave_block("Call to r1cs_to_qap_instance_map");
 
-    return res;
+    return qap_instance<FieldT>(domain,
+                                cs.num_variables(),
+                                domain->m,
+                                cs.num_inputs(),
+                                std::move(A_in_Lagrange_basis),
+                                std::move(B_in_Lagrange_basis),
+                                std::move(C_in_Lagrange_basis));
 }
 
 /**
@@ -109,66 +109,70 @@ qap_instance_evaluation<FieldT> r1cs_to_qap_instance_map_with_evaluation(const r
 {
     enter_block("Call to r1cs_to_qap_instance_map_with_evaluation");
 
-    qap_instance_evaluation<FieldT> res;
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
 
-    res.domain = get_evaluation_domain<FieldT>(cs.constraints.size() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
+    std::vector<FieldT> At, Bt, Ct, Ht;
 
-    res.num_vars = cs.num_vars;
-    res.degree = res.domain->m;
-    res.num_inputs = cs.num_inputs;
+    At.resize(cs.num_variables()+1, FieldT::zero());
+    Bt.resize(cs.num_variables()+1, FieldT::zero());
+    Ct.resize(cs.num_variables()+1, FieldT::zero());
+    Ht.reserve(domain->m+1);
 
-    res.t = t;
-
-    res.At.resize(res.num_vars+1, FieldT::zero());
-    res.Bt.resize(res.num_vars+1, FieldT::zero());
-    res.Ct.resize(res.num_vars+1, FieldT::zero());
-    res.Ht.reserve(res.degree+1);
-
-    res.Zt = res.domain->compute_Z(res.t);
+    const FieldT Zt = domain->compute_Z(t);
 
     enter_block("Compute evaluations of A, B, C, H at t");
-    const std::vector<FieldT> u = res.domain->lagrange_coeffs(res.t);
+    const std::vector<FieldT> u = domain->lagrange_coeffs(t);
     /**
      * add and process the constraint
      *     (1 + \sum_{i=1}^{num_inputs} (i+1) * input_i) * 0 = 0
      * to ensure soundness of input consistency
      */
-    for (size_t i = 0; i <= res.num_inputs; ++i)
+    for (size_t i = 0; i <= cs.num_inputs(); ++i)
     {
-        res.At[i] += u[0] * FieldT(i+1);
+        At[i] += u[0] * FieldT(i+1);
     }
     /* process all other constraints */
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
         for (size_t j = 0; j < cs.constraints[i].a.terms.size(); ++j)
         {
-            res.At[cs.constraints[i].a.terms[j].index] +=
+            At[cs.constraints[i].a.terms[j].index] +=
                 u[i+1]*cs.constraints[i].a.terms[j].coeff;
         }
 
         for (size_t j = 0; j < cs.constraints[i].b.terms.size(); ++j)
         {
-            res.Bt[cs.constraints[i].b.terms[j].index] +=
+            Bt[cs.constraints[i].b.terms[j].index] +=
                 u[i+1]*cs.constraints[i].b.terms[j].coeff;
         }
 
         for (size_t j = 0; j < cs.constraints[i].c.terms.size(); ++j)
         {
-            res.Ct[cs.constraints[i].c.terms[j].index] +=
+            Ct[cs.constraints[i].c.terms[j].index] +=
                 u[i+1]*cs.constraints[i].c.terms[j].coeff;
         }
     }
+
     FieldT ti = FieldT::one();
-    for (size_t i = 0; i < res.degree+1; ++i)
+    for (size_t i = 0; i < domain->m+1; ++i)
     {
-        res.Ht.emplace_back(ti);
-        ti *= res.t;
+        Ht.emplace_back(ti);
+        ti *= t;
     }
     leave_block("Compute evaluations of A, B, C, H at t");
 
     leave_block("Call to r1cs_to_qap_instance_map_with_evaluation");
 
-    return res;
+    return qap_instance_evaluation<FieldT>(domain,
+                                           cs.num_variables(),
+                                           domain->m,
+                                           cs.num_inputs(),
+                                           t,
+                                           std::move(At),
+                                           std::move(Bt),
+                                           std::move(Ct),
+                                           std::move(Ht),
+                                           Zt);
 }
 
 /**
@@ -202,7 +206,8 @@ qap_instance_evaluation<FieldT> r1cs_to_qap_instance_map_with_evaluation(const r
  */
 template<typename FieldT>
 qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT> &cs,
-                                            const r1cs_variable_assignment<FieldT> &w,
+                                            const r1cs_primary_input<FieldT> &primary_input,
+                                            const r1cs_auxiliary_input<FieldT> &auxiliary_input,
                                             const FieldT &d1,
                                             const FieldT &d2,
                                             const FieldT &d3)
@@ -210,36 +215,27 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
     enter_block("Call to r1cs_to_qap_witness_map");
 
     /* sanity check */
-    assert(cs.is_satisfied(w));
+    assert(cs.is_satisfied(primary_input, auxiliary_input));
 
-    std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.constraints.size() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints() + R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS);
 
-    qap_witness<FieldT> res;
-
-    res.d1 = d1;
-    res.d2 = d2;
-    res.d3 = d3;
-
-    res.coefficients_for_ABCs = w;
-
-    res.num_vars = cs.num_vars;
-    res.degree = domain->m;
-    res.num_inputs = cs.num_inputs;
+    r1cs_variable_assignment<FieldT> full_variable_assignment = primary_input;
+    full_variable_assignment.insert(full_variable_assignment.end(), auxiliary_input.begin(), auxiliary_input.end());
 
     enter_block("Compute evaluation of polynomials A, B on set S");
-    std::vector<FieldT> aA(res.degree, FieldT::zero()), aB(res.degree, FieldT::zero());
+    std::vector<FieldT> aA(domain->m, FieldT::zero()), aB(domain->m, FieldT::zero());
 
     /* account for the additional constraint (1 + \sum_{i=1}^{num_inputs} (i+1) * input_i) * 0 = 0 */
     aA[0] = FieldT::one();
-    for (size_t i = 0; i < res.num_inputs; ++i)
+    for (size_t i = 0; i < cs.num_inputs(); ++i)
     {
-        aA[0] += w[i] * FieldT(i+2);
+        aA[0] += full_variable_assignment[i] * FieldT(i+2);
     }
     /* account for all other constraints */
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
-        aA[i+1] += cs.constraints[i].a.evaluate(w);
-        aB[i+1] += cs.constraints[i].b.evaluate(w);
+        aA[i+1] += cs.constraints[i].a.evaluate(full_variable_assignment);
+        aB[i+1] += cs.constraints[i].b.evaluate(full_variable_assignment);
     }
     leave_block("Compute evaluation of polynomials A, B on set S");
 
@@ -252,17 +248,17 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
     leave_block("Compute coefficients of polynomial B");
 
     enter_block("Compute ZK-patch");
-    res.coefficients_for_H = std::vector<FieldT>(res.degree+1, FieldT::zero());
+    std::vector<FieldT> coefficients_for_H(domain->m+1, FieldT::zero());
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
     /* add coefficients of the polynomial (d2*A + d1*B - d3) + d1*d2*Z */
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
-        res.coefficients_for_H[i] = res.d2*aA[i] + res.d1*aB[i];
+        coefficients_for_H[i] = d2*aA[i] + d1*aB[i];
     }
-    res.coefficients_for_H[0] -= res.d3;
-    domain->add_poly_Z(res.d1*res.d2, res.coefficients_for_H);
+    coefficients_for_H[0] -= d3;
+    domain->add_poly_Z(d1*d2, coefficients_for_H);
     leave_block("Compute ZK-patch");
 
     enter_block("Compute evaluation of polynomial A on set T");
@@ -278,17 +274,17 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
         H_tmp[i] = aA[i]*aB[i];
     }
     std::vector<FieldT>().swap(aB); // destroy aB
 
     enter_block("Compute evaluation of polynomial C on set S");
-    std::vector<FieldT> aC(res.degree, FieldT::zero());
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    std::vector<FieldT> aC(domain->m, FieldT::zero());
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
-        aC[i+1] += cs.constraints[i].c.evaluate(w);
+        aC[i+1] += cs.constraints[i].c.evaluate(full_variable_assignment);
     }
     leave_block("Compute evaluation of polynomial C on set S");
 
@@ -303,7 +299,7 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
         H_tmp[i] = (H_tmp[i]-aC[i]);
     }
@@ -322,15 +318,22 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
-        res.coefficients_for_H[i] += H_tmp[i];
+        coefficients_for_H[i] += H_tmp[i];
     }
     leave_block("Compute sum of H and ZK-patch");
 
     leave_block("Call to r1cs_to_qap_witness_map");
 
-    return res;
+    return qap_witness<FieldT>(cs.num_variables(),
+                               domain->m,
+                               cs.num_inputs(),
+                               d1,
+                               d2,
+                               d3,
+                               full_variable_assignment,
+                               std::move(coefficients_for_H));
 }
 
 } // libsnark

@@ -229,18 +229,18 @@ r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy
         v.emplace_back(Fr<ppT>::random_element() * G1<ppT>::one());
     }
 
-    result.encoded_IC_query = accumulation_vector<G1<ppT> >(v);
+    result.encoded_IC_query = accumulation_vector<G1<ppT> >(std::move(v));
 
     return result;
 }
 
 template <typename ppT>
-r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_system<Fr<ppT> > &cs)
+r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constraint_system<ppT> &cs)
 {
     enter_block("Call to r1cs_ppzksnark_generator");
 
     /* make the B_query "lighter" if possible */
-    r1cs_constraint_system<Fr<ppT> > cs_copy(cs);
+    r1cs_ppzksnark_constraint_system<ppT> cs_copy(cs);
     cs_copy.swap_AB_if_beneficial();
 
     /* draw random element at which the QAP is evaluated */
@@ -248,14 +248,14 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 
     qap_instance_evaluation<Fr<ppT> > qap_inst = r1cs_to_qap_instance_map_with_evaluation(cs_copy, t);
 
-    print_indent(); printf("* QAP number of variables: %zu\n", qap_inst.num_vars);
+    print_indent(); printf("* QAP number of variables: %zu\n", qap_inst.num_variables());
     print_indent(); printf("* QAP pre degree: %zu\n", cs_copy.constraints.size());
-    print_indent(); printf("* QAP degree: %zu\n", qap_inst.degree);
-    print_indent(); printf("* QAP number of input variables: %zu\n", qap_inst.num_inputs);
+    print_indent(); printf("* QAP degree: %zu\n", qap_inst.degree());
+    print_indent(); printf("* QAP number of input variables: %zu\n", qap_inst.num_inputs());
 
     enter_block("Compute query densities");
     size_t non_zero_At = 0, non_zero_Bt = 0, non_zero_Ct = 0, non_zero_Ht = 0;
-    for (size_t i = 0; i < qap_inst.num_vars+1; ++i)
+    for (size_t i = 0; i < qap_inst.num_variables()+1; ++i)
     {
         if (!qap_inst.At[i].is_zero())
         {
@@ -270,7 +270,7 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
             ++non_zero_Ct;
         }
     }
-    for (size_t i = 0; i < qap_inst.degree+1; ++i)
+    for (size_t i = 0; i < qap_inst.degree()+1; ++i)
     {
         if (!qap_inst.Ht[i].is_zero())
         {
@@ -300,8 +300,8 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 
     // consrtuct the same-coefficient-check query (must happen before zeroing out the prefix of At)
     Fr_vector<ppT> Kt;
-    Kt.reserve(qap_inst.num_vars+4);
-    for (size_t i = 0; i < qap_inst.num_vars+1; ++i)
+    Kt.reserve(qap_inst.num_variables()+4);
+    for (size_t i = 0; i < qap_inst.num_variables()+1; ++i)
     {
         Kt.emplace_back( beta * (rA * At[i] + rB * Bt[i] + rC * Ct[i] ) );
     }
@@ -311,15 +311,15 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 
     /* zero out prefix of At and stick it into IC coefficients */
     Fr_vector<ppT> IC_coefficients;
-    IC_coefficients.reserve(qap_inst.num_inputs + 1);
-    for (size_t i = 0; i < qap_inst.num_inputs + 1; ++i)
+    IC_coefficients.reserve(qap_inst.num_inputs() + 1);
+    for (size_t i = 0; i < qap_inst.num_inputs() + 1; ++i)
     {
         IC_coefficients.emplace_back(At[i]);
         assert(!IC_coefficients[i].is_zero());
         At[i] = Fr<ppT>::zero();
     }
 
-    const size_t g1_exp_count = 2*(non_zero_At - qap_inst.num_inputs + non_zero_Ct) + non_zero_Bt + non_zero_Ht + Kt.size();
+    const size_t g1_exp_count = 2*(non_zero_At - qap_inst.num_inputs() + non_zero_Ct) + non_zero_Bt + non_zero_Ht + Kt.size();
     const size_t g2_exp_count = non_zero_Bt;
 
     size_t g1_window = get_exp_window_size<G1<ppT> >(g1_exp_count);
@@ -334,30 +334,30 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 #endif
 
     enter_block("Generating G1 multiexp table");
-    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::num_bits, g1_window, G1<ppT>::one());
+    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::size_in_bits(), g1_window, G1<ppT>::one());
     leave_block("Generating G1 multiexp table");
 
     enter_block("Generating G2 multiexp table");
-    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::num_bits, g2_window, G2<ppT>::one());
+    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::size_in_bits(), g2_window, G2<ppT>::one());
     leave_block("Generating G2 multiexp table");
 
     enter_block("Generate R1CS proving key");
 
     enter_block("Generate knowledge commitments");
     enter_block("Compute the A-query", false);
-    knowledge_commitment_vector<G1<ppT>, G1<ppT> > A_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, chunks);
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > A_query = kc_batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, chunks);
     leave_block("Compute the A-query", false);
 
     enter_block("Compute the B-query", false);
-    knowledge_commitment_vector<G2<ppT>, G1<ppT> > B_query = kc_batch_exp(Fr<ppT>::num_bits, g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, chunks);
+    knowledge_commitment_vector<G2<ppT>, G1<ppT> > B_query = kc_batch_exp(Fr<ppT>::size_in_bits(), g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, chunks);
     leave_block("Compute the B-query", false);
 
     enter_block("Compute the C-query", false);
-    knowledge_commitment_vector<G1<ppT>, G1<ppT> > C_query = kc_batch_exp(Fr<ppT>::num_bits, g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, chunks);
+    knowledge_commitment_vector<G1<ppT>, G1<ppT> > C_query = kc_batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, chunks);
     leave_block("Compute the C-query", false);
 
     enter_block("Compute the H-query", false);
-    G1_vector<ppT> H_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Ht);
+    G1_vector<ppT> H_query = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, Ht);
     leave_block("Compute the H-query", false);
 
     enter_block("Compute the K-query", false);
@@ -383,12 +383,12 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
     enter_block("Encode IC query for R1CS verification key");
     G1<ppT> encoded_IC_base = (rA * IC_coefficients[0]) * G1<ppT>::one();
     Fr_vector<ppT> multiplied_IC_coefficients;
-    multiplied_IC_coefficients.reserve(qap_inst.num_inputs);
-    for (size_t i = 1; i < qap_inst.num_inputs + 1; ++i)
+    multiplied_IC_coefficients.reserve(qap_inst.num_inputs());
+    for (size_t i = 1; i < qap_inst.num_inputs() + 1; ++i)
     {
         multiplied_IC_coefficients.emplace_back(rA * IC_coefficients[i]);
     }
-    G1_vector<ppT> encoded_IC_values = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, multiplied_IC_coefficients);
+    G1_vector<ppT> encoded_IC_values = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, multiplied_IC_coefficients);
 
     leave_block("Encode IC query for R1CS verification key");
     leave_block("Generate R1CS verification key");
@@ -420,12 +420,13 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_constraint_syste
 
 template <typename ppT>
 r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key<ppT> &pk,
-                                                const r1cs_variable_assignment<Fr<ppT> > &w)
+                                                const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const r1cs_ppzksnark_auxiliary_input<ppT> &auxiliary_input)
 {
     enter_block("Call to r1cs_ppzksnark_prover");
 
 #ifdef DEBUG
-    assert(pk.constraint_system.is_satisfied(w));
+    assert(pk.constraint_system.is_satisfied(primary_input, auxiliary_input));
 #endif
 
     const Fr<ppT> d1 = Fr<ppT>::random_element(),
@@ -433,7 +434,7 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
         d3 = Fr<ppT>::random_element();
 
     enter_block("Compute the polynomial H");
-    const qap_witness<Fr<ppT> > qap_wit = r1cs_to_qap_witness_map(pk.constraint_system, w, d1, d2, d3);
+    const qap_witness<Fr<ppT> > qap_wit = r1cs_to_qap_witness_map(pk.constraint_system, primary_input, auxiliary_input, d1, d2, d3);
     leave_block("Compute the polynomial H");
 
 #ifdef DEBUG
@@ -442,23 +443,26 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     assert(qap_inst.is_satisfied(qap_wit));
 #endif
 
-    knowledge_commitment<G1<ppT>, G1<ppT> > g_A = pk.A_query[0] + qap_wit.d1*pk.A_query[qap_wit.num_vars+1];
-    knowledge_commitment<G2<ppT>, G1<ppT> > g_B = pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_vars+1];
-    knowledge_commitment<G1<ppT>, G1<ppT> > g_C = pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_vars+1];
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_A = pk.A_query[0] + qap_wit.d1*pk.A_query[qap_wit.num_variables()+1];
+    knowledge_commitment<G2<ppT>, G1<ppT> > g_B = pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_variables()+1];
+    knowledge_commitment<G1<ppT>, G1<ppT> > g_C = pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_variables()+1];
 
     G1<ppT> g_H = G1<ppT>::zero();
-    G1<ppT> g_K = pk.K_query[0] + qap_wit.d1*pk.K_query[qap_wit.num_vars+1] + qap_wit.d2*pk.K_query[qap_wit.num_vars+2] + qap_wit.d3*pk.K_query[qap_wit.num_vars+3];
+    G1<ppT> g_K = (pk.K_query[0] +
+                   qap_wit.d1*pk.K_query[qap_wit.num_variables()+1] +
+                   qap_wit.d2*pk.K_query[qap_wit.num_variables()+2] +
+                   qap_wit.d3*pk.K_query[qap_wit.num_variables()+3]);
 
 #ifdef DEBUG
-    for (size_t i = 0; i < qap_wit.num_inputs + 1; ++i)
+    for (size_t i = 0; i < qap_wit.num_inputs() + 1; ++i)
     {
         assert(pk.A_query[i].g == G1<ppT>::zero());
     }
-    assert(pk.A_query.domain_size() == qap_wit.num_vars+2);
-    assert(pk.B_query.domain_size() == qap_wit.num_vars+2);
-    assert(pk.C_query.domain_size() == qap_wit.num_vars+2);
-    assert(pk.H_query.size() == qap_wit.degree+1);
-    assert(pk.K_query.size() == qap_wit.num_vars+4);
+    assert(pk.A_query.domain_size() == qap_wit.num_variables()+2);
+    assert(pk.B_query.domain_size() == qap_wit.num_variables()+2);
+    assert(pk.C_query.domain_size() == qap_wit.num_variables()+2);
+    assert(pk.H_query.size() == qap_wit.degree()+1);
+    assert(pk.K_query.size() == qap_wit.num_variables()+4);
 #endif
 
 #ifdef MULTICORE
@@ -471,35 +475,35 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
 
     enter_block("Compute answer to A-query", false);
     g_A = g_A + kc_multi_exp_with_mixed_addition<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.A_query,
-                                                                               1, 1+qap_wit.num_vars,
-                                                                               qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
-                                                                               chunks, true);
+                                                                             1, 1+qap_wit.num_variables(),
+                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+                                                                             chunks, true);
     leave_block("Compute answer to A-query", false);
 
     enter_block("Compute answer to B-query", false);
     g_B = g_B + kc_multi_exp_with_mixed_addition<G2<ppT>, G1<ppT>, Fr<ppT> >(pk.B_query,
-                                                                               1, 1+qap_wit.num_vars,
-                                                                               qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
-                                                                               chunks, true);
+                                                                             1, 1+qap_wit.num_variables(),
+                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+                                                                             chunks, true);
     leave_block("Compute answer to B-query", false);
 
     enter_block("Compute answer to C-query", false);
     g_C = g_C + kc_multi_exp_with_mixed_addition<G1<ppT>, G1<ppT>, Fr<ppT> >(pk.C_query,
-                                                                               1, 1+qap_wit.num_vars,
-                                                                               qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
-                                                                               chunks, true);
+                                                                             1, 1+qap_wit.num_variables(),
+                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+                                                                             chunks, true);
     leave_block("Compute answer to C-query", false);
 
     enter_block("Compute answer to H-query", false);
-    g_H = g_H + multi_exp<G1<ppT>, Fr<ppT> >(pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree+1,
-                                             qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree+1,
+    g_H = g_H + multi_exp<G1<ppT>, Fr<ppT> >(pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree()+1,
+                                             qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree()+1,
                                              chunks, true);
     leave_block("Compute answer to H-query", false);
 
     enter_block("Compute answer to K-query", false);
-    g_K = g_K + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_vars,
-                                                                   qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_vars,
-                                                                   chunks, true);
+    g_K = g_K + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_variables(),
+                                                                 qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+                                                                 chunks, true);
     leave_block("Compute answer to K-query", false);
 
     leave_block("Compute the proof");
@@ -536,15 +540,14 @@ r1cs_ppzksnark_processed_verification_key<ppT> r1cs_ppzksnark_verifier_process_v
 
 template <typename ppT>
 bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const r1cs_variable_assignment<Fr<ppT> > &input,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_online_verifier_weak_IC");
-    assert(pvk.encoded_IC_query.domain_size() >= input.size());
+    assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
     enter_block("Compute input-dependent part of A");
-    const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(input.begin(), input.end(), 0);
-    assert(accumulated_IC.is_fully_accumulated());
+    const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const G1<ppT> &acc = accumulated_IC.first;
     leave_block("Compute input-dependent part of A");
 
@@ -651,32 +654,32 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
 
 template<typename ppT>
 bool r1cs_ppzksnark_verifier_weak_IC(const r1cs_ppzksnark_verification_key<ppT> &vk,
-                                     const r1cs_variable_assignment<Fr<ppT> > &input,
+                                     const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                      const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_verifier_weak_IC");
     r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
-    bool result = r1cs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, input, proof);
+    bool result = r1cs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, primary_input, proof);
     leave_block("Call to r1cs_ppzksnark_verifier_weak_IC");
     return result;
 }
 
 template<typename ppT>
 bool r1cs_ppzksnark_online_verifier_strong_IC(const r1cs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const r1cs_variable_assignment<Fr<ppT> > &input,
+                                              const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                               const r1cs_ppzksnark_proof<ppT> &proof)
 {
     bool result = true;
     enter_block("Call to r1cs_ppzksnark_online_verifier_strong_IC");
 
-    if (pvk.encoded_IC_query.domain_size() != input.size())
+    if (pvk.encoded_IC_query.domain_size() != primary_input.size())
     {
-        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", input.size(), pvk.encoded_IC_query.domain_size());
+        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", primary_input.size(), pvk.encoded_IC_query.domain_size());
         result = false;
     }
     else
     {
-        result = r1cs_ppzksnark_online_verifier_weak_IC(pvk, input, proof);
+        result = r1cs_ppzksnark_online_verifier_weak_IC(pvk, primary_input, proof);
     }
 
     leave_block("Call to r1cs_ppzksnark_online_verifier_strong_IC");
