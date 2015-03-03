@@ -23,19 +23,16 @@ protoboard<FieldT>::protoboard()
     constraint_system.variable_annotations[0] = "ONE";
 #endif
 
-    constraint_system.num_vars = 0;
-    constraint_system.num_inputs = 0;
-    next_free_var = 1;
+    next_free_var = 1; /* to account for constant 1 term */
     next_free_lc = 0;
 }
 
 template<typename FieldT>
 var_index_t protoboard<FieldT>::allocate_var_index(const std::string &annotation)
 {
-    ++constraint_system.num_vars;
 #ifdef DEBUG
     assert(annotation != "");
-    constraint_system.variable_annotations[constraint_system.num_vars] = annotation;
+    constraint_system.variable_annotations[next_free_var] = annotation;
 #endif
     values.emplace_back(FieldT::zero());
     return next_free_var++;
@@ -101,30 +98,80 @@ void protoboard<FieldT>::add_r1cs_constraint(const r1cs_constraint<FieldT> &cons
 }
 
 template<typename FieldT>
-void protoboard<FieldT>::augment_annotation(const pb_variable<FieldT> &v, const std::string &postfix)
+void protoboard<FieldT>::augment_variable_annotation(const pb_variable<FieldT> &v, const std::string &postfix)
 {
 #ifdef DEBUG
     auto it = constraint_system.variable_annotations.find(v.index);
-    constraint_system.variable_annotations[v.index] = (it == constraint_system.variable_annotations.end() ? "" : it->second) + postfix;
+    constraint_system.variable_annotations[v.index] = (it == constraint_system.variable_annotations.end() ? "" : it->second + " ") + postfix;
 #endif
 }
 
 template<typename FieldT>
-bool protoboard<FieldT>::is_satisfied()
+bool protoboard<FieldT>::is_satisfied() const
 {
-    return constraint_system.is_satisfied(values);
+    return constraint_system.is_satisfied(primary_input(), auxiliary_input());
 }
 
 template<typename FieldT>
-void protoboard<FieldT>::dump_variables()
+void protoboard<FieldT>::dump_variables() const
 {
 #ifdef DEBUG
-    for (size_t i = 0; i < constraint_system.num_vars; ++i)
+    for (size_t i = 0; i < constraint_system.num_variables; ++i)
     {
         printf("%-40s --> ", constraint_system.variable_annotations[i].c_str());
         values[i].as_bigint().print_hex();
     }
 #endif
+}
+
+template<typename FieldT>
+size_t protoboard<FieldT>::num_constraints() const
+{
+    return constraint_system.num_constraints();
+}
+
+template<typename FieldT>
+size_t protoboard<FieldT>::num_inputs() const
+{
+    return constraint_system.num_inputs();
+}
+
+template<typename FieldT>
+size_t protoboard<FieldT>::num_variables() const
+{
+    return next_free_var - 1;
+}
+
+template<typename FieldT>
+void protoboard<FieldT>::set_input_sizes(const size_t primary_input_size)
+{
+    assert(primary_input_size <= num_variables());
+    constraint_system.primary_input_size = primary_input_size;
+    constraint_system.auxiliary_input_size = num_variables() - primary_input_size;
+}
+
+template<typename FieldT>
+r1cs_variable_assignment<FieldT> protoboard<FieldT>::full_variable_assignment() const
+{
+    return values;
+}
+
+template<typename FieldT>
+r1cs_primary_input<FieldT> protoboard<FieldT>::primary_input() const
+{
+    return r1cs_primary_input<FieldT>(values.begin(), values.begin() + num_inputs());
+}
+
+template<typename FieldT>
+r1cs_auxiliary_input<FieldT> protoboard<FieldT>::auxiliary_input() const
+{
+    return r1cs_primary_input<FieldT>(values.begin() + num_inputs(), values.end());
+}
+
+template<typename FieldT>
+r1cs_constraint_system<FieldT> protoboard<FieldT>::get_constraint_system() const
+{
+    return constraint_system;
 }
 
 } // libsnark

@@ -28,24 +28,16 @@ class r1cs_constraint_system;
 template<typename FieldT>
 class protoboard {
 private:
-    FieldT constant_term;
-public:
+    FieldT constant_term; /* only here, because pb.val() needs to be able to return reference to the constant 1 term */
+    r1cs_variable_assignment<FieldT> values; /* values[0] will hold the value of the first allocated variable of the protoboard, *NOT* constant 1 */
     var_index_t next_free_var;
     lc_index_t next_free_lc;
-
-    /* values[i] is the value of the i-th variable (set in witness
-       generation), values[0] will always hold 1 */
-    std::vector<FieldT> values;
+    std::vector<FieldT> lc_values;
     r1cs_constraint_system<FieldT> constraint_system;
 
-    std::vector<FieldT> lc_values;
-
-    protoboard();
-private:
-    var_index_t allocate_var_index(const std::string &annotation="");
-    lc_index_t allocate_lc_index();
-
 public:
+    protoboard();
+
     FieldT& val(const pb_variable<FieldT> &var);
     FieldT val(const pb_variable<FieldT> &var) const;
 
@@ -53,15 +45,27 @@ public:
     FieldT lc_val(const pb_linear_combination<FieldT> &lc) const;
 
     void add_r1cs_constraint(const r1cs_constraint<FieldT> &constr, const std::string &annotation="");
-    void augment_annotation(const pb_variable<FieldT> &v, const std::string &postfix);
-    bool is_satisfied();
-    void dump_variables();
+    void augment_variable_annotation(const pb_variable<FieldT> &v, const std::string &postfix);
+    bool is_satisfied() const;
+    void dump_variables() const;
 
-    size_t num_constraints() { return constraint_system.constraints.size(); }
-    size_t num_vars() { return next_free_var - 1; }
+    size_t num_constraints() const;
+    size_t num_inputs() const;
+    size_t num_variables() const;
+
+    void set_input_sizes(const size_t primary_input_size);
+
+    r1cs_variable_assignment<FieldT> full_variable_assignment() const;
+    r1cs_primary_input<FieldT> primary_input() const;
+    r1cs_auxiliary_input<FieldT> auxiliary_input() const;
+    r1cs_constraint_system<FieldT> get_constraint_system() const;
 
     friend class pb_variable<FieldT>;
     friend class pb_linear_combination<FieldT>;
+
+private:
+    var_index_t allocate_var_index(const std::string &annotation="");
+    lc_index_t allocate_lc_index();
 };
 
 } // libsnark

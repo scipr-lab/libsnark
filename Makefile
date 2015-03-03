@@ -37,7 +37,18 @@ SRCS= \
 	src/gadgetlib2/protoboard.cpp \
 	src/gadgetlib2/variable.cpp \
 	src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
-	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp
+	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
+        src/common/data_structures/integer_permutation.cpp \
+        src/common/default_types/tinyram_ppzksnark_pp.cpp \
+        src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
+        src/common/routing_algorithms/benes_routing_algorithm.cpp \
+        src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
+        src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
+        src/relations/ram_computations/memory/examples/memory_contents_examples.cpp \
+        src/relations/ram_computations/memory/memory_store_trace.cpp \
+        src/relations/ram_computations/memory/ra_memory.cpp \
+        src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
+        src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
 
 EXECUTABLES= \
 	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
@@ -47,7 +58,17 @@ EXECUTABLES= \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
+        src/common/routing_algorithms/profiling/profile_routing_algorithms \
+        src/common/routing_algorithms/tests/test_routing_algorithms \
+        src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+        src/reductions/ram_to_r1cs/examples/demo_arithmetization \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
+        src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \
