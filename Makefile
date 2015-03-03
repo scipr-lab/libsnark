@@ -12,7 +12,7 @@ DEPSRC=depsrc
 DEPINST=depinst
 
 LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
-LDLIBS += -lgmpxx -lgmp
+LDLIBS += -lgmpxx -lgmp -lboost_program_options
 CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM
 DEFAULT_CURVE=BN128
 
