@@ -25,8 +25,10 @@ ifneq ($(NO_GTEST),1)
 endif
 
 SRCS= \
+	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
 	src/common/profiling.cpp \
 	src/common/utils.cpp \
+	src/gadgetlib1/constraint_profiling.cpp \
 	src/gadgetlib2/adapters.cpp \
 	src/gadgetlib2/constraint.cpp \
 	src/gadgetlib2/examples/simple_example.cpp \
@@ -38,17 +40,6 @@ SRCS= \
 	src/gadgetlib2/variable.cpp \
 	src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
 	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
-        src/common/data_structures/integer_permutation.cpp \
-        src/common/default_types/tinyram_ppzksnark_pp.cpp \
-        src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
-        src/common/routing_algorithms/benes_routing_algorithm.cpp \
-        src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
-        src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
-        src/relations/ram_computations/memory/examples/memory_contents_examples.cpp \
-        src/relations/ram_computations/memory/memory_store_trace.cpp \
-        src/relations/ram_computations/memory/ra_memory.cpp \
-        src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
-        src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp \
         src/algebra/curves/mnt/mnt4/mnt4_g1.cpp \
         src/algebra/curves/mnt/mnt4/mnt4_g2.cpp \
         src/algebra/curves/mnt/mnt4/mnt4_init.cpp \
@@ -59,7 +50,18 @@ SRCS= \
         src/algebra/curves/mnt/mnt6/mnt6_g2.cpp \
         src/algebra/curves/mnt/mnt6/mnt6_init.cpp \
         src/algebra/curves/mnt/mnt6/mnt6_pairing.cpp \
-        src/algebra/curves/mnt/mnt6/mnt6_pp.cpp
+        src/algebra/curves/mnt/mnt6/mnt6_pp.cpp \
+        src/common/data_structures/integer_permutation.cpp \
+        src/common/default_types/tinyram_ppzksnark_pp.cpp \
+        src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
+        src/common/routing_algorithms/benes_routing_algorithm.cpp \
+        src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
+        src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
+        src/relations/ram_computations/memory/examples/memory_contents_examples.cpp \
+        src/relations/ram_computations/memory/memory_store_trace.cpp \
+        src/relations/ram_computations/memory/ra_memory.cpp \
+        src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
+        src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
 
 EXECUTABLES= \
 	src/algebra/curves/tests/test_bilinearity \
@@ -68,7 +70,10 @@ EXECUTABLES= \
 	src/common/routing_algorithms/profiling/profile_routing_algorithms \
 	src/common/routing_algorithms/tests/test_routing_algorithms \
 	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
 	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
+	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd \
+	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd \
 	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \

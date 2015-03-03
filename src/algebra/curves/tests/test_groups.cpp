@@ -10,7 +10,6 @@
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
 #include "algebra/curves/bn128/bn128_pp.hpp"
 #include "algebra/curves/alt_bn128/alt_bn128_pp.hpp"
-#include "algebra/curves/simulated_encoding/simulated_encoding_pp.hpp"
 #include <sstream>
 
 using namespace libsnark;
@@ -169,16 +168,4 @@ int main(void)
     test_output<G1<bn128_pp> >();
     test_group<G2<bn128_pp> >();
     test_output<G2<bn128_pp> >();
-
-    simulated_encoding_pp<mnt4_pp>::init_public_params();
-    test_group<G1<simulated_encoding_pp<mnt4_pp> > >();
-    test_output<G1<simulated_encoding_pp<mnt4_pp> > >();
-    test_group<G2<simulated_encoding_pp<mnt4_pp> > >();
-    test_output<G2<simulated_encoding_pp<mnt4_pp> > >();
-
-    simulated_encoding_pp<mnt6_pp>::init_public_params();
-    test_group<G1<simulated_encoding_pp<mnt6_pp> > >();
-    test_output<G1<simulated_encoding_pp<mnt6_pp> > >();
-    test_group<G2<simulated_encoding_pp<mnt6_pp> > >();
-    test_output<G2<simulated_encoding_pp<mnt6_pp> > >();
 }
