@@ -49,6 +49,12 @@ using uscs_constraint = linear_combination<FieldT>;
  * a candidate solution to a USCS constraint system (see below).
  */
 template<typename FieldT>
+using uscs_primary_input = std::vector<FieldT>;
+
+template<typename FieldT>
+using uscs_auxiliary_input = std::vector<FieldT>;
+
+template<typename FieldT>
 using uscs_variable_assignment = std::vector<FieldT>;
 
 
@@ -74,18 +80,21 @@ std::istream& operator>>(std::istream &in, uscs_constraint_system<FieldT> &cs);
  *
  * NOTE:
  * The 0-th variable (i.e., "x_{0}") always represents the constant 1.
- * Thus, the 0-th variable is not included in num_vars.
+ * Thus, the 0-th variable is not included in num_variables.
  */
 template<typename FieldT>
 class uscs_constraint_system {
 public:
+    size_t primary_input_size;
+    size_t auxiliary_input_size;
 
     std::vector<uscs_constraint<FieldT> > constraints;
 
-    size_t num_inputs;
-    size_t num_vars;
+    uscs_constraint_system() : primary_input_size(0), auxiliary_input_size(0) {};
 
-    uscs_constraint_system() : num_inputs(0), num_vars(0) {};
+    size_t num_inputs() const;
+    size_t num_variables() const;
+    size_t num_constraints() const;
 
 #ifdef DEBUG
     std::map<size_t, std::string> constraint_annotations;
@@ -93,17 +102,18 @@ public:
 #endif
 
     bool is_valid() const;
-    bool is_satisfied(const uscs_variable_assignment<FieldT> &va) const;
+    bool is_satisfied(const uscs_primary_input<FieldT> &primary_input,
+                      const uscs_auxiliary_input<FieldT> &auxiliary_input) const;
 
-    void add_constraint(const uscs_constraint<FieldT> &c);
-    void add_constraint(const uscs_constraint<FieldT> &c, const std::string &annotation);
+    void add_constraint(const uscs_constraint<FieldT> &constraint);
+    void add_constraint(const uscs_constraint<FieldT> &constraint, const std::string &annotation);
 
     bool operator==(const uscs_constraint_system<FieldT> &other) const;
 
     friend std::ostream& operator<< <FieldT>(std::ostream &out, const uscs_constraint_system<FieldT> &cs);
     friend std::istream& operator>> <FieldT>(std::istream &in, uscs_constraint_system<FieldT> &cs);
 
-    void report_statistics() const;
+    void report_linear_constraint_statistics() const;
 };
 
 

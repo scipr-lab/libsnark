@@ -57,7 +57,8 @@ ssp_instance_evaluation<FieldT> uscs_to_ssp_instance_map_with_evaluation(const u
  */
 template<typename FieldT>
 ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT> &cs,
-                                            const uscs_variable_assignment<FieldT> &w,
+                                            const uscs_primary_input<FieldT> &primary_input,
+                                            const uscs_auxiliary_input<FieldT> &auxiliary_input,
                                             const FieldT &d);
 
 } // libsnark

@@ -4,6 +4,8 @@
  Implementation of functionality that runs the USCS ppzkSNARK for
  a given USCS example.
 
+ See run_uscs_ppzksnark.hpp .
+
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
@@ -56,7 +58,7 @@ bool run_uscs_ppzksnark(const uscs_example<Fr<ppT> > &example,
     }
 
     print_header("USCS ppzkSNARK Prover");
-    uscs_ppzksnark_proof<ppT> proof = uscs_ppzksnark_prover<ppT>(keypair.pk, example.witness);
+    uscs_ppzksnark_proof<ppT> proof = uscs_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
     printf("\n"); print_indent(); print_mem("after prover");
 
     if (test_serialization)
@@ -67,12 +69,12 @@ bool run_uscs_ppzksnark(const uscs_example<Fr<ppT> > &example,
     }
 
     print_header("USCS ppzkSNARK Verifier");
-    bool ans = uscs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.input, proof);
+    bool ans = uscs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.primary_input, proof);
     printf("\n"); print_indent(); print_mem("after verifier");
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
 
     print_header("USCS ppzkSNARK Online Verifier");
-    bool ans2 = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.input, proof);
+    bool ans2 = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
     assert(ans == ans2);
 
     leave_block("Call to run_uscs_ppzksnark");

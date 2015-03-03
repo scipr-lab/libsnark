@@ -1,14 +1,16 @@
 /** @file
-*****************************************************************************
+ *****************************************************************************
 
-Implementation of functionality that runs the TBCS ppzkSNARK for
-a given TBCS example.
+ Implementation of functionality that runs the TBCS ppzkSNARK for
+ a given TBCS example.
 
-*****************************************************************************
-* @author     This file is part of libsnark, developed by SCIPR Lab
-*             and contributors (see AUTHORS).
-* @copyright  MIT license (see LICENSE file)
-*****************************************************************************/
+ See run_tbcs_ppzksnark.hpp .
+
+ *****************************************************************************
+ * @author     This file is part of libsnark, developed by SCIPR Lab
+ *             and contributors (see AUTHORS).
+ * @copyright  MIT license (see LICENSE file)
+ *****************************************************************************/
 
 #ifndef RUN_TBCS_PPZKSNARK_TCC_
 #define RUN_TBCS_PPZKSNARK_TCC_

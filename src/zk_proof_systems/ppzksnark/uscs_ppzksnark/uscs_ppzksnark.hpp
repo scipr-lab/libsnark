@@ -52,6 +52,7 @@
 #include "common/data_structures/accumulation_vector.hpp"
 #include "algebra/knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -77,7 +78,7 @@ public:
     G1_vector<ppT> H_g1_query;
     G2_vector<ppT> V_g2_query;
 
-    uscs_constraint_system<Fr<ppT> > constraint_system;
+    uscs_ppzksnark_constraint_system<ppT> constraint_system;
 
     uscs_ppzksnark_proving_key() {};
     uscs_ppzksnark_proving_key<ppT>& operator=(const uscs_ppzksnark_proving_key<ppT> &other) = default;
@@ -87,7 +88,7 @@ public:
                                G1_vector<ppT> &&alpha_V_g1_query,
                                G1_vector<ppT> &&H_g1_query,
                                G2_vector<ppT> &&V_g2_query,
-                               uscs_constraint_system<Fr<ppT> > &&constraint_system) :
+                               uscs_ppzksnark_constraint_system<ppT> &&constraint_system) :
         V_g1_query(std::move(V_g1_query)),
         alpha_V_g1_query(std::move(alpha_V_g1_query)),
         H_g1_query(std::move(H_g1_query)),
@@ -269,7 +270,7 @@ template<typename ppT>
 std::istream& operator>>(std::istream &in, uscs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A proof for the USCS ppZKSNARK.
+ * A proof for the USCS ppzkSNARK.
  *
  * While the proof has a structure, externally one merely opaquely produces,
  * seralizes/deserializes, and verifies proofs. We only expose some information
@@ -340,15 +341,15 @@ public:
 /***************************** Main algorithms *******************************/
 
 /**
- * A generator algorithm for the USCS ppZKSNARK.
+ * A generator algorithm for the USCS ppzkSNARK.
  *
  * Given a USCS constraint system CS, this algorithm produces proving and verification keys for CS.
  */
 template<typename ppT>
-uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_system<Fr<ppT> > &cs);
+uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constraint_system<ppT> &cs);
 
 /**
- * A prover algorithm for the USCS ppZKSNARK.
+ * A prover algorithm for the USCS ppzkSNARK.
  *
  * Given a USCS primary input X and a USCS auxiliary input Y, this algorithm
  * produces a proof (of knowledge) that attests to the following statement:
@@ -357,10 +358,11 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
  */
 template<typename ppT>
 uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key<ppT> &pk,
-                                                const uscs_variable_assignment<Fr<ppT> > &witness);
+                                                const uscs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const uscs_ppzksnark_auxiliary_input<ppT> &auxiliary_input);
 
 /*
- Below are four variants of verifier algorithm for the USCS ppZKSNARK.
+ Below are four variants of verifier algorithm for the USCS ppzkSNARK.
 
  These are the four cases that arise from the following two choices:
 
@@ -374,23 +376,23 @@ uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key
  */
 
 /**
- * A verifier algorithm for the USCS ppZKSNARK that:
+ * A verifier algorithm for the USCS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool uscs_ppzksnark_verifier_weak_IC(const uscs_ppzksnark_verification_key<ppT> &vk,
-                                     const uscs_variable_assignment<Fr<ppT> > &input,
+                                     const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                      const uscs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the USCS ppZKSNARK that:
+ * A verifier algorithm for the USCS ppzkSNARK that:
  * (1) accepts a non-processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool uscs_ppzksnark_verifier_strong_IC(const uscs_ppzksnark_verification_key<ppT> &vk,
-                                       const uscs_variable_assignment<Fr<ppT> > &input,
+                                       const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                        const uscs_ppzksnark_proof<ppT> &proof);
 
 /**
@@ -400,23 +402,23 @@ template<typename ppT>
 uscs_ppzksnark_processed_verification_key<ppT> uscs_ppzksnark_verifier_process_vk(const uscs_ppzksnark_verification_key<ppT> &vk);
 
 /**
- * A verifier algorithm for the USCS ppZKSNARK that:
+ * A verifier algorithm for the USCS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has weak input consistency.
  */
 template<typename ppT>
 bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const uscs_variable_assignment<Fr<ppT> > &input,
+                                            const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                             const uscs_ppzksnark_proof<ppT> &proof);
 
 /**
- * A verifier algorithm for the USCS ppZKSNARK that:
+ * A verifier algorithm for the USCS ppzkSNARK that:
  * (1) accepts a processed verification key, and
  * (2) has strong input consistency.
  */
 template<typename ppT>
 bool uscs_ppzksnark_online_verifier_strong_IC(const uscs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const uscs_variable_assignment<Fr<ppT> > &input,
+                                              const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                               const uscs_ppzksnark_proof<ppT> &proof);
 
 } // libsnark

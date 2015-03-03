@@ -22,29 +22,29 @@ namespace libsnark {
 template<typename FieldT>
 struct uscs_example {
     uscs_constraint_system<FieldT> constraint_system;
-    uscs_variable_assignment<FieldT> input;
-    uscs_variable_assignment<FieldT> witness;
+    uscs_primary_input<FieldT> primary_input;
+    uscs_auxiliary_input<FieldT> auxiliary_input;
 
     uscs_example<FieldT>() = default;
     uscs_example<FieldT>(const uscs_example<FieldT> &other) = default;
     uscs_example<FieldT>(const uscs_constraint_system<FieldT> &constraint_system,
-                         const uscs_variable_assignment<FieldT> &input,
-                         const uscs_variable_assignment<FieldT> &witness) :
+                         const uscs_primary_input<FieldT> &primary_input,
+                         const uscs_auxiliary_input<FieldT> &auxiliary_input) :
         constraint_system(constraint_system),
-        input(input),
-        witness(witness)
+        primary_input(primary_input),
+        auxiliary_input(auxiliary_input)
     {};
     uscs_example<FieldT>(uscs_constraint_system<FieldT> &&constraint_system,
-                         uscs_variable_assignment<FieldT> &&input,
-                         uscs_variable_assignment<FieldT> &&witness) :
+                         uscs_primary_input<FieldT> &&primary_input,
+                         uscs_auxiliary_input<FieldT> &&auxiliary_input) :
         constraint_system(std::move(constraint_system)),
-        input(std::move(input)),
-        witness(std::move(witness))
+        primary_input(std::move(primary_input)),
+        auxiliary_input(std::move(auxiliary_input))
     {};
 };
 
 /**
- * Generate an USCS example such that:
+ * Generate a USCS example such that:
  * - the number of constraints of the USCS constraint system is num_constraints;
  * - the number of variables of the USCS constraint system is (approximately) num_constraints;
  * - the number of inputs of the USCS constraint system is num_inputs;
@@ -55,7 +55,7 @@ uscs_example<FieldT> generate_uscs_example_with_field_input(const size_t num_con
                                                             const size_t num_inputs);
 
 /**
- * Generate an USCS example such that:
+ * Generate a USCS example such that:
  * - the number of constraints of the USCS constraint system is num_constraints;
  * - the number of variables of the USCS constraint system is (approximately) num_constraints;
  * - the number of inputs of the USCS constraint system is num_inputs;

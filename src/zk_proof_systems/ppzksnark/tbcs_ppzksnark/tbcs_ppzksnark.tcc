@@ -70,7 +70,9 @@ tbcs_ppzksnark_proof<ppT> tbcs_ppzksnark_prover(const tbcs_ppzksnark_proving_key
 
     enter_block("Call to tbcs_ppzksnark_prover");
     const uscs_variable_assignment<FieldT> uscs_va = tbcs_to_uscs_witness_map<FieldT>(pk.circuit, primary_input, auxiliary_input);
-    const uscs_ppzksnark_proof<ppT> uscs_proof = uscs_ppzksnark_prover<ppT>(pk.uscs_pk, uscs_va);
+    const uscs_primary_input<FieldT> uscs_pi = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
+    const uscs_auxiliary_input<FieldT> uscs_ai(uscs_va.begin() + primary_input.size(), uscs_va.end()); // TODO: faster to just change bacs_to_r1cs_witness_map into two :(
+    const uscs_ppzksnark_proof<ppT> uscs_proof = uscs_ppzksnark_prover<ppT>(pk.uscs_pk, uscs_pi, uscs_ai);
     leave_block("Call to tbcs_ppzksnark_prover");
 
     return uscs_proof;
@@ -93,7 +95,7 @@ bool tbcs_ppzksnark_verifier_weak_IC(const tbcs_ppzksnark_verification_key<ppT> 
 {
     typedef Fr<ppT> FieldT;
     enter_block("Call to tbcs_ppzksnark_verifier_weak_IC");
-    const uscs_variable_assignment<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
+    const uscs_primary_input<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
     const tbcs_ppzksnark_processed_verification_key<ppT> pvk = tbcs_ppzksnark_verifier_process_vk<ppT>(vk);
     const bool bit = uscs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, uscs_input, proof);
     leave_block("Call to tbcs_ppzksnark_verifier_weak_IC");
@@ -109,7 +111,7 @@ bool tbcs_ppzksnark_verifier_strong_IC(const tbcs_ppzksnark_verification_key<ppT
     typedef Fr<ppT> FieldT;
     enter_block("Call to tbcs_ppzksnark_verifier_strong_IC");
     const tbcs_ppzksnark_processed_verification_key<ppT> pvk = tbcs_ppzksnark_verifier_process_vk<ppT>(vk);
-    const uscs_variable_assignment<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
+    const uscs_primary_input<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
     const bool bit = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, uscs_input, proof);
     leave_block("Call to tbcs_ppzksnark_verifier_strong_IC");
 
@@ -123,7 +125,7 @@ bool tbcs_ppzksnark_online_verifier_weak_IC(const tbcs_ppzksnark_processed_verif
 {
     typedef Fr<ppT> FieldT;
     enter_block("Call to tbcs_ppzksnark_online_verifier_weak_IC");
-    const uscs_variable_assignment<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
+    const uscs_primary_input<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
     const bool bit = uscs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, uscs_input, proof);
     leave_block("Call to tbcs_ppzksnark_online_verifier_weak_IC");
 
@@ -137,7 +139,7 @@ bool tbcs_ppzksnark_online_verifier_strong_IC(const tbcs_ppzksnark_processed_ver
 {
     typedef Fr<ppT> FieldT;
     enter_block("Call to tbcs_ppzksnark_online_verifier_strong_IC");
-    const uscs_variable_assignment<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
+    const uscs_primary_input<FieldT> uscs_input = convert_bit_vector_to_field_element_vector<FieldT>(primary_input);
     const bool bit = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, uscs_input, proof);
     leave_block("Call to tbcs_ppzksnark_online_verifier_strong_IC");
 

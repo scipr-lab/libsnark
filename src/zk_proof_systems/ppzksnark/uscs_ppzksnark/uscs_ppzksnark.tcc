@@ -198,7 +198,7 @@ uscs_ppzksnark_verification_key<ppT> uscs_ppzksnark_verification_key<ppT>::dummy
 }
 
 template <typename ppT>
-uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_system<Fr<ppT> > &cs)
+uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constraint_system<ppT> &cs)
 {
     enter_block("Call to uscs_ppzksnark_generator");
 
@@ -210,10 +210,10 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
 
     ssp_instance_evaluation<Fr<ppT> > ssp_inst = uscs_to_ssp_instance_map_with_evaluation(cs, t);
 
-    print_indent(); printf("* SSP number of variables: %zu\n", ssp_inst.num_vars);
-    print_indent(); printf("* SSP pre degree: %zu\n", cs.constraints.size());
-    print_indent(); printf("* SSP degree: %zu\n", ssp_inst.degree);
-    print_indent(); printf("* SSP number of input variables: %zu\n", ssp_inst.num_inputs);
+    print_indent(); printf("* SSP number of variables: %zu\n", ssp_inst.num_variables());
+    print_indent(); printf("* SSP pre degree: %zu\n", cs.num_constraints());
+    print_indent(); printf("* SSP degree: %zu\n", ssp_inst.degree());
+    print_indent(); printf("* SSP number of input variables: %zu\n", ssp_inst.num_inputs());
 
     /* construct various tables of FieldT elements */
 
@@ -222,16 +222,17 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
 
     Vt_table.emplace_back(ssp_inst.Zt);
 
-    Fr_vector<ppT> Xt_table = Fr_vector<ppT>(Vt_table.begin(), Vt_table.begin() + ssp_inst.num_inputs + 1);
-    Fr_vector<ppT> Vt_table_minus_Xt_table = Fr_vector<ppT>(Vt_table.begin() + ssp_inst.num_inputs + 1, Vt_table.end());
+    Fr_vector<ppT> Xt_table = Fr_vector<ppT>(Vt_table.begin(), Vt_table.begin() + ssp_inst.num_inputs() + 1);
+    Fr_vector<ppT> Vt_table_minus_Xt_table = Fr_vector<ppT>(Vt_table.begin() + ssp_inst.num_inputs() + 1, Vt_table.end());
 
     /* sanity checks */
 
-    assert(Vt_table.size() == ssp_inst.num_vars + 2);
-    assert(Ht_table.size() == ssp_inst.degree + 1);
-    assert(Xt_table.size() == ssp_inst.num_inputs + 1);
-    assert(Vt_table_minus_Xt_table.size() == ssp_inst.num_vars + 2 - ssp_inst.num_inputs - 1);
-    for (size_t i = 0; i < ssp_inst.num_inputs+1; ++i)
+    assert(Vt_table.size() == ssp_inst.num_variables() + 2);
+    printf("Ht_table.size() = %zu, ssp_inst.degree() + 1 = %zu\n", Ht_table.size(), ssp_inst.degree() + 1);
+    assert(Ht_table.size() == ssp_inst.degree() + 1);
+    assert(Xt_table.size() == ssp_inst.num_inputs() + 1);
+    assert(Vt_table_minus_Xt_table.size() == ssp_inst.num_variables() + 2 - ssp_inst.num_inputs() - 1);
+    for (size_t i = 0; i < ssp_inst.num_inputs()+1; ++i)
     {
         assert(!Xt_table[i].is_zero());
     }
@@ -250,29 +251,29 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
     print_indent(); printf("* G2 window: %zu\n", g2_window);
 
     enter_block("Generating G1 multiexp table");
-    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::num_bits, g1_window, G1<ppT>::one());
+    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::size_in_bits(), g1_window, G1<ppT>::one());
     leave_block("Generating G1 multiexp table");
 
     enter_block("Generating G2 multiexp table");
-    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::num_bits, g2_window, G2<ppT>::one());
+    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::size_in_bits(), g2_window, G2<ppT>::one());
     leave_block("Generating G2 multiexp table");
 
     enter_block("Generate proof components");
 
     enter_block("Compute the query for V_g1", false);
-    G1_vector<ppT> V_g1_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Vt_table_minus_Xt_table);
+    G1_vector<ppT> V_g1_query = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, Vt_table_minus_Xt_table);
     leave_block("Compute the query for V_g1", false);
 
     enter_block("Compute the query for alpha_V_g1", false);
-    G1_vector<ppT> alpha_V_g1_query = batch_exp_with_coeff(Fr<ppT>::num_bits, g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
+    G1_vector<ppT> alpha_V_g1_query = batch_exp_with_coeff(Fr<ppT>::size_in_bits(), g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
     leave_block("Compute the query for alpha_V_g1", false);
 
     enter_block("Compute the query for H_g1", false);
-    G1_vector<ppT> H_g1_query = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Ht_table);
+    G1_vector<ppT> H_g1_query = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, Ht_table);
     leave_block("Compute the query for H_g1", false);
 
     enter_block("Compute the query for V_g2", false);
-    G2_vector<ppT> V_g2_query = batch_exp(Fr<ppT>::num_bits, g2_window, g2_table, Vt_table);
+    G2_vector<ppT> V_g2_query = batch_exp(Fr<ppT>::size_in_bits(), g2_window, g2_table, Vt_table);
     leave_block("Compute the query for V_g2", false);
 
     leave_block("Generate proof components");
@@ -288,7 +289,7 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
 
     enter_block("Encode IC query for USCS verification key");
     G1<ppT> encoded_IC_base = Xt_table[0] * G1<ppT>::one();
-    G1_vector<ppT> encoded_IC_values = batch_exp(Fr<ppT>::num_bits, g1_window, g1_table, Fr_vector<ppT>(Xt_table.begin() + 1, Xt_table.end()));
+    G1_vector<ppT> encoded_IC_values = batch_exp(Fr<ppT>::size_in_bits(), g1_window, g1_table, Fr_vector<ppT>(Xt_table.begin() + 1, Xt_table.end()));
     leave_block("Encode IC query for USCS verification key");
 
     leave_block("Generate USCS verification key");
@@ -302,7 +303,7 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
                                                                                    Z_g2,
                                                                                    encoded_IC_query);
 
-    uscs_constraint_system<Fr<ppT> > cs_copy = cs;
+    uscs_ppzksnark_constraint_system<ppT> cs_copy = cs;
     uscs_ppzksnark_proving_key<ppT> pk = uscs_ppzksnark_proving_key<ppT>(std::move(V_g1_query),
                                                                          std::move(alpha_V_g1_query),
                                                                          std::move(H_g1_query),
@@ -317,22 +318,23 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_constraint_syste
 
 template <typename ppT>
 uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key<ppT> &pk,
-                                                const uscs_variable_assignment<Fr<ppT> > &witness)
+                                                const uscs_ppzksnark_primary_input<ppT> &primary_input,
+                                                const uscs_ppzksnark_auxiliary_input<ppT> &auxiliary_input)
 {
     enter_block("Call to uscs_ppzksnark_prover");
 
     const Fr<ppT> d = Fr<ppT>::random_element();
 
     enter_block("Compute the polynomial H");
-    const ssp_witness<Fr<ppT> > ssp_wit = uscs_to_ssp_witness_map(pk.constraint_system, witness, d);
+    const ssp_witness<Fr<ppT> > ssp_wit = uscs_to_ssp_witness_map(pk.constraint_system, primary_input, auxiliary_input, d);
     leave_block("Compute the polynomial H");
 
     /* sanity checks */
-    assert(pk.constraint_system.is_satisfied(witness));
-    assert(pk.V_g1_query.size() == ssp_wit.num_vars + 2 - ssp_wit.num_inputs - 1);
-    assert(pk.alpha_V_g1_query.size() == ssp_wit.num_vars + 2 - ssp_wit.num_inputs - 1);
-    assert(pk.H_g1_query.size() == ssp_wit.degree + 1);
-    assert(pk.V_g2_query.size() == ssp_wit.num_vars + 2);
+    assert(pk.constraint_system.is_satisfied(primary_input, auxiliary_input));
+    assert(pk.V_g1_query.size() == ssp_wit.num_variables() + 2 - ssp_wit.num_inputs() - 1);
+    assert(pk.alpha_V_g1_query.size() == ssp_wit.num_variables() + 2 - ssp_wit.num_inputs() - 1);
+    assert(pk.H_g1_query.size() == ssp_wit.degree() + 1);
+    assert(pk.V_g2_query.size() == ssp_wit.num_variables() + 2);
 
 #ifdef DEBUG
     const Fr<ppT> t = Fr<ppT>::random_element();
@@ -356,29 +358,29 @@ uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key
     enter_block("Compute the proof");
 
     enter_block("Compute V_g1, the 1st component of the proof", false);
-    V_g1 = V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
-                                                                     ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs, ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_vars,
-                                                                     chunks,
-                                                                     true);
+    V_g1 = V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
+                                                                   ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
+                                                                   chunks,
+                                                                   true);
     leave_block("Compute V_g1, the 1st component of the proof", false);
 
     enter_block("Compute alpha_V_g1, the 2nd component of the proof", false);
-    alpha_V_g1 = alpha_V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_vars-ssp_wit.num_inputs),
-                                                                                 ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs, ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_vars,
-                                                                                 chunks,
-                                                                                 true);
+    alpha_V_g1 = alpha_V_g1 + multi_exp_with_mixed_addition<G1<ppT>, Fr<ppT> >(pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
+                                                                               ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
+                                                                               chunks,
+                                                                               true);
     leave_block("Compute alpha_V_g1, the 2nd component of the proof", false);
 
     enter_block("Compute H_g1, the 3rd component of the proof", false);
-    H_g1 = H_g1 + multi_exp<G1<ppT>, Fr<ppT> >(pk.H_g1_query.begin(), pk.H_g1_query.begin()+ssp_wit.degree+1,
-                                               ssp_wit.coefficients_for_H.begin(), ssp_wit.coefficients_for_H.begin()+ssp_wit.degree+1,
+    H_g1 = H_g1 + multi_exp<G1<ppT>, Fr<ppT> >(pk.H_g1_query.begin(), pk.H_g1_query.begin()+ssp_wit.degree()+1,
+                                               ssp_wit.coefficients_for_H.begin(), ssp_wit.coefficients_for_H.begin()+ssp_wit.degree()+1,
                                                chunks,
                                                true);
     leave_block("Compute H_g1, the 3rd component of the proof", false);
 
     enter_block("Compute V_g2, the 4th component of the proof", false);
-    V_g2 = V_g2 + multi_exp<G2<ppT>, Fr<ppT> >(pk.V_g2_query.begin()+1, pk.V_g2_query.begin()+ssp_wit.num_vars+1,
-                                               ssp_wit.coefficients_for_Vs.begin(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_vars,
+    V_g2 = V_g2 + multi_exp<G2<ppT>, Fr<ppT> >(pk.V_g2_query.begin()+1, pk.V_g2_query.begin()+ssp_wit.num_variables()+1,
+                                               ssp_wit.coefficients_for_Vs.begin(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
                                                chunks,
                                                true);
     leave_block("Compute V_g2, the 4th component of the proof", false);
@@ -419,14 +421,14 @@ uscs_ppzksnark_processed_verification_key<ppT> uscs_ppzksnark_verifier_process_v
 
 template <typename ppT>
 bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                            const uscs_variable_assignment<Fr<ppT> > &input,
+                                            const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                             const uscs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to uscs_ppzksnark_online_verifier_weak_IC");
-    assert(pvk.encoded_IC_query.domain_size() >= input.size());
+    assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
     enter_block("Compute input-dependent part of V");
-    const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(input.begin(), input.end(), 0);
+    const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     assert(accumulated_IC.is_fully_accumulated());
     const G1<ppT> &acc = accumulated_IC.first;
     leave_block("Compute input-dependent part of V");
@@ -502,32 +504,32 @@ bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verif
 
 template<typename ppT>
 bool uscs_ppzksnark_verifier_weak_IC(const uscs_ppzksnark_verification_key<ppT> &vk,
-                                     const uscs_variable_assignment<Fr<ppT> > &input,
+                                     const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                      const uscs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to uscs_ppzksnark_verifier_weak_IC");
     uscs_ppzksnark_processed_verification_key<ppT> pvk = uscs_ppzksnark_verifier_process_vk<ppT>(vk);
-    bool result = uscs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, input, proof);
+    bool result = uscs_ppzksnark_online_verifier_weak_IC<ppT>(pvk, primary_input, proof);
     leave_block("Call to uscs_ppzksnark_verifier_weak_IC");
     return result;
 }
 
 template<typename ppT>
 bool uscs_ppzksnark_online_verifier_strong_IC(const uscs_ppzksnark_processed_verification_key<ppT> &pvk,
-                                              const uscs_variable_assignment<Fr<ppT> > &input,
+                                              const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                               const uscs_ppzksnark_proof<ppT> &proof)
 {
     bool result = true;
     enter_block("Call to uscs_ppzksnark_online_verifier_strong_IC");
 
-    if (pvk.encoded_IC_query.domain_size() != input.size())
+    if (pvk.encoded_IC_query.domain_size() != primary_input.size())
     {
-        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", input.size(), pvk.encoded_IC_query.domain_size());
+        print_indent(); printf("Input length differs from expected (got %zu, expected %zu).\n", primary_input.size(), pvk.encoded_IC_query.domain_size());
         result = false;
     }
     else
     {
-        result = uscs_ppzksnark_online_verifier_weak_IC(pvk, input, proof);
+        result = uscs_ppzksnark_online_verifier_weak_IC(pvk, primary_input, proof);
     }
 
     leave_block("Call to uscs_ppzksnark_online_verifier_strong_IC");
@@ -536,12 +538,12 @@ bool uscs_ppzksnark_online_verifier_strong_IC(const uscs_ppzksnark_processed_ver
 
 template<typename ppT>
 bool uscs_ppzksnark_verifier_strong_IC(const uscs_ppzksnark_verification_key<ppT> &vk,
-                                       const uscs_variable_assignment<Fr<ppT> > &input,
+                                       const uscs_ppzksnark_primary_input<ppT> &primary_input,
                                        const uscs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to uscs_ppzksnark_verifier_strong_IC");
     uscs_ppzksnark_processed_verification_key<ppT> pvk = uscs_ppzksnark_verifier_process_vk<ppT>(vk);
-    bool result = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, input, proof);
+    bool result = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof);
     leave_block("Call to uscs_ppzksnark_verifier_strong_IC");
     return result;
 }

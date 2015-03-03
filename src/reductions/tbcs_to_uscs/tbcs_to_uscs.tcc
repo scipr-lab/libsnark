@@ -14,6 +14,8 @@ See tbcs_to_uscs.hpp .
 #ifndef TBCS_TO_USCS_TCC_
 #define TBCS_TO_USCS_TCC_
 
+#include "algebra/fields/field_utils.hpp"
+
 namespace libsnark {
 
 template<typename FieldT>
@@ -22,12 +24,12 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
     assert(circuit.is_valid());
     uscs_constraint_system<FieldT> result;
 
-    #ifdef DEBUG
+#ifdef DEBUG
     result.variable_annotations = circuit.variable_annotations;
-    #endif
+#endif
 
-    result.num_inputs = circuit.primary_input_size;
-    result.num_vars = circuit.primary_input_size + circuit.auxiliary_input_size + circuit.gates.size();
+    result.primary_input_size = circuit.primary_input_size;
+    result.auxiliary_input_size = circuit.auxiliary_input_size + circuit.gates.size();
 
     for (auto &g : circuit.gates)
     {
@@ -35,12 +37,12 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
         const variable<FieldT> y(g.right_wire);
         const variable<FieldT> z(g.output);
 
-        #ifdef DEBUG
+#ifdef DEBUG
         auto it = circuit.gate_annotations.find(g.output);
         const std::string annotation = (it != circuit.gate_annotations.end() ? it->second : FORMAT("", "compute_wire_%zu", g.output));
-        #else
+#else
         const std::string annotation = "";
-        #endif
+#endif
 
         switch (g.type)
         {
@@ -149,16 +151,11 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
 
 template<typename FieldT>
 uscs_variable_assignment<FieldT> tbcs_to_uscs_witness_map(const tbcs_circuit &circuit,
-                                                          const tbcs_primary_input &primary_input,
-                                                          const tbcs_auxiliary_input &auxiliary_input)
+                                                               const tbcs_primary_input &primary_input,
+                                                               const tbcs_auxiliary_input &auxiliary_input)
 {
-    tbcs_variable_assignment all_wires = circuit.get_all_wires(primary_input, auxiliary_input);
-    uscs_variable_assignment<FieldT> result;
-    for (size_t i = 0; i < all_wires.size(); ++i)
-    {
-        result.emplace_back(all_wires[i] ? FieldT::one() : FieldT::zero());
-    }
-
+    const tbcs_variable_assignment all_wires = circuit.get_all_wires(primary_input, auxiliary_input);
+    const uscs_variable_assignment<FieldT> result = convert_bit_vector_to_field_element_vector<FieldT>(all_wires);
     return result;
 }
 

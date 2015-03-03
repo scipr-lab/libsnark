@@ -35,32 +35,30 @@ ssp_instance<FieldT> uscs_to_ssp_instance_map(const uscs_constraint_system<Field
 {
     enter_block("Call to uscs_to_ssp_instance_map");
 
-    ssp_instance<FieldT> res;
-
-    res.domain = get_evaluation_domain<FieldT>(cs.constraints.size());
-
-    res.num_vars = cs.num_vars;
-    res.degree = res.domain->m;
-    res.num_inputs = cs.num_inputs;
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints());
 
     enter_block("Compute polynomials V in Lagrange basis");
-    res.V_in_Lagrange_basis.resize(res.num_vars+1);
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    std::vector<std::map<size_t, FieldT> > V_in_Lagrange_basis(cs.num_variables()+1);
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
         for (size_t j = 0; j < cs.constraints[i].terms.size(); ++j)
         {
-            res.V_in_Lagrange_basis[cs.constraints[i].terms[j].index][i] += cs.constraints[i].terms[j].coeff;
+            V_in_Lagrange_basis[cs.constraints[i].terms[j].index][i] += cs.constraints[i].terms[j].coeff;
         }
     }
-    for (size_t i = cs.constraints.size(); i < res.degree; ++i)
+    for (size_t i = cs.num_constraints(); i < domain->m; ++i)
     {
-        res.V_in_Lagrange_basis[0][i] += FieldT::one();
+        V_in_Lagrange_basis[0][i] += FieldT::one();
     }
     leave_block("Compute polynomials V in Lagrange basis");
 
     leave_block("Call to uscs_to_ssp_instance_map");
 
-    return res;
+    return ssp_instance<FieldT>(domain,
+                                cs.num_variables(),
+                                domain->m,
+                                cs.num_inputs(),
+                                std::move(V_in_Lagrange_basis));
 }
 
 /**
@@ -81,45 +79,44 @@ ssp_instance_evaluation<FieldT> uscs_to_ssp_instance_map_with_evaluation(const u
 {
     enter_block("Call to uscs_to_ssp_instance_map_with_evaluation");
 
-    ssp_instance_evaluation<FieldT> res;
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints());
 
-    res.domain = get_evaluation_domain<FieldT>(cs.constraints.size());
+    std::vector<FieldT> Vt(cs.num_variables()+1, FieldT::zero());
+    std::vector<FieldT> Ht(domain->m+1);
 
-    res.num_vars = cs.num_vars;
-    res.degree = res.domain->m;
-    res.num_inputs = cs.num_inputs;
-
-    res.t = t;
-
-    res.Vt.resize(res.num_vars+1, FieldT::zero());
-    res.Ht.reserve(res.degree+1);
-
-    res.Zt = res.domain->compute_Z(res.t);
+    const FieldT Zt = domain->compute_Z(t);
 
     enter_block("Compute evaluations of V and H at t");
-    const std::vector<FieldT> u = res.domain->lagrange_coeffs(res.t);
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    const std::vector<FieldT> u = domain->lagrange_coeffs(t);
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
         for (size_t j = 0; j < cs.constraints[i].terms.size(); ++j)
         {
-            res.Vt[cs.constraints[i].terms[j].index] += u[i]*cs.constraints[i].terms[j].coeff;
+            Vt[cs.constraints[i].terms[j].index] += u[i]*cs.constraints[i].terms[j].coeff;
         }
     }
-    for (size_t i = cs.constraints.size(); i < res.degree; ++i)
+    for (size_t i = cs.num_constraints(); i < domain->m; ++i)
     {
-        res.Vt[0] += u[i]; /* dummy constraint: 1^2 = 1 */
+        Vt[0] += u[i]; /* dummy constraint: 1^2 = 1 */
     }
     FieldT ti = FieldT::one();
-    for (size_t i = 0; i < res.degree+1; ++i)
+    for (size_t i = 0; i < domain->m+1; ++i)
     {
-        res.Ht.emplace_back(ti);
-        ti *= res.t;
+        Ht[i] = ti;
+        ti *= t;
     }
     leave_block("Compute evaluations of V and H at t");
 
     leave_block("Call to uscs_to_ssp_instance_map_with_evaluation");
 
-    return res;
+    return ssp_instance_evaluation<FieldT>(domain,
+                                           cs.num_variables(),
+                                           domain->m,
+                                           cs.num_inputs(),
+                                           t,
+                                           std::move(Vt),
+                                           std::move(Ht),
+                                           Zt);
 }
 
 /**
@@ -151,35 +148,29 @@ ssp_instance_evaluation<FieldT> uscs_to_ssp_instance_map_with_evaluation(const u
  */
 template<typename FieldT>
 ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT> &cs,
-                                            const uscs_variable_assignment<FieldT> &w,
+                                            const uscs_primary_input<FieldT> &primary_input,
+                                            const uscs_auxiliary_input<FieldT> &auxiliary_input,
                                             const FieldT &d)
 {
     enter_block("Call to uscs_to_ssp_witness_map");
 
     /* sanity check */
 
-    assert(cs.is_satisfied(w));
+    assert(cs.is_satisfied(primary_input, auxiliary_input));
 
-    std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.constraints.size());
+    uscs_variable_assignment<FieldT> full_variable_assignment = primary_input;
+    full_variable_assignment.insert(full_variable_assignment.end(), auxiliary_input.begin(), auxiliary_input.end());
 
-    ssp_witness<FieldT> res;
-
-    res.d = d;
-
-    res.coefficients_for_Vs = w;
-
-    res.num_vars = cs.num_vars;
-    res.degree = domain->m;
-    res.num_inputs = cs.num_inputs;
+    const std::shared_ptr<evaluation_domain<FieldT> > domain = get_evaluation_domain<FieldT>(cs.num_constraints());
 
     enter_block("Compute evaluation of polynomial V on set S");
-    std::vector<FieldT> aA(res.degree, FieldT::zero());
-    assert(res.degree >= cs.constraints.size());
-    for (size_t i = 0; i < cs.constraints.size(); ++i)
+    std::vector<FieldT> aA(domain->m, FieldT::zero());
+    assert(domain->m >= cs.num_constraints());
+    for (size_t i = 0; i < cs.num_constraints(); ++i)
     {
-        aA[i] += cs.constraints[i].evaluate(res.coefficients_for_Vs);
+        aA[i] += cs.constraints[i].evaluate(full_variable_assignment);
     }
-    for (size_t i = cs.constraints.size(); i < res.degree; ++i)
+    for (size_t i = cs.num_constraints(); i < domain->m; ++i)
     {
         aA[i] += FieldT::one();
     }
@@ -190,16 +181,16 @@ ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT>
     leave_block("Compute coefficients of polynomial V");
 
     enter_block("Compute ZK-patch");
-    res.coefficients_for_H = std::vector<FieldT>(res.degree+1, FieldT::zero());
+    std::vector<FieldT> coefficients_for_H(domain->m+1, FieldT::zero());
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
     /* add coefficients of the polynomial 2*d*V(z) + d*d*Z(z) */
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
-        res.coefficients_for_H[i] = FieldT(2)*res.d*aA[i];
+        coefficients_for_H[i] = FieldT(2)*d*aA[i];
     }
-    domain->add_poly_Z(res.d.squared(), res.coefficients_for_H);
+    domain->add_poly_Z(d.squared(), coefficients_for_H);
     leave_block("Compute ZK-patch");
 
     enter_block("Compute evaluation of polynomial V on set T");
@@ -211,7 +202,7 @@ ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT>
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
         H_tmp[i] = aA[i].squared()-FieldT::one();
     }
@@ -230,15 +221,20 @@ ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT>
 #ifdef MULTICORE
 #pragma omp parallel for
 #endif
-    for (size_t i = 0; i < res.degree; ++i)
+    for (size_t i = 0; i < domain->m; ++i)
     {
-        res.coefficients_for_H[i] += H_tmp[i];
+        coefficients_for_H[i] += H_tmp[i];
     }
     leave_block("Compute sum of H and ZK-patch");
 
     leave_block("Call to uscs_to_ssp_witness_map");
 
-    return res;
+    return ssp_witness<FieldT>(cs.num_variables(),
+                               domain->m,
+                               cs.num_inputs(),
+                               d,
+                               full_variable_assignment,
+                               std::move(coefficients_for_H));
 }
 
 } // libsnark

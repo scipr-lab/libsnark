@@ -29,7 +29,7 @@
 #ifndef TBCS_TO_USCS_HPP_
 #define TBCS_TO_USCS_HPP_
 
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
 #include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
 
 namespace libsnark {
@@ -45,8 +45,8 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
  */
 template<typename FieldT>
 uscs_variable_assignment<FieldT> tbcs_to_uscs_witness_map(const tbcs_circuit &circuit,
-                                                          const tbcs_primary_input &primary_input,
-                                                          const tbcs_auxiliary_input &auxiliary_input);
+                                                               const tbcs_primary_input &primary_input,
+                                                               const tbcs_auxiliary_input &auxiliary_input);
 
 } // libsnark
 

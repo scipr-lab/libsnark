@@ -28,7 +28,7 @@ namespace libsnark {
 
 /* forward declaration */
 template<typename FieldT>
-struct ssp_witness;
+class ssp_witness;
 
 /**
  * A SSP instance.
@@ -42,21 +42,36 @@ struct ssp_witness;
  * determined by the domain (as Z is its vanishing polynomial).
  */
 template<typename FieldT>
-struct ssp_instance {
+class ssp_instance {
+private:
+    size_t num_variables_;
+    size_t degree_;
+    size_t num_inputs_;
 
+public:
     std::shared_ptr<evaluation_domain<FieldT> > domain;
-
-    size_t num_vars;
-    size_t degree;
-    size_t num_inputs;
 
     std::vector<std::map<size_t, FieldT> > V_in_Lagrange_basis;
 
-    ssp_instance() = default;
+    ssp_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+                 const size_t num_variables,
+                 const size_t degree,
+                 const size_t num_inputs,
+                 const std::vector<std::map<size_t, FieldT> > &V_in_Lagrange_basis);
+    ssp_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+                 const size_t num_variables,
+                 const size_t degree,
+                 const size_t num_inputs,
+                 std::vector<std::map<size_t, FieldT> > &&V_in_Lagrange_basis);
+
     ssp_instance(const ssp_instance<FieldT> &other) = default;
     ssp_instance(ssp_instance<FieldT> &&other) = default;
     ssp_instance& operator=(const ssp_instance<FieldT> &other) = default;
     ssp_instance& operator=(ssp_instance<FieldT> &&other) = default;
+
+    size_t num_variables() const;
+    size_t degree() const;
+    size_t num_inputs() const;
 
     bool is_satisfied(const ssp_witness<FieldT> &witness) const;
 };
@@ -73,13 +88,14 @@ struct ssp_instance {
  * - evaluations of all monomials of t.
  */
 template<typename FieldT>
-struct ssp_instance_evaluation {
+class ssp_instance_evaluation {
+private:
+    size_t num_variables_;
+    size_t degree_;
+    size_t num_inputs_;
 
+public:
     std::shared_ptr<evaluation_domain<FieldT> > domain;
-
-    size_t num_vars;
-    size_t degree;
-    size_t num_inputs;
 
     FieldT t;
 
@@ -87,11 +103,31 @@ struct ssp_instance_evaluation {
 
     FieldT Zt;
 
-    ssp_instance_evaluation() = default;
+    ssp_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+                            const size_t num_variables,
+                            const size_t degree,
+                            const size_t num_inputs,
+                            const FieldT &t,
+                            const std::vector<FieldT> &Vt,
+                            const std::vector<FieldT> &Ht,
+                            const FieldT &Zt);
+    ssp_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+                            const size_t num_variables,
+                            const size_t degree,
+                            const size_t num_inputs,
+                            const FieldT &t,
+                            std::vector<FieldT> &&Vt,
+                            std::vector<FieldT> &&Ht,
+                            const FieldT &Zt);
+
     ssp_instance_evaluation(const ssp_instance_evaluation<FieldT> &other) = default;
     ssp_instance_evaluation(ssp_instance_evaluation<FieldT> &&other) = default;
     ssp_instance_evaluation& operator=(const ssp_instance_evaluation<FieldT> &other) = default;
     ssp_instance_evaluation& operator=(ssp_instance_evaluation<FieldT> &&other) = default;
+
+    size_t num_variables() const;
+    size_t degree() const;
+    size_t num_inputs() const;
 
     bool is_satisfied(const ssp_witness<FieldT> &witness) const;
 };
@@ -100,22 +136,39 @@ struct ssp_instance_evaluation {
  * A SSP witness.
  */
 template<typename FieldT>
-struct ssp_witness {
+class ssp_witness {
+private:
+    size_t num_variables_;
+    size_t degree_;
+    size_t num_inputs_;
 
+public:
     FieldT d;
-
-    size_t num_vars;
-    size_t degree;
-    size_t num_inputs;
 
     std::vector<FieldT> coefficients_for_Vs;
     std::vector<FieldT> coefficients_for_H;
 
-    ssp_witness() = default;
+    ssp_witness(const size_t num_variables,
+                const size_t degree,
+                const size_t num_inputs,
+                const FieldT &d,
+                const std::vector<FieldT> &coefficients_for_Vs,
+                const std::vector<FieldT> &coefficients_for_H);
+    ssp_witness(const size_t num_variables,
+                const size_t degree,
+                const size_t num_inputs,
+                const FieldT &d,
+                const std::vector<FieldT> &coefficients_for_Vs,
+                std::vector<FieldT> &&coefficients_for_H);
+
     ssp_witness(const ssp_witness<FieldT> &other) = default;
     ssp_witness(ssp_witness<FieldT> &&other) = default;
     ssp_witness& operator=(const ssp_witness<FieldT> &other) = default;
     ssp_witness& operator=(ssp_witness<FieldT> &&other) = default;
+
+    size_t num_variables() const;
+    size_t degree() const;
+    size_t num_inputs() const;
 };
 
 } // libsnark
