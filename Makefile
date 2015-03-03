@@ -26,6 +26,7 @@ endif
 
 SRCS= \
 	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
+	src/common/default_types/tinyram_zksnark_pp.cpp \
 	src/common/profiling.cpp \
 	src/common/utils.cpp \
 	src/gadgetlib1/constraint_profiling.cpp \
@@ -69,6 +70,7 @@ EXECUTABLES= \
 	src/algebra/fields/tests/test_fields \
 	src/common/routing_algorithms/profiling/profile_routing_algorithms \
 	src/common/routing_algorithms/tests/test_routing_algorithms \
+	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
 	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
 	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
 	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
@@ -87,7 +89,9 @@ EXECUTABLES= \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark
+	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
+	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
+	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES += \
