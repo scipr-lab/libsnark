@@ -470,7 +470,7 @@ TEST(gadgetLib2, LinearCombination) {
     LinearCombination lc2 = lt;
     assignment[x[2]] = 2;
     EXPECT_EQ(lc2.eval(assignment),4);
-//    LinearCombination(long i) : linearTerms_(), constant_(i) {} 
+//    LinearCombination(long i) : linearTerms_(), constant_(i) {}
     LinearCombination lc3 = 3;
     EXPECT_EQ(lc3.eval(assignment),3);
 //    LinearCombination(const FElem& elem) : linearTerms_(), constant_(elem) {}
@@ -497,7 +497,7 @@ TEST(gadgetLib2, LinearCombination) {
     Variable::set sVar = lc1.getUsedVariables();
     EXPECT_EQ(sVar.size(),1);
     assignment[x[2]] = 83;
-    EXPECT_EQ(assignment[*sVar.begin()], 83);    
+    EXPECT_EQ(assignment[*sVar.begin()], 83);
     assignment[x[2]] = 2;
 //  LinearCombination operator-(const LinearCombination& lc);
     lc2 = -lc1;

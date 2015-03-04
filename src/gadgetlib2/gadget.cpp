@@ -514,9 +514,9 @@ void R1P_CompressionPacking_Gadget::init() {}
 void R1P_CompressionPacking_Gadget::generateConstraints() {
     const int n = unpacked_.size();
     LinearCombination packed;
-    long two_i = 1; // Will hold 2^i
+    FElem two_i(R1P_Elem(1)); // Will hold 2^i
     for (int i = 0; i < n; ++i) {
-        packed += LinearTerm(unpacked_[i], two_i);
+        packed += unpacked_[i]*two_i;
         two_i += two_i;
         if (packingMode_ == PackingMode::UNPACK) {enforceBooleanity(unpacked_[i]);}
     }
@@ -527,7 +527,7 @@ void R1P_CompressionPacking_Gadget::generateWitness() {
     const int n = unpacked_.size();
     if (packingMode_ == PackingMode::PACK) {
         FElem packedVal = 0;
-        FElem two_i = 1; // will hold 2^i
+        FElem two_i(R1P_Elem(1)); // will hold 2^i
         for(int i = 0; i < n; ++i) {
             GADGETLIB_ASSERT(val(unpacked_[i]).asLong() == 0 || val(unpacked_[i]).asLong() == 1,
                          GADGETLIB2_FMT("unpacked[%u]  = %u. Expected a Boolean value.", i,
@@ -584,8 +584,6 @@ R1P_IntegerPacking_Gadget::R1P_IntegerPacking_Gadget(ProtoboardPtr pb,
     GADGETLIB_ASSERT(n > 0, "Attempted to pack 0 bits in R1P.")
     GADGETLIB_ASSERT(packed.size() == 1,
                  "Attempted to pack into more than 1 Variable in R1P_IntegerPacking_Gadget.")
-    GADGETLIB_ASSERT(n < log2(Fp(-1).as_ulong()), "Attempted to pack to an integer which may be larger"
-                                                         " than the field characteristic in R1P.");
 }
 
 void R1P_IntegerPacking_Gadget::init() {
@@ -898,15 +896,13 @@ R1P_Comparison_Gadget::R1P_Comparison_Gadget(ProtoboardPtr pb,
                                              const FlagVariable& lessOrEqual)
         : Gadget(pb), Comparison_GadgetBase(pb), R1P_Gadget(pb), wordBitSize_(wordBitSize),
           lhs_(lhs), rhs_(rhs), less_(less), lessOrEqual_(lessOrEqual),
-          alpha_(wordBitSize+1, R1P, "alpha"), notAllZeroes_("notAllZeroes") {
-    GADGETLIB_ASSERT(alpha_.multipacked().size() == 1, "alpha was expected to be of size 1");
-}
+          alpha_u_(wordBitSize,  "alpha"), notAllZeroes_("notAllZeroes") {}
 
 void R1P_Comparison_Gadget::init() {
-    allZeroesTest_ = OR_Gadget::create(pb_, alpha_.unpacked(), notAllZeroes_);
-    alphaDualVariablePacker_ = DualWord_Gadget::create(pb_, alpha_, PackingMode::PACK);
+    allZeroesTest_ = OR_Gadget::create(pb_, alpha_u_, notAllZeroes_);
+	alpha_u_.emplace_back(lessOrEqual_);
+	alphaDualVariablePacker_ = CompressionPacking_Gadget::create(pb_, alpha_u_,VariableArray(1,alpha_p_), PackingMode::UNPACK);
 }
-
 /*
     Constraint breakdown:
 
@@ -931,27 +927,24 @@ void R1P_Comparison_Gadget::init() {
 
 
 */
-
 void R1P_Comparison_Gadget::generateConstraints() {
     enforceBooleanity(notAllZeroes_);
-    GADGETLIB_ASSERT(wordBitSize_ <= sizeof(long) - 2, "word bit size overflow occured");
     const FElem two_n = long(POW2(wordBitSize_));
-    addRank1Constraint(1, alpha_.multipacked()[0], two_n + lhs_ - rhs_,
-                       "packed(alpha) = 2^n + B - A");
+    addRank1Constraint(1, alpha_p_, two_n + rhs_ - lhs_,
+							 "packed(alpha) = 2^n + B - A");
     alphaDualVariablePacker_->generateConstraints();
     allZeroesTest_->generateConstraints();
-    addRank1Constraint(1, alpha_.unpacked()[wordBitSize_], lessOrEqual_, "alpha[n] = lessOrEqual");
-    addRank1Constraint(alpha_.unpacked()[wordBitSize_], notAllZeroes_, less_,
+    addRank1Constraint(1, alpha_u_[wordBitSize_], lessOrEqual_, "alpha[n] = lessOrEqual");
+    addRank1Constraint(alpha_u_[wordBitSize_], notAllZeroes_, less_,
                        "alpha[n] * notAllZeroes = less");
 }
 
 void R1P_Comparison_Gadget::generateWitness() {
-    GADGETLIB_ASSERT(wordBitSize_ < sizeof(long), "word bit size overflow occured");
     const FElem two_n = long(POW2(wordBitSize_));
-    val(alpha_.multipacked()[0]) = two_n + val(rhs_) - val(lhs_);
+    val(alpha_p_) = two_n + val(rhs_) - val(lhs_);
     alphaDualVariablePacker_->generateWitness();
     allZeroesTest_->generateWitness();
-    val(lessOrEqual_) = val(alpha_.unpacked()[wordBitSize_]);
+    val(lessOrEqual_) = val(alpha_u_[wordBitSize_]);
     val(less_) = val(lessOrEqual_) * val(notAllZeroes_);
 }
 

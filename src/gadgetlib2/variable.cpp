@@ -224,7 +224,7 @@ FElemInterfacePtr R1P_Elem::inverse() const {
 }
 
 long R1P_Elem::asLong() const {
-    GADGETLIB_ASSERT(elem_.as_ulong() <= LONG_MAX, "long overflow occured.");
+    //GADGETLIB_ASSERT(elem_.as_ulong() <= LONG_MAX, "long overflow occured.");
     return long(elem_.as_ulong());
 }
 

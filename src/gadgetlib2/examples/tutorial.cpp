@@ -304,8 +304,8 @@ void HashDifficultyEnforcer_Gadget::generateConstraints() {
 void HashDifficultyEnforcer_Gadget::generateWitness() {
     // Take the packed representation and unpack to bits.
     hashValueUnpacker_->generateWitness();
-    // In a real setting we would add an assertion that the value will indeed satisfy the 
-    // difficulty constraint, and notify the user with an error otherwise. As this is a tutorial, 
+    // In a real setting we would add an assertion that the value will indeed satisfy the
+    // difficulty constraint, and notify the user with an error otherwise. As this is a tutorial,
     // we'll let invalid values pass through so that we can see how isSatisfied() returns false.
 }
 

@@ -41,9 +41,9 @@ r1cs_constraint_system<Fr<default_ec_pp> > get_constraint_system_from_gadgetlib2
     }
     //The numbers of variables is the highest index created.
     //TODO: If there are multiple protoboard, or variables not assigned to a protoboard, then getNextFreeIndex() is *not* the number of variables! See also in get_variable_assignment_from_gadgetlib2.
-
-    // TODO: fix integration
-    // result.num_variables = GLA::getNextFreeIndex();
+    const size_t num_variables = GLA::getNextFreeIndex();
+    result.primary_input_size = pb.numInputs();
+    result.auxiliary_input_size = num_variables - pb.numInputs();
     return result;
 }
 
@@ -52,19 +52,16 @@ r1cs_variable_assignment<Fr<default_ec_pp> > get_variable_assignment_from_gadget
     typedef Fr<default_ec_pp> FieldT;
     typedef gadgetlib2::GadgetLibAdapter GLA;
 
-    const size_t num_vars = pb.numVars();
-
-    r1cs_variable_assignment<FieldT> result(num_vars, FieldT::zero());
+    //The numbers of variables is the highest index created. This is also the required size for the assignment vector.
+    //TODO: If there are multiple protoboard, or variables not assigned to a protoboard, then getNextFreeIndex() is *not* the number of variables! See also in get_constraint_system_from_gadgetlib2.
+    const size_t num_vars = GLA::getNextFreeIndex();
     const GLA adapter;
+    r1cs_variable_assignment<FieldT> result(num_vars, FieldT::zero());
+    VariableAssignment assignment = pb.assignment();
 
-    GLA::protoboard_t converted_pb = adapter.convert(pb);
-    for (size_t i = 0; i < num_vars; ++i)
-    {
-        auto it = converted_pb.second.find(i);
-        if (it != converted_pb.second.end())
-        {
-            result[i] = it->second;
-        }
+    //Go over all assigned values of the protoboard, from every variable-value pair, put the value in the variable.index place of the new assignment.
+    for(VariableAssignment::iterator iter = assignment.begin(); iter != assignment.end(); ++iter){
+    	result[GLA::getVariableIndex(iter->first)] = adapter.convert(iter->second);
     }
 
     return result;

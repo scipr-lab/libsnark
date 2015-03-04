@@ -108,12 +108,12 @@ class FElem {
 private:
     FElemInterfacePtr elem_;
 
+public:
     explicit FElem(const FElemInterface& elem);
     /// Helper method. When doing arithmetic between a constant and a field specific element
     /// we want to "promote" the constant to the same field. This function changes the unique_ptr
     /// to point to a field specific element with the same value as the constant which it held.
     void promoteToFieldType(FieldType type);
-public:
     FElem();
     FElem(const long n);
     FElem(const int i);
@@ -218,9 +218,9 @@ public:
 class R1P_Elem : public FElemInterface {
 private:
     Fp elem_;
+public:
 
     explicit R1P_Elem(const Fp& elem) : elem_(elem) {}
-public:
     virtual R1P_Elem& operator=(const FConst& src) {elem_ = src.asLong(); return *this;}
     virtual R1P_Elem& operator=(const long n) {elem_ = Fp(n); return *this;}
     virtual ::std::string asString() const {return GADGETLIB2_FMT("%u", elem_.as_ulong());}
@@ -268,16 +268,14 @@ public:
  */
 class Variable {
 private:
-    static VarIndex_t nextFreeIndex_;
-    VarIndex_t index_;  ///< The variable specifier. This index differentiates and
-                        ///< identifies Variable instances.
+    VarIndex_t index_;  ///< This index differentiates and identifies Variable instances.
+    static VarIndex_t nextFreeIndex_; ///< Monotonically-increasing counter to allocate disinct indices.
 #ifdef DEBUG
     ::std::string name_;
 #endif
 
    /**
-    * @brief allocates the variable on to a protoboard
-    * @param[in] pb - a reference to the protoboard to which the variable must allocate
+    * @brief allocates the variable
     */
 public:
     explicit Variable(const ::std::string& name = "");

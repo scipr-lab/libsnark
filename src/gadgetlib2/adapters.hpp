@@ -26,12 +26,14 @@ using gadgetlib2::VariableAssignment;
 using gadgetlib2::Protoboard;
 using gadgetlib2::FElem;
 
-// This class is a temporary hack for quick integration of Fp constraints with ppsnark. It is the
-// IDDQD of classes and has "god mode" friend access to many of the gadgetlib classes. This will
-// be refactored out in the future. --Shaul
 
 namespace gadgetlib2 {
 
+/**
+ * This class is a temporary hack for quick integration of Fp constraints with ppsnark. It is the
+ * IDDQD of classes and has "god mode" friend access to many of the gadgetlib classes. This will
+ * be refactored out in the future. --Shaul
+ */
 class GadgetLibAdapter {
 public:
     typedef unsigned long variable_index_t;
@@ -53,11 +55,12 @@ public:
     constraint_t convert(const Constraint& constraint) const;
     constraint_sys_t convert(const ConstraintSystem& constraint_sys) const;
     assignment_t convert(const VariableAssignment& assignment) const;
-    static void resetVariableIndex(); // This is used for testing. Resets variable index to 0 to
-                                      // allow for expected outcomes.
+    static void resetVariableIndex(); ///< Resets variable index to 0 to make variable indices deterministic.
+                                      //TODO: Kill GadgetLibAdapter::resetVariableIndex()
+    static size_t getNextFreeIndex(){return Variable::nextFreeIndex_;}
     protoboard_t convert(const Protoboard& pb) const;
-private:
     Fp_elem_t convert(FElem fElem) const;
+    static size_t getVariableIndex(const Variable& v){return v.index_;}
 };
 
 bool operator==(const GadgetLibAdapter::linear_combination_t& lhs,

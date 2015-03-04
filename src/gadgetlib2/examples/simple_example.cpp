@@ -41,21 +41,16 @@ r1cs_example<Fr<default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(con
     g->generateWitness();
     // translate constraint system to libsnark format.
     r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(*pb);
-    // translate witness to libsnark format
-#if 0
-    // TODO: fix the integration
-
-    const r1cs_variable_assignment<Fr<default_ec_pp> > va = get_variable_assignment_from_gadgetlib2(*pb);
-    // in this case the input to the constraint system is exactly the same as the assignment. This
-    // may not always be the case (inputs could be a strict subset of the assignment).
-    const r1cs_variable_assignment<Fr<default_ec_pp> > input = va;
-    cs.num_inputs = input.size();
+    // translate full variable assignment to libsnark format
+    const r1cs_variable_assignment<FieldT> full_assignment = get_variable_assignment_from_gadgetlib2(*pb);
+    // extract primary and auxiliary input
+    const r1cs_primary_input<FieldT> primary_input(full_assignment.begin(), full_assignment.begin() + cs.num_inputs());
+    const r1cs_auxiliary_input<FieldT> auxiliary_input(full_assignment.begin() + cs.num_inputs(), full_assignment.end());
 
     assert(cs.is_valid());
-    assert(cs.is_satisfied(va));
+    assert(cs.is_satisfied(primary_input, auxiliary_input));
 
-    return r1cs_example<FieldT>(cs, input, va);
-#endif
+    return r1cs_example<FieldT>(cs, primary_input, auxiliary_input);
 }
 
 } // libsnark

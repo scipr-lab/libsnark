@@ -53,7 +53,7 @@ namespace gadgetlib2 {
 
 /**
  Gadget class, representing the constraints and witness generation for a logical task.
- 
+
  Gadget hierarchy:
  (Here and elsewhere: R1P = Rank 1 constraints over a prime-characteristic field.)
  Gadgets have a somewhat cumbursome class heirarchy, for the sake of clean gadget construction.
@@ -702,7 +702,8 @@ private:
     const PackedWord rhs_;
     const FlagVariable less_;
     const FlagVariable lessOrEqual_;
-    const DualWord alpha_;
+	const PackedWord alpha_p_;
+	UnpackedWord alpha_u_;
     const FlagVariable notAllZeroes_;
     GadgetPtr allZeroesTest_;
     GadgetPtr alphaDualVariablePacker_;
@@ -715,6 +716,14 @@ private:
                           const FlagVariable& lessOrEqual);
     virtual void init();
 public:
+
+	static GadgetPtr create(ProtoboardPtr pb,
+							const size_t& wordBitSize,
+							const PackedWord& lhs,
+							const PackedWord& rhs,
+							const FlagVariable& less,
+							const FlagVariable& lessOrEqual);
+
     void generateConstraints();
     void generateWitness();
     friend class Comparison_Gadget;
@@ -722,7 +731,7 @@ private:
     DISALLOW_COPY_AND_ASSIGN(R1P_Comparison_Gadget);
 };
 
-CREATE_GADGET_FACTORY_CLASS_5(Comparison_Gadget,
+CREATE_GADGET_FACTORY_CLASS_5(Comparison_Gadget, // TODO uncomment this
                               size_t, wordBitSize,
                               PackedWord, lhs,
                               PackedWord, rhs,

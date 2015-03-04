@@ -62,13 +62,24 @@ void GLA::resetVariableIndex() { // This is a hack, used for testing
     Variable::nextFreeIndex_ = 0;
 }
 
+/***TODO: Remove reliance of GadgetLibAdapter conversion on global variable indices, and the resulting limit of single protoboard instance at a time.
+This limitation is to prevent a logic bug that may occur if the variables used are given different indices in different generations of the same constraint system.
+The indices are assigned on the Variable constructor, using the global variable nextFreeIndex. Thus, creating two protoboards in the same program may cause
+unexpected behavior when converting.
+Moreover, the bug will create more variables than needed in the converted system, e.g. if variables 0,1,3,4 were used in the gadgetlib2
+generated system, than the conversion will create a new r1cs system with variables 0,1,2,3,4 and assign variable 2 the value zero
+(when converting the assignment).
+Everything should be fixed soon.
+If you are sure you know what you are doing, you can comment out the ASSERT line.
+*/
 GLA::protoboard_t GLA::convert(const Protoboard& pb) const {
+	//GADGETLIB_ASSERT(pb.numVars()==getNextFreeIndex(), "Some Variables were created and not used, or, more than one protoboard was used.");
     return protoboard_t(convert(pb.constraintSystem()), convert(pb.assignment()));
 }
 
 GLA::Fp_elem_t GLA::convert(FElem fElem) const {
     using gadgetlib2::R1P_Elem;
-    fElem.promoteToFieldType(gadgetlib2::R1P);
+    fElem.promoteToFieldType(gadgetlib2::R1P); // convert fElem from FConst to R1P_Elem
     const R1P_Elem* pR1P = dynamic_cast<R1P_Elem*>(fElem.elem_.get());
     return pR1P->elem_;
 }

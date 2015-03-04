@@ -49,6 +49,8 @@ public:
         return ProtoboardPtr(new Protoboard(fieldType, pParams));
     }
     size_t numVars() const {return assignment_.size();} // TODO change to take num from constraintSys_
+    //size_t numVars() const {return constraintSystem_.getUsedVariables().size();} // TODO change to take num from constraintSys_
+
     size_t numInputs() const {return numInputs_;} // TODO Madars How do we book keep this?
     ParamsCPtr params() const {return pParams_;}
     FElem& val(const Variable& var);

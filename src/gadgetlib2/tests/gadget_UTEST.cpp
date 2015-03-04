@@ -321,7 +321,7 @@ void packing_Gadget_R1P_ExhaustiveTest(ProtoboardPtr unpackingPB, ProtoboardPtr 
                                        GadgetPtr packingGadget, GadgetPtr unpackingGadget) {
     packingGadget->generateConstraints();
     unpackingGadget->generateConstraints();
-    for(int i = 0; i < 1u<<n; ++i) {
+    for(int i = 0; i < 1l<<n; ++i) {
         ::std::vector<int> bits(n);
         for(int j = 0; j < n; ++j) {
             bits[j] = i & 1u<<j ? 1 : 0 ;
@@ -335,7 +335,7 @@ void packing_Gadget_R1P_ExhaustiveTest(ProtoboardPtr unpackingPB, ProtoboardPtr 
         ASSERT_EQ(packingPB->val(packed[0]), i); // check packed value is correct
         for(int j = 0; j < n; ++j) {
             // Tests for unpacking gadget
-            SCOPED_TRACE(GADGETLIB2_FMT("\nValue being packed/unpacked: %u, bits[%u] = %u", i, j, bits[j]));
+            SCOPED_TRACE(GADGETLIB2_FMT("\nValue being packed/unpacked: %u, bits[%u] = %u" , i, j, bits[j]));
             ASSERT_EQ(unpackingPB->val(unpacked[j]), bits[j]); // check bit correctness
             packingPB->val(unpacked[j]) = unpackingPB->val(unpacked[j]) = 1-bits[j]; // flip bit
             ASSERT_FALSE(unpackingPB->isSatisfied());
@@ -343,13 +343,13 @@ void packing_Gadget_R1P_ExhaustiveTest(ProtoboardPtr unpackingPB, ProtoboardPtr 
             packingPB->val(unpacked[j]) = unpackingPB->val(unpacked[j]) = bits[j]; // restore bit
             // special case to test booleanity checks. Cause arithmetic constraints to stay
             // satisfied while ruining Booleanity
-            if (j > 0 && bits[j]==1 && bits[j-1]==0 ) { 
+            if (j > 0 && bits[j]==1 && bits[j-1]==0 ) {
                 packingPB->val(unpacked[j-1]) = unpackingPB->val(unpacked[j-1]) = 2;
-                packingPB->val(unpacked[j]) = unpackingPB->val(unpacked[j]) = 0; 
+                packingPB->val(unpacked[j]) = unpackingPB->val(unpacked[j]) = 0;
                 ASSERT_FALSE(unpackingPB->isSatisfied());
                 ASSERT_TRUE(packingPB->isSatisfied()); // packing should not enforce Booleanity
                 // restore correct state
-                packingPB->val(unpacked[j-1]) = unpackingPB->val(unpacked[j-1]) = 0; 
+                packingPB->val(unpacked[j-1]) = unpackingPB->val(unpacked[j-1]) = 0;
                 packingPB->val(unpacked[j]) = unpackingPB->val(unpacked[j]) = 1;
             }
         }
@@ -408,4 +408,4 @@ OrGadgetExhaustiveTester::OrGadgetExhaustiveTester(ProtoboardPtr pb, size_t numI
 }
 
 
-} // namespace 
+} // namespace

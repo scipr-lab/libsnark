@@ -7,7 +7,6 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <stdexcept>
 #include <gtest/gtest.h>
 #include <gadgetlib2/pp.hpp>
 #include <gadgetlib2/protoboard.hpp>

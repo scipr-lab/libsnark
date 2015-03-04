@@ -74,12 +74,12 @@ TEST(GadgetLibAdapter, VariableAssignment) {
     adapter.resetVariableIndex();
     const VariableArray varArray(10, "x");
     VariableAssignment assignment;
-    for (int i = 0; i < varArray.size(); ++i) {
+    for (size_t i = 0; i < varArray.size(); ++i) {
         assignment[varArray[i]] = i;
     }
     const auto new_assignment = adapter.convert(assignment);
     ASSERT_EQ(assignment.size(), new_assignment.size());
-    for (int i = 0; i < new_assignment.size(); ++i) {
+    for (size_t i = 0; i < new_assignment.size(); ++i) {
         const GadgetLibAdapter::variable_index_t var = i;
         EXPECT_EQ(new_assignment.at(var), Fp(i));
     }

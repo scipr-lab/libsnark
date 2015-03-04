@@ -154,7 +154,7 @@ public:
     ::std::string annotation() const;
     Variable::set getUsedVariables() const;
 
-    typedef ::std::set< ::std::unique_ptr<Polynomial> > PolyPtrSet;
+    typedef ::std::set<::std::unique_ptr<Polynomial> > PolyPtrSet;
     /// Required for interfacing with BREX. Should be optimized in the future
     PolyPtrSet getConstraintPolynomials() const {
         PolyPtrSet retset;
@@ -163,7 +163,8 @@ public:
         }
         return retset;
     }
-
+    size_t getNumberOfConstraints() { return constraintsPtrs_.size(); }
+    ConstraintPtr getConstraint(size_t idx){ return constraintsPtrs_[idx];}
     friend class GadgetLibAdapter;
 }; // class ConstraintSystem
 

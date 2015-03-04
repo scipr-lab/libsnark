@@ -139,6 +139,7 @@ bool PolynomialConstraint::isSatisfied(const VariableAssignment& assignment,
                 cerr << GADGETLIB2_FMT("Constraint named \"%s\" not satisfied. Constraint is:",
                     name().c_str()) << endl;
                 cerr << annotation() << endl;
+				cerr << "Expecting: " << aEval << " == " << bEval << endl;
                 cerr << "Variable assignments are:" << endl;
                 const Variable::set varSet = getUsedVariables();
                 for(const Variable& var : varSet) {
