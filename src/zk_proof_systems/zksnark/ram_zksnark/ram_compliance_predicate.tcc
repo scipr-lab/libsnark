@@ -238,6 +238,7 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
                                                            cur->pc_addr,
                                                            *prev_pc_val_digest,
                                                            *cur_root_digest,
+                                                           ONE,
                                                            "instruction_fetch"));
 
     // for next.timestamp = cur.timestamp + 1
@@ -258,7 +259,7 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     ls_next_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_next_val, zero, "ls_next_val_digest"));
     temp_next_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, temp_next_root, zero, "temp_next_root_digest"));
     load_store_checker.reset(new memory_load_store_gadget<FieldT>(this->pb, addr_size, ls_addr,
-                                                                  *ls_prev_val_digest, *cur_root_digest, *ls_next_val_digest, *temp_next_root_digest,
+                                                                  *ls_prev_val_digest, *cur_root_digest, *ls_next_val_digest, *temp_next_root_digest, ONE,
                                                                   "load_store_checker"));
     /*
       If do_halt = 1: (final case)
@@ -425,7 +426,7 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
                                                                    typename ram_input_tape<ramT>::const_iterator &aux_it,
                                                                    const typename ram_input_tape<ramT>::const_iterator &aux_end)
 {
-    assert(mem.depth == addr_size); // check value_size and num_addresses too
+    assert(mem.num_addresses == 1ul << addr_size); // check value_size and num_addresses too
 
     this->pb.val(cur_type) = FieldT(msg.type);
     cur_packed.fill_with_field_elements(this->pb, msg.payload);

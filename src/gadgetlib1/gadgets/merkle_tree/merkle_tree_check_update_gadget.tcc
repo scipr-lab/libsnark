@@ -1,9 +1,9 @@
 /** @file
  *****************************************************************************
 
- Implementation of interfaces for the memory load&store gadget.
+ Implementation of interfaces for the Merkle tree check update gadget.
 
- See memory_load_store_gadget.hpp .
+ See merkle_tree_check_update_gadget.hpp .
 
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
@@ -11,28 +11,30 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#ifndef MEMORY_LOAD_STORE_GADGET_TCC_
-#define MEMORY_LOAD_STORE_GADGET_TCC_
+#ifndef MERKLE_TREE_CHECK_UPDATE_GADGET_TCC_
+#define MERKLE_TREE_CHECK_UPDATE_GADGET_TCC_
 
 namespace libsnark {
 
 template<typename FieldT>
-memory_load_store_gadget<FieldT>::memory_load_store_gadget(protoboard<FieldT> &pb,
-                                                           const size_t tree_depth,
-                                                           const pb_variable_array<FieldT> &addr_bits,
-                                                           const digest_variable<FieldT> &prev_leaf_digest,
-                                                           const digest_variable<FieldT> &prev_root_digest,
-                                                           const digest_variable<FieldT> &next_leaf_digest,
-                                                           const digest_variable<FieldT> &next_root_digest,
-                                                           const std::string &annotation_prefix) :
-    gadget<FieldT>(pb, annotation_prefix),
+merkle_tree_check_update_gadget<FieldT>::merkle_tree_check_update_gadget(protoboard<FieldT> &pb,
+                                                                         const size_t tree_depth,
+                                                                         const pb_variable_array<FieldT> &addr_bits,
+                                                                         const digest_variable<FieldT> &prev_leaf_digest,
+                                                                         const digest_variable<FieldT> &prev_root_digest,
+                                                                         const digest_variable<FieldT> &next_leaf_digest,
+                                                                         const digest_variable<FieldT> &next_root_digest,
+                                                                         const pb_linear_combination<FieldT> &update_successful,
+                                                                         const std::string &annotation_prefix) :
+gadget<FieldT>(pb, annotation_prefix),
     digest_size(knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len()),
     tree_depth(tree_depth),
     addr_bits(addr_bits),
     prev_leaf_digest(prev_leaf_digest),
     prev_root_digest(prev_root_digest),
     next_leaf_digest(next_leaf_digest),
-    next_root_digest(next_root_digest)
+    next_root_digest(next_root_digest),
+    update_successful(update_successful)
 {
     assert(tree_depth > 0);
     assert(tree_depth == addr_bits.size());
@@ -55,32 +57,36 @@ memory_load_store_gadget<FieldT>::memory_load_store_gadget(protoboard<FieldT> &p
         next_internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " next_internal_output_%zu", i)));
     }
 
+    computed_next_root.reset(new digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " computed_root")));
+
     for (size_t i = 0; i < tree_depth; ++i)
     {
         block_variable<FieldT> prev_inp(pb, prev_internal_left[i], prev_internal_right[i], FMT(this->annotation_prefix, " prev_inp_%zu", i));
         prev_hasher_inputs.emplace_back(prev_inp);
         prev_hashers.emplace_back(CRH_with_bit_out_gadget<FieldT>(pb, 2*digest_size, prev_inp, (i == 0 ? prev_root_digest : prev_internal_output[i-1]),
-                                                     FMT(this->annotation_prefix, " prev_hashers_%zu", i)));
+                                                                  FMT(this->annotation_prefix, " prev_hashers_%zu", i)));
 
         block_variable<FieldT> next_inp(pb, next_internal_left[i], next_internal_right[i], FMT(this->annotation_prefix, " next_inp_%zu", i));
         next_hasher_inputs.emplace_back(next_inp);
-        next_hashers.emplace_back(CRH_with_bit_out_gadget<FieldT>(pb, 2*digest_size, next_inp, (i == 0 ? next_root_digest : next_internal_output[i-1]),
-                                                     FMT(this->annotation_prefix, " next_hashers_%zu", i)));
+        next_hashers.emplace_back(CRH_with_bit_out_gadget<FieldT>(pb, 2*digest_size, next_inp, (i == 0 ? *computed_next_root : next_internal_output[i-1]),
+                                                                  FMT(this->annotation_prefix, " next_hashers_%zu", i)));
     }
 
     for (size_t i = 0; i < tree_depth; ++i)
     {
         prev_propagators.emplace_back(digest_selector_gadget<FieldT>(pb, digest_size, i < tree_depth -1 ? prev_internal_output[i] : prev_leaf_digest,
-                                                                       addr_bits[tree_depth-1-i], prev_internal_left[i], prev_internal_right[i],
-                                                                       FMT(this->annotation_prefix, " prev_propagators_%zu", i)));
+                                                                     addr_bits[tree_depth-1-i], prev_internal_left[i], prev_internal_right[i],
+                                                                     FMT(this->annotation_prefix, " prev_propagators_%zu", i)));
         next_propagators.emplace_back(digest_selector_gadget<FieldT>(pb, digest_size, i < tree_depth -1 ? next_internal_output[i] : next_leaf_digest,
-                                                                       addr_bits[tree_depth-1-i], next_internal_left[i], next_internal_right[i],
-                                                                       FMT(this->annotation_prefix, " next_propagators_%zu", i)));
+                                                                     addr_bits[tree_depth-1-i], next_internal_left[i], next_internal_right[i],
+                                                                     FMT(this->annotation_prefix, " next_propagators_%zu", i)));
     }
+
+    check_next_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_next_root->bits, next_root_digest.bits, update_successful, FieldT::capacity(), FMT(annotation_prefix, " check_next_root")));
 }
 
 template<typename FieldT>
-void memory_load_store_gadget<FieldT>::generate_r1cs_constraints()
+void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_constraints()
 {
     /* ensure bitness of authentication path plus all prev computed values */
     for (size_t i = 0; i < tree_depth; ++i)
@@ -119,11 +125,15 @@ void memory_load_store_gadget<FieldT>::generate_r1cs_constraints()
                                          FMT(this->annotation_prefix, " aux_check_%zu_%zu", i, j));
         }
     }
+
+    check_next_root->generate_r1cs_constraints(false, false);
 }
 
 template<typename FieldT>
-void memory_load_store_gadget<FieldT>::generate_r1cs_witness(const bit_vector &prev_leaf, const bit_vector &prev_root, const merkle_authentication_path &prev_path, const bit_vector &next_leaf)
+void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_witness(const bit_vector &prev_leaf, const bit_vector &prev_root, const merkle_authentication_path &prev_path, const bit_vector &next_leaf)
 {
+    assert(prev_path.size() == tree_depth);
+
     /* fill in the leafs, everything else will be filled by hashers/propagators */
     prev_leaf_digest.fill_with_bits(prev_leaf);
     next_leaf_digest.fill_with_bits(next_leaf);
@@ -155,10 +165,17 @@ void memory_load_store_gadget<FieldT>::generate_r1cs_witness(const bit_vector &p
     }
 
     prev_root_digest.fill_with_bits(prev_root);
+    check_next_root->generate_r1cs_witness();
 }
 
 template<typename FieldT>
-size_t memory_load_store_gadget<FieldT>::expected_constraints(const size_t tree_depth)
+size_t merkle_tree_check_update_gadget<FieldT>::root_size_in_bits()
+{
+    return knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len();
+}
+
+template<typename FieldT>
+size_t merkle_tree_check_update_gadget<FieldT>::expected_constraints(const size_t tree_depth)
 {
     const size_t digest_size = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
 
@@ -166,11 +183,13 @@ size_t memory_load_store_gadget<FieldT>::expected_constraints(const size_t tree_
     const size_t propagator_constraints = 2 * tree_depth * digest_size;
     const size_t aux_digest_constraints = tree_depth * digest_size;
     const size_t aux_equality_constraints = tree_depth * digest_size;
-    return hasher_constraints + propagator_constraints + aux_digest_constraints + aux_equality_constraints;
+    const size_t check_root_constraints = 3 * div_ceil(CRH_with_bit_out_gadget<FieldT>::get_digest_len(), FieldT::capacity());
+
+    return hasher_constraints + propagator_constraints + aux_digest_constraints + aux_equality_constraints + check_root_constraints;
 }
 
 template<typename FieldT>
-void test_memory_load_store_gadget()
+void test_merkle_tree_check_update_gadget()
 {
     /* prepare test */
     const size_t digest_len = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
@@ -222,7 +241,7 @@ void test_memory_load_store_gadget()
     digest_variable<FieldT> prev_root_digest(pb, digest_len, "prev_root_digest");
     digest_variable<FieldT> next_leaf_digest(pb, digest_len, "next_leaf_digest");
     digest_variable<FieldT> next_root_digest(pb, digest_len, "next_root_digest");
-    memory_load_store_gadget<FieldT> mls(pb, tree_depth, addr_bits_va, prev_leaf_digest, prev_root_digest, next_leaf_digest, next_root_digest, "mls");
+    merkle_tree_check_update_gadget<FieldT> mls(pb, tree_depth, addr_bits_va, prev_leaf_digest, prev_root_digest, next_leaf_digest, next_root_digest, ONE, "mls");
     mls.generate_r1cs_constraints();
     mls.generate_r1cs_witness(loaded_leaf, load_root, prev_path, stored_leaf);
     prev_leaf_digest.fill_with_bits(loaded_leaf);
@@ -234,10 +253,10 @@ void test_memory_load_store_gadget()
     assert(pb.is_satisfied());
 
     const size_t num_constraints = pb.num_constraints();
-    const size_t expected_constraints = memory_load_store_gadget<FieldT>::expected_constraints(tree_depth);
+    const size_t expected_constraints = merkle_tree_check_update_gadget<FieldT>::expected_constraints(tree_depth);
     assert(num_constraints == expected_constraints);
 }
 
 } // libsnark
 
-#endif // MEMORY_LOAD_STORE_GADGET_TCC_
+#endif // MERKLE_TREE_CHECK_UPDATE_GADGET_TCC_
