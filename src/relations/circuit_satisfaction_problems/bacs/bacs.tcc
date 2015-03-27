@@ -240,7 +240,7 @@ bool bacs_circuit<FieldT>::operator==(const bacs_circuit<FieldT> &other) const
 {
     return (this->primary_input_size == other.primary_input_size &&
             this->auxiliary_input_size == other.auxiliary_input_size &&
-            vectors_equal<bacs_gate<FieldT> >(this->gates, other.gates));
+            this->gates == other.gates);
 }
 
 template<typename FieldT>

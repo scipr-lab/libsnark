@@ -287,7 +287,7 @@ bool tbcs_circuit::operator==(const tbcs_circuit &other) const
 {
     return (this->primary_input_size == other.primary_input_size &&
             this->auxiliary_input_size == other.auxiliary_input_size &&
-            vectors_equal<tbcs_gate>(this->gates, other.gates));
+            this->gates == other.gates);
 }
 
 std::ostream& operator<<(std::ostream &out, const tbcs_circuit &circuit)

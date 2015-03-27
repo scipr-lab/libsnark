@@ -126,9 +126,9 @@ bool r1cs_pcd_compliance_predicate<FieldT>::operator==(const r1cs_pcd_compliance
     return (this->name == other.name &&
             this->type == other.type &&
             this->constraint_system == other.constraint_system &&
-            this->max_arity == other.max_arity &&
-            vectors_equal<size_t>(this->incoming_message_payload_lengths, other.incoming_message_payload_lengths) &&
             this->outgoing_message_payload_length == other.outgoing_message_payload_length &&
+            this->max_arity == other.max_arity &&
+            this->incoming_message_payload_lengths == other.incoming_message_payload_lengths &&
             this->local_data_length == other.local_data_length &&
             this->witness_length == other.witness_length);
 }
