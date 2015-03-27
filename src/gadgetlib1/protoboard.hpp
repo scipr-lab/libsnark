@@ -38,6 +38,8 @@ private:
 public:
     protoboard();
 
+    void clear_values();
+
     FieldT& val(const pb_variable<FieldT> &var);
     FieldT val(const pb_variable<FieldT> &var) const;
 

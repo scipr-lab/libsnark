@@ -124,7 +124,7 @@ private:
     std::shared_ptr<digest_variable<FieldT> > cur_root_digest;
     std::shared_ptr<memory_load_gadget<FieldT> > instruction_fetch;
 
-    std::shared_ptr<digest_variable<FieldT> > temp_next_root_digest;
+    std::shared_ptr<digest_variable<FieldT> > next_root_digest;
 
     pb_variable_array<FieldT> ls_addr;
     pb_variable_array<FieldT> ls_prev_val;
@@ -133,10 +133,8 @@ private:
     std::shared_ptr<digest_variable<FieldT> > ls_next_val_digest;
     std::shared_ptr<memory_load_store_gadget<FieldT> > load_store_checker;
 
-    pb_variable_array<FieldT> temp_next_root;
     pb_variable_array<FieldT> temp_next_pc_addr;
     pb_variable_array<FieldT> temp_next_cpu_state;
-    pb_variable<FieldT> temp_next_has_accepted;
     std::shared_ptr<ram_cpu_checker<ramT> > cpu_checker;
 
     pb_variable<FieldT> do_halt;

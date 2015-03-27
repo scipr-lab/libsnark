@@ -28,6 +28,12 @@ protoboard<FieldT>::protoboard()
 }
 
 template<typename FieldT>
+void protoboard<FieldT>::clear_values()
+{
+    std::fill(values.begin(), values.end(), FieldT::zero());
+}
+
+template<typename FieldT>
 var_index_t protoboard<FieldT>::allocate_var_index(const std::string &annotation)
 {
 #ifdef DEBUG

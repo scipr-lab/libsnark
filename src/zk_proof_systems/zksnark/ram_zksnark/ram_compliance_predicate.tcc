@@ -146,7 +146,6 @@ size_t ram_compliance_message_vars<ramT>::size_in_bits(const ram_architecture_pa
   that CPU accepted on (cur, temp)
   that load-then-store was correctly handled
   that next.root = temp.root, next.cpu_state = temp.cpu_state, next.pc_addr = temp.pc_addr
-  that next.has_accepted = temp.has_accepted
 
   If do_halt = 1: (final case)
   that cur.has_accepted = 1
@@ -192,10 +191,8 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     // work-around for bad linear combination handling
     zero.allocate(this->pb, "zero"); // will go away when we properly support linear terms
 
-    temp_next_root.allocate(this->pb, digest_size, "temp_next_root");
     temp_next_pc_addr.allocate(this->pb, addr_size, "temp_next_pc_addr");
     temp_next_cpu_state.allocate(this->pb, cur->cpu_state_size, "temp_next_cpu_state");
-    temp_next_has_accepted.allocate(this->pb, "temp_next_has_accepted");
 
     /*
       Always:
@@ -251,15 +248,15 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     ls_next_val.allocate(this->pb, value_size, "ls_next_val");
     cpu_checker.reset(new ram_cpu_checker<ramT>(this->pb, cur->pc_addr, prev_pc_val, cur->cpu_state,
                                                 ls_addr, ls_prev_val, ls_next_val,
-                                                temp_next_cpu_state, temp_next_pc_addr, temp_next_has_accepted,
+                                                temp_next_cpu_state, temp_next_pc_addr, next->has_accepted,
                                                 "cpu_checker"));
 
     // that load-then-store was correctly handled
     ls_prev_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_prev_val, zero, "ls_prev_val_digest"));
     ls_next_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_next_val, zero, "ls_next_val_digest"));
-    temp_next_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, temp_next_root, zero, "temp_next_root_digest"));
+    next_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, next->root, zero, "next_root_digest"));
     load_store_checker.reset(new memory_load_store_gadget<FieldT>(this->pb, addr_size, ls_addr,
-                                                                  *ls_prev_val_digest, *cur_root_digest, *ls_next_val_digest, *temp_next_root_digest, ONE,
+                                                                  *ls_prev_val_digest, *cur_root_digest, *ls_next_val_digest, *next_root_digest, is_not_halt_case,
                                                                   "load_store_checker"));
     /*
       If do_halt = 1: (final case)
@@ -273,7 +270,6 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     clear_next_pc_addr.reset(new bit_vector_copy_gadget<FieldT>(this->pb, zero_pc_addr, next->pc_addr, do_halt, chunk_size, "clear_next_pc_addr"));
     clear_next_cpu_state.reset(new bit_vector_copy_gadget<FieldT>(this->pb, zero_cpu_state, next->cpu_state, do_halt, chunk_size, "clear_cpu_state"));
 
-    copy_temp_next_root.reset(new bit_vector_copy_gadget<FieldT>(this->pb, temp_next_root, next->root, is_not_halt_case, chunk_size, "copy_temp_next_root"));
     copy_temp_next_pc_addr.reset(new bit_vector_copy_gadget<FieldT>(this->pb, temp_next_pc_addr, next->pc_addr, is_not_halt_case, chunk_size, "copy_temp_next_pc_addr"));
     copy_temp_next_cpu_state.reset(new bit_vector_copy_gadget<FieldT>(this->pb, temp_next_cpu_state, next->cpu_state, is_not_halt_case, chunk_size, "copy_temp_next_cpu_state"));
 
@@ -361,7 +357,6 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_constraints()
       that CPU accepted on (cur, next)
       that load-then-store was correctly handled
       that next.root = temp.root, next.cpu_state = temp.cpu_state, next.pc_addr = temp.pc_addr
-      that next.has_accepted = temp.has_accepted
     */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, 1 - do_halt, is_not_halt_case), "is_not_halt_case");
     PROFILE_CONSTRAINTS(this->pb, "instruction fetch")
@@ -379,18 +374,11 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_constraints()
         load_store_checker->generate_r1cs_constraints();
     }
 
-    PROFILE_CONSTRAINTS(this->pb, "copy temp next root")
-    {
-        copy_temp_next_root->generate_r1cs_constraints(true, false);
-    }
-
     PROFILE_CONSTRAINTS(this->pb, "copy temp_next_pc_addr and temp_next_cpu_state")
     {
         copy_temp_next_pc_addr->generate_r1cs_constraints(true, false);
         copy_temp_next_cpu_state->generate_r1cs_constraints(true, false);
     }
-
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(is_not_halt_case, temp_next_has_accepted - next->has_accepted, 0), "copy_temp_next_has_accepted");
 
     /*
       If do_halt = 1: (final case)
@@ -427,6 +415,8 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
                                                                    const typename ram_input_tape<ramT>::const_iterator &aux_end)
 {
     assert(mem.num_addresses == 1ul << addr_size); // check value_size and num_addresses too
+
+    this->pb.clear_values();
 
     this->pb.val(cur_type) = FieldT(msg.type);
     cur_packed.fill_with_field_elements(this->pb, msg.payload);
@@ -531,8 +521,6 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
     // Step 4: Use both to satisfy load_store_checker
     load_store_checker->generate_r1cs_witness(prev_leaf_bits, prev_root_bits, prev_path, next_leaf_bits);
 
-    this->pb.val(next->has_accepted) = this->pb.val(temp_next_has_accepted);
-
     /*
       If do_halt = 1: (final case)
       that cur.has_accepted = 1
@@ -546,7 +534,6 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
     // actually set by the other witness map.
     if (!want_halt)
     {
-        copy_temp_next_root->generate_r1cs_witness();
         copy_temp_next_pc_addr->generate_r1cs_witness();
         copy_temp_next_cpu_state->generate_r1cs_witness();
 
@@ -560,7 +547,6 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
         clear_next_pc_addr->generate_r1cs_witness();
         clear_next_cpu_state->generate_r1cs_witness();
 
-        copy_temp_next_root->generate_r1cs_witness();
         copy_temp_next_pc_addr->generate_r1cs_witness();
         copy_temp_next_cpu_state->generate_r1cs_witness();
     }
