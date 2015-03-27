@@ -273,7 +273,7 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs
                                                                       const std::vector<r1cs_ppzksnark_proof<other_curve<ppT> > > &incoming_proofs)
 {
     const size_t compliance_predicate_arity = compliance_predicate.max_arity;
-
+    this->pb.clear_values();
     this->pb.val(zero) = FieldT::zero();
 
     compliance_predicate_as_gadget->generate_r1cs_witness(compliance_predicate_primary_input.as_r1cs_primary_input(),
@@ -400,6 +400,7 @@ template<typename ppT>
 void sp_translation_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs_primary_input<Fr<ppT> > sp_translation_step_input,
                                                                        const r1cs_ppzksnark_proof<other_curve<ppT> > &compliance_step_proof)
 {
+    this->pb.clear_values();
     sp_translation_step_pcd_circuit_input.fill_with_field_elements(pb, sp_translation_step_input);
     unpack_sp_translation_step_pcd_circuit_input->generate_r1cs_witness_from_packed();
 

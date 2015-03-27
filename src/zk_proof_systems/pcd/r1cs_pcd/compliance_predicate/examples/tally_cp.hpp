@@ -64,6 +64,9 @@ public:
     pb_variable<FieldT> local_data;
     pb_variable<FieldT> dummy;
 
+    pb_variable_array<FieldT> sum_in_packed_aux;
+    pb_variable_array<FieldT> count_in_packed_aux;
+
     std::shared_ptr<packing_gadget<FieldT> > unpack_sum_out;
     std::shared_ptr<packing_gadget<FieldT> > unpack_count_out;
     std::vector<packing_gadget<FieldT> > pack_sum_in;

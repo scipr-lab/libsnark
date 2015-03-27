@@ -120,6 +120,7 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
             tree_proofs[cur_idx] = proof;
             // TODO: how to do this without hacks?
             const r1cs_pcd_message<FieldT> pcd_msg = tally.get_outgoing_message();
+            tree_messages[cur_idx].wordsize = wordsize;
             tree_messages[cur_idx].type = pcd_msg.type;
             tree_messages[cur_idx].payload = pcd_msg.payload;
 

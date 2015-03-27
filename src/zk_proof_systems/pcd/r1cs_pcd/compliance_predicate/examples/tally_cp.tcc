@@ -22,6 +22,7 @@ namespace libsnark {
 template<typename FieldT>
 void tally_pcd_message<FieldT>::print() const
 {
+    assert(wordsize > 0);
     printf("Message type: %zu\n", this->type);
 
     std::function<bool(FieldT)> FieldT_to_bool = [](const FieldT &el) { return el == FieldT::one(); };
@@ -72,6 +73,9 @@ tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_a
 
     dummy.allocate(this->pb, "dummy"); // equals square of local_data
 
+    sum_in_packed_aux.allocate(this->pb, max_arity, "sum_in_packed_aux");
+    count_in_packed_aux.allocate(this->pb, max_arity, "count_in_packed_aux");
+
     type_val_inner_product.allocate(this->pb, "type_val_inner_product");
     compute_type_val_inner_product.reset(new inner_product_gadget<FieldT>(this->pb, type_in, sum_in_packed, type_val_inner_product, "compute_type_val_inner_product"));
 
@@ -114,8 +118,8 @@ void tally_cp_handler<FieldT>::generate_r1cs_constraints()
 
     for (size_t i = 0; i < this->max_arity; ++i)
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1 - type_in[i], sum_in_packed[i], 0), FMT("", "initial_sum_%zu_is_zero", i));
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1 - type_in[i], count_in_packed[i], 0), FMT("", "initial_sum_%zu_is_zero", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(type_in[i], sum_in_packed_aux[i], sum_in_packed[i]), FMT("", "initial_sum_%zu_is_zero", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(type_in[i], count_in_packed_aux[i], count_in_packed[i]), FMT("", "initial_sum_%zu_is_zero", i));
     }
 
     /* constrain arity indicator variables so that arity_indicators[arity] = 1 and arity_indicators[i] = 0 for any other i */
@@ -137,7 +141,7 @@ void tally_cp_handler<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, type_val_inner_product + local_data, sum_out_packed), "update_sum");
 
     /* count_out = 1 + \sum_i count_in[i] */
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_sum<FieldT>(count_in_packed), count_out_packed - 1), "update_count");
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, 1 + pb_sum<FieldT>(count_in_packed), count_out_packed), "update_count");
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(local_data, local_data, dummy), "dummy_witness");
 }
@@ -146,7 +150,7 @@ template<typename FieldT>
 void tally_cp_handler<FieldT>::generate_r1cs_witness(const std::vector<tally_pcd_message<FieldT> > &input, const r1cs_pcd_local_data<FieldT> &ld)
 {
     assert(ld.payload.size() == 1);
-
+    this->pb.clear_values();
     this->pb.val(arity) = FieldT(input.size());
 
     for (size_t i = 0; i < input.size(); ++i)
@@ -160,6 +164,12 @@ void tally_cp_handler<FieldT>::generate_r1cs_witness(const std::vector<tally_pcd
     {
         pack_sum_in[i].generate_r1cs_witness_from_bits();
         pack_count_in[i].generate_r1cs_witness_from_bits();
+
+        if (!this->pb.val(type_in[i]).is_zero())
+        {
+            this->pb.val(sum_in_packed_aux[i]) = this->pb.val(sum_in_packed[i]) * this->pb.val(type_in[i]).inverse();
+            this->pb.val(count_in_packed_aux[i]) = this->pb.val(count_in_packed[i]) * this->pb.val(type_in[i]).inverse();
+        }
     }
 
     for (size_t i = 0; i < this->max_arity + 1; ++i)
