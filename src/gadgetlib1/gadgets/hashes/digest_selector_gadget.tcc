@@ -13,7 +13,7 @@ template<typename FieldT>
 digest_selector_gadget<FieldT>::digest_selector_gadget(protoboard<FieldT> &pb,
                                                        const size_t digest_size,
                                                        const digest_variable<FieldT> &input,
-                                                       const pb_variable<FieldT> &is_right,
+                                                       const pb_linear_combination<FieldT> &is_right,
                                                        const digest_variable<FieldT> &left,
                                                        const digest_variable<FieldT> &right,
                                                        const std::string &annotation_prefix) :
@@ -30,19 +30,18 @@ void digest_selector_gadget<FieldT>::generate_r1cs_constraints()
           input = is_right * right + (1-is_right) * left
           input - left = is_right(right - left)
         */
-        this->pb.add_r1cs_constraint(
-            r1cs_constraint<FieldT>(
-                { is_right },
-                { right.bits[i], left.bits[i] * (-1) },
-                { input.bits[i], left.bits[i] * (-1) }),
-            FMT(this->annotation_prefix, " propagate_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(is_right, right.bits[i] - left.bits[i], input.bits[i] - left.bits[i]),
+                                     FMT(this->annotation_prefix, " propagate_%zu", i));
     }
 }
 
 template<typename FieldT>
 void digest_selector_gadget<FieldT>::generate_r1cs_witness()
 {
-    if (this->pb.val(is_right) == FieldT::one())
+    is_right.evaluate(this->pb);
+
+    assert(this->pb.lc_val(is_right) == FieldT::one() || this->pb.lc_val(is_right) == FieldT::zero());
+    if (this->pb.lc_val(is_right) == FieldT::one())
     {
         for (size_t i = 0; i < digest_size; ++i)
         {

@@ -70,12 +70,12 @@ class field_vector_copy_gadget : public gadget<FieldT> {
 public:
     const pb_variable_array<FieldT> source;
     const pb_variable_array<FieldT> target;
-    const pb_variable<FieldT> do_copy;
+    const pb_linear_combination<FieldT> do_copy;
 
     field_vector_copy_gadget(protoboard<FieldT> &pb,
                              const pb_variable_array<FieldT> &source,
                              const pb_variable_array<FieldT> &target,
-                             const pb_variable<FieldT> &do_copy,
+                             const pb_linear_combination<FieldT> &do_copy,
                              const std::string &annotation_prefix="");
     void generate_r1cs_constraints();
     void generate_r1cs_witness();
@@ -86,7 +86,7 @@ class bit_vector_copy_gadget : public gadget<FieldT> {
 public:
     const pb_variable_array<FieldT> source_bits;
     const pb_variable_array<FieldT> target_bits;
-    const pb_variable<FieldT> do_copy;
+    const pb_linear_combination<FieldT> do_copy;
 
     pb_variable_array<FieldT> packed_source;
     pb_variable_array<FieldT> packed_target;
@@ -101,7 +101,7 @@ public:
     bit_vector_copy_gadget(protoboard<FieldT> &pb,
                            const pb_variable_array<FieldT> &source_bits,
                            const pb_variable_array<FieldT> &target_bits,
-                           const pb_variable<FieldT> &do_copy,
+                           const pb_linear_combination<FieldT> &do_copy,
                            const size_t chunk_size,
                            const std::string &annotation_prefix="");
     void generate_r1cs_constraints(const bool enforce_source_bitness, const bool enforce_target_bitness);

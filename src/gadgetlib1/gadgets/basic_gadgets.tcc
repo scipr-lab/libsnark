@@ -56,6 +56,7 @@ void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitnes
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_packed()
 {
+    packed.evaluate(this->pb);
     assert(this->pb.lc_val(packed).as_bigint().num_bits() <= bits.size());
     bits.fill_with_bits_of_field_element(this->pb, this->pb.lc_val(packed));
 }
@@ -124,7 +125,7 @@ template<typename FieldT>
 field_vector_copy_gadget<FieldT>::field_vector_copy_gadget(protoboard<FieldT> &pb,
                                                            const pb_variable_array<FieldT> &source,
                                                            const pb_variable_array<FieldT> &target,
-                                                           const pb_variable<FieldT> &do_copy,
+                                                           const pb_linear_combination<FieldT> &do_copy,
                                                            const std::string &annotation_prefix) :
 gadget<FieldT>(pb, annotation_prefix), source(source), target(target), do_copy(do_copy)
 {
@@ -144,7 +145,9 @@ void field_vector_copy_gadget<FieldT>::generate_r1cs_constraints()
 template<typename FieldT>
 void field_vector_copy_gadget<FieldT>::generate_r1cs_witness()
 {
-    if (this->pb.val(do_copy) != FieldT::zero())
+    do_copy.evaluate(this->pb);
+    assert(this->pb.lc_val(do_copy) == FieldT::one() || this->pb.lc_val(do_copy) == FieldT::zero());
+    if (this->pb.lc_val(do_copy) != FieldT::zero())
     {
         for (size_t i = 0; i < source.size(); ++i)
         {
@@ -157,7 +160,7 @@ template<typename FieldT>
 bit_vector_copy_gadget<FieldT>::bit_vector_copy_gadget(protoboard<FieldT> &pb,
                                                        const pb_variable_array<FieldT> &source_bits,
                                                        const pb_variable_array<FieldT> &target_bits,
-                                                       const pb_variable<FieldT> &do_copy,
+                                                       const pb_linear_combination<FieldT> &do_copy,
                                                        const size_t chunk_size,
                                                        const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), source_bits(source_bits), target_bits(target_bits), do_copy(do_copy),
@@ -186,7 +189,9 @@ void bit_vector_copy_gadget<FieldT>::generate_r1cs_constraints(const bool enforc
 template<typename FieldT>
 void bit_vector_copy_gadget<FieldT>::generate_r1cs_witness()
 {
-    if (this->pb.val(do_copy) == FieldT::one())
+    do_copy.evaluate(this->pb);
+    assert(this->pb.lc_val(do_copy) == FieldT::zero() || this->pb.lc_val(do_copy) == FieldT::one());
+    if (this->pb.lc_val(do_copy) == FieldT::one())
     {
         for (size_t i = 0; i < source_bits.size(); ++i)
         {
@@ -503,6 +508,9 @@ void inner_product_gadget<FieldT>::generate_r1cs_witness()
     FieldT total = FieldT::zero();
     for (size_t i = 0; i < A.size(); ++i)
     {
+        A[i].evaluate(this->pb);
+        B[i].evaluate(this->pb);
+
         total += this->pb.lc_val(A[i]) * this->pb.lc_val(B[i]);
         this->pb.val(i == A.size()-1 ? result : S[i]) = total;
     }
