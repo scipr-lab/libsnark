@@ -60,6 +60,29 @@ inline void input_bool(std::istream &in, bool &b)
     b = (tmp == 1 ? true : false);
 }
 
+inline void output_bool_vector(std::ostream &out, const std::vector<bool> &v)
+{
+    out << v.size() << "\n";
+    for (const bool b : v)
+    {
+        output_bool(out, b);
+    }
+}
+
+inline void input_bool_vector(std::istream &in, std::vector<bool> &v)
+{
+    size_t size;
+    in >> size;
+    consume_newline(in);
+    v.resize(size);
+    for (size_t i = 0; i < size; ++i)
+    {
+        bool b;
+        input_bool(in, b);
+        v[i] = b;
+    }
+}
+
 template<typename T>
 T reserialize(const T &obj)
 {
@@ -99,6 +122,42 @@ std::istream& operator>>(std::istream& in, std::vector<T> &v)
         in >> elt;
         consume_OUTPUT_NEWLINE(in);
         v.push_back(elt);
+    }
+
+    return in;
+}
+
+template<typename T1, typename T2>
+std::ostream& operator<<(std::ostream& out, const std::map<T1, T2> &m)
+{
+    out << m.size() << "\n";
+
+    for (auto &it : m)
+    {
+        out << it.first << "\n";
+        out << it.second << "\n";
+    }
+
+    return out;
+}
+
+template<typename T1, typename T2>
+std::istream& operator>>(std::istream& in, std::map<T1, T2> &m)
+{
+    m.clear();
+    size_t size;
+    in >> size;
+    consume_newline(in);
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        T1 k;
+        T2 v;
+        in >> k;
+        consume_newline(in);
+        in >> v;
+        consume_newline(in);
+        m[k] = v;
     }
 
     return in;

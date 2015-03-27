@@ -15,6 +15,26 @@ namespace libsnark {
 struct merkle_authentication_node {
     bool computed_is_right;
     bit_vector aux_digest;
+
+    bool operator==(const merkle_authentication_node &other) const
+    {
+        return (this->computed_is_right == other.computed_is_right &&
+                this->aux_digest == other.aux_digest);
+    }
+
+    friend std::ostream& operator<<(std::ostream &out, const merkle_authentication_node &node)
+    {
+        output_bool(out, node.computed_is_right);
+        output_bool_vector(out, node.aux_digest);
+        return out;
+    }
+
+    friend std::istream& operator>>(std::istream &in, merkle_authentication_node &node)
+    {
+        input_bool(in, node.computed_is_right);
+        input_bool_vector(in, node.aux_digest);
+        return in;
+    }
 };
 
 typedef std::vector<merkle_authentication_node> merkle_authentication_path;
