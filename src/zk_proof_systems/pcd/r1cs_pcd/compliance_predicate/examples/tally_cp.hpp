@@ -80,7 +80,9 @@ public:
     size_t wordsize;
     size_t message_length;
 
-    tally_cp_handler(const size_t type, const size_t max_arity, const size_t wordsize);
+    tally_cp_handler(const size_t type, const size_t max_arity, const size_t wordsize,
+                     const bool relies_on_same_type_inputs = false,
+                     const std::set<size_t> accepted_input_types = std::set<size_t>());
 
     void generate_r1cs_constraints();
     void generate_r1cs_witness(const std::vector<tally_pcd_message<FieldT> > &input, const r1cs_pcd_local_data<FieldT> &ld);

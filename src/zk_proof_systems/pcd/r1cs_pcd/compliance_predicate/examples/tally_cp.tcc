@@ -40,7 +40,9 @@ void tally_pcd_message<FieldT>::print() const
 }
 
 template<typename FieldT>
-tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_arity, const size_t wordsize) :
+tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_arity, const size_t wordsize,
+                                           const bool relies_on_same_type_inputs,
+                                           const std::set<size_t> accepted_input_types) :
     compliance_predicate_handler<FieldT, protoboard<FieldT> >(protoboard<FieldT>()),
     wordsize(wordsize)
 {
@@ -101,7 +103,8 @@ tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_a
     this->local_data_length = 1;
     const size_t all_but_witness_length = (1+max_arity)*(1+message_length) + 2; // output, arity, input, local_data
     this->witness_length = this->pb.num_variables() - all_but_witness_length;
-    this->relies_on_same_type_inputs = false;
+    this->relies_on_same_type_inputs = relies_on_same_type_inputs;
+    this->accepted_input_types = accepted_input_types;
 }
 
 template<typename FieldT>

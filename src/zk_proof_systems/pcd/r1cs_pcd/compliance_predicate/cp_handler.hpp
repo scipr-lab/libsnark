@@ -42,7 +42,6 @@ public:
 
     void generate_r1cs_witness(const r1cs_pcd_message<FieldT> &msg);
 
-
     r1cs_pcd_message<FieldT> get_message() const;
 
 };
@@ -83,6 +82,7 @@ protected:
     size_t local_data_length;
     size_t witness_length;
     bool relies_on_same_type_inputs;
+    std::set<size_t> accepted_input_types;
 public:
     compliance_predicate_handler(const protoboardT &pb);
 

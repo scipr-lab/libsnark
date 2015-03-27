@@ -93,12 +93,14 @@ std::istream& operator>>(std::istream &in, r1cs_pcd_compliance_predicate<FieldT>
  *
  * The rest witness_length wires of the R1CS constitute the witness.
  *
- * To allow for optimizations, the compliance predicate also specififies a flag,
- * called relies_on_same_type_inputs, denoting whether the predicate works under
- * the assumption that all input messages have the same type.
+ * To allow for optimizations, the compliance predicate also
+ * specififies a flag, called relies_on_same_type_inputs, denoting
+ * whether the predicate works under the assumption that all input
+ * messages have the same type. In such case a member
+ * accepted_input_types lists all types accepted by the predicate
+ * (accepted_input_types has no meaning if
+ * relies_on_same_type_inputs=false).
  */
-
-// TODO: move both to proof system:
 
 template<typename FieldT>
 class r1cs_pcd_compliance_predicate {
@@ -116,6 +118,7 @@ public:
     size_t witness_length;
 
     bool relies_on_same_type_inputs;
+    std::set<size_t> accepted_input_types;
 
     r1cs_pcd_compliance_predicate() = default;
     r1cs_pcd_compliance_predicate(r1cs_pcd_compliance_predicate<FieldT> &&other) = default;
@@ -128,7 +131,8 @@ public:
                                   const std::vector<size_t> &incoming_message_payload_lengths,
                                   const size_t local_data_length,
                                   const size_t witness_length,
-                                  const bool relies_on_same_type_inputs);
+                                  const bool relies_on_same_type_inputs,
+                                  const std::set<size_t> accepted_input_types);
 
     r1cs_pcd_compliance_predicate<FieldT> & operator=(const r1cs_pcd_compliance_predicate<FieldT> &other) = default;
 

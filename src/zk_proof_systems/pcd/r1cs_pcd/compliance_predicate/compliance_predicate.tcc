@@ -47,7 +47,8 @@ r1cs_pcd_compliance_predicate<FieldT>::r1cs_pcd_compliance_predicate(const size_
                                                                      const std::vector<size_t> &incoming_message_payload_lengths,
                                                                      const size_t local_data_length,
                                                                      const size_t witness_length,
-                                                                     const bool relies_on_same_type_inputs) :
+                                                                     const bool relies_on_same_type_inputs,
+                                                                     const std::set<size_t> accepted_input_types) :
     name(name),
     type(type),
     constraint_system(constraint_system),
@@ -56,7 +57,8 @@ r1cs_pcd_compliance_predicate<FieldT>::r1cs_pcd_compliance_predicate(const size_
     incoming_message_payload_lengths(incoming_message_payload_lengths),
     local_data_length(local_data_length),
     witness_length(witness_length),
-    relies_on_same_type_inputs(relies_on_same_type_inputs)
+    relies_on_same_type_inputs(relies_on_same_type_inputs),
+    accepted_input_types(accepted_input_types)
 {
     assert(max_arity == incoming_message_payload_lengths.size());
 }
@@ -130,7 +132,9 @@ bool r1cs_pcd_compliance_predicate<FieldT>::operator==(const r1cs_pcd_compliance
             this->max_arity == other.max_arity &&
             this->incoming_message_payload_lengths == other.incoming_message_payload_lengths &&
             this->local_data_length == other.local_data_length &&
-            this->witness_length == other.witness_length);
+            this->witness_length == other.witness_length &&
+            this->relies_on_same_type_inputs == other.relies_on_same_type_inputs &&
+            this->accepted_input_types == other.accepted_input_types);
 }
 
 template<typename FieldT>
@@ -147,6 +151,8 @@ std::ostream& operator<<(std::ostream &out, const r1cs_pcd_compliance_predicate<
     out << cp.outgoing_message_payload_length << "\n";
     out << cp.local_data_length << "\n";
     out << cp.witness_length << "\n";
+    output_bool(out, cp.relies_on_same_type_inputs);
+    out << cp.accepted_input_types << "\n";
     out << cp.constraint_system << "\n";
 
     return out;
@@ -172,6 +178,9 @@ std::istream& operator>>(std::istream &in, r1cs_pcd_compliance_predicate<FieldT>
     in >> cp.local_data_length;
     consume_newline(in);
     in >> cp.witness_length;
+    consume_newline(in);
+    input_bool(in, cp.relies_on_same_type_inputs);
+    in >> cp.accepted_input_types;
     consume_newline(in);
     in >> cp.constraint_system;
     consume_newline(in);

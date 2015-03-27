@@ -71,7 +71,8 @@ r1cs_pcd_compliance_predicate<FieldT> compliance_predicate_handler<FieldT, proto
                                                  incoming_message_payload_lengths,
                                                  local_data_length,
                                                  witness_length,
-                                                 relies_on_same_type_inputs);
+                                                 relies_on_same_type_inputs,
+                                                 accepted_input_types);
 }
 
 template<typename FieldT, typename protoboardT>

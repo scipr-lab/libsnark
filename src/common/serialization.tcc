@@ -74,6 +74,7 @@ T reserialize(const T &obj)
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T> &v)
 {
+    static_assert(!std::is_same<T, bool>::value, "this does not work for std::vector<bool>");
     out << v.size() << "\n";
     for (const T& t : v)
     {
@@ -86,6 +87,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T> &v)
 template<typename T>
 std::istream& operator>>(std::istream& in, std::vector<T> &v)
 {
+    static_assert(!std::is_same<T, bool>::value, "this does not work for std::vector<bool>");
     size_t size;
     in >> size;
     consume_newline(in);
@@ -97,6 +99,39 @@ std::istream& operator>>(std::istream& in, std::vector<T> &v)
         in >> elt;
         consume_OUTPUT_NEWLINE(in);
         v.push_back(elt);
+    }
+
+    return in;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::set<T> &s)
+{
+    out << s.size() << "\n";
+
+    for (auto &el : s)
+    {
+        out << el << "\n";
+    }
+
+    return out;
+}
+
+
+template<typename T>
+std::istream& operator>>(std::istream& in, std::set<T> &s)
+{
+    s.clear();
+    size_t size;
+    in >> size;
+    consume_newline(in);
+
+    for (size_t i = 0; i < size; ++i)
+    {
+        T el;
+        in >> el;
+        consume_newline(in);
+        s.insert(el);
     }
 
     return in;

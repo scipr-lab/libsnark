@@ -14,6 +14,7 @@
 
 #include <istream>
 #include <ostream>
+#include <set>
 #include <vector>
 
 namespace libsnark {
@@ -81,6 +82,12 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T> &v);
 
 template<typename T>
 std::istream& operator>>(std::ostream& out, std::vector<T> &v);
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::set<T> &s);
+
+template<typename T>
+std::istream& operator>>(std::istream& in, std::set<T> &s);
 
 } // libsnark
 
