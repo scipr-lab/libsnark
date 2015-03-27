@@ -265,7 +265,6 @@ r1cs_auxiliary_input<Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_au
     return pb.auxiliary_input();
 }
 
-
 template<typename ppT>
 void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs_ppzksnark_verification_key<other_curve<ppT> > &sp_translation_step_pcd_circuit_vk,
                                                                       const r1cs_pcd_compliance_predicate_primary_input<FieldT> &compliance_predicate_primary_input,

@@ -97,7 +97,7 @@ void gadget_from_r1cs<FieldT>::generate_r1cs_witness(const r1cs_primary_input<Fi
                                                      const r1cs_auxiliary_input<FieldT> &auxiliary_input)
 {
     assert(cs.num_inputs() == primary_input.size());
-    assert(cs.num_variables() == primary_input.size()+ auxiliary_input.size());
+    assert(cs.num_variables() == primary_input.size() + auxiliary_input.size());
 
     for (size_t i = 0; i < primary_input.size(); ++i)
     {
