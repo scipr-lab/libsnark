@@ -31,7 +31,7 @@ r1cs_auxiliary_input<FieldT> r1cs_pcd_compliance_predicate_auxiliary_input<Field
         }
         else
         {
-            result.resize(result.size() + incoming_message_payload_lengths[i], FieldT::zero());
+            result.resize(result.size() + incoming_message_payload_lengths[i] + 1, FieldT::zero());
         }
     }
 
