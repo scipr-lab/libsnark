@@ -18,6 +18,6 @@ r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constrain
 
 } // libsnark
 
-#include "examples/gadgetlib1/simple_example.tcc"
+#include "gadgetlib1/examples/simple_example.tcc"
 
 #endif // SIMPLE_EXAMPLE_HPP_
