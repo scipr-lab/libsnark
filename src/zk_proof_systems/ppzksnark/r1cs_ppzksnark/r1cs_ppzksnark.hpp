@@ -48,11 +48,11 @@
 
 #include <memory>
 
-#include "algebra/curves/public_params.hpp"
-#include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark_params.hpp"
+#include <algebra/curves/public_params.hpp>
+#include <common/data_structures/accumulation_vector.hpp>
+#include <algebra/knowledge_commitment/knowledge_commitment.hpp>
+#include <relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
+#include <zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark_params.hpp>
 
 namespace libsnark {
 
