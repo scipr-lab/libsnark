@@ -343,6 +343,13 @@ The following flags change the behavior of the compiled code:
     Use unrolled assembly routines for F[p] arithmetic and faster heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
+*   define `USE_MIXED_ADDITION`
+
+    Convert each element of the proving key and verification key to
+    affine coordinates. This allows using mixed addition formulas in
+    multiexponentiation and results in slightly faster prover and
+    verifier runtime at expense of increased proving time.
+
 *   `make PERFORMANCE=1`
 
     Enables various compiler optimizations for the current CPU, and disables debugging aids.
