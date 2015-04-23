@@ -758,7 +758,7 @@ Fp_model<n,modulus> Fp_model<n,modulus>::sqrt() const
 template<mp_size_t n, const bigint<n>& modulus>
 std::ostream& operator<<(std::ostream &out, const Fp_model<n, modulus> &p)
 {
-#ifdef DEBUG
+#ifndef MONTGOMERY_OUTPUT
     Fp_model<n,modulus> tmp;
     tmp.mont_repr.data[0] = 1;
     tmp.mul_reduce(p.mont_repr);
@@ -772,7 +772,7 @@ std::ostream& operator<<(std::ostream &out, const Fp_model<n, modulus> &p)
 template<mp_size_t n, const bigint<n>& modulus>
 std::istream& operator>>(std::istream &in, Fp_model<n, modulus> &p)
 {
-#ifdef DEBUG
+#ifndef MONTGOMERY_OUTPUT
     in >> p.mont_repr;
     p.mul_reduce(Fp_model<n, modulus>::Rsquared);
 #else

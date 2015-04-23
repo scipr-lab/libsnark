@@ -298,7 +298,6 @@ The following flags change the behavior of the compiled code:
 *   `make DEBUG=1` / define `DEBUG`
 
     Print additional information for debugging purposes.
-    Moreover, Fp elements are serialized as their equivalence classes, instead of their Montgomery representations.
 
 *   `make LOWMEM=1` / define `LOWMEM`
 
@@ -325,6 +324,13 @@ The following flags change the behavior of the compiled code:
     Do not use point compression.
     This gives much faster serialization times, at the expense of ~2x larger
     sizes for serialized keys and proofs.
+
+*   define `MONTGOMERY_OUTPUT` (on by default)
+
+    Serialize Fp elements as their Montgomery representations. If this
+    option is not set then Fp elements are serialized as their
+    equivalence classes, which is slower but produces human-readable
+    output.
 
 *   `make PROFILE_OP_COUNTS=1` / define `PROFILE_OP_COUNTS`
 

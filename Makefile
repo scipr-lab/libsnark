@@ -13,7 +13,7 @@ DEPINST=depinst
 
 LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
 LDLIBS += -lgmpxx -lgmp -lboost_program_options -lcrypto
-CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM
+CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM -DMONTGOMERY_OUTPUT
 DEFAULT_CURVE=BN128
 
 ifneq ($(NO_GTEST),1)
