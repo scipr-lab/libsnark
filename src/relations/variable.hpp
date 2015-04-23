@@ -155,6 +155,7 @@ public:
     linear_combination(const FieldT &field_coeff);
     linear_combination(const variable<FieldT> &var);
     linear_combination(const linear_term<FieldT> &lt);
+    linear_combination(const std::vector<linear_term<FieldT> > &all_terms);
 
     /* for supporting range-based for loops over linear_combination */
     typename std::vector<linear_term<FieldT> >::const_iterator begin() const;

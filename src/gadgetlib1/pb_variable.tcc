@@ -291,16 +291,39 @@ linear_combination<FieldT> pb_sum(const pb_linear_combination_array<FieldT> &v)
 template<typename FieldT>
 linear_combination<FieldT> pb_packing_sum(const pb_linear_combination_array<FieldT> &v)
 {
-    linear_combination<FieldT> result;
-    FieldT coeff = FieldT::one();
-    for (auto &term : v)
+    FieldT twoi = FieldT::one(); // will hold 2^i entering each iteration
+    std::vector<linear_term<FieldT> > all_terms;
+    for (auto &lc : v)
     {
-        result = result + coeff * term;
-        coeff += coeff;
+        for (auto &term : lc.terms)
+        {
+            all_terms.emplace_back(twoi * term);
+        }
+        twoi += twoi;
     }
 
-    return result;
+    return linear_combination<FieldT>(all_terms);
 }
+
+template<typename FieldT>
+linear_combination<FieldT> pb_coeff_sum(const pb_linear_combination_array<FieldT> &v, const std::vector<FieldT> &coeffs)
+{
+    assert(v.size() == coeffs.size());
+    std::vector<linear_term<FieldT> > all_terms;
+
+    auto coeff_it = coeffs.begin();
+    for (auto &lc : v)
+    {
+        for (auto &term : lc.terms)
+        {
+            all_terms.emplace_back((*coeff_it) * term);
+        }
+        ++coeff_it;
+    }
+
+    return linear_combination<FieldT>(all_terms);
+}
+
 
 } // libsnark
 #endif // PB_VARIABLE_TCC

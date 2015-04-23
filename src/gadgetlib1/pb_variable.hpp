@@ -135,6 +135,9 @@ linear_combination<FieldT> pb_sum(const pb_linear_combination_array<FieldT> &v);
 template<typename FieldT>
 linear_combination<FieldT> pb_packing_sum(const pb_linear_combination_array<FieldT> &v);
 
+template<typename FieldT>
+linear_combination<FieldT> pb_coeff_sum(const pb_linear_combination_array<FieldT> &v, const std::vector<FieldT> &coeffs);
+
 } // libsnark
 #include "gadgetlib1/pb_variable.tcc"
 

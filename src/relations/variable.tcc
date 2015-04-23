@@ -17,6 +17,7 @@
 #ifndef VARIABLE_TCC_
 #define VARIABLE_TCC_
 
+#include <algorithm>
 #include <cassert>
 
 #include "algebra/fields/bigint.hpp"
@@ -470,6 +471,32 @@ template<typename FieldT>
 linear_combination<FieldT> operator-(const FieldT &field_coeff, const linear_combination<FieldT> &lc)
 {
     return linear_combination<FieldT>(field_coeff) - lc;
+}
+
+template<typename FieldT>
+linear_combination<FieldT>::linear_combination(const std::vector<linear_term<FieldT> > &all_terms)
+{
+    if (all_terms.empty())
+    {
+        return;
+    }
+
+    terms = all_terms;
+    std::sort(terms.begin(), terms.end(), [](linear_term<FieldT> &a, linear_term<FieldT> &b) { return a.index < b.index; });
+
+    auto result_it = terms.begin();
+    for (auto it = ++terms.begin(); it != terms.end(); ++it)
+    {
+        if (it->index == result_it->index)
+        {
+            result_it->coeff += it->coeff;
+        }
+        else
+        {
+            *(++result_it) = *it;
+        }
+    }
+    terms.resize((result_it - terms.begin()) + 1);
 }
 
 } // libsnark

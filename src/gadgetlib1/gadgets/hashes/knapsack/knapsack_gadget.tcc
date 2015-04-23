@@ -46,14 +46,11 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_constraints()
 {
     for (size_t i = 0; i < dimension; ++i)
     {
-        linear_combination<FieldT> sum;
-
-        for (size_t k = 0; k < input_block.bits.size(); ++k)
-        {
-            sum = sum + input_block.bits[k] * knapsack_coefficients[input_len*i + k];
-        }
-
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, sum, output[i]), FMT(this->annotation_prefix, " knapsack_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1,
+                                                             pb_coeff_sum<FieldT>(input_block.bits,
+                                                                                  std::vector<FieldT>(knapsack_coefficients.begin() + input_len * i,
+                                                                                                      knapsack_coefficients.begin() + input_len * (i+1))),
+                                                             output[i]), FMT(this->annotation_prefix, " knapsack_%zu", i));
     }
 }
 
@@ -158,16 +155,8 @@ knapsack_CRH_with_bit_out_gadget<FieldT>::knapsack_CRH_with_bit_out_gadget(proto
 
     for (size_t i = 0; i < dimension; ++i)
     {
-        FieldT twoi = FieldT::one();
-        linear_combination<FieldT> sum;
-
-        for (size_t k = 0; k < FieldT::size_in_bits(); ++k)
-        {
-            sum = sum + twoi * output_digest.bits[i * FieldT::size_in_bits() + k];
-            twoi = twoi + twoi;
-        }
-
-        output[i].assign(pb, sum);
+        output[i].assign(pb, pb_packing_sum<FieldT>(pb_variable_array<FieldT>(output_digest.bits.begin() + i * FieldT::size_in_bits(),
+                                                                              output_digest.bits.begin() + (i + 1) * FieldT::size_in_bits())));
     }
 
     hasher.reset(new knapsack_CRH_with_field_out_gadget<FieldT>(pb, input_len, input_block, output, FMT(annotation_prefix, " hasher")));
