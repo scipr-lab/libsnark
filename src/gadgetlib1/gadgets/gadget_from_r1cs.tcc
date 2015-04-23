@@ -25,11 +25,14 @@ gadget_from_r1cs<FieldT>::gadget_from_r1cs(protoboard<FieldT> &pb,
     vars(vars),
     cs(cs)
 {
-    cs_to_vars[0] = 0; // constant term maps to constant term
+    cs_to_vars[0] = 0; /* constant term maps to constant term */
 
     size_t cs_var_idx = 1;
     for (auto va : vars)
     {
+#ifdef DEBUG
+        printf("gadget_from_r1cs: translating a block of variables with length %zu\n", va.size());
+#endif
         for (auto v : va)
         {
             cs_to_vars[cs_var_idx] = v.index;
@@ -52,6 +55,11 @@ gadget_from_r1cs<FieldT>::gadget_from_r1cs(protoboard<FieldT> &pb,
             ++cs_var_idx;
         }
     }
+
+#ifdef DEBUG
+    printf("gadget_from_r1cs: sum of all block lengths: %zu\n", cs_var_idx-1);
+    printf("gadget_from_r1cs: cs.num_variables(): %zu\n", cs.num_variables());
+#endif
 
     assert(cs_var_idx - 1 == cs.num_variables());
 }
