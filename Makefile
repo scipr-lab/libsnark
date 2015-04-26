@@ -100,6 +100,7 @@ EXECUTABLES = \
 	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
 	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
 	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
 	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
 	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
 	src/relations/arithmetic_programs/qap/tests/test_qap \
