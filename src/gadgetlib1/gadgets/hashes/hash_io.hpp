@@ -56,8 +56,8 @@ public:
                             const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness();
-    void fill_with_bits(const bit_vector& contents);
+    void generate_r1cs_witness(const bit_vector& contents);
+    bit_vector get_digest() const;
 };
 
 template<typename FieldT>
@@ -80,8 +80,8 @@ public:
                    const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness();
-    void fill_with_bits(const bit_vector& contents);
+    void generate_r1cs_witness(const bit_vector& contents);
+    bit_vector get_block() const;
 };
 
 } // libsnark

@@ -44,13 +44,15 @@ void digest_variable<FieldT>::generate_r1cs_constraints()
 }
 
 template<typename FieldT>
-void digest_variable<FieldT>::fill_with_bits(const bit_vector& contents)
+void digest_variable<FieldT>::generate_r1cs_witness(const bit_vector& contents)
 {
-    assert(contents.size() == digest_size);
-    for (size_t i = 0; i < digest_size; ++i)
-    {
-        this->pb.val(bits[i]) = contents[i] ? FieldT::one() : FieldT::zero();
-    }
+    bits.fill_with_bits(this->pb, contents);
+}
+
+template<typename FieldT>
+bit_vector digest_variable<FieldT>::get_digest() const
+{
+    return bits.get_bits(this->pb);
 }
 
 template<typename FieldT>
@@ -88,13 +90,15 @@ block_variable<FieldT>::block_variable(protoboard<FieldT> &pb,
 }
 
 template<typename FieldT>
-void block_variable<FieldT>::fill_with_bits(const bit_vector& contents)
+void block_variable<FieldT>::generate_r1cs_witness(const bit_vector& contents)
 {
-    assert(contents.size() == block_size);
-    for (size_t i = 0; i < block_size; ++i)
-    {
-        this->pb.val(bits[i]) = contents[i] ? FieldT::one() : FieldT::zero();
-    }
+    bits.fill_with_bits(this->pb, contents);
+}
+
+template<typename FieldT>
+bit_vector block_variable<FieldT>::get_block() const
+{
+    return bits.get_bits(this->pb);
 }
 
 } // libsnark

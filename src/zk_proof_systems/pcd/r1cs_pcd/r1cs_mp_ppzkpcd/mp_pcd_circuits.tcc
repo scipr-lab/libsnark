@@ -380,7 +380,7 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
         translation_step_vks[i].generate_r1cs_witness(mp_translation_step_pcd_circuit_vks[i]);
     }
 
-    commitment->bits.fill_with_bits(this->pb, commitment_to_translation_step_r1cs_vks);
+    commitment->generate_r1cs_witness(commitment_to_translation_step_r1cs_vks);
 
     if (compliance_predicate.relies_on_same_type_inputs)
     {

@@ -55,10 +55,9 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_constraints()
 }
 
 template<typename FieldT>
-void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_witness(const bit_vector &input)
+void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_witness()
 {
-    assert(input_len == input.size());
-    input_block.bits.fill_with_bits(this->pb, input);
+    const bit_vector input = input_block.get_block();
 
     for (size_t i = 0; i < dimension; ++i)
     {
@@ -73,13 +72,6 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_witness(const bit
 
         this->pb.lc_val(output[i]) = sum;
     }
-}
-
-template<typename FieldT>
-void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_witness()
-{
-    const bit_vector input = input_block.bits.get_bits(this->pb);
-    this->generate_r1cs_witness(input);
 }
 
 template<typename FieldT>
@@ -180,16 +172,10 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_constraints(const b
 template<typename FieldT>
 void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_witness()
 {
-    const bit_vector input = input_block.bits.get_bits(this->pb);
-    this->generate_r1cs_witness(input);
-}
-
-template<typename FieldT>
-void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_witness(const bit_vector &input)
-{
-    hasher->generate_r1cs_witness(input);
+    hasher->generate_r1cs_witness();
 
     /* do unpacking in place */
+    const bit_vector input = input_block.bits.get_bits(this->pb);
     for (size_t i = 0; i < dimension; ++i)
     {
         pb_variable_array<FieldT> va(output_digest.bits.begin() + i * FieldT::size_in_bits(),
@@ -248,10 +234,11 @@ void test_knapsack_CRH_with_bit_out_gadget_internal(const size_t dimension, cons
     digest_variable<FieldT> output_digest(pb, knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len(), "output_digest");
     knapsack_CRH_with_bit_out_gadget<FieldT> H(pb, input_bits.size(), input_block, output_digest, "H");
 
+    input_block.generate_r1cs_witness(input_bits);
     H.generate_r1cs_constraints();
-    H.generate_r1cs_witness(input_bits);
+    H.generate_r1cs_witness();
 
-    assert(output_digest.bits.get_bits(pb).size() == digest_bits.size());
+    assert(output_digest.get_digest().size() == digest_bits.size());
     assert(pb.is_satisfied());
 
     const size_t num_constraints = pb.num_constraints();

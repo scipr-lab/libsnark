@@ -99,7 +99,7 @@ void merkle_tree_check_read_gadget<FieldT>::generate_r1cs_witness(const bit_vect
     assert(path.size() == tree_depth);
 
     /* fill in the leaf, everything else will be filled by hashers/propagators */
-    leaf.fill_with_bits(leaf_digest);
+    leaf.generate_r1cs_witness(leaf_digest);
 
     /* do the hash computations bottom-up */
     for (int i = tree_depth-1; i >= 0; --i)
@@ -108,19 +108,19 @@ void merkle_tree_check_read_gadget<FieldT>::generate_r1cs_witness(const bit_vect
         if (path[i].computed_is_right)
         {
             this->pb.lc_val(address_bits[tree_depth-1-i]) = FieldT::one();
-            internal_left[i].fill_with_bits(path[i].aux_digest);
+            internal_left[i].generate_r1cs_witness(path[i].aux_digest);
         }
         else
         {
             this->pb.lc_val(address_bits[tree_depth-1-i]) = FieldT::zero();
-            internal_right[i].fill_with_bits(path[i].aux_digest);
+            internal_right[i].generate_r1cs_witness(path[i].aux_digest);
         }
 
         /* propagate previous input */
         propagators[i].generate_r1cs_witness();
 
         /* compute hash */
-        hashers[i].generate_r1cs_witness(hasher_inputs[i].bits.get_bits(this->pb));
+        hashers[i].generate_r1cs_witness();
     }
 
     check_root->generate_r1cs_witness();
@@ -188,8 +188,8 @@ void test_merkle_tree_check_read_gadget()
     ml.generate_r1cs_witness(leaf, root, path);
 
     address_bits_va.fill_with_bits(pb, address_bits);
-    leaf_digest.fill_with_bits(leaf);
-    root_digest.fill_with_bits(root);
+    leaf_digest.generate_r1cs_witness(leaf);
+    root_digest.generate_r1cs_witness(root);
     assert(pb.is_satisfied());
 
     const size_t num_constraints = pb.num_constraints();

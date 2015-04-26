@@ -78,7 +78,6 @@ public:
                                        const std::string &annotation_prefix);
     void generate_r1cs_constraints();
     void generate_r1cs_witness();
-    void generate_r1cs_witness(const bit_vector &input);
 
     static size_t get_digest_len();
     size_t get_block_len() const;
@@ -114,7 +113,6 @@ public:
                                      const std::string &annotation_prefix);
     void generate_r1cs_constraints(const bool enforce_bitness=true);
     void generate_r1cs_witness();
-    void generate_r1cs_witness(const bit_vector &input);
 
     static size_t get_digest_len();
     size_t get_block_len() const;
