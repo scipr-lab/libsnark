@@ -84,7 +84,7 @@ std::istream& operator>>(std::istream &in, r1cs_sp_ppzkpcd_verification_key<PCD_
 }
 
 template<typename PCD_ppT>
-r1cs_sp_ppzkpcd_verification_key<PCD_ppT> r1cs_sp_ppzkpcd_verification_key<PCD_ppT>::dummy_verification_key(const size_t message_size)
+r1cs_sp_ppzkpcd_verification_key<PCD_ppT> r1cs_sp_ppzkpcd_verification_key<PCD_ppT>::dummy_verification_key()
 {
     typedef typename PCD_ppT::curve_A_pp curve_A_pp;
     typedef typename PCD_ppT::curve_B_pp curve_B_pp;

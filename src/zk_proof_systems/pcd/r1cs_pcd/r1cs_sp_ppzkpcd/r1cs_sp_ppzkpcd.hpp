@@ -150,7 +150,7 @@ public:
     friend std::ostream& operator<< <PCD_ppT>(std::ostream &out, const r1cs_sp_ppzkpcd_verification_key<PCD_ppT> &vk);
     friend std::istream& operator>> <PCD_ppT>(std::istream &in, r1cs_sp_ppzkpcd_verification_key<PCD_ppT> &vk);
 
-    static r1cs_sp_ppzkpcd_verification_key<PCD_ppT> dummy_verification_key(const size_t message_size);
+    static r1cs_sp_ppzkpcd_verification_key<PCD_ppT> dummy_verification_key();
 };
 
 
