@@ -37,7 +37,10 @@ knapsack_CRH_with_field_out_gadget<FieldT>::knapsack_CRH_with_field_out_gadget(p
     output(output)
 {
     assert(input_block.bits.size() == input_len);
-    assert(num_cached_coefficients >= dimension * input_len);
+    if (num_cached_coefficients < dimension * input_len)
+    {
+        sample_randomness(input_len);
+    }
     assert(output.size() == this->get_digest_len());
 }
 
@@ -90,7 +93,10 @@ template<typename FieldT>
 std::vector<FieldT> knapsack_CRH_with_field_out_gadget<FieldT>::get_hash(const bit_vector &input)
 {
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    assert(num_cached_coefficients >= dimension * input.size());
+    if (num_cached_coefficients < dimension * input.size())
+    {
+        sample_randomness(input.size());
+    }
 
     std::vector<FieldT> result(dimension, FieldT::zero());
 

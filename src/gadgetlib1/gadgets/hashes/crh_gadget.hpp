@@ -20,4 +20,5 @@ template<typename FieldT>
 using CRH_with_bit_out_gadget = knapsack_CRH_with_bit_out_gadget<FieldT>;
 
 } // libsnark
+
 #endif // CRH_GADGET_HPP_
