@@ -91,11 +91,9 @@ std::istream& operator>>(std::istream &in, ram_zksnark_proof<ram_zksnark_ppT> &p
 template<typename ram_zksnark_ppT>
 ram_zksnark_verification_key<ram_zksnark_ppT> ram_zksnark_verification_key<ram_zksnark_ppT>::dummy_verification_key(const ram_zksnark_architecture_params<ram_zksnark_ppT> &ap)
 {
-    typedef ram_zksnark_machine_pp<ram_zksnark_ppT> ramT;
     typedef ram_zksnark_PCD_pp<ram_zksnark_ppT> pcdT;
 
-    const size_t msg_size = ram_compliance_predicate_handler<ramT>::message_size(ap);
-    return ram_zksnark_verification_key<ram_zksnark_ppT>(ap, r1cs_sp_ppzkpcd_verification_key<pcdT>::dummy_verification_key(msg_size));
+    return ram_zksnark_verification_key<ram_zksnark_ppT>(ap, r1cs_sp_ppzkpcd_verification_key<pcdT>::dummy_verification_key());
 }
 
 template<typename ram_zksnark_ppT>
@@ -148,7 +146,7 @@ ram_zksnark_proof<ram_zksnark_ppT> ram_zksnark_prover(const ram_zksnark_proving_
     const size_t value_size = pk.ap.value_size();
 
     delegated_ra_memory<CRH_with_bit_out_gadget<FieldT> > mem(num_addresses, value_size, primary_input.as_memory_contents());
-    r1cs_pcd_message<FieldT> msg = ram_compliance_predicate_handler<ramT>::get_base_case_message(pk.ap, primary_input);
+    std::shared_ptr<r1cs_pcd_message<FieldT> > msg = ram_compliance_predicate_handler<ramT>::get_base_case_message(pk.ap, primary_input);
 
     typename ram_input_tape<ramT>::const_iterator aux_it = auxiliary_input.begin();
     leave_block("Initialize the RAM computation");
@@ -160,19 +158,25 @@ ram_zksnark_proof<ram_zksnark_ppT> ram_zksnark_prover(const ram_zksnark_proving_
         enter_block(FORMAT("", "Prove step %zu out of %zu", step, time_bound));
 
         enter_block("Execute witness map");
-        cp_handler.generate_r1cs_witness(msg, want_halt, mem, aux_it, auxiliary_input.end());
+
+        std::shared_ptr<r1cs_pcd_local_data<FieldT> > local_data;
+        local_data.reset(new ram_pcd_local_data<ramT>(want_halt, mem, aux_it, auxiliary_input.end()));
+
+        cp_handler.generate_r1cs_witness({ msg }, local_data);
 
         const r1cs_pcd_compliance_predicate_primary_input<FieldT> cp_primary_input(cp_handler.get_outgoing_message());
-        const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> cp_auxiliary_input({ cp_handler.get_incoming_message(0) },
-                                                                                       cp_handler.get_local_data(),
-                                                                                       cp_handler.get_witness());
+        const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> cp_auxiliary_input({ msg }, local_data, cp_handler.get_witness());
 
-        msg = cp_handler.get_outgoing_message();
 #ifdef DEBUG
         printf("Current state:\n");
-        cp_handler.cur->print();
+        msg->print();
+#endif
+
+        msg = cp_handler.get_outgoing_message();
+
+#ifdef DEBUG
         printf("Next state:\n");
-        cp_handler.next->print();
+        msg->print();
 #endif
         leave_block("Execute witness map");
 
@@ -182,15 +186,17 @@ ram_zksnark_proof<ram_zksnark_ppT> ram_zksnark_prover(const ram_zksnark_proving_
     leave_block("Execute and prove the computation");
 
     enter_block("Finalize the computation");
+    want_halt = true;
 
     enter_block("Execute witness map");
-    want_halt = true;
-    cp_handler.generate_r1cs_witness(msg, want_halt, mem, aux_it, auxiliary_input.end());
+
+    std::shared_ptr<r1cs_pcd_local_data<FieldT> > local_data;
+    local_data.reset(new ram_pcd_local_data<ramT>(want_halt, mem, aux_it, auxiliary_input.end()));
+
+    cp_handler.generate_r1cs_witness({ msg }, local_data);
 
     const r1cs_pcd_compliance_predicate_primary_input<FieldT> cp_primary_input(cp_handler.get_outgoing_message());
-    const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> cp_auxiliary_input({ cp_handler.get_incoming_message(0) },
-                                                                                   cp_handler.get_local_data(),
-                                                                                   cp_handler.get_witness());
+    const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> cp_auxiliary_input({ msg }, local_data, cp_handler.get_witness());
     leave_block("Execute witness map");
 
     cur_proof = r1cs_sp_ppzkpcd_prover<pcdT>(pk.pcd_pk, cp_primary_input, cp_auxiliary_input, { cur_proof });

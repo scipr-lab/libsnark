@@ -45,13 +45,24 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
     sp_compliance_step_pcd_circuit_input.allocate(pb, input_size_in_elts(), "sp_compliance_step_pcd_circuit_input");
 
     /* allocate inputs to the compliance predicate */
-    outgoing_message.reset(new r1cs_pcd_message_variable<FieldT>(pb, compliance_predicate.outgoing_message_payload_length, "outgoing_message"));
+    outgoing_message_type.allocate(pb, "outgoing_message_type");
+    outgoing_message_payload.allocate(pb, compliance_predicate.outgoing_message_payload_length, "outgoing_message_payload");
+
+    outgoing_message_vars.insert(outgoing_message_vars.end(), outgoing_message_type);
+    outgoing_message_vars.insert(outgoing_message_vars.end(), outgoing_message_payload.begin(), outgoing_message_payload.end());
 
     arity.allocate(pb, "arity");
 
+    incoming_message_types.resize(compliance_predicate_arity);
+    incoming_message_payloads.resize(compliance_predicate_arity);
+    incoming_message_vars.resize(compliance_predicate_arity);
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        incoming_messages.emplace_back(r1cs_pcd_message_variable<FieldT>(pb, compliance_predicate.outgoing_message_payload_length, FMT("", "incoming_message_%zu", i)));
+        incoming_message_types[i].allocate(pb, FMT("", "incoming_message_type_%zu", i));
+        incoming_message_payloads[i].allocate(pb, compliance_predicate.outgoing_message_payload_length, FMT("", "incoming_message_payloads_%zu", i));
+
+        incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_types[i]);
+        incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_payloads[i].begin(), incoming_message_payloads[i].end());
     }
 
     local_data.allocate(pb, compliance_predicate.local_data_length, "local_data");
@@ -61,11 +72,11 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
     pb_variable_array<FieldT> incoming_messages_concat;
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        incoming_messages_concat.insert(incoming_messages_concat.end(), incoming_messages[i].all_vars.begin(), incoming_messages[i].all_vars.end());
+        incoming_messages_concat.insert(incoming_messages_concat.end(), incoming_message_vars[i].begin(), incoming_message_vars[i].end());
     }
 
     compliance_predicate_as_gadget.reset(new gadget_from_r1cs<FieldT>(pb,
-        { outgoing_message->all_vars,
+        { outgoing_message_vars,
           pb_variable_array<FieldT>(1, arity),
           incoming_messages_concat,
           local_data,
@@ -74,13 +85,13 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
 
     /* unpack messages to bits */
     outgoing_message_bits.allocate(pb, msg_size_in_bits, "outgoing_message_bits");
-    unpack_outgoing_message.reset(new multipacking_gadget<FieldT>(pb, outgoing_message_bits, outgoing_message->all_vars, field_logsize(), "unpack_outgoing_message"));
+    unpack_outgoing_message.reset(new multipacking_gadget<FieldT>(pb, outgoing_message_bits, outgoing_message_vars, field_logsize(), "unpack_outgoing_message"));
 
     incoming_messages_bits.resize(compliance_predicate_arity);
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
         incoming_messages_bits[i].allocate(pb, msg_size_in_bits, FMT("", "incoming_messages_bits_%zu", i));
-        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_messages[i].all_vars, field_logsize(), FMT("", "unpack_incoming_messages_%zu", i)));
+        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_message_vars[i], field_logsize(), FMT("", "unpack_incoming_messages_%zu", i)));
     }
 
     /* allocate digests */
@@ -230,17 +241,17 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
         generate_boolean_r1cs_constraint<FieldT>(pb, verification_result, "verification_result");
 
         /* type * (1-verification_result) = 0 */
-        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_messages[0].type, 1 - verification_result, 0), "not_base_case_implies_valid_proofs");
+        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_message_types[0], 1 - verification_result, 0), "not_base_case_implies_valid_proofs");
 
         /* all types equal */
         for (size_t i = 1; i < compliance_predicate.max_arity; ++i)
         {
-            pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, incoming_messages[0].type, incoming_messages[i].type),
+            pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, incoming_message_types[0], incoming_message_types[i]),
                                    FMT("", "type_%zu_equal_to_type_0", i));
         }
 
         pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, arity, compliance_predicate_arity), "full_arity");
-        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, outgoing_message->type, FieldT(compliance_predicate.type)), "enforce_outgoing_type");
+        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, outgoing_message_type, FieldT(compliance_predicate.type)), "enforce_outgoing_type");
     }
 
     PRINT_CONSTRAINT_PROFILING();
@@ -298,7 +309,7 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs
         verifiers[i].generate_r1cs_witness();
     }
 
-    if (this->pb.val(incoming_messages[0].type) != FieldT::zero())
+    if (this->pb.val(incoming_message_types[0]) != FieldT::zero())
     {
         this->pb.val(verification_result) = FieldT::one();
     }
@@ -468,9 +479,9 @@ r1cs_primary_input<Fr<ppT> > get_sp_compliance_step_pcd_circuit_input(const bit_
     enter_block("Call to get_sp_compliance_step_pcd_circuit_input");
     typedef Fr<ppT> FieldT;
 
+    const r1cs_variable_assignment<FieldT> outgoing_message_as_va = primary_input.outgoing_message->as_r1cs_variable_assignment();
     bit_vector msg_bits;
-    msg_bits = convert_field_element_to_bit_vector<FieldT>(FieldT(primary_input.outgoing_message.type));
-    for (const FieldT &elt : primary_input.outgoing_message.payload)
+    for (const FieldT &elt : outgoing_message_as_va)
     {
         const bit_vector elt_bits = convert_field_element_to_bit_vector(elt);
         msg_bits.insert(msg_bits.end(), elt_bits.begin(), elt_bits.end());

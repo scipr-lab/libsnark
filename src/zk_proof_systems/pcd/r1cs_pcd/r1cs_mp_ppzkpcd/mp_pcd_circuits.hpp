@@ -65,10 +65,15 @@ public:
     std::vector<r1cs_ppzksnark_verification_key_variable<ppT> > translation_step_vks;
     std::vector<pb_variable_array<FieldT> > translation_step_vks_bits;
 
-    std::shared_ptr<r1cs_pcd_message_variable<FieldT> > outgoing_message;
+    pb_variable<FieldT> outgoing_message_type;
+    pb_variable_array<FieldT> outgoing_message_payload;
+    pb_variable_array<FieldT> outgoing_message_vars;
 
     pb_variable<FieldT> arity;
-    std::vector<r1cs_pcd_message_variable<FieldT> > incoming_messages;
+    std::vector<pb_variable<FieldT> > incoming_message_types;
+    std::vector<pb_variable_array<FieldT> > incoming_message_payloads;
+    std::vector<pb_variable_array<FieldT> > incoming_message_vars;
+
     pb_variable_array<FieldT> local_data;
     pb_variable_array<FieldT> cp_witness;
     std::shared_ptr<gadget_from_r1cs<FieldT> > compliance_predicate_as_gadget;

@@ -28,41 +28,51 @@
 namespace libsnark {
 
 /**
- * Specialize a R1CS PCD message to the tally compliance predicate.
+ * Subclasses a R1CS PCD message to the tally compliance predicate.
  */
 template<typename FieldT>
 class tally_pcd_message : public r1cs_pcd_message<FieldT> {
 public:
     size_t wordsize;
 
+    size_t sum;
+    size_t count;
+
+    tally_pcd_message(const size_t type,
+                      const size_t wordsize,
+                      const size_t sum,
+                      const size_t count);
+    r1cs_variable_assignment<FieldT> payload_as_r1cs_variable_assignment() const;
     void print() const;
+
+    ~tally_pcd_message() = default;
+};
+
+template<typename FieldT>
+class tally_pcd_local_data : public r1cs_pcd_local_data<FieldT> {
+public:
+    size_t summand;
+
+    tally_pcd_local_data(const size_t summand);
+    r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment() const;
+    void print() const;
+
+    ~tally_pcd_local_data() = default;
 };
 
 /**
- * Specialize a R1CS compliance predicate handler to the tally compliance predicate handler.
+ * Subclass a R1CS compliance predicate handler to the tally compliance predicate handler.
  */
 template<typename FieldT>
 class tally_cp_handler : public compliance_predicate_handler<FieldT, protoboard<FieldT> > {
 public:
-
-    pb_variable<FieldT> type_out;
-    pb_variable_array<FieldT> sum_out_bits;
-    pb_variable_array<FieldT> count_out_bits;
-
-    pb_variable_array<FieldT> type_in;
-    std::vector<pb_variable_array<FieldT> > sum_in_bits;
-    std::vector<pb_variable_array<FieldT> > count_in_bits;
-
-    pb_variable<FieldT> arity;
+    typedef compliance_predicate_handler<FieldT, protoboard<FieldT> > base_handler;
+    pb_variable_array<FieldT> incoming_types;
 
     pb_variable<FieldT> sum_out_packed;
     pb_variable<FieldT> count_out_packed;
-
     pb_variable_array<FieldT> sum_in_packed;
     pb_variable_array<FieldT> count_in_packed;
-
-    pb_variable<FieldT> local_data;
-    pb_variable<FieldT> dummy;
 
     pb_variable_array<FieldT> sum_in_packed_aux;
     pb_variable_array<FieldT> count_in_packed_aux;
@@ -80,14 +90,17 @@ public:
     size_t wordsize;
     size_t message_length;
 
-    tally_cp_handler(const size_t type, const size_t max_arity, const size_t wordsize,
+    tally_cp_handler(const size_t type,
+                     const size_t max_arity,
+                     const size_t wordsize,
                      const bool relies_on_same_type_inputs = false,
                      const std::set<size_t> accepted_input_types = std::set<size_t>());
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const std::vector<tally_pcd_message<FieldT> > &input, const r1cs_pcd_local_data<FieldT> &ld);
+    void generate_r1cs_witness(const std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > &incoming_messages,
+                               const std::shared_ptr<r1cs_pcd_local_data<FieldT> > &local_data);
 
-    tally_pcd_message<FieldT> get_base_case_message() const;
+    std::shared_ptr<r1cs_pcd_message<FieldT> > get_base_case_message() const;
 };
 
 } // libsnark

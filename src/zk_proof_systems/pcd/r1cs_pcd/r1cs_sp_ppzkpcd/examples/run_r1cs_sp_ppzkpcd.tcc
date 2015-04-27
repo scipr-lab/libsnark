@@ -50,7 +50,7 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
     leave_block("Generate all messages");
 
     std::vector<r1cs_sp_ppzkpcd_proof<PCD_ppT> > tree_proofs(tree_size);
-    std::vector<tally_pcd_message<FieldT> > tree_messages(tree_size);
+    std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > tree_messages(tree_size);
 
     enter_block("Generate compliance predicate");
     const size_t type = 1;
@@ -74,7 +74,7 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
         leave_block("Test serialization of keys");
     }
 
-    tally_pcd_message<FieldT> base_msg  = tally.get_base_case_message();
+    std::shared_ptr<r1cs_pcd_message<FieldT> > base_msg = tally.get_base_case_message();
     nodes_in_layer /= arity;
     for (long layer = depth; layer >= 0; --layer, nodes_in_layer /= arity)
     {
@@ -82,7 +82,7 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
         {
             const size_t cur_idx = (nodes_in_layer - 1) / (arity - 1) + i;
 
-            std::vector<tally_pcd_message<FieldT> > msgs(arity, base_msg);
+            std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > msgs(arity, base_msg);
             std::vector<r1cs_sp_ppzkpcd_proof<PCD_ppT> > proofs(arity);
 
             const bool base_case = (arity * cur_idx + arity >= tree_size);
@@ -96,16 +96,12 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
                 }
             }
 
-            r1cs_pcd_local_data<FieldT> ld;
-            ld.payload.push_back(FieldT(tree_elems[cur_idx]));
+            std::shared_ptr<r1cs_pcd_local_data<FieldT> > ld;
+            ld.reset(new tally_pcd_local_data<FieldT>(tree_elems[cur_idx]));
             tally.generate_r1cs_witness(msgs, ld);
 
-            /* vector of tally_pcd_message does not naturally convert to r1cs_pcd_message, despite being subclass, so we do it explicitly here */
-            std::vector<r1cs_pcd_message<FieldT> > pcd_msgs(arity);
-            std::transform(msgs.begin(), msgs.end(), pcd_msgs.begin(), [] (tally_pcd_message<FieldT> &tm) { return static_cast<r1cs_pcd_message<FieldT> >(tm); });
-
             const r1cs_pcd_compliance_predicate_primary_input<FieldT> tally_primary_input(tally.get_outgoing_message());
-            const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> tally_auxiliary_input(pcd_msgs, ld, tally.get_witness());
+            const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> tally_auxiliary_input(msgs, ld, tally.get_witness());
 
             print_header("R1CS ppzkPCD Prover");
             r1cs_sp_ppzkpcd_proof<PCD_ppT> proof = r1cs_sp_ppzkpcd_prover<PCD_ppT>(keypair.pk, tally_primary_input, tally_auxiliary_input, proofs);
@@ -118,11 +114,7 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
             }
 
             tree_proofs[cur_idx] = proof;
-            // TODO: how to do this without hacks?
-            const r1cs_pcd_message<FieldT> pcd_msg = tally.get_outgoing_message();
-            tree_messages[cur_idx].wordsize = wordsize;
-            tree_messages[cur_idx].type = pcd_msg.type;
-            tree_messages[cur_idx].payload = pcd_msg.payload;
+            tree_messages[cur_idx] = tally.get_outgoing_message();
 
             print_header("R1CS ppzkPCD Verifier");
             const r1cs_sp_ppzkpcd_primary_input<PCD_ppT> pcd_verifier_input(tree_messages[cur_idx]);
@@ -138,11 +130,11 @@ bool run_r1cs_sp_ppzkpcd_tally_example(const size_t wordsize,
             for (size_t i = 0; i < arity; ++i)
             {
                 printf("Message %zu was:\n", i);
-                msgs[i].print();
+                msgs[i]->print();
             }
             printf("Summand at this node:\n%zu\n", tree_elems[cur_idx]);
             printf("Outgoing message is:\n");
-            tree_messages[cur_idx].print();
+            tree_messages[cur_idx]->print();
             printf("\n");
             printf("Current node = %zu. Current proof verifies = %s\n", cur_idx, ans ? "YES" : "NO");
             printf("\n\n\n ================================================================================\n\n\n");

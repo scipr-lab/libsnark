@@ -15,6 +15,7 @@
 #ifndef MP_PCD_CIRCUITS_TCC_
 #define MP_PCD_CIRCUITS_TCC_
 
+#include <algorithm>
 #include "common/utils.hpp"
 #include "gadgetlib1/constraint_profiling.hpp"
 
@@ -29,27 +30,38 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
     const size_t digest_size = CRH_with_field_out_gadget<FieldT>::get_digest_len();
     const size_t outgoing_msg_size_in_bits = field_logsize() * (1 + compliance_predicate.outgoing_message_payload_length);
     assert(compliance_predicate.has_equal_input_lengths());
-    const size_t incoming_msg_size_in_bits = field_logsize() * (1 + compliance_predicate.incoming_message_payload_lengths[0]); // TODO: a method
     const size_t translation_step_vk_size_in_bits = r1cs_ppzksnark_verification_key_variable<ppT>::size_in_bits(mp_translation_step_pcd_circuit_maker<other_curve<ppT> >::input_size_in_elts());
     const size_t padded_verifier_input_size = mp_translation_step_pcd_circuit_maker<other_curve<ppT> >::input_capacity_in_bits();
     const size_t commitment_size = set_commitment_gadget<FieldT>::root_size_in_bits();
 
     const size_t output_block_size = commitment_size + outgoing_msg_size_in_bits;
-    const size_t input_block_size = commitment_size + incoming_msg_size_in_bits;
+    const size_t max_incoming_payload_length = *std::max_element(compliance_predicate.incoming_message_payload_lengths.begin(), compliance_predicate.incoming_message_payload_lengths.end());
+    const size_t max_input_block_size = commitment_size + field_logsize() * (1 + max_incoming_payload_length);
 
-    CRH_with_bit_out_gadget<FieldT>::sample_randomness(std::max(output_block_size, input_block_size));
+    CRH_with_bit_out_gadget<FieldT>::sample_randomness(std::max(output_block_size, max_input_block_size));
 
     /* allocate input of the compliance MP_PCD circuit */
     mp_compliance_step_pcd_circuit_input.allocate(pb, input_size_in_elts(), "mp_compliance_step_pcd_circuit_input");
 
     /* allocate inputs to the compliance predicate */
-    outgoing_message.reset(new r1cs_pcd_message_variable<FieldT>(pb, compliance_predicate.outgoing_message_payload_length, "outgoing_message"));
+    outgoing_message_type.allocate(pb, "outgoing_message_type");
+    outgoing_message_payload.allocate(pb, compliance_predicate.outgoing_message_payload_length, "outgoing_message_payload");
+
+    outgoing_message_vars.insert(outgoing_message_vars.end(), outgoing_message_type);
+    outgoing_message_vars.insert(outgoing_message_vars.end(), outgoing_message_payload.begin(), outgoing_message_payload.end());
 
     arity.allocate(pb, "arity");
 
+    incoming_message_types.resize(compliance_predicate.max_arity);
+    incoming_message_payloads.resize(compliance_predicate.max_arity);
+    incoming_message_vars.resize(compliance_predicate.max_arity);
     for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
     {
-        incoming_messages.emplace_back(r1cs_pcd_message_variable<FieldT>(pb, compliance_predicate.incoming_message_payload_lengths[i], FMT("", "incoming_messages_%zu", i)));
+        incoming_message_types[i].allocate(pb, FMT("", "incoming_message_type_%zu", i));
+        incoming_message_payloads[i].allocate(pb, compliance_predicate.incoming_message_payload_lengths[i], FMT("", "incoming_message_payloads_%zu", i));
+
+        incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_types[i]);
+        incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_payloads[i].begin(), incoming_message_payloads[i].end());
     }
 
     local_data.allocate(pb, compliance_predicate.local_data_length, "local_data");
@@ -59,11 +71,11 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
     pb_variable_array<FieldT> incoming_messages_concat;
     for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
     {
-        incoming_messages_concat.insert(incoming_messages_concat.end(), incoming_messages[i].all_vars.begin(), incoming_messages[i].all_vars.end());
+        incoming_messages_concat.insert(incoming_messages_concat.end(), incoming_message_vars[i].begin(), incoming_message_vars[i].end());
     }
 
     compliance_predicate_as_gadget.reset(new gadget_from_r1cs<FieldT>(pb,
-        { outgoing_message->all_vars,
+        { outgoing_message_vars,
           pb_variable_array<FieldT>(1, arity),
           incoming_messages_concat,
           local_data,
@@ -72,13 +84,15 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
 
     /* unpack messages to bits */
     outgoing_message_bits.allocate(pb, outgoing_msg_size_in_bits, "outgoing_message_bits");
-    unpack_outgoing_message.reset(new multipacking_gadget<FieldT>(pb, outgoing_message_bits, outgoing_message->all_vars, field_logsize(), "unpack_outgoing_message"));
+    unpack_outgoing_message.reset(new multipacking_gadget<FieldT>(pb, outgoing_message_bits, outgoing_message_vars, field_logsize(), "unpack_outgoing_message"));
 
     incoming_messages_bits.resize(compliance_predicate.max_arity);
     for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
     {
+        const size_t incoming_msg_size_in_bits = field_logsize() * (1 + compliance_predicate.incoming_message_payload_lengths[i]);
+
         incoming_messages_bits[i].allocate(pb, incoming_msg_size_in_bits, FMT("", "incoming_messages_bits_%zu", i));
-        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_messages[i].all_vars, field_logsize(), FMT("", "unpack_incoming_messages_%zu", i)));
+        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_message_vars[i], field_logsize(), FMT("", "unpack_incoming_messages_%zu", i)));
     }
 
     /* allocate digests */
@@ -150,6 +164,7 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
 
     for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
     {
+        const size_t input_block_size = commitment_size + incoming_messages_bits[i].size();
         hash_incoming_messages.emplace_back(CRH_with_field_out_gadget<FieldT>(pb, input_block_size, block_for_incoming_messages[i], commitment_and_incoming_message_digests[i], FMT("", "hash_incoming_messages_%zu", i)));
     }
 
@@ -209,8 +224,13 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
     print_indent(); printf("* Knapsack dimension: %zu\n", dimension);
 
     print_indent(); printf("* Compliance predicate arity: %zu\n", compliance_predicate.max_arity);
-    print_indent(); printf("* Compliance predicate output payload length: %zu\n", compliance_predicate.outgoing_message_payload_length);
-    print_indent(); printf("* Compliance predicate input payload length: %zu\n", compliance_predicate.incoming_message_payload_lengths[0]);
+    print_indent(); printf("* Compliance predicate outgoing payload length: %zu\n", compliance_predicate.outgoing_message_payload_length);
+    print_indent(); printf("* Compliance predicate inncoming payload lengts:");
+    for (auto l : compliance_predicate.incoming_message_payload_lengths)
+    {
+        printf(" %zu", l);
+    }
+    printf("\n");
     print_indent(); printf("* Compliance predicate local data length: %zu\n", compliance_predicate.local_data_length);
     print_indent(); printf("* Compliance predicate witness length: %zu\n", compliance_predicate.witness_length);
 
@@ -308,7 +328,7 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
         {
             for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
             {
-                pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_messages[i].type, 1 - verification_results[i], 0), FMT("", "not_base_case_implies_valid_proof_%zu", i));
+                pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_message_types[i], 1 - verification_results[i], 0), FMT("", "not_base_case_implies_valid_proof_%zu", i));
             }
         }
 
@@ -318,7 +338,7 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
             {
                 for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
                 {
-                    pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_messages[i].type, incoming_messages[i].type - common_type, 0), FMT("", "non_base_types_equal_%zu", i));
+                    pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_message_types[i], incoming_message_types[i] - common_type, 0), FMT("", "non_base_types_equal_%zu", i));
                 }
 
                 pb.add_r1cs_constraint(r1cs_constraint<FieldT>(common_type, 1 - membership_check_results[0], 0), "valid_vk_for_the_common_type");
@@ -339,11 +359,11 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
             {
                 for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
                 {
-                    pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_messages[i].type, 1 - membership_check_results[i], 0), FMT("", "not_base_case_implies_valid_vk_%zu", i));
+                    pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_message_types[i], 1 - membership_check_results[i], 0), FMT("", "not_base_case_implies_valid_vk_%zu", i));
                 }
             }
         }
-        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, outgoing_message->type, FieldT(compliance_predicate.type)), "enforce_outgoing_type");
+        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, outgoing_message_type, FieldT(compliance_predicate.type)), "enforce_outgoing_type");
     }
 
     PRINT_CONSTRAINT_PROFILING();
@@ -400,21 +420,21 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
         /* all messages (except base case) must be of the same type */
         this->pb.val(common_type) = FieldT::zero();
         size_t nonzero_type_idx = 0;
-        for (size_t i = 0; i < incoming_messages.size(); ++i)
+        for (size_t i = 0; i < compliance_predicate.max_arity; ++i)
         {
-            if (this->pb.val(incoming_messages[i].type) == 0)
+            if (this->pb.val(incoming_message_types[i]) == 0)
             {
                 continue;
             }
 
             if (this->pb.val(common_type).is_zero())
             {
-                this->pb.val(common_type) = this->pb.val(incoming_messages[i].type);
+                this->pb.val(common_type) = this->pb.val(incoming_message_types[i]);
                 nonzero_type_idx = i;
             }
             else
             {
-                assert(this->pb.val(common_type) == this->pb.val(incoming_messages[i].type));
+                assert(this->pb.val(common_type) == this->pb.val(incoming_message_types[i]));
             }
         }
 
@@ -433,7 +453,7 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
     {
         for (size_t i = 0; i < membership_checkers.size(); ++i)
         {
-            this->pb.val(membership_check_results[i]) = (this->pb.val(incoming_messages[i].type).is_zero() ? FieldT::zero() : FieldT::one());
+            this->pb.val(membership_check_results[i]) = (this->pb.val(incoming_message_types[i]).is_zero() ? FieldT::zero() : FieldT::one());
             membership_proofs[i].generate_r1cs_witness(vk_membership_proofs[i]);
             membership_checkers[i].generate_r1cs_witness();
         }
@@ -609,9 +629,9 @@ r1cs_primary_input<Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(const set_
     enter_block("Call to get_mp_compliance_step_pcd_circuit_input");
     typedef Fr<ppT> FieldT;
 
+    const r1cs_variable_assignment<FieldT> outgoing_message_as_va = primary_input.outgoing_message->as_r1cs_variable_assignment();
     bit_vector msg_bits;
-    msg_bits = convert_field_element_to_bit_vector<FieldT>(FieldT(primary_input.outgoing_message.type));
-    for (const FieldT &elt : primary_input.outgoing_message.payload)
+    for (const FieldT &elt : outgoing_message_as_va)
     {
         const bit_vector elt_bits = convert_field_element_to_bit_vector(elt);
         msg_bits.insert(msg_bits.end(), elt_bits.begin(), elt_bits.end());

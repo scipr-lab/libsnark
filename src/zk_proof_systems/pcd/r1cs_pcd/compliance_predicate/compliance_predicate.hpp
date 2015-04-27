@@ -34,24 +34,26 @@ template<typename FieldT>
 class r1cs_pcd_message {
 public:
     size_t type;
-    std::vector<FieldT> payload;
 
-    void print() const;
+    r1cs_pcd_message(const size_t type);
+    virtual r1cs_variable_assignment<FieldT> payload_as_r1cs_variable_assignment() const = 0;
+    r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment() const;
+
+    virtual void print() const;
+    virtual ~r1cs_pcd_message() = default;
 };
 
 /******************************* Local data **********************************/
 
 /**
  * A local data for R1CS PCD.
- *
- * It is a vector of field elements.
  */
 template<typename FieldT>
 class r1cs_pcd_local_data {
 public:
-    std::vector<FieldT> payload;
-
-    void print() const;
+    r1cs_pcd_local_data() = default;
+    virtual r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment() const = 0;
+    virtual ~r1cs_pcd_local_data() = default;
 };
 
 /******************************** Witness ************************************/
@@ -84,7 +86,7 @@ std::istream& operator>>(std::istream &in, r1cs_pcd_compliance_predicate<FieldT>
  * as the type of the output message.
  *
  * The input wires of R1CS appear in the following order:
- * - (1 + outgoing_message_payload_length) wires for output message
+ * - (1 + outgoing_message_payload_length) wires for outgoing message
  * - 1 wire for arity (allegedly, 0 <= arity <= max_arity)
  * - for i = 0, ..., max_arity-1:
  * - (1 + incoming_message_payload_lengths[i]) wires for i-th message of
@@ -132,7 +134,7 @@ public:
                                   const size_t local_data_length,
                                   const size_t witness_length,
                                   const bool relies_on_same_type_inputs,
-                                  const std::set<size_t> accepted_input_types);
+                                  const std::set<size_t> accepted_input_types = std::set<size_t>());
 
     r1cs_pcd_compliance_predicate<FieldT> & operator=(const r1cs_pcd_compliance_predicate<FieldT> &other) = default;
 
@@ -140,9 +142,9 @@ public:
     bool has_equal_input_and_output_lengths() const;
     bool has_equal_input_lengths() const;
 
-    bool is_satisfied(const r1cs_pcd_message<FieldT> &outgoing_message,
-                      const std::vector<r1cs_pcd_message<FieldT> > &incoming_messages,
-                      const r1cs_pcd_local_data<FieldT> &local_data,
+    bool is_satisfied(const std::shared_ptr<r1cs_pcd_message<FieldT> > &outgoing_message,
+                      const std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > &incoming_messages,
+                      const std::shared_ptr<r1cs_pcd_local_data<FieldT> > &local_data,
                       const r1cs_pcd_witness<FieldT> &witness) const;
 
     bool operator==(const r1cs_pcd_compliance_predicate<FieldT> &other) const;

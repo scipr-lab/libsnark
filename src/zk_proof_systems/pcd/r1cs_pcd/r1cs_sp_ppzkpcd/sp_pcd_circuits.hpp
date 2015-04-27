@@ -66,10 +66,14 @@ public:
     std::shared_ptr<r1cs_ppzksnark_verification_key_variable<ppT> > sp_translation_step_vk;
     pb_variable_array<FieldT> sp_translation_step_vk_bits;
 
-    std::shared_ptr<r1cs_pcd_message_variable<FieldT> > outgoing_message;
+    pb_variable<FieldT> outgoing_message_type;
+    pb_variable_array<FieldT> outgoing_message_payload;
+    pb_variable_array<FieldT> outgoing_message_vars;
 
     pb_variable<FieldT> arity;
-    std::vector<r1cs_pcd_message_variable<FieldT> > incoming_messages;
+    std::vector<pb_variable<FieldT> > incoming_message_types;
+    std::vector<pb_variable_array<FieldT> > incoming_message_payloads;
+    std::vector<pb_variable_array<FieldT> > incoming_message_vars;
 
     pb_variable_array<FieldT> local_data;
     pb_variable_array<FieldT> cp_witness;

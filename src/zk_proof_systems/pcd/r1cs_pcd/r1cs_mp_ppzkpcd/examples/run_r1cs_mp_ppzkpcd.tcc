@@ -83,7 +83,7 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
     leave_block("Generate all messages");
 
     std::vector<r1cs_mp_ppzkpcd_proof<PCD_ppT> > tree_proofs(tree_size);
-    std::vector<tally_pcd_message<FieldT> > tree_messages(tree_size);
+    std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > tree_messages(tree_size);
 
     enter_block("Generate compliance predicates");
     std::set<size_t> tally_1_accepted_types, tally_2_accepted_types;
@@ -124,7 +124,7 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
         leave_block("Test serialization of keys");
     }
 
-    tally_pcd_message<FieldT> base_msg  = tally_1.get_base_case_message(); /* we choose the base to always be tally_1 */
+    std::shared_ptr<r1cs_pcd_message<FieldT> > base_msg = tally_1.get_base_case_message(); /* we choose the base to always be tally_1 */
     nodes_in_layer /= max_arity;
     for (long layer = depth; layer >= 0; --layer, nodes_in_layer /= max_arity)
     {
@@ -137,7 +137,7 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
 
             const bool base_case = (max_arity * cur_idx + max_arity >= tree_size);
 
-            std::vector<tally_pcd_message<FieldT> > msgs(max_arity, base_msg);
+            std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > msgs(max_arity, base_msg);
             std::vector<r1cs_mp_ppzkpcd_proof<PCD_ppT> > proofs(max_arity);
 
             if (!base_case)
@@ -148,20 +148,15 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
                     proofs[i] = tree_proofs[max_arity*cur_idx + i + 1];
                 }
             }
-
             msgs.resize(tree_arity[i]);
             proofs.resize(tree_arity[i]);
 
-            r1cs_pcd_local_data<FieldT> ld;
-            ld.payload.push_back(FieldT(tree_elems[cur_idx]));
+            std::shared_ptr<r1cs_pcd_local_data<FieldT> > ld;
+            ld.reset(new tally_pcd_local_data<FieldT>(tree_elems[cur_idx]));
             cur_tally.generate_r1cs_witness(msgs, ld);
 
-            /* vector of tally_pcd_message does not naturally convert to r1cs_pcd_message, despite being subclass, so we do it explicitly here */
-            std::vector<r1cs_pcd_message<FieldT> > pcd_msgs(tree_arity[i]);
-            std::transform(msgs.begin(), msgs.end(), pcd_msgs.begin(), [] (tally_pcd_message<FieldT> &tm) { return static_cast<r1cs_pcd_message<FieldT> >(tm); });
-
             const r1cs_pcd_compliance_predicate_primary_input<FieldT> tally_primary_input(cur_tally.get_outgoing_message());
-            const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> tally_auxiliary_input(pcd_msgs, ld, cur_tally.get_witness());
+            const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> tally_auxiliary_input(msgs, ld, cur_tally.get_witness());
 
             print_header("R1CS ppzkPCD Prover");
             r1cs_mp_ppzkpcd_proof<PCD_ppT> proof = r1cs_mp_ppzkpcd_prover<PCD_ppT>(keypair.pk, cur_cp.name, tally_primary_input, tally_auxiliary_input, proofs);
@@ -174,11 +169,7 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
             }
 
             tree_proofs[cur_idx] = proof;
-            // TODO: how to do this without hacks?
-            const r1cs_pcd_message<FieldT> pcd_msg = cur_tally.get_outgoing_message();
-            tree_messages[cur_idx].wordsize = wordsize;
-            tree_messages[cur_idx].type = pcd_msg.type;
-            tree_messages[cur_idx].payload = pcd_msg.payload;
+            tree_messages[cur_idx] = cur_tally.get_outgoing_message();
 
             print_header("R1CS ppzkPCD Verifier");
             const r1cs_mp_ppzkpcd_primary_input<PCD_ppT> pcd_verifier_input(tree_messages[cur_idx]);
@@ -191,14 +182,14 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
             all_accept = all_accept && ans;
 
             printf("\n");
-            for (size_t i = 0; i < max_arity; ++i)
+            for (size_t i = 0; i < msgs.size(); ++i)
             {
                 printf("Message %zu was:\n", i);
-                msgs[i].print();
+                msgs[i]->print();
             }
             printf("Summand at this node:\n%zu\n", tree_elems[cur_idx]);
             printf("Outgoing message is:\n");
-            tree_messages[cur_idx].print();
+            tree_messages[cur_idx]->print();
             printf("\n");
             printf("Current node = %zu. Current proof verifies = %s\n", cur_idx, ans ? "YES" : "NO");
             printf("\n\n\n ================================================================================\n\n\n");

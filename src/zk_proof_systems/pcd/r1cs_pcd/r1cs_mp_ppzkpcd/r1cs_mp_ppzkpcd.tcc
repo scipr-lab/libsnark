@@ -353,7 +353,7 @@ r1cs_mp_ppzkpcd_proof<PCD_ppT> r1cs_mp_ppzkpcd_prover(const r1cs_mp_ppzkpcd_prov
 
 #ifdef DEBUG
     printf("Outgoing message:\n");
-    primary_input.outgoing_message.print();
+    primary_input.outgoing_message->print();
 #endif
 
     enter_block("Prove compliance step");
@@ -387,7 +387,8 @@ r1cs_mp_ppzkpcd_proof<PCD_ppT> r1cs_mp_ppzkpcd_prover(const r1cs_mp_ppzkpcd_prov
         translation_step_vks.emplace_back(pk.translation_step_r1cs_vks[input_predicate_idx]);
         membership_proofs.emplace_back(pk.compliance_step_r1cs_vk_membership_proofs[input_predicate_idx]);
 
-        if (auxiliary_input.incoming_messages[i].type != 0)
+#ifdef DEBUG
+        if (auxiliary_input.incoming_messages[i]->type != 0)
         {
             printf("check proof for message %zu\n", i);
             const r1cs_primary_input<FieldT_B> translated_msg = get_mp_translation_step_pcd_circuit_input<curve_B_pp>(pk.commitment_to_translation_step_r1cs_vks,
@@ -399,6 +400,7 @@ r1cs_mp_ppzkpcd_proof<PCD_ppT> r1cs_mp_ppzkpcd_prover(const r1cs_mp_ppzkpcd_prov
         {
             printf("message %zu is base case\n", i);
         }
+#endif
     }
 
     /* pad with dummy vks/membership proofs */

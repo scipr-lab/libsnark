@@ -27,25 +27,23 @@ namespace libsnark {
  */
 template<typename FieldT>
 class r1cs_pcd_message_variable : public gadget<FieldT> {
+protected:
+    size_t num_vars_at_construction;
 public:
 
     pb_variable<FieldT> type;
-    pb_variable_array<FieldT> payload;
 
     pb_variable_array<FieldT> all_vars;
 
-    size_t payload_size;
-
     r1cs_pcd_message_variable(protoboard<FieldT> &pb,
-                              const size_t payload_size,
                               const std::string &annotation_prefix);
+    void update_all_vars();
 
-    void generate_r1cs_witness(const r1cs_pcd_message<FieldT> &msg);
+    void generate_r1cs_witness(const std::shared_ptr<r1cs_pcd_message<FieldT> > &message);
+    virtual std::shared_ptr<r1cs_pcd_message<FieldT> > get_message() const = 0;
 
-    r1cs_pcd_message<FieldT> get_message() const;
-
+    virtual ~r1cs_pcd_message_variable() = default;
 };
-
 /*************************** Local data variable *****************************/
 
 /**
@@ -53,15 +51,19 @@ public:
  */
 template<typename FieldT>
 class r1cs_pcd_local_data_variable : public gadget<FieldT> {
+protected:
+    size_t num_vars_at_construction;
 public:
 
     pb_variable_array<FieldT> all_vars;
 
     r1cs_pcd_local_data_variable(protoboard<FieldT> &pb,
                                  const std::string &annotation_prefix);
+    void update_all_vars();
 
-    void generate_r1cs_witness(const r1cs_pcd_local_data<FieldT> &ld);
+    void generate_r1cs_witness(const std::shared_ptr<r1cs_pcd_local_data<FieldT> > &local_data);
 
+    virtual ~r1cs_pcd_local_data_variable() = default;
 };
 
 /*********************** Compliance predicate handler ************************/
@@ -74,34 +76,35 @@ class compliance_predicate_handler {
 protected:
     protoboardT pb;
 
-    size_t name;
-    size_t type;
-    size_t outgoing_message_payload_length;
-    size_t max_arity;
-    std::vector<size_t> incoming_message_payload_lengths;
-    size_t local_data_length;
-    size_t witness_length;
-    bool relies_on_same_type_inputs;
-    std::set<size_t> accepted_input_types;
+    std::shared_ptr<r1cs_pcd_message_variable<FieldT> > outgoing_message;
+    pb_variable<FieldT> arity;
+    std::vector<std::shared_ptr<r1cs_pcd_message_variable<FieldT> > > incoming_messages;
+    std::shared_ptr<r1cs_pcd_local_data_variable<FieldT> > local_data;
 public:
-    compliance_predicate_handler(const protoboardT &pb);
+    const size_t name;
+    const size_t type;
+    const size_t max_arity;
+    const bool relies_on_same_type_inputs;
+    const std::set<size_t> accepted_input_types;
 
-    void generate_r1cs_constraints();
-    void generate_r1cs_witness(const std::vector<r1cs_pcd_message<FieldT> > &input_messages,
-                               const r1cs_pcd_local_data<FieldT> &local_data,
-                               const bool is_base_case);
+    compliance_predicate_handler(const protoboardT &pb,
+                                 const size_t name,
+                                 const size_t type,
+                                 const size_t max_arity,
+                                 const bool relies_on_same_type_inputs,
+                                 const std::set<size_t> accepted_input_types = std::set<size_t>());
+    virtual void generate_r1cs_constraints() = 0;
+    virtual void generate_r1cs_witness(const std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > &incoming_message_values,
+                                       const std::shared_ptr<r1cs_pcd_local_data<FieldT> > &local_data_value);
 
     r1cs_pcd_compliance_predicate<FieldT> get_compliance_predicate() const;
     r1cs_variable_assignment<FieldT> get_full_variable_assignment() const;
 
-    r1cs_pcd_message<FieldT> get_outgoing_message() const;
+    std::shared_ptr<r1cs_pcd_message<FieldT> > get_outgoing_message() const;
     size_t get_arity() const;
-    r1cs_pcd_message<FieldT> get_incoming_message(const size_t message_idx) const;
-    r1cs_pcd_local_data<FieldT> get_local_data() const;
+    std::shared_ptr<r1cs_pcd_message<FieldT> > get_incoming_message(const size_t message_idx) const;
+    std::shared_ptr<r1cs_pcd_local_data<FieldT> > get_local_data() const;
     r1cs_variable_assignment<FieldT> get_witness() const;
-
-    r1cs_pcd_compliance_predicate_primary_input<FieldT> get_primary_input() const;
-    r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> get_auxiliary_input() const;
 };
 
 } // libsnark

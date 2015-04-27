@@ -191,7 +191,7 @@ r1cs_sp_ppzkpcd_proof<PCD_ppT> r1cs_sp_ppzkpcd_prover(const r1cs_sp_ppzkpcd_prov
     const bit_vector translation_step_r1cs_vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(pk.translation_step_r1cs_vk);
 #ifdef DEBUG
     printf("Outgoing message:\n");
-    primary_input.outgoing_message.print();
+    primary_input.outgoing_message->print();
 #endif
 
     enter_block("Prove compliance step");

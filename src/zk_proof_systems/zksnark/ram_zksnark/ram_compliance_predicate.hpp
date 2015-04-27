@@ -46,29 +46,110 @@
 
 namespace libsnark {
 
-/*
-  XXX
-  message (FieldT values), message_vars (variables).
-  could:
-  - have all_vars in message_vars for serialization
-  - print() method of message would construct message_vars, serialize into and then semantically access
- */
-
 /**
  * A RAM message specializes the generic PCD message, in order to
  * obtain a more user-friendly print method.
  */
 template<typename ramT>
-class ram_message : public r1cs_pcd_message<ram_base_field<ramT> > {
+class ram_pcd_message : public r1cs_pcd_message<ram_base_field<ramT> > {
+private:
+    void print_bits(const bit_vector &bv) const;
+
 public:
-    void print(const ram_architecture_params<ramT> &ap) const;
+    typedef ram_base_field<ramT> FieldT;
+
+    ram_architecture_params<ramT> ap;
+
+    size_t timestamp;
+    bit_vector root_initial;
+    bit_vector root;
+    size_t pc_addr;
+    bit_vector cpu_state;
+    size_t pc_addr_initial;
+    bit_vector cpu_state_initial;
+    bool has_accepted;
+
+    ram_pcd_message(const size_t type,
+                    const ram_architecture_params<ramT> &ap,
+                    const size_t timestamp,
+                    const bit_vector root_initial,
+                    const bit_vector root,
+                    const size_t pc_addr,
+                    const bit_vector cpu_state,
+                    const size_t pc_addr_initial,
+                    const bit_vector cpu_state_initial,
+                    const bool has_accepted);
+
+    bit_vector unpacked_payload_as_bits() const;
+    r1cs_variable_assignment<FieldT> payload_as_r1cs_variable_assignment() const;
+    void print() const;
+
+    static size_t unpacked_payload_size_in_bits(const ram_architecture_params<ramT> &ap);
 };
 
-/**
- * Forward declaration. (The implementation is in the tcc file.)
- */
 template<typename ramT>
-class ram_compliance_message_vars;
+class ram_pcd_message_variable : public r1cs_pcd_message_variable<ram_base_field<ramT> > {
+public:
+    ram_architecture_params<ramT> ap;
+
+    typedef ram_base_field<ramT> FieldT;
+
+    pb_variable_array<FieldT> packed_payload;
+
+    pb_variable_array<FieldT> timestamp;
+    pb_variable_array<FieldT> root_initial;
+    pb_variable_array<FieldT> root;
+    pb_variable_array<FieldT> pc_addr;
+    pb_variable_array<FieldT> cpu_state;
+    pb_variable_array<FieldT> pc_addr_initial;
+    pb_variable_array<FieldT> cpu_state_initial;
+    pb_variable<FieldT> has_accepted;
+
+    pb_variable_array<FieldT> all_unpacked_vars;
+
+    std::shared_ptr<multipacking_gadget<FieldT> > unpack_payload;
+
+    ram_pcd_message_variable(protoboard<FieldT> &pb,
+                             const ram_architecture_params<ramT> &ap,
+                             const std::string &annotation_prefix);
+
+    void allocate_unpacked_part();
+    void generate_r1cs_constraints();
+    void generate_r1cs_witness_from_bits();
+    void generate_r1cs_witness_from_packed();
+
+    std::shared_ptr<r1cs_pcd_message<FieldT> > get_message() const;
+};
+
+template<typename ramT>
+class ram_pcd_local_data : public r1cs_pcd_local_data<ram_base_field<ramT> > {
+public:
+    typedef ram_base_field<ramT> FieldT;
+
+    bool is_halt_case;
+
+    delegated_ra_memory<CRH_with_bit_out_gadget<FieldT> > &mem;
+    typename ram_input_tape<ramT>::const_iterator &aux_it;
+    const typename ram_input_tape<ramT>::const_iterator &aux_end;
+
+    ram_pcd_local_data(const bool is_halt_case,
+                       delegated_ra_memory<CRH_with_bit_out_gadget<FieldT> > &mem,
+                       typename ram_input_tape<ramT>::const_iterator &aux_it,
+                       const typename ram_input_tape<ramT>::const_iterator &aux_end);
+
+    r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment() const;
+};
+
+template<typename ramT>
+class ram_pcd_local_data_variable : public r1cs_pcd_local_data_variable<ram_base_field<ramT> > {
+public:
+    typedef ram_base_field<ramT> FieldT;
+
+    pb_variable<FieldT> is_halt_case;
+
+    ram_pcd_local_data_variable(protoboard<FieldT> &pb,
+                                const std::string &annotation_prefix);
+};
 
 /**
  * A RAM compliance predicate.
@@ -82,19 +163,10 @@ protected:
 public:
 
     typedef ram_base_field<ramT> FieldT;
+    typedef compliance_predicate_handler<ram_base_field<ramT>, ram_protoboard<ramT> > base_handler;
 
-    pb_variable<FieldT> next_type;
-    pb_variable_array<FieldT> next_packed;
-    pb_variable<FieldT> arity;
-    pb_variable<FieldT> cur_type;
-    pb_variable_array<FieldT> cur_packed;
-
-    std::shared_ptr<ram_compliance_message_vars<ramT> > next;
-    std::shared_ptr<ram_compliance_message_vars<ramT> > cur;
-
-    std::shared_ptr<multipacking_gadget<FieldT> > unpack_next;
-    std::shared_ptr<multipacking_gadget<FieldT> > unpack_cur;
-
+    std::shared_ptr<ram_pcd_message_variable<ramT> > next;
+    std::shared_ptr<ram_pcd_message_variable<ramT> > cur;
 private:
 
     pb_variable<FieldT> zero; // TODO: promote linear combinations to first class objects
@@ -157,20 +229,15 @@ public:
     size_t message_length;
 
     ram_compliance_predicate_handler(const ram_architecture_params<ramT> &ap);
-
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const r1cs_pcd_message<FieldT> &msg,
-                               const bool halt_case,
-                               delegated_ra_memory<CRH_with_bit_out_gadget<FieldT> > &mem,
-                               typename ram_input_tape<ramT>::const_iterator &aux_it,
-                               const typename ram_input_tape<ramT>::const_iterator &aux_end);
+    void generate_r1cs_witness(const std::vector<std::shared_ptr<r1cs_pcd_message<FieldT> > > &incoming_message_values,
+                               const std::shared_ptr<r1cs_pcd_local_data<FieldT> > &local_data_value);
 
-    static size_t message_size(const ram_architecture_params<ramT> &ap);
-    static ram_message<ramT> get_base_case_message(const ram_architecture_params<ramT> &ap,
-                                                   const ram_boot_trace<ramT> &primary_input);
-    static ram_message<ramT> get_final_case_msg(const ram_architecture_params<ramT> &ap,
-                                                const ram_boot_trace<ramT> &primary_input,
-                                                const size_t time_bound);
+    static std::shared_ptr<r1cs_pcd_message<FieldT> > get_base_case_message(const ram_architecture_params<ramT> &ap,
+                                                                            const ram_boot_trace<ramT> &primary_input);
+    static std::shared_ptr<r1cs_pcd_message<FieldT> > get_final_case_msg(const ram_architecture_params<ramT> &ap,
+                                                                         const ram_boot_trace<ramT> &primary_input,
+                                                                         const size_t time_bound);
 };
 
 } // libsnark
