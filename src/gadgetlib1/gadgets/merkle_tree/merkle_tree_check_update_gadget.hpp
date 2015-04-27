@@ -17,9 +17,12 @@
 #ifndef MERKLE_TREE_CHECK_UPDATE_GADGET_HPP_
 #define MERKLE_TREE_CHECK_UPDATE_GADGET_HPP_
 
+#include "common/data_structures/merkle_tree.hpp"
+#include "gadgetlib1/gadget.hpp"
 #include "gadgetlib1/gadgets/hashes/crh_gadget.hpp"
 #include "gadgetlib1/gadgets/hashes/hash_io.hpp"
 #include "gadgetlib1/gadgets/hashes/digest_selector_gadget.hpp"
+#include "gadgetlib1/gadgets/merkle_tree/merkle_authentication_path_variable.hpp"
 
 namespace libsnark {
 
@@ -30,15 +33,11 @@ private:
     std::vector<CRH_with_bit_out_gadget<FieldT> > prev_hashers;
     std::vector<block_variable<FieldT> > prev_hasher_inputs;
     std::vector<digest_selector_gadget<FieldT> > prev_propagators;
-    std::vector<digest_variable<FieldT> > prev_internal_left;
-    std::vector<digest_variable<FieldT> > prev_internal_right;
     std::vector<digest_variable<FieldT> > prev_internal_output;
 
     std::vector<CRH_with_bit_out_gadget<FieldT> > next_hashers;
     std::vector<block_variable<FieldT> > next_hasher_inputs;
     std::vector<digest_selector_gadget<FieldT> > next_propagators;
-    std::vector<digest_variable<FieldT> > next_internal_left;
-    std::vector<digest_variable<FieldT> > next_internal_right;
     std::vector<digest_variable<FieldT> > next_internal_output;
 
     std::shared_ptr<digest_variable<FieldT> > computed_next_root;
@@ -49,26 +48,33 @@ public:
     const size_t digest_size;
     const size_t tree_depth;
 
-    pb_variable_array<FieldT> addr_bits;
+    pb_variable_array<FieldT> address_bits;
     digest_variable<FieldT> prev_leaf_digest;
     digest_variable<FieldT> prev_root_digest;
+    merkle_authentication_path_variable<FieldT> prev_path;
     digest_variable<FieldT> next_leaf_digest;
     digest_variable<FieldT> next_root_digest;
+    merkle_authentication_path_variable<FieldT> next_path;
     pb_linear_combination<FieldT> update_successful;
+
+    /* Note that while it is necessary to generate R1CS constraints
+       for prev_path, it is not necessary to do so for next_path. See
+       comment in the implementation of generate_r1cs_constraints() */
 
     merkle_tree_check_update_gadget(protoboard<FieldT> &pb,
                                     const size_t tree_depth,
-                                    const pb_variable_array<FieldT> &addr_bits,
+                                    const pb_variable_array<FieldT> &address_bits,
                                     const digest_variable<FieldT> &prev_leaf_digest,
                                     const digest_variable<FieldT> &prev_root_digest,
+                                    const merkle_authentication_path_variable<FieldT> &prev_path,
                                     const digest_variable<FieldT> &next_leaf_digest,
                                     const digest_variable<FieldT> &next_root_digest,
+                                    const merkle_authentication_path_variable<FieldT> &next_path,
                                     const pb_linear_combination<FieldT> &update_successful,
                                     const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-
-    void generate_r1cs_witness(const bit_vector &prev_leaf, const bit_vector &prev_root, const merkle_authentication_path &prev_path, const bit_vector &next_leaf);
+    void generate_r1cs_witness();
 
     static size_t root_size_in_bits();
     /* for debugging purposes */

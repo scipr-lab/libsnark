@@ -58,7 +58,12 @@ set_membership_proof set_commitment_accumulator<HashT>::get_membership_proof(con
     const bit_vector hash = HashT::get_hash(value);
     auto it = hash_to_pos.find(hash);
     assert(it != hash_to_pos.end());
-    return tree->get_path(it->second);
+
+    set_membership_proof proof;
+    proof.address = it->second;
+    proof.merkle_path = tree->get_path(it->second);
+
+    return proof;
 }
 
 } // libsnark

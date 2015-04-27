@@ -19,7 +19,16 @@
 namespace libsnark {
 
 typedef bit_vector set_commitment;
-typedef merkle_authentication_path set_membership_proof;
+
+struct set_membership_proof {
+    size_t address;
+    merkle_authentication_path merkle_path;
+
+    bool operator==(const set_membership_proof &other) const;
+    size_t size_in_bits() const;
+    friend std::ostream& operator<<(std::ostream &out, const set_membership_proof &other);
+    friend std::istream& operator>>(std::istream &in, set_membership_proof &other);
+};
 
 template<typename HashT>
 class set_commitment_accumulator {
@@ -43,6 +52,9 @@ public:
 
 } // libsnark
 
+/* note that set_commitment has both .cpp, for implementation of
+   non-templatized code (methods of set_membership_proof) and .tcc
+   (implementation of set_commitment_accumulator<HashT> */
 #include "common/data_structures/set_commitment.tcc"
 
 #endif // SET_COMMITMENT_HPP_

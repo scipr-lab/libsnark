@@ -209,14 +209,13 @@ typename HashT::merkle_authentication_path_type merkle_tree<HashT>::get_path(con
         if (layer == depth)
         {
             auto it2 = values.find(sibling_idx - ((1ul<<depth) - 1));
-            result[layer-1].aux_digest = (it2 == values.end() ? bit_vector(value_size, false) : it2->second);
-            result[layer-1].aux_digest.resize(digest_size);
+            result[layer-1] = (it2 == values.end() ? bit_vector(value_size, false) : it2->second);
+            result[layer-1].resize(digest_size);
         }
         else
         {
-            result[layer-1].aux_digest = (it == hashes.end() ? hash_defaults[layer] : it->second);
+            result[layer-1] = (it == hashes.end() ? hash_defaults[layer] : it->second);
         }
-        result[layer-1].computed_is_right = ((idx & 1) == 0);
 
         idx = (idx-1)/2;
     }

@@ -231,10 +231,12 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     prev_pc_val.allocate(this->pb, value_size, "prev_pc_val");
     prev_pc_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, prev_pc_val, zero, "prev_pc_val_digest"));
     cur_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, cur->root, zero, "cur_root_digest"));
+    instruction_fetch_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "instruction_fetch_merkle_proof"));
     instruction_fetch.reset(new memory_load_gadget<FieldT>(this->pb, addr_size,
                                                            cur->pc_addr,
                                                            *prev_pc_val_digest,
                                                            *cur_root_digest,
+                                                           *instruction_fetch_merkle_proof,
                                                            ONE,
                                                            "instruction_fetch"));
 
@@ -255,8 +257,11 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     ls_prev_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_prev_val, zero, "ls_prev_val_digest"));
     ls_next_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_next_val, zero, "ls_next_val_digest"));
     next_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, next->root, zero, "next_root_digest"));
+    load_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "load_merkle_proof"));
+    store_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "store_merkle_proof"));
     load_store_checker.reset(new memory_load_store_gadget<FieldT>(this->pb, addr_size, ls_addr,
-                                                                  *ls_prev_val_digest, *cur_root_digest, *ls_next_val_digest, *next_root_digest, is_not_halt_case,
+                                                                  *ls_prev_val_digest, *cur_root_digest, *load_merkle_proof,
+                                                                  *ls_next_val_digest, *next_root_digest, *store_merkle_proof, is_not_halt_case,
                                                                   "load_store_checker"));
     /*
       If do_halt = 1: (final case)
@@ -361,6 +366,7 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, 1 - do_halt, is_not_halt_case), "is_not_halt_case");
     PROFILE_CONSTRAINTS(this->pb, "instruction fetch")
     {
+        instruction_fetch_merkle_proof->generate_r1cs_constraints();
         instruction_fetch->generate_r1cs_constraints();
     }
     pack_next_timestamp->generate_r1cs_constraints(false);
@@ -371,6 +377,8 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_constraints()
     }
     PROFILE_CONSTRAINTS(this->pb, "load/store checker")
     {
+        // See comment in merkle_tree_check_update_gadget::generate_r1cs_witness() for why we don't need to call store_merkle_proof->generate_r1cs_constraints()
+        load_merkle_proof->generate_r1cs_constraints();
         load_store_checker->generate_r1cs_constraints();
     }
 
@@ -486,10 +494,9 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
     std::reverse(pc_val_bv.begin(), pc_val_bv.end());
 
     prev_pc_val.fill_with_bits(this->pb, pc_val_bv);
-    const bit_vector pc_val_digest_bv = prev_pc_val_digest->bits.get_bits(this->pb);
-    const bit_vector cur_root_bit_vec = cur_root_digest->bits.get_bits(this->pb);
     const merkle_authentication_path pc_path = mem.get_path(int_pc_addr);
-    instruction_fetch->generate_r1cs_witness(pc_val_digest_bv, cur_root_bit_vec, pc_path);
+    instruction_fetch_merkle_proof->generate_r1cs_witness(int_pc_addr, pc_path);
+    instruction_fetch->generate_r1cs_witness();
 
     // next.timestamp = cur.timestamp + 1 (or cur.timestamp if do_halt)
     this->pb.val(packed_next_timestamp) = this->pb.val(packed_cur_timestamp) + (want_halt ? FieldT::zero() : FieldT::one());
@@ -500,7 +507,6 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
     cpu_checker->generate_r1cs_witness_address();
     const size_t int_ls_addr = ls_addr.get_field_element_from_bits(this->pb).as_ulong();
     const size_t int_ls_prev_val = mem.get_value(int_ls_addr);
-    const bit_vector prev_root_bits = cur_root_digest->bits.get_bits(this->pb);
     const merkle_authentication_path prev_path = mem.get_path(int_ls_addr);
     ls_prev_val.fill_with_bits_of_ulong(this->pb, int_ls_prev_val);
     assert(ls_prev_val.get_field_element_from_bits(this->pb) == FieldT(int_ls_prev_val, true));
@@ -515,11 +521,9 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const r1cs_pc
 #ifdef DEBUG
     printf("Memory location %zu changed from %zu (0x%08zx) to %zu (0x%08zx)\n", int_ls_addr, int_ls_prev_val, int_ls_prev_val, int_ls_next_val, int_ls_next_val);
 #endif
-    // Step 3: Get new witness for delegated memory.
-    const bit_vector prev_leaf_bits = ls_prev_val_digest->bits.get_bits(this->pb);
-    const bit_vector next_leaf_bits = ls_next_val_digest->bits.get_bits(this->pb);
-    // Step 4: Use both to satisfy load_store_checker
-    load_store_checker->generate_r1cs_witness(prev_leaf_bits, prev_root_bits, prev_path, next_leaf_bits);
+    // Step 3: Satisfy load_store_checker
+    load_merkle_proof->generate_r1cs_witness(int_ls_addr, prev_path);
+    load_store_checker->generate_r1cs_witness();
 
     /*
       If do_halt = 1: (final case)

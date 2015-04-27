@@ -122,6 +122,7 @@ private:
     pb_variable_array<FieldT> prev_pc_val;
     std::shared_ptr<digest_variable<FieldT> > prev_pc_val_digest;
     std::shared_ptr<digest_variable<FieldT> > cur_root_digest;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT> > instruction_fetch_merkle_proof;
     std::shared_ptr<memory_load_gadget<FieldT> > instruction_fetch;
 
     std::shared_ptr<digest_variable<FieldT> > next_root_digest;
@@ -131,6 +132,8 @@ private:
     pb_variable_array<FieldT> ls_next_val;
     std::shared_ptr<digest_variable<FieldT> > ls_prev_val_digest;
     std::shared_ptr<digest_variable<FieldT> > ls_next_val_digest;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT> > load_merkle_proof;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT> > store_merkle_proof;
     std::shared_ptr<memory_load_store_gadget<FieldT> > load_store_checker;
 
     pb_variable_array<FieldT> temp_next_pc_addr;

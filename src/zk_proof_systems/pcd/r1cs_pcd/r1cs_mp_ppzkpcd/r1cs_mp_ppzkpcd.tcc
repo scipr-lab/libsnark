@@ -37,7 +37,7 @@ size_t r1cs_mp_ppzkpcd_proving_key<PCD_ppT>::size_in_bits() const
                    translation_step_r1cs_pks[i].size_in_bits() +
                    compliance_step_r1cs_vks[i].size_in_bits() +
                    translation_step_r1cs_vks[i].size_in_bits() +
-                   compliance_step_r1cs_vk_membership_proofs[i].size());
+                   compliance_step_r1cs_vk_membership_proofs[i].size_in_bits());
     }
     result += commitment_to_translation_step_r1cs_vks.size();
 

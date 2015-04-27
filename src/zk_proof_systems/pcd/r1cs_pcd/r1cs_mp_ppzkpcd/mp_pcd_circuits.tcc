@@ -104,10 +104,14 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
         translation_step_vks_bits[0].allocate(pb, translation_step_vk_size_in_bits, "translation_step_vk_bits");
         membership_check_results.allocate(pb, 1, "membership_check_results");
 
+        membership_proofs.emplace_back(set_membership_proof_variable<FieldT>(pb,
+                                                                             max_number_of_predicates,
+                                                                             "membership_proof"));
         membership_checkers.emplace_back(set_commitment_gadget<FieldT>(pb,
                                                                        max_number_of_predicates,
                                                                        translation_step_vks_bits[0],
                                                                        *commitment,
+                                                                       membership_proofs[0],
                                                                        membership_check_results[0], "membership_checker"));
     }
     else
@@ -120,10 +124,14 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
         {
             translation_step_vks_bits[i].allocate(pb, translation_step_vk_size_in_bits, FMT("", "translation_step_vks_bits_%zu", i));
 
+            membership_proofs.emplace_back(set_membership_proof_variable<FieldT>(pb,
+                                                                                 max_number_of_predicates,
+                                                                                 FMT("", "membership_proof_%zu", i)));
             membership_checkers.emplace_back(set_commitment_gadget<FieldT>(pb,
                                                                            max_number_of_predicates,
                                                                            translation_step_vks_bits[i],
                                                                            *commitment,
+                                                                           membership_proofs[i],
                                                                            membership_check_results[i],
                                                                            FMT("", "membership_checkers_%zu", i)));
         }
@@ -251,9 +259,14 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
 
     PROFILE_CONSTRAINTS(pb, "set membership check")
     {
-        for (size_t i = 0; i < membership_checkers.size(); ++i)
+        for (auto &membership_proof : membership_proofs)
         {
-            membership_checkers[i].generate_r1cs_constraints();
+            membership_proof.generate_r1cs_constraints();
+        }
+
+        for (auto &membership_checker : membership_checkers)
+        {
+            membership_checker.generate_r1cs_constraints();
         }
     }
 
@@ -406,7 +419,8 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
         }
 
         this->pb.val(membership_check_results[0]) = (this->pb.val(common_type).is_zero() ? FieldT::zero() : FieldT::one());
-        membership_checkers[0].generate_r1cs_witness(vk_membership_proofs[nonzero_type_idx]);
+        membership_proofs[0].generate_r1cs_witness(vk_membership_proofs[nonzero_type_idx]);
+        membership_checkers[0].generate_r1cs_witness();
 
         auto it = compliance_predicate.accepted_input_types.begin();
         for (size_t i = 0; i < compliance_predicate.accepted_input_types.size(); ++i, ++it)
@@ -420,7 +434,8 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
         for (size_t i = 0; i < membership_checkers.size(); ++i)
         {
             this->pb.val(membership_check_results[i]) = (this->pb.val(incoming_messages[i].type).is_zero() ? FieldT::zero() : FieldT::one());
-            membership_checkers[i].generate_r1cs_witness(vk_membership_proofs[i]);
+            membership_proofs[i].generate_r1cs_witness(vk_membership_proofs[i]);
+            membership_checkers[i].generate_r1cs_witness();
         }
     }
 

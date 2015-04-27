@@ -47,6 +47,7 @@ SRCS = \
 	src/algebra/curves/mnt/mnt6/mnt6_pairing.cpp \
 	src/algebra/curves/mnt/mnt6/mnt6_pp.cpp \
 	src/common/data_structures/integer_permutation.cpp \
+	src/common/data_structures/set_commitment.cpp \
 	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
 	src/common/default_types/tinyram_ppzksnark_pp.cpp \
 	src/common/default_types/tinyram_zksnark_pp.cpp \

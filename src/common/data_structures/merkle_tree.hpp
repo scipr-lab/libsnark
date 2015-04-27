@@ -31,6 +31,9 @@ namespace libsnark {
  * obtain the authentication paths for (the value at) a given address.
  */
 
+typedef bit_vector merkle_authentication_node;
+typedef std::vector<merkle_authentication_node> merkle_authentication_path;
+
 template<typename HashT>
 class merkle_tree {
 private:

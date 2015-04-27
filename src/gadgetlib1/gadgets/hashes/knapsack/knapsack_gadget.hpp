@@ -45,6 +45,7 @@
 
 #include "gadgetlib1/gadgets/basic_gadgets.hpp"
 #include "gadgetlib1/gadgets/hashes/hash_io.hpp"
+#include "common/data_structures/merkle_tree.hpp"
 
 namespace libsnark {
 
