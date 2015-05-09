@@ -20,23 +20,33 @@
 using namespace libsnark;
 
 template<typename FieldT>
-void test_qap(const size_t num_constraints, const size_t num_inputs, const bool binary_input)
+void test_qap(const size_t qap_degree, const size_t num_inputs, const bool binary_input)
 {
+    /*
+      We construct an instance where the QAP degree is qap_degree.
+      So we generate an instance of R1CS where the number of constraints qap_degree - num_inputs - 1.
+      See the transformation from R1CS to QAP for why this is the case.
+      So we need that qap_degree >= num_inputs + 1.
+    */
+    assert(num_inputs + 1 <= qap_degree);
     enter_block("Call to test_qap");
 
-    print_indent(); printf("* Number of constraints: %zu\n", num_constraints);
+    const size_t num_constraints = qap_degree - num_inputs - 1;
+
+    print_indent(); printf("* QAP degree: %zu\n", qap_degree);
     print_indent(); printf("* Number of inputs: %zu\n", num_inputs);
+    print_indent(); printf("* Number of R1CS constraints: %zu\n", num_constraints);
     print_indent(); printf("* Input type: %s\n", binary_input ? "binary" : "field");
 
     enter_block("Generate constraint system and assignment");
     r1cs_example<FieldT> example;
     if (binary_input)
     {
-        example = generate_r1cs_example_with_binary_input<FieldT>(num_constraints - R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS, num_inputs);
+        example = generate_r1cs_example_with_binary_input<FieldT>(num_constraints, num_inputs);
     }
     else
     {
-        example = generate_r1cs_example_with_field_input<FieldT>(num_constraints - R1CS_TO_QAP_ADDITIONAL_CONSTRAINTS, num_inputs);
+        example = generate_r1cs_example_with_field_input<FieldT>(num_constraints, num_inputs);
     }
     leave_block("Generate constraint system and assignment");
 
