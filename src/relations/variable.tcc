@@ -482,7 +482,7 @@ linear_combination<FieldT>::linear_combination(const std::vector<linear_term<Fie
     }
 
     terms = all_terms;
-    std::sort(terms.begin(), terms.end(), [](linear_term<FieldT> &a, linear_term<FieldT> &b) { return a.index < b.index; });
+    std::sort(terms.begin(), terms.end(), [](linear_term<FieldT> a, linear_term<FieldT> b) { return a.index < b.index; });
 
     auto result_it = terms.begin();
     for (auto it = ++terms.begin(); it != terms.end(); ++it)
