@@ -115,8 +115,6 @@ TEST(gadgetLib2,BinaryAND_Gadget) {
     ASSERT_EQ(pb->val(result), 1);
 }
 
-void orGadgetExhaustiveTest(ProtoboardPtr pb, size_t n); // Forward declaration
-
 TEST(gadgetLib2,R1P_ORGadget_Exhaustive) {
     initPublicParamsFromDefaultPp();
     for(int n = 1; n <= EXHAUSTIVE_N; ++n) {
