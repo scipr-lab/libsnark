@@ -45,7 +45,9 @@ struct knowledge_commitment {
     knowledge_commitment<T1,T2>& operator=(knowledge_commitment<T1,T2> &&other) = default;
     knowledge_commitment<T1,T2> operator+(const knowledge_commitment<T1, T2> &other) const;
 
+    bool is_zero() const;
     bool operator==(const knowledge_commitment<T1,T2> &other) const;
+    bool operator!=(const knowledge_commitment<T1,T2> &other) const;
 
     static knowledge_commitment<T1,T2> zero();
     static knowledge_commitment<T1,T2> one();

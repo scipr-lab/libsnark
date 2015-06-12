@@ -36,9 +36,61 @@ T sparse_vector<T>::operator[](const size_t idx) const
 template<typename T>
 bool sparse_vector<T>::operator==(const sparse_vector<T> &other) const
 {
-    return (this->domain_size_ == other.domain_size_ &&
-            this->values == other.values &&
-            this->indices == other.indices);
+    if (this->domain_size_ != other.domain_size_)
+    {
+        return false;
+    }
+
+    size_t this_pos = 0, other_pos = 0;
+    while (this_pos < this->indices.size() && other_pos < other.indices.size())
+    {
+        if (this->indices[this_pos] == other.indices[other_pos])
+        {
+            if (this->values[this_pos] != other.values[other_pos])
+            {
+                return false;
+            }
+            ++this_pos;
+            ++other_pos;
+        }
+        else if (this->indices[this_pos] < other.indices[other_pos])
+        {
+            if (!this->values[this_pos].is_zero())
+            {
+                return false;
+            }
+            ++this_pos;
+        }
+        else
+        {
+            if (!other.values[other_pos].is_zero())
+            {
+                return false;
+            }
+            ++other_pos;
+        }
+    }
+
+    /* at least one of the vectors has been exhausted, so other must be empty */
+    while (this_pos < this->indices.size())
+    {
+        if (!this->values[this_pos].is_zero())
+        {
+            return false;
+        }
+        ++this_pos;
+    }
+
+    while (other_pos < other.indices.size())
+    {
+        if (!other.values[other_pos].is_zero())
+        {
+            return false;
+        }
+        ++other_pos;
+    }
+
+    return true;
 }
 
 template<typename T>

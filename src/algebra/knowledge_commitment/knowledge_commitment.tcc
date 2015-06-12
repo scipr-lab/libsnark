@@ -44,10 +44,22 @@ knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::operator+(const knowled
 }
 
 template<typename T1, typename T2>
+bool knowledge_commitment<T1,T2>::is_zero() const
+{
+    return (g.is_zero() && h.is_zero());
+}
+
+template<typename T1, typename T2>
 bool knowledge_commitment<T1,T2>::operator==(const knowledge_commitment<T1,T2> &other) const
 {
     return (this->g == other.g &&
             this->h == other.h);
+}
+
+template<typename T1, typename T2>
+bool knowledge_commitment<T1,T2>::operator!=(const knowledge_commitment<T1,T2> &other) const
+{
+    return !((*this) == other);
 }
 
 template<typename T1, typename T2, mp_size_t m>
