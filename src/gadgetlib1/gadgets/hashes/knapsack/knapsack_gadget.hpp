@@ -121,7 +121,7 @@ public:
     static void sample_randomness(const size_t input_len);
 
     /* for debugging */
-    static size_t expected_constraints();
+    static size_t expected_constraints(const bool enforce_bitness=true);
 };
 
 template<typename FieldT>

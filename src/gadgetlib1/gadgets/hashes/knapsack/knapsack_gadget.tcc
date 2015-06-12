@@ -218,9 +218,11 @@ bit_vector knapsack_CRH_with_bit_out_gadget<FieldT>::get_hash(const bit_vector &
 }
 
 template<typename FieldT>
-size_t knapsack_CRH_with_bit_out_gadget<FieldT>::expected_constraints()
+size_t knapsack_CRH_with_bit_out_gadget<FieldT>::expected_constraints(const bool enforce_bitness)
 {
-    return knapsack_dimension<FieldT>::dimension * (FieldT::size_in_bits() + 1);
+    const size_t hasher_constraints = knapsack_CRH_with_field_out_gadget<FieldT>::expected_constraints();
+    const size_t bitness_constraints = (enforce_bitness ? get_digest_len() : 0);
+    return hasher_constraints + bitness_constraints;
 }
 
 template<typename FieldT>
