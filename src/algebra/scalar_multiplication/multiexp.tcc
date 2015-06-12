@@ -409,7 +409,7 @@ size_t get_exp_window_size(const size_t num_scalars)
     }
 
 #ifdef LOWMEM
-    window = std::min(14, window);
+    window = std::min((size_t)14, window);
 #endif
     return window;
 }
