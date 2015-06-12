@@ -166,15 +166,18 @@ template<typename FieldT>
 size_t merkle_tree_check_update_gadget<FieldT>::expected_constraints(const size_t tree_depth)
 {
     /* NB: this includes path constraints */
-    const size_t digest_size = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
+    typedef CRH_with_bit_out_gadget<FieldT> HashT;
+    const size_t prev_hasher_constraints = tree_depth * HashT::expected_constraints(false);
+    const size_t next_hasher_constraints = tree_depth * HashT::expected_constraints(true);
+    const size_t prev_authentication_path_constraints = 2 * tree_depth * HashT::get_digest_len();
+    const size_t prev_propagator_constraints = tree_depth * HashT::get_digest_len();
+    const size_t next_propagator_constraints = tree_depth * HashT::get_digest_len();
+    const size_t check_next_root_constraints = 3 * div_ceil(HashT::get_digest_len(), FieldT::capacity());
+    const size_t aux_equality_constraints = tree_depth * HashT::get_digest_len();
 
-    const size_t hasher_constraints = 2 * tree_depth * CRH_with_bit_out_gadget<FieldT>::expected_constraints();
-    const size_t propagator_constraints = 2 * tree_depth * digest_size;
-    const size_t aux_digest_constraints = tree_depth * digest_size;
-    const size_t aux_equality_constraints = tree_depth * digest_size;
-    const size_t check_root_constraints = 3 * div_ceil(CRH_with_bit_out_gadget<FieldT>::get_digest_len(), FieldT::capacity());
-
-    return hasher_constraints + propagator_constraints + aux_digest_constraints + aux_equality_constraints + check_root_constraints;
+    return (prev_hasher_constraints + next_hasher_constraints + prev_authentication_path_constraints +
+            prev_propagator_constraints + next_propagator_constraints + check_next_root_constraints +
+            aux_equality_constraints);
 }
 
 template<typename FieldT>

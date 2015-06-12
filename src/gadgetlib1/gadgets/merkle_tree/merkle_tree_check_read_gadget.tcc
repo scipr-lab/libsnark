@@ -123,12 +123,13 @@ template<typename FieldT>
 size_t merkle_tree_check_read_gadget<FieldT>::expected_constraints(const size_t tree_depth)
 {
     /* NB: this includes path constraints */
-    const size_t hasher_constraints = tree_depth * CRH_with_bit_out_gadget<FieldT>::expected_constraints();
-    const size_t propagator_constraints = tree_depth * CRH_with_bit_out_gadget<FieldT>::get_digest_len();
-    const size_t aux_digest_constraints = tree_depth * CRH_with_bit_out_gadget<FieldT>::get_digest_len();
-    const size_t check_root_constraints = 3 * div_ceil(CRH_with_bit_out_gadget<FieldT>::get_digest_len(), FieldT::capacity());
+    typedef CRH_with_bit_out_gadget<FieldT> HashT;
+    const size_t hasher_constraints = tree_depth * HashT::expected_constraints(false);
+    const size_t propagator_constraints = tree_depth * HashT::get_digest_len();
+    const size_t authentication_path_constraints = 2 * tree_depth * HashT::get_digest_len();
+    const size_t check_root_constraints = 3 * div_ceil(HashT::get_digest_len(), FieldT::capacity());
 
-    return hasher_constraints + propagator_constraints + aux_digest_constraints + check_root_constraints;
+    return hasher_constraints + propagator_constraints + authentication_path_constraints + check_root_constraints;
 }
 
 template<typename FieldT>
