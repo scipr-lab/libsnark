@@ -99,6 +99,7 @@ EXECUTABLES = \
 	src/common/routing_algorithms/tests/test_routing_algorithms \
 	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
 	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
+	src/gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget \
 	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
 	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
 	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
