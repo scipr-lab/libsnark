@@ -81,7 +81,7 @@ public:
     void generate_r1cs_witness();
 
     static size_t get_digest_len();
-    size_t get_block_len() const;
+    static size_t get_block_len(); /* return 0 as block length, as the hash function is variable-input */
     static std::vector<FieldT> get_hash(const bit_vector &input);
     static void sample_randomness(const size_t input_len);
 
@@ -116,7 +116,7 @@ public:
     void generate_r1cs_witness();
 
     static size_t get_digest_len();
-    size_t get_block_len() const;
+    static size_t get_block_len(); /* return 0 as block length, as the hash function is variable-input */
     static hash_value_type get_hash(const bit_vector &input);
     static void sample_randomness(const size_t input_len);
 

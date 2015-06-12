@@ -84,9 +84,9 @@ size_t knapsack_CRH_with_field_out_gadget<FieldT>::get_digest_len()
 }
 
 template<typename FieldT>
-size_t knapsack_CRH_with_field_out_gadget<FieldT>::get_block_len() const
+size_t knapsack_CRH_with_field_out_gadget<FieldT>::get_block_len()
 {
-    return input_len;
+    return 0;
 }
 
 template<typename FieldT>
@@ -197,9 +197,9 @@ size_t knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len()
 }
 
 template<typename FieldT>
-size_t knapsack_CRH_with_bit_out_gadget<FieldT>::get_block_len() const
+size_t knapsack_CRH_with_bit_out_gadget<FieldT>::get_block_len()
 {
-     return input_len;
+     return 0;
 }
 
 template<typename FieldT>
