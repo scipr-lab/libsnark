@@ -20,7 +20,6 @@ set_commitment_accumulator<HashT>::set_commitment_accumulator(const size_t max_e
 {
     depth = log2(max_entries);
     digest_size = HashT::get_digest_len();
-    HashT::sample_randomness(2*digest_size);
 
     tree.reset(new merkle_tree<HashT>(depth, digest_size));
 }
