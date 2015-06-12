@@ -11,26 +11,32 @@
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
 #include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_read_gadget.hpp"
 #include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_update_gadget.hpp"
+#include "gadgetlib1/gadgets/hashes/sha256/sha256_gadget.hpp"
 
 using namespace libsnark;
+
+template<typename ppT>
+void test_all_merkle_tree_gadgets()
+{
+    typedef Fr<ppT> FieldT;
+    test_merkle_tree_check_read_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> >();
+
+    test_merkle_tree_check_update_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> >();
+}
 
 int main(void)
 {
     start_profiling();
 
     bn128_pp::init_public_params();
-    test_merkle_tree_check_read_gadget<Fr<bn128_pp> >();
-    test_merkle_tree_check_update_gadget<Fr<bn128_pp> >();
+    test_all_merkle_tree_gadgets<bn128_pp>();
 
     edwards_pp::init_public_params();
-    test_merkle_tree_check_read_gadget<Fr<edwards_pp> >();
-    test_merkle_tree_check_update_gadget<Fr<edwards_pp> >();
+    test_all_merkle_tree_gadgets<edwards_pp>();
 
     mnt4_pp::init_public_params();
-    test_merkle_tree_check_read_gadget<Fr<mnt4_pp> >();
-    test_merkle_tree_check_update_gadget<Fr<mnt4_pp> >();
+    test_all_merkle_tree_gadgets<mnt4_pp>();
 
     mnt6_pp::init_public_params();
-    test_merkle_tree_check_read_gadget<Fr<mnt6_pp> >();
-    test_merkle_tree_check_update_gadget<Fr<mnt6_pp> >();
+    test_all_merkle_tree_gadgets<mnt6_pp>();
 }

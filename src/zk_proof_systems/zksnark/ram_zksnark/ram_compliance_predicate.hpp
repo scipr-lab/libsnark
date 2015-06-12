@@ -37,9 +37,9 @@
 #ifndef RAM_COMPLIANCE_PREDICATE_HPP_
 #define RAM_COMPLIANCE_PREDICATE_HPP_
 
-#include "relations/ram_computations/memory/delegated_ra_memory.hpp"
 #include "gadgetlib1/gadgets/delegated_ra_memory/memory_load_gadget.hpp"
 #include "gadgetlib1/gadgets/delegated_ra_memory/memory_load_store_gadget.hpp"
+#include "relations/ram_computations/memory/delegated_ra_memory.hpp"
 #include "relations/ram_computations/rams/ram_params.hpp"
 #include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
 #include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp"
@@ -163,6 +163,7 @@ protected:
 public:
 
     typedef ram_base_field<ramT> FieldT;
+    typedef CRH_with_bit_out_gadget<FieldT> HashT;
     typedef compliance_predicate_handler<ram_base_field<ramT>, ram_protoboard<ramT> > base_handler;
 
     std::shared_ptr<ram_pcd_message_variable<ramT> > next;
@@ -194,8 +195,8 @@ private:
     pb_variable_array<FieldT> prev_pc_val;
     std::shared_ptr<digest_variable<FieldT> > prev_pc_val_digest;
     std::shared_ptr<digest_variable<FieldT> > cur_root_digest;
-    std::shared_ptr<merkle_authentication_path_variable<FieldT> > instruction_fetch_merkle_proof;
-    std::shared_ptr<memory_load_gadget<FieldT> > instruction_fetch;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT, HashT> > instruction_fetch_merkle_proof;
+    std::shared_ptr<memory_load_gadget<FieldT, HashT> > instruction_fetch;
 
     std::shared_ptr<digest_variable<FieldT> > next_root_digest;
 
@@ -204,9 +205,9 @@ private:
     pb_variable_array<FieldT> ls_next_val;
     std::shared_ptr<digest_variable<FieldT> > ls_prev_val_digest;
     std::shared_ptr<digest_variable<FieldT> > ls_next_val_digest;
-    std::shared_ptr<merkle_authentication_path_variable<FieldT> > load_merkle_proof;
-    std::shared_ptr<merkle_authentication_path_variable<FieldT> > store_merkle_proof;
-    std::shared_ptr<memory_load_store_gadget<FieldT> > load_store_checker;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT, HashT> > load_merkle_proof;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT, HashT> > store_merkle_proof;
+    std::shared_ptr<memory_load_store_gadget<FieldT, HashT> > load_store_checker;
 
     pb_variable_array<FieldT> temp_next_pc_addr;
     pb_variable_array<FieldT> temp_next_cpu_state;

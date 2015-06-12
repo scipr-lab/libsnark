@@ -25,11 +25,11 @@
 
 namespace libsnark {
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 class merkle_tree_check_read_gadget : public gadget<FieldT> {
 private:
 
-    std::vector<CRH_with_bit_out_gadget<FieldT> > hashers;
+    std::vector<HashT> hashers;
     std::vector<block_variable<FieldT> > hasher_inputs;
     std::vector<digest_selector_gadget<FieldT> > propagators;
     std::vector<digest_variable<FieldT> > internal_output;
@@ -44,7 +44,7 @@ public:
     pb_linear_combination_array<FieldT> address_bits;
     digest_variable<FieldT> leaf;
     digest_variable<FieldT> root;
-    merkle_authentication_path_variable<FieldT> path;
+    merkle_authentication_path_variable<FieldT, HashT> path;
     pb_linear_combination<FieldT> read_successful;
 
     merkle_tree_check_read_gadget(protoboard<FieldT> &pb,
@@ -52,7 +52,7 @@ public:
                                   const pb_linear_combination_array<FieldT> &address_bits,
                                   const digest_variable<FieldT> &leaf_digest,
                                   const digest_variable<FieldT> &root_digest,
-                                  const merkle_authentication_path_variable<FieldT> &path,
+                                  const merkle_authentication_path_variable<FieldT, HashT> &path,
                                   const pb_linear_combination<FieldT> &read_successful,
                                   const std::string &annotation_prefix);
 
@@ -64,7 +64,7 @@ public:
     static size_t expected_constraints(const size_t tree_depth);
 };
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 void test_merkle_tree_check_read_gadget();
 
 } // libsnark

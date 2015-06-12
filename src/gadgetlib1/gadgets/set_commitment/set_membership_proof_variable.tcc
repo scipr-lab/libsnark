@@ -10,10 +10,10 @@
 
 namespace libsnark {
 
-template<typename FieldT>
-set_membership_proof_variable<FieldT>::set_membership_proof_variable(protoboard<FieldT> &pb,
-                                                                     const size_t max_entries,
-                                                                     const std::string &annotation_prefix) :
+template<typename FieldT, typename HashT>
+set_membership_proof_variable<FieldT, HashT>::set_membership_proof_variable(protoboard<FieldT> &pb,
+                                                                            const size_t max_entries,
+                                                                            const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix),
     max_entries(max_entries),
     tree_depth(log2(max_entries))
@@ -21,12 +21,12 @@ set_membership_proof_variable<FieldT>::set_membership_proof_variable(protoboard<
     if (tree_depth > 0)
     {
         address_bits.allocate(pb, tree_depth, FMT(annotation_prefix, " address_bits"));
-        merkle_path.reset(new merkle_authentication_path_variable<FieldT>(pb, tree_depth, FMT(annotation_prefix, " merkle_path")));
+        merkle_path.reset(new merkle_authentication_path_variable<FieldT, HashT>(pb, tree_depth, FMT(annotation_prefix, " merkle_path")));
     }
 }
 
-template<typename FieldT>
-void set_membership_proof_variable<FieldT>::generate_r1cs_constraints()
+template<typename FieldT, typename HashT>
+void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_constraints()
 {
     if (tree_depth > 0)
     {
@@ -38,8 +38,8 @@ void set_membership_proof_variable<FieldT>::generate_r1cs_constraints()
     }
 }
 
-template<typename FieldT>
-void set_membership_proof_variable<FieldT>::generate_r1cs_witness(const set_membership_proof &proof)
+template<typename FieldT, typename HashT>
+void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const set_membership_proof &proof)
 {
     if (tree_depth > 0)
     {
@@ -48,8 +48,8 @@ void set_membership_proof_variable<FieldT>::generate_r1cs_witness(const set_memb
     }
 }
 
-template<typename FieldT>
-set_membership_proof set_membership_proof_variable<FieldT>::get_membership_proof() const
+template<typename FieldT, typename HashT>
+set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membership_proof() const
 {
     set_membership_proof result;
 
@@ -66,12 +66,12 @@ set_membership_proof set_membership_proof_variable<FieldT>::get_membership_proof
     return result;
 }
 
-template<typename FieldT>
-r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT>::as_r1cs_variable_assignment(const set_membership_proof &proof)
+template<typename FieldT, typename HashT>
+r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT, HashT>::as_r1cs_variable_assignment(const set_membership_proof &proof)
 {
     protoboard<FieldT> pb;
     const size_t max_entries = (1ul << (proof.merkle_path.size()));
-    set_membership_proof_variable<FieldT> proof_variable(pb, max_entries, "proof_variable");
+    set_membership_proof_variable<FieldT, HashT> proof_variable(pb, max_entries, "proof_variable");
     proof_variable.generate_r1cs_witness(proof);
 
     return pb.full_variable_assignment();

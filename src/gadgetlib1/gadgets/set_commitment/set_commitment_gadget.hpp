@@ -15,29 +15,29 @@
 
 namespace libsnark {
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 using set_commitment_variable = digest_variable<FieldT>;
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 class set_commitment_gadget : public gadget<FieldT> {
 private:
     std::shared_ptr<block_variable<FieldT> > element_block;
     std::shared_ptr<digest_variable<FieldT> > element_digest;
-    std::shared_ptr<CRH_with_bit_out_gadget<FieldT> > hash_element;
-    std::shared_ptr<merkle_tree_check_read_gadget<FieldT> > check_membership;
+    std::shared_ptr<HashT> hash_element;
+    std::shared_ptr<merkle_tree_check_read_gadget<FieldT, HashT> > check_membership;
 
 public:
     size_t tree_depth;
     pb_variable_array<FieldT> element_bits;
-    set_commitment_variable<FieldT> root_digest;
-    set_membership_proof_variable<FieldT> proof;
+    set_commitment_variable<FieldT, HashT> root_digest;
+    set_membership_proof_variable<FieldT, HashT> proof;
     pb_linear_combination<FieldT> check_successful;
 
     set_commitment_gadget(protoboard<FieldT> &pb,
                           const size_t max_entries,
                           const pb_variable_array<FieldT> &element_bits,
-                          const set_commitment_variable<FieldT> &root_digest,
-                          const set_membership_proof_variable<FieldT> &proof,
+                          const set_commitment_variable<FieldT, HashT> &root_digest,
+                          const set_membership_proof_variable<FieldT, HashT> &proof,
                           const pb_linear_combination<FieldT> &check_successful,
                           const std::string &annotation_prefix);
 
@@ -47,7 +47,7 @@ public:
     static size_t root_size_in_bits();
 };
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 void test_set_commitment_gadget();
 
 } // libsnark

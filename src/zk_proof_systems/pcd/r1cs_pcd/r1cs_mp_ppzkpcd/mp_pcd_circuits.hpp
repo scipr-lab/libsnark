@@ -88,9 +88,9 @@ public:
     pb_variable_array<FieldT> padded_translation_step_vk_and_outgoing_message_digest;
     std::vector<pb_variable_array<FieldT> > padded_commitment_and_incoming_messages_digest;
 
-    std::shared_ptr<set_commitment_variable<FieldT> > commitment;
-    std::vector<set_membership_proof_variable<FieldT> > membership_proofs;
-    std::vector<set_commitment_gadget<FieldT> > membership_checkers;
+    std::shared_ptr<set_commitment_variable<FieldT, CRH_with_bit_out_gadget<FieldT> > > commitment;
+    std::vector<set_membership_proof_variable<FieldT, CRH_with_bit_out_gadget<FieldT> > > membership_proofs;
+    std::vector<set_commitment_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> > > membership_checkers;
     pb_variable_array<FieldT> membership_check_results;
     pb_variable<FieldT> common_type;
     pb_variable_array<FieldT> common_type_check_aux;

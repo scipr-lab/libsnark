@@ -15,11 +15,11 @@
 
 namespace libsnark {
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 class set_membership_proof_variable : public gadget<FieldT> {
 public:
     pb_variable_array<FieldT> address_bits;
-    std::shared_ptr<merkle_authentication_path_variable<FieldT> > merkle_path;
+    std::shared_ptr<merkle_authentication_path_variable<FieldT, HashT> > merkle_path;
 
     const size_t max_entries;
     const size_t tree_depth;

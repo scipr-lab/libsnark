@@ -16,20 +16,20 @@
 
 namespace libsnark {
 
-template<typename FieldT>
-merkle_tree_check_update_gadget<FieldT>::merkle_tree_check_update_gadget(protoboard<FieldT> &pb,
-                                                                         const size_t tree_depth,
-                                                                         const pb_variable_array<FieldT> &address_bits,
-                                                                         const digest_variable<FieldT> &prev_leaf_digest,
-                                                                         const digest_variable<FieldT> &prev_root_digest,
-                                                                         const merkle_authentication_path_variable<FieldT> &prev_path,
-                                                                         const digest_variable<FieldT> &next_leaf_digest,
-                                                                         const digest_variable<FieldT> &next_root_digest,
-                                                                         const merkle_authentication_path_variable<FieldT> &next_path,
-                                                                         const pb_linear_combination<FieldT> &update_successful,
-                                                                         const std::string &annotation_prefix) :
-gadget<FieldT>(pb, annotation_prefix),
-    digest_size(knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len()),
+template<typename FieldT, typename HashT>
+merkle_tree_check_update_gadget<FieldT, HashT>::merkle_tree_check_update_gadget(protoboard<FieldT> &pb,
+                                                                                const size_t tree_depth,
+                                                                                const pb_variable_array<FieldT> &address_bits,
+                                                                                const digest_variable<FieldT> &prev_leaf_digest,
+                                                                                const digest_variable<FieldT> &prev_root_digest,
+                                                                                const merkle_authentication_path_variable<FieldT, HashT> &prev_path,
+                                                                                const digest_variable<FieldT> &next_leaf_digest,
+                                                                                const digest_variable<FieldT> &next_root_digest,
+                                                                                const merkle_authentication_path_variable<FieldT, HashT> &next_path,
+                                                                                const pb_linear_combination<FieldT> &update_successful,
+                                                                                const std::string &annotation_prefix) :
+    gadget<FieldT>(pb, annotation_prefix),
+    digest_size(HashT::get_digest_len()),
     tree_depth(tree_depth),
     address_bits(address_bits),
     prev_leaf_digest(prev_leaf_digest),
@@ -43,8 +43,6 @@ gadget<FieldT>(pb, annotation_prefix),
     assert(tree_depth > 0);
     assert(tree_depth == address_bits.size());
 
-    knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(2*digest_size);
-
     for (size_t i = 0; i < tree_depth-1; ++i)
     {
         prev_internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " prev_internal_output_%zu", i)));
@@ -57,12 +55,12 @@ gadget<FieldT>(pb, annotation_prefix),
     {
         block_variable<FieldT> prev_inp(pb, prev_path.left_digests[i], prev_path.right_digests[i], FMT(this->annotation_prefix, " prev_inp_%zu", i));
         prev_hasher_inputs.emplace_back(prev_inp);
-        prev_hashers.emplace_back(CRH_with_bit_out_gadget<FieldT>(pb, 2*digest_size, prev_inp, (i == 0 ? prev_root_digest : prev_internal_output[i-1]),
+        prev_hashers.emplace_back(HashT(pb, 2*digest_size, prev_inp, (i == 0 ? prev_root_digest : prev_internal_output[i-1]),
                                                                   FMT(this->annotation_prefix, " prev_hashers_%zu", i)));
 
         block_variable<FieldT> next_inp(pb, next_path.left_digests[i], next_path.right_digests[i], FMT(this->annotation_prefix, " next_inp_%zu", i));
         next_hasher_inputs.emplace_back(next_inp);
-        next_hashers.emplace_back(CRH_with_bit_out_gadget<FieldT>(pb, 2*digest_size, next_inp, (i == 0 ? *computed_next_root : next_internal_output[i-1]),
+        next_hashers.emplace_back(HashT(pb, 2*digest_size, next_inp, (i == 0 ? *computed_next_root : next_internal_output[i-1]),
                                                                   FMT(this->annotation_prefix, " next_hashers_%zu", i)));
     }
 
@@ -79,8 +77,8 @@ gadget<FieldT>(pb, annotation_prefix),
     check_next_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_next_root->bits, next_root_digest.bits, update_successful, FieldT::capacity(), FMT(annotation_prefix, " check_next_root")));
 }
 
-template<typename FieldT>
-void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_constraints()
+template<typename FieldT, typename HashT>
+void merkle_tree_check_update_gadget<FieldT, HashT>::generate_r1cs_constraints()
 {
     /* ensure correct hash computations */
     for (size_t i = 0; i < tree_depth; ++i)
@@ -128,8 +126,8 @@ void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_constraints()
     check_next_root->generate_r1cs_constraints(false, false);
 }
 
-template<typename FieldT>
-void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_witness()
+template<typename FieldT, typename HashT>
+void merkle_tree_check_update_gadget<FieldT, HashT>::generate_r1cs_witness()
 {
     /* do the hash computations bottom-up */
     for (int i = tree_depth-1; i >= 0; --i)
@@ -156,17 +154,16 @@ void merkle_tree_check_update_gadget<FieldT>::generate_r1cs_witness()
     check_next_root->generate_r1cs_witness();
 }
 
-template<typename FieldT>
-size_t merkle_tree_check_update_gadget<FieldT>::root_size_in_bits()
+template<typename FieldT, typename HashT>
+size_t merkle_tree_check_update_gadget<FieldT, HashT>::root_size_in_bits()
 {
-    return knapsack_CRH_with_bit_out_gadget<FieldT>::get_digest_len();
+    return HashT::get_digest_len();
 }
 
-template<typename FieldT>
-size_t merkle_tree_check_update_gadget<FieldT>::expected_constraints(const size_t tree_depth)
+template<typename FieldT, typename HashT>
+size_t merkle_tree_check_update_gadget<FieldT, HashT>::expected_constraints(const size_t tree_depth)
 {
     /* NB: this includes path constraints */
-    typedef CRH_with_bit_out_gadget<FieldT> HashT;
     const size_t prev_hasher_constraints = tree_depth * HashT::expected_constraints(false);
     const size_t next_hasher_constraints = tree_depth * HashT::expected_constraints(true);
     const size_t prev_authentication_path_constraints = 2 * tree_depth * HashT::get_digest_len();
@@ -180,12 +177,11 @@ size_t merkle_tree_check_update_gadget<FieldT>::expected_constraints(const size_
             aux_equality_constraints);
 }
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 void test_merkle_tree_check_update_gadget()
 {
     /* prepare test */
-    const size_t digest_len = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
-    knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(2*digest_len);
+    const size_t digest_len = HashT::get_digest_len();
 
     const size_t tree_depth = 16;
     std::vector<merkle_authentication_node> prev_path(tree_depth);
@@ -214,8 +210,8 @@ void test_merkle_tree_check_update_gadget()
         bit_vector store_block = prev_store_hash;
         store_block.insert(computed_is_right ? store_block.begin() : store_block.end(), other.begin(), other.end());
 
-        bit_vector load_h = CRH_with_bit_out_gadget<FieldT>::get_hash(load_block);
-        bit_vector store_h = CRH_with_bit_out_gadget<FieldT>::get_hash(store_block);
+        bit_vector load_h = HashT::get_hash(load_block);
+        bit_vector store_h = HashT::get_hash(store_block);
 
         prev_path[level] = other;
 
@@ -232,13 +228,13 @@ void test_merkle_tree_check_update_gadget()
     address_bits_va.allocate(pb, tree_depth, "address_bits");
     digest_variable<FieldT> prev_leaf_digest(pb, digest_len, "prev_leaf_digest");
     digest_variable<FieldT> prev_root_digest(pb, digest_len, "prev_root_digest");
-    merkle_authentication_path_variable<FieldT> prev_path_var(pb, tree_depth, "prev_path_var");
+    merkle_authentication_path_variable<FieldT, HashT> prev_path_var(pb, tree_depth, "prev_path_var");
     digest_variable<FieldT> next_leaf_digest(pb, digest_len, "next_leaf_digest");
     digest_variable<FieldT> next_root_digest(pb, digest_len, "next_root_digest");
-    merkle_authentication_path_variable<FieldT> next_path_var(pb, tree_depth, "next_path_var");
-    merkle_tree_check_update_gadget<FieldT> mls(pb, tree_depth, address_bits_va,
-                                                prev_leaf_digest, prev_root_digest, prev_path_var,
-                                                next_leaf_digest, next_root_digest, next_path_var, ONE, "mls");
+    merkle_authentication_path_variable<FieldT, HashT> next_path_var(pb, tree_depth, "next_path_var");
+    merkle_tree_check_update_gadget<FieldT, HashT> mls(pb, tree_depth, address_bits_va,
+                                                       prev_leaf_digest, prev_root_digest, prev_path_var,
+                                                       next_leaf_digest, next_root_digest, next_path_var, ONE, "mls");
 
     prev_path_var.generate_r1cs_constraints();
     mls.generate_r1cs_constraints();
@@ -260,7 +256,7 @@ void test_merkle_tree_check_update_gadget()
     assert(pb.is_satisfied());
 
     const size_t num_constraints = pb.num_constraints();
-    const size_t expected_constraints = merkle_tree_check_update_gadget<FieldT>::expected_constraints(tree_depth);
+    const size_t expected_constraints = merkle_tree_check_update_gadget<FieldT, HashT>::expected_constraints(tree_depth);
     assert(num_constraints == expected_constraints);
 }
 

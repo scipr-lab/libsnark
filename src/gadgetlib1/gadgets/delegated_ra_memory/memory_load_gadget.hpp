@@ -17,8 +17,8 @@
 
 namespace libsnark {
 
-template<typename FieldT>
-using memory_load_gadget = merkle_tree_check_read_gadget<FieldT>;
+template<typename FieldT, typename HashT>
+using memory_load_gadget = merkle_tree_check_read_gadget<FieldT, HashT>;
 
 } // libsnark
 

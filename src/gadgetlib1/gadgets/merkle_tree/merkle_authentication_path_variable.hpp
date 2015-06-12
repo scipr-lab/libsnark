@@ -14,11 +14,10 @@
 
 namespace libsnark {
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 class merkle_authentication_path_variable : public gadget<FieldT> {
 public:
 
-    const size_t digest_size;
     const size_t tree_depth;
     std::vector<digest_variable<FieldT> > left_digests;
     std::vector<digest_variable<FieldT> > right_digests;

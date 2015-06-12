@@ -32,7 +32,7 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
     assert(compliance_predicate.has_equal_input_lengths());
     const size_t translation_step_vk_size_in_bits = r1cs_ppzksnark_verification_key_variable<ppT>::size_in_bits(mp_translation_step_pcd_circuit_maker<other_curve<ppT> >::input_size_in_elts());
     const size_t padded_verifier_input_size = mp_translation_step_pcd_circuit_maker<other_curve<ppT> >::input_capacity_in_bits();
-    const size_t commitment_size = set_commitment_gadget<FieldT>::root_size_in_bits();
+    const size_t commitment_size = set_commitment_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> >::root_size_in_bits();
 
     const size_t output_block_size = commitment_size + outgoing_msg_size_in_bits;
     const size_t max_incoming_payload_length = *std::max_element(compliance_predicate.incoming_message_payload_lengths.begin(), compliance_predicate.incoming_message_payload_lengths.end());
@@ -103,7 +103,7 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
     }
 
     /* allocate commitment, verification key(s) and membership checker(s)/proof(s) */
-    commitment.reset(new set_commitment_variable<FieldT>(pb, commitment_size, "commitment"));
+    commitment.reset(new set_commitment_variable<FieldT, CRH_with_bit_out_gadget<FieldT> >(pb, commitment_size, "commitment"));
 
     print_indent(); printf("* %s perform same type optimization for compliance predicate with type %zu\n",
                            (compliance_predicate.relies_on_same_type_inputs ? "Will" : "Will NOT"),
@@ -118,15 +118,15 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
         translation_step_vks_bits[0].allocate(pb, translation_step_vk_size_in_bits, "translation_step_vk_bits");
         membership_check_results.allocate(pb, 1, "membership_check_results");
 
-        membership_proofs.emplace_back(set_membership_proof_variable<FieldT>(pb,
-                                                                             max_number_of_predicates,
-                                                                             "membership_proof"));
-        membership_checkers.emplace_back(set_commitment_gadget<FieldT>(pb,
-                                                                       max_number_of_predicates,
-                                                                       translation_step_vks_bits[0],
-                                                                       *commitment,
-                                                                       membership_proofs[0],
-                                                                       membership_check_results[0], "membership_checker"));
+        membership_proofs.emplace_back(set_membership_proof_variable<FieldT, CRH_with_bit_out_gadget<FieldT>>(pb,
+                                                                                                              max_number_of_predicates,
+                                                                                                              "membership_proof"));
+        membership_checkers.emplace_back(set_commitment_gadget<FieldT, CRH_with_bit_out_gadget<FieldT>>(pb,
+                                                                                                        max_number_of_predicates,
+                                                                                                        translation_step_vks_bits[0],
+                                                                                                        *commitment,
+                                                                                                        membership_proofs[0],
+                                                                                                        membership_check_results[0], "membership_checker"));
     }
     else
     {
@@ -138,16 +138,16 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
         {
             translation_step_vks_bits[i].allocate(pb, translation_step_vk_size_in_bits, FMT("", "translation_step_vks_bits_%zu", i));
 
-            membership_proofs.emplace_back(set_membership_proof_variable<FieldT>(pb,
-                                                                                 max_number_of_predicates,
-                                                                                 FMT("", "membership_proof_%zu", i)));
-            membership_checkers.emplace_back(set_commitment_gadget<FieldT>(pb,
-                                                                           max_number_of_predicates,
-                                                                           translation_step_vks_bits[i],
-                                                                           *commitment,
-                                                                           membership_proofs[i],
-                                                                           membership_check_results[i],
-                                                                           FMT("", "membership_checkers_%zu", i)));
+            membership_proofs.emplace_back(set_membership_proof_variable<FieldT, CRH_with_bit_out_gadget<FieldT> >(pb,
+                                                                                                                   max_number_of_predicates,
+                                                                                                                   FMT("", "membership_proof_%zu", i)));
+            membership_checkers.emplace_back(set_commitment_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> >(pb,
+                                                                                                             max_number_of_predicates,
+                                                                                                             translation_step_vks_bits[i],
+                                                                                                             *commitment,
+                                                                                                             membership_proofs[i],
+                                                                                                             membership_check_results[i],
+                                                                                                             FMT("", "membership_checkers_%zu", i)));
         }
     }
 
@@ -191,10 +191,10 @@ mp_compliance_step_pcd_circuit_maker<ppT>::mp_compliance_step_pcd_circuit_maker(
     {
         commitment_and_incoming_messages_digest_bits[i].allocate(pb, digest_size * field_logsize(), FMT("", "commitment_and_incoming_messages_digest_bits_%zu", i));
         unpack_commitment_and_incoming_message_digests.emplace_back(multipacking_gadget<FieldT>(pb,
-                                                                                        commitment_and_incoming_messages_digest_bits[i],
-                                                                                        commitment_and_incoming_message_digests[i],
-                                                                                        field_logsize(),
-                                                                                        FMT("", "unpack_commitment_and_incoming_message_digests_%zu", i)));
+                                                                                                commitment_and_incoming_messages_digest_bits[i],
+                                                                                                commitment_and_incoming_message_digests[i],
+                                                                                                field_logsize(),
+                                                                                                FMT("", "unpack_commitment_and_incoming_message_digests_%zu", i)));
 
         verifier_input.emplace_back(commitment_and_incoming_messages_digest_bits[i]);
         while (verifier_input[i].size() < padded_verifier_input_size)

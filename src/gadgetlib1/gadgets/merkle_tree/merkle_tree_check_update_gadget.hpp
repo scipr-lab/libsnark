@@ -26,16 +26,16 @@
 
 namespace libsnark {
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 class merkle_tree_check_update_gadget : public gadget<FieldT> {
 private:
 
-    std::vector<CRH_with_bit_out_gadget<FieldT> > prev_hashers;
+    std::vector<HashT> prev_hashers;
     std::vector<block_variable<FieldT> > prev_hasher_inputs;
     std::vector<digest_selector_gadget<FieldT> > prev_propagators;
     std::vector<digest_variable<FieldT> > prev_internal_output;
 
-    std::vector<CRH_with_bit_out_gadget<FieldT> > next_hashers;
+    std::vector<HashT> next_hashers;
     std::vector<block_variable<FieldT> > next_hasher_inputs;
     std::vector<digest_selector_gadget<FieldT> > next_propagators;
     std::vector<digest_variable<FieldT> > next_internal_output;
@@ -51,10 +51,10 @@ public:
     pb_variable_array<FieldT> address_bits;
     digest_variable<FieldT> prev_leaf_digest;
     digest_variable<FieldT> prev_root_digest;
-    merkle_authentication_path_variable<FieldT> prev_path;
+    merkle_authentication_path_variable<FieldT, HashT> prev_path;
     digest_variable<FieldT> next_leaf_digest;
     digest_variable<FieldT> next_root_digest;
-    merkle_authentication_path_variable<FieldT> next_path;
+    merkle_authentication_path_variable<FieldT, HashT> next_path;
     pb_linear_combination<FieldT> update_successful;
 
     /* Note that while it is necessary to generate R1CS constraints
@@ -66,10 +66,10 @@ public:
                                     const pb_variable_array<FieldT> &address_bits,
                                     const digest_variable<FieldT> &prev_leaf_digest,
                                     const digest_variable<FieldT> &prev_root_digest,
-                                    const merkle_authentication_path_variable<FieldT> &prev_path,
+                                    const merkle_authentication_path_variable<FieldT, HashT> &prev_path,
                                     const digest_variable<FieldT> &next_leaf_digest,
                                     const digest_variable<FieldT> &next_root_digest,
-                                    const merkle_authentication_path_variable<FieldT> &next_path,
+                                    const merkle_authentication_path_variable<FieldT, HashT> &next_path,
                                     const pb_linear_combination<FieldT> &update_successful,
                                     const std::string &annotation_prefix);
 
@@ -81,7 +81,7 @@ public:
     static size_t expected_constraints(const size_t tree_depth);
 };
 
-template<typename FieldT>
+template<typename FieldT, typename HashT>
 void test_merkle_tree_check_update_gadget();
 
 } // libsnark

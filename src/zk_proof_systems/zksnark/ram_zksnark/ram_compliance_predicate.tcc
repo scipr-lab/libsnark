@@ -333,14 +333,14 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     prev_pc_val.allocate(this->pb, value_size, "prev_pc_val");
     prev_pc_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, prev_pc_val, zero, "prev_pc_val_digest"));
     cur_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, cur->root, zero, "cur_root_digest"));
-    instruction_fetch_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "instruction_fetch_merkle_proof"));
-    instruction_fetch.reset(new memory_load_gadget<FieldT>(this->pb, addr_size,
-                                                           cur->pc_addr,
-                                                           *prev_pc_val_digest,
-                                                           *cur_root_digest,
-                                                           *instruction_fetch_merkle_proof,
-                                                           ONE,
-                                                           "instruction_fetch"));
+    instruction_fetch_merkle_proof.reset(new merkle_authentication_path_variable<FieldT, HashT>(this->pb, addr_size, "instruction_fetch_merkle_proof"));
+    instruction_fetch.reset(new memory_load_gadget<FieldT, HashT>(this->pb, addr_size,
+                                                                  cur->pc_addr,
+                                                                  *prev_pc_val_digest,
+                                                                  *cur_root_digest,
+                                                                  *instruction_fetch_merkle_proof,
+                                                                  ONE,
+                                                                  "instruction_fetch"));
 
     // for next.timestamp = cur.timestamp + 1
     packed_next_timestamp.allocate(this->pb, "packed_next_timestamp");
@@ -359,12 +359,12 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     ls_prev_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_prev_val, zero, "ls_prev_val_digest"));
     ls_next_val_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, ls_next_val, zero, "ls_next_val_digest"));
     next_root_digest.reset(new digest_variable<FieldT>(this->pb, digest_size, next->root, zero, "next_root_digest"));
-    load_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "load_merkle_proof"));
-    store_merkle_proof.reset(new merkle_authentication_path_variable<FieldT>(this->pb, addr_size, "store_merkle_proof"));
-    load_store_checker.reset(new memory_load_store_gadget<FieldT>(this->pb, addr_size, ls_addr,
-                                                                  *ls_prev_val_digest, *cur_root_digest, *load_merkle_proof,
-                                                                  *ls_next_val_digest, *next_root_digest, *store_merkle_proof, is_not_halt_case,
-                                                                  "load_store_checker"));
+    load_merkle_proof.reset(new merkle_authentication_path_variable<FieldT, HashT>(this->pb, addr_size, "load_merkle_proof"));
+    store_merkle_proof.reset(new merkle_authentication_path_variable<FieldT, HashT>(this->pb, addr_size, "store_merkle_proof"));
+    load_store_checker.reset(new memory_load_store_gadget<FieldT, HashT>(this->pb, addr_size, ls_addr,
+                                                                         *ls_prev_val_digest, *cur_root_digest, *load_merkle_proof,
+                                                                         *ls_next_val_digest, *next_root_digest, *store_merkle_proof, is_not_halt_case,
+                                                                         "load_store_checker"));
     /*
       If do_halt = 1: (final case)
       that cur.has_accepted = 1
