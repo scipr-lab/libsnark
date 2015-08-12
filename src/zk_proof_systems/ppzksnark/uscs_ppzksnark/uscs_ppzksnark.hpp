@@ -182,7 +182,7 @@ public:
 
     size_t size_in_bits() const
     {
-        return G1<ppT>::size_in_bits() * G1_size() + G2<ppT>::size_in_bits() * G2_size();
+        return encoded_IC_query.size_in_bits() + 3 * G2<ppT>::size_in_bits();
     }
 
     void print_size() const
