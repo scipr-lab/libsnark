@@ -21,7 +21,7 @@ ifneq ($(NO_GTEST),1)
 # Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
 # See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
 	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
-	LDLIBS += -lgtest -lpthread
+	GTEST_LDLIBS += -lgtest -lpthread
 endif
 
 SRCS = \
@@ -129,7 +129,7 @@ EXECUTABLES = \
 	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 ifneq ($(NO_GTEST),1)
-	EXECUTABLES += \
+	EXECUTABLES_WITH_GTEST = \
 		src/gadgetlib2/examples/tutorial \
 		src/gadgetlib2/tests/gadgetlib2_test
 endif
@@ -181,7 +181,7 @@ endif
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
 ifeq ($(strip $(COMPILE_GTEST)),1)
-all: libgtest.a $(EXECUTABLES) doc
+all: libgtest.a $(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) doc
 else
 all: $(EXECUTABLES) doc
 endif
@@ -208,6 +208,9 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 
 $(EXECUTABLES): %: %.o $(OBJS)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+
+$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS)
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(GTEST_LDLIBS)
 
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)
