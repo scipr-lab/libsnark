@@ -198,7 +198,7 @@ let us know!) See also the notes on [portability](#portability) below.
 
 For example, on a fresh install of Ubuntu 14.04, install the following packages:
 
-    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev python-markdown
+    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev python-markdown libboost-all-dev libssl-dev
 
 Or, on Fedora 20:
 
