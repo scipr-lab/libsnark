@@ -6,13 +6,13 @@
 #* @copyright  MIT license (see LICENSE file)
 #*******************************************************************************/
 
-CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -mtune=native -std=c++11
+CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -mtune=native -std=c++11 -Wfatal-errors
 
 DEPSRC=depsrc
 DEPINST=depinst
 
 LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
-LDLIBS += -lgmpxx -lgmp -lboost_program_options -lcrypto
+LDLIBS += -lgmpxx -lgmp -lboost_program_options -lsupercop -lcrypto
 CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM -DMONTGOMERY_OUTPUT
 DEFAULT_CURVE=BN128
 
@@ -50,6 +50,7 @@ SRCS = \
 	src/common/data_structures/set_commitment.cpp \
 	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
 	src/common/default_types/tinyram_ppzksnark_pp.cpp \
+	src/common/default_types/r1cs_ppzkadsnark_pp.cpp \
 	src/common/default_types/tinyram_zksnark_pp.cpp \
 	src/common/profiling.cpp \
 	src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
@@ -126,7 +127,9 @@ EXECUTABLES = \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
 	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
+	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark \
+	src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
+
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES_WITH_GTEST = \
