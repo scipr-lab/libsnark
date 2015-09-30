@@ -209,10 +209,6 @@ compile it. (Required only when using the default bn128 curve.)
 
     $ ./prepare-depends.sh
 
-If not using bn128 option the depinst directory, referred to in Makefile, needs to be created manually:
-
-    $ mkdir -p depinst/include depinst/src
-
 Then, to compile the library, tests, profiling harness and documentation, run:
 
     $ make

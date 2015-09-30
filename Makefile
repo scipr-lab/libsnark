@@ -6,22 +6,32 @@
 #* @copyright  MIT license (see LICENSE file)
 #*******************************************************************************/
 
-CXXFLAGS += -O2 -Wall -Wextra -Wno-unused-parameter -Wno-comment -march=native -mtune=native -std=c++11 -Wfatal-errors
+# To override these, use "make OPTFLAGS=..." etc.
+CURVE = BN128
+OPTFLAGS = -O2 -march=native -mtune=native
+FEATUREFLAGS = -DUSE_ASM -DMONTGOMERY_OUTPUT
+
+# Initialize this using "CXXFLAGS=... make". The makefile appends to that.
+CXXFLAGS += -std=c++11 -Wall -Wextra -Wno-unused-parameter -Wno-comment -Wfatal-errors $(OPTFLAGS) $(FEATUREFLAGS) -DCURVE_$(CURVE)
 
 DEPSRC=depsrc
 DEPINST=depinst
 
 LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
-LDLIBS += -lgmpxx -lgmp -lboost_program_options -lsupercop -lcrypto
-CXXFLAGS += -I $(DEPINST)/include -I src -DUSE_ASM -DMONTGOMERY_OUTPUT
-DEFAULT_CURVE=BN128
+LDLIBS += -lgmpxx -lgmp -lboost_program_options
+LDLIBS += -lcrypto -ldl -lz       # OpenSSL and its dependencies (needed explicitly for static builds)
+CXXFLAGS += -I $(DEPINST)/include -I src
 
 ifneq ($(NO_GTEST),1)
 	GTESTDIR=/usr/src/gtest
-# Recompile GTest, if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
+# Compile GTest from sourcecode if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
 # See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
-	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo 1)   # Found GTest sourcecode?
+	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo -n 1)
 	GTEST_LDLIBS += -lgtest -lpthread
+endif
+
+ifneq ($(NO_SUPERCOP),1)
+	SUPERCOP_LDLIBS += -lsupercop
 endif
 
 SRCS = \
@@ -74,11 +84,6 @@ SRCS = \
 	src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
 	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
 
-ifeq ($(CURVE),)
-	CURVE = $(DEFAULT_CURVE)
-endif
-CXXFLAGS += -DCURVE_$(CURVE)
-
 ifeq ($(CURVE),BN128)
 	SRCS += \
 	        src/algebra/curves/bn128/bn128_g1.cpp \
@@ -127,14 +132,18 @@ EXECUTABLES = \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
 	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
 	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark \
-	src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
+	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 
 ifneq ($(NO_GTEST),1)
 	EXECUTABLES_WITH_GTEST = \
 		src/gadgetlib2/examples/tutorial \
 		src/gadgetlib2/tests/gadgetlib2_test
+endif
+
+ifneq ($(NO_SUPERCOP),1)
+	EXECUTABLES_WITH_SUPERCOP = \
+		src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
 endif
 
 DOCS= README.html
@@ -151,14 +160,15 @@ ifeq ($(LOWMEM),1)
 	CXXFLAGS += -DLOWMEM
 endif
 
+ifeq ($(PROFILE_OP_COUNTS),1)
+	STATIC = 1
+	CXXFLAGS += -DPROFILE_OP_COUNTS
+endif
+
 ifeq ($(STATIC),1)
 	CXXFLAGS += -static -DSTATIC
 else
 	CXXFLAGS += -fPIC
-endif
-
-ifeq ($(PROFILE_OP_COUNTS),1)
-	CXXFLAGS += -static -DPROFILE_OP_COUNTS
 endif
 
 ifeq ($(MULTICORE),1)
@@ -175,21 +185,24 @@ ifeq ($(DEBUG),1)
 endif
 
 ifeq ($(PERFORMANCE),1)
-        CXXFLAGS += -flto -fuse-linker-plugin
-        CXXFLAGS += -march=native -mtune=native
+        # OPTFLAGS could be changed here, but the default set above is already OK
         CXXFLAGS += -DNDEBUG
+        CXXFLAGS += -flto -fuse-linker-plugin    # enable link-time optimization
         LDFLAGS += -flto
 endif
 
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-ifeq ($(strip $(COMPILE_GTEST)),1)
-all: libgtest.a $(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) doc
-else
-all: $(EXECUTABLES) doc
-endif
+all: $(if $(NO_GTEST),,$(if $(COMPILE_GTEST),libgtest.a) $(EXECUTABLES_WITH_GTEST)) \
+     $(EXECUTABLES) \
+     $(if $(NO_SUPERCOP),,$(EXECUTABLES_WITH_SUPERCOP)) \
+     $(if $(NO_DOCS),,doc)
 
 doc: $(DOCS)
+
+deplib:
+# Placeholder. Some make settings (including the default) require actually running ./prepare-depends
+	mkdir -p $(DEPINST)/lib
 
 # In order to detect changes to #include dependencies. -MMD below generates a .d file for .cpp file. Include the .d file.
 -include $(SRCS:.cpp=.d)
@@ -197,7 +210,7 @@ doc: $(DOCS)
 $(OBJS): %.o: %.cpp
 	$(CXX) -o $@ $< -c -MMD $(CXXFLAGS)
 
-libgtest.a: $(GTESTDIR)/src/gtest-all.cc
+libgtest.a: $(GTESTDIR)/src/gtest-all.cc deplib
 	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
 	$(AR) -rv $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
 
@@ -209,11 +222,14 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/protoboard_UTEST.cpp \
 	src/gadgetlib2/tests/variable_UTEST.cpp
 
-$(EXECUTABLES): %: %.o $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+$(EXECUTABLES): %: %.o $(OBJS) deplib
+	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS)
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(GTEST_LDLIBS)
+$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS) deplib
+	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
+
+$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(OBJS) deplib
+	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
 
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)
@@ -229,11 +245,9 @@ lib:	$(LIBOBJ)
 
 
 $(DOCS): %.html: %.md
-ifneq ($(NO_DOCS),1)
 	markdown_py -f $@ $^ -x toc -x extra --noisy
 #	TODO: Would be nice to enable "-x smartypants" but Ubuntu 12.04 doesn't support that.
 #	TODO: switch to redcarpet, to produce same output as GitHub's processing of README.md. But what about TOC?
-endif
 
 ifeq ($(PREFIX),)
 install:
@@ -246,7 +260,7 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 	mkdir -p $(shell dirname $@)
 	cp $< $@
 
-install: lib $(HEADERS_DEST)
+install: lib $(HEADERS_DEST) deplib
 	mkdir -p $(PREFIX)/lib
 	cp $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
 	cp -rv $(DEPINST)/lib $(PREFIX)
@@ -270,6 +284,6 @@ clean:
 
 # Clean all, including locally-compiled dependencies
 clean-all: clean
-	rm -fr $(DEPSRC) $(DEPINST)
+	$(RM) -fr $(DEPSRC) $(DEPINST)
 
-.PHONY: all clean clean-all doc doxy lib
+.PHONY: all clean clean-all doc doxy lib deplib
