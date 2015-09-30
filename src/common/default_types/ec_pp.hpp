@@ -36,4 +36,18 @@ typedef edwards_pp default_ec_pp;
 } // libsnark
 #endif
 
+#ifdef CURVE_MNT4
+#include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
+namespace libsnark {
+typedef mnt4_pp default_ec_pp;
+} // libsnark
+#endif
+
+#ifdef CURVE_MNT6
+#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
+namespace libsnark {
+typedef mnt6_pp default_ec_pp;
+} // libsnark
+#endif
+
 #endif // EC_PP_HPP_

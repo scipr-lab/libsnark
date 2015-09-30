@@ -8,7 +8,9 @@
 #include "algebra/curves/edwards/edwards_pp.hpp"
 #include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
+#ifdef CURVE_BN128
 #include "algebra/curves/bn128/bn128_pp.hpp"
+#endif
 #include "algebra/curves/alt_bn128/alt_bn128_pp.hpp"
 #include <sstream>
 
@@ -163,9 +165,11 @@ int main(void)
     test_output<G2<alt_bn128_pp> >();
     test_mul_by_q<G2<alt_bn128_pp> >();
 
+#ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
     bn128_pp::init_public_params();
     test_group<G1<bn128_pp> >();
     test_output<G1<bn128_pp> >();
     test_group<G2<bn128_pp> >();
     test_output<G2<bn128_pp> >();
+#endif
 }
