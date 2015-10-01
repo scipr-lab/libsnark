@@ -205,7 +205,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
         nonzero += (v[i].is_zero() ? 0 : 1);
     }
 
-    const size_t num_chunks = std::max(1ul, std::min(nonzero, suggested_num_chunks));
+    const size_t num_chunks = std::max((size_t)1, std::min(nonzero, suggested_num_chunks));
 
     if (!inhibit_profiling_info)
     {
