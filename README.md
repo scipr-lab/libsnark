@@ -54,22 +54,58 @@ For formal definitions and theoretical discussions about these, see
 
 The libsnark library currently provides a C++ implementation of:
 
-1.  A zkSNARK for the NP-complete language "R1CS" (_rank-1 constraint systems_), which is a language that is similar to arithmetic circuit satisfiability.
-2.  Gadget libraries (gadgetlib1 and gadgetlib2) for constructing R1CS instances out of modular "gadget" classes.
+1.  General-purpose proof systems:
+    1.  A preprocessing zkSNARK for the NP-complete language "R1CS"
+        (_Rank-1 Constraint Systems_), which is a language that is similar to arithmetic
+        circuit satisfiability.
+    2. A preprocessing SNARK for a language of arithmetic circuits, "BACS"
+       (_Bilinear Arithmetic Circuit Satisfiability_). This simplifies the writing
+       of NP statements when the additional flexibility of R1CS is not needed.
+       Internally, it reduces to R1CS.
+    3. A preprocessing SNARK for the language "USCS"
+       (_Unitary-Square Constraint Systems_). This abstracts and implements the core
+       contribution of \[DFGK14]
+    4. A preprocessing SNARK for a language of Boolean circuits, "TBCS"
+       (_Two-input Boolean Circuit Satisfiability_). Internally, it reduces to USCS.
+       This is much more  efficient than going through R1CS.
+    5. ADSNARK, a preprocessing SNARKs for proving statements on authenticated
+       data, as described in \[BBFR15].
+    6. Proof-Carrying Data (PCD). This uses recursive composition of SNARKs, as
+       explained in \[BCCT13] and optimized in \[BCTV14b].
+2.  Gadget libraries (gadgetlib1 and gadgetlib2) for constructing R1CS
+    instances out of modular "gadget" classes.
+3.  Examples of applications that use the above proof systems to prove
+    statements about:
+    1. Several toy examples.
+    2. Execution of TinyRAM machine code, as explained in \[BCTV14a] and
+       \[BCGTV13]. (Such machine code can be obtained, e.g., by compiling from C.)
+       This is easily adapted to any other Random Access Machine that satisfies a
+       simple load-store interface.
+    3. A scalable for TinyRAM using Proof-Carrying Data, as explained in \[BCTV14b]
+    4. Zero-knowldge cluster MapReduce, as explained in \[CTV15].
 
-Future releases of libsnark will add many examples of R1CS instances, including those for checking execution of TinyRAM machine code, as explained in \[BCTV14] and \[BCGTV13]; in turn, such machine code can be obtained, e.g., by compiling from C.
+The zkSNARK construction implemented by libsnark follows, extends, and
+optimizes the approach described in \[BCTV14], itself an extension of
+\[BCGTV13], following the approach of \[BCIOP13] and \[GGPR13]. An alternative
+implementation of the basic approach is the _Pinocchio_ system of \[PGHR13].
+See these references for discussions of efficiency aspects that arise in
+practical use of such constructions, as well as security and trust
+considerations.
 
-The zkSNARK construction implemented by libsnark follows, extends, and optimizes the approach described in \[BCTV14], itself an extension of \[BCGTV13], following the approach of \[BCIOP13] and \[GGPR13]. An alternative implementation of the basic approach is the _Pinocchio_ system of \[PGHR13]. See these references for discussions of efficiency aspects that arise in practical use of such constructions, as well as security and trust considerations.
-
-This scheme is a _preprocessing zkSNARK_ (_ppzkSNARK_): before proofs can be created and verified, one needs to first decide on a size/circuit/system representing the NP statements to be proved, and run a _generator_ algorithm to create corresponding public parameters (a long proving key and a short verification key).
+This scheme is a _preprocessing zkSNARK_ (_ppzkSNARK_): before proofs can be
+created and verified, one needs to first decide on a size/circuit/system
+representing the NP statements to be proved, and run a _generator_ algorithm to
+create corresponding public parameters (a long proving key and a short
+verification key).
 
 Using the library involves the following high-level steps:
 
-1.  Express the statements to be proved as a R1CS, by writing C++
-    code that creates these constraints with the help of gadgetlib1 or gadgetlib2.
-    Link this code together with libsnark.
-2.  Use libsnark's generator algorithm to create the public parameters for this R1CS
-    (once and for all).
+1.  Express the statements to be proved as an R1CS (or any of the other
+    languages above, such as arithmetic circuits, Boolean circuits, or TinyRAM).
+    This is done by writing C++ code that constructs an R1CS, and linking this code
+    together with libsnark
+2.  Use libsnark's generator algorithm to create the public parameters for this
+    statement (once and for all).
 3.  Use libsnark's prover algorithm to create proofs of true statements about
     the satisfiability of the R1CS.
 4.  Use libsnark's verifier algorithm to check proofs for alleged statements.
@@ -134,24 +170,18 @@ complex R1CS instances can be built bottom up.
 
 ### gadgetlib1
 
-This library is a minimalistic library that only seeks to support basic
-functionality for the construction of R1CS instances. Moreover, its design is
-based on templates (as does the ppzkSNARK code) to efficiently support
-working on multiple elliptic curves simultaneously.
+This is a low-level library which expose all features of the preprocessing
+zkSNARK for R1CS. Its design is based on templates (as does the ppzkSNARK code)
+to efficiently support working on multiple elliptic curves simultaneously. This
+library is used for most of the constraint-building in libsnark, both internal
+(reductions and Proof-Carrying Data) and examples applications.
 
 ### gadgetlib2
 
-This library provides support for constructing systems of polynomial equations
-and, in particular, also R1CS instances. It is better documented and easier to use
-than gadgetlib1, and its interface does not use templates.
-
-### Choice and stability
-
-We advise new uses of libsnark to use gadgetlib2, unless the template features of
-gadgetlib1 are specifically required. In the future, we plan to bring the template
-features to gadgetlib2 as well. Note that (consequentially) the constraint library
-interface and its implementation are in flux, and future versions of libsnark are
-likely to break compatibility.
+This is an alternative library for constructing systems of polynomial equations
+and, in particular, also R1CS instances. It is better documented and easier to
+use than gadgetlib1, and its interface does not use templates. However, fewer
+useful gadgets are provided.
 
 
 --------------------------------------------------------------------------------
@@ -204,8 +234,8 @@ Or, on Fedora 20:
 
     $ sudo yum install gcc-c++ make git gmp-devel procps-ng-devel gtest-devel python-markdown
 
-Run the following, to fetch \[ate-pairing] from its Github repo and
-compile it. (Required only when using the default bn128 curve.)
+Run the following, to fetch dependencies from their GitHub repos and compile them.
+(Not required if you set `CURVE` to other than the default `BN128` and also set `NO_SUPERCOP=1`.)
 
     $ ./prepare-depends.sh
 
@@ -234,16 +264,35 @@ To build the static library `libsnark.a`, run:
 
     $ make lib STATIC=1
 
-As for Cygwin, it should suffice to install g++ and libgmp using the graphical installer and use:
+Note that static compilation requires static versions of all libraries it depends on.
+It may help to minize these dependencies by appending
+`CURVE=ALT_BN128 NO_PROCPS=1 NO_GTEST=1 NO_SUPERCOP=1`. On Fedora 21, the requisite 
+library RPM dependencies are then: 
+`boost-static glibc-static gmp-static libstdc++-static openssl-static zlib-static
+ boost-devel glibc-devel gmp-devel gmp-devel libstdc++-devel openssl-devel openssl-devel`.
+
+
+### Building on Windows using Cygwin
+Install Cygwin using the graphical installer, including the `g++`, `libgmp`
+and `git` packages. Then disable the dependencies not easily supported under CygWin,
+using:
 
     $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
 
-As for Mac OS X, it should suffice to install GMP from MacPorts (`port install gmp`) and use:
+
+### Building on Mac OS X
+
+On Mac OS X, install GMP from MacPorts (`port install gmp`). Then disable the
+dependencies not easily supported under CygWin, using:
 
     $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
 
-MacPorts does not write its libraries into standard system folders, so you might need to explicitly provide the paths to the header files and libraries by appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line above.
-Similarly, to pass the paths to ate-pairing you would run `INC_DIR=-I/opt/local/include LIB_DIR=-L/opt/local/lib ./prepare-depends.sh` instead of `./prepare-depends.sh` above.
+MacPorts does not write its libraries into standard system folders, so you
+might need to explicitly provide the paths to the header files and libraries by
+appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line
+above. Similarly, to pass the paths to ate-pairing you would run
+`INC_DIR=-I/opt/local/include LIB_DIR=-L/opt/local/lib ./prepare-depends.sh`
+instead of `./prepare-depends.sh` above.
 
 --------------------------------------------------------------------------------
 Tutorials
@@ -251,11 +300,18 @@ Tutorials
 
 libsnark includes a tutorial, and some usage examples, for the high-level API.
 
-* `src/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express NP statements as constraint systems. It introduces basic terminology, design overview, and recommended programming style. It also shows how to invoke ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds into a standalone executable.
+* `src/gadgetlib1/examples1` contains a simple example for constructing a
+  constraint system using gadgetlib1.
 
-* `src/gadgetlib1/examples1` contains a simple example for constructing a constraint system using gadgetlib1. gadgetlib1 was the predecessor to gadgetlib2 and shares similar design methodologies.
+* `src/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
+  NP statements as constraint systems. It introduces basic terminology, design
+  overview, and recommended programming style. It also shows how to invoke
+  ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
+  into a standalone executable.
 
-* `r1cs_ppzksnark/examples/demo_r1cs_ppzksnark.cpp` constructs a simple constraint system and runs the ppzksnark. See below for how to run it.
+* `src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
+  constructs a simple constraint system and runs the ppzksnark. See below for how to
+   run it.
 
 
 --------------------------------------------------------------------------------
@@ -264,15 +320,17 @@ Executing profiling example
 
 The command
 
-     $ src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark 1000 10 Fr
+     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
 
-exercises the ppzkSNARK (first generator, then prover, then verifier) on an R1CS instance with 1000 equations and an input consisting of 10 field elements.
+exercises the ppzkSNARK (first generator, then prover, then verifier) on an
+R1CS instance with 1000 equations and an input consisting of 10 field elements.
 
-(If you get the error `zmInit ERR:can't protect`, see the discussion [above](#elliptic-curve-choices).)
+(If you get the error `zmInit ERR:can't protect`, see the discussion
+[above](#elliptic-curve-choices).)
 
 The command
 
-     $ src/r1cs_ppzksnark/examples/demo_r1cs_ppzksnark 1000 10 bytes
+     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
 
 does the same but now the input consists of 10 bytes.
 
@@ -281,13 +339,16 @@ does the same but now the input consists of 10 bytes.
 Build options
 --------------------------------------------------------------------------------
 
-The following flags change the behavior of the compiled code:
+The following flags change the behavior of the compiled code.
+(To override the active conditional define, use `make FEATUREFLAGS='-Dname -Dname ...`. 
+You can see the default at the top of the Makefile.)
 
 *    define `BINARY_OUTPUT`
 
      In serialization, output raw binary data (instead of decimal, when not set).
 
-*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
+*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: 
+     ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
@@ -309,11 +370,16 @@ The following flags change the behavior of the compiled code:
 
 *   `make NO_GTEST=1`
 
-     Do not link against GTest. The tutorial and test suite of gadgetlib2 tutorial won't be compiled if this option is enabled.
+     Do not link against GTest. The tutorial and test suite of gadgetlib2 tutorial won't be compiled.
+
+*   `make NO_SUPERCOP=1`
+
+     Do not link against SUPERCOP for optimized crypto. The ADSNARK executables will not be built.
 
 *   `make MULTICORE=1`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
+     (The default is single-core.)
 
 *   define `NO_PT_COMPRESSION`
 
@@ -324,7 +390,7 @@ The following flags change the behavior of the compiled code:
 *   define `MONTGOMERY_OUTPUT` (on by default)
 
     Serialize Fp elements as their Montgomery representations. If this
-    option is not set then Fp elements are serialized as their
+    option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
 
@@ -332,7 +398,7 @@ The following flags change the behavior of the compiled code:
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
-  curves except bn128.
+    curves except bn128.
 
 *   define `USE_ASM` (on by default)
 
@@ -386,7 +452,7 @@ Tested configurations include:
 
 * Debian jessie with g++ 4.7 on x86-64
 * Debian jessie with clang 3.4 on x86-64
-* Fedora 20 with g++ 4.8.2 on x86-64
+* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
@@ -403,15 +469,18 @@ The directory structure of the libsnark library is as follows:
 * src/ --- main C++ source code, containing the following modules:
     * algebra/ --- fields and elliptic curve groups
     * common/ --- miscellaneous utilities
-    * encoding/ --- cryptographic encoding of group elements
     * gadgetlib1/ --- gadgetlib1, a library to construct R1CS instances
         * gadgets/ --- basic gadgets for gadgetlib1
     * gadgetlib2/ --- gadgetlib2, a library to construct R1CS instances
     * qap/ --- quadratic arithmetic program
         * domains/ --- support for fast interpolation/evaluation, by providing
           FFTs and Lagrange-coefficient computations for various domains
-    * r1cs/ --- interfaces for R1CS instances
-    * r1cs_ppzksnark/ --- preprocessing zk-SNARK for R1CS instances
+    * relations/ --- interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
+        * constraint_satisfaction_problems/ --- R1CS and USCS languages
+        * circuit_satisfaction_problems/ ---  Boolean and arithmetic circuit satisfiability languages
+        * ram_computations/ --- RAM computation languages
+    * zk_proof_systems --- interfaces and implementations of the proof systems
+    * reductions --- reductions between languages (used internally, but contains many examples of building constraints)
 
     Some of these module directories have the following subdirectories:
 
@@ -454,12 +523,23 @@ optimal window sizes.
 References
 --------------------------------------------------------------------------------
 
+\[BBFR15] [
+  _ADSNARK: nearly practical and privacy-preserving proofs on authenticated data_
+](https://eprint.iacr.org/2014/617),
+  Michael Backes, Manuel Barbosa, Dario Fiore, Raphael M. Reischuk,
+  IEEE Symposium on Security and Privacy (Oakland) 2015
+
 \[BCCT12] [
   _From extractable collision resistance to succinct non-Interactive arguments of knowledge, and back again_
-](http://eprint.iacr.org/2011/443)
-  Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer
-  ITCS 2012
+](http://eprint.iacr.org/2011/443),
+  Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer,
+  Innovations in Computer Science (ITCS) 2012
 
+\[BCCT13] [
+  _Recursive composition and bootstrapping for SNARKs and proof-carrying data_
+](http://eprint.iacr.org/2012/095)
+  Nir Bitansky, Ran Canetti, Alessandro Chiesa, Eran Tromer,
+  Symposium on Theory of Computing (STOC) 13
 
 \[BCGTV13] [
   _SNARKs for C: Verifying Program Executions Succinctly and in Zero Knowledge_
@@ -469,33 +549,50 @@ References
 
 \[BCIOP13] [
   _Succinct Non-Interactive Arguments via Linear Interactive Proofs_
-](http://eprint.iacr.org/2012/718)
-  Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth
-  TCC 2013
+](http://eprint.iacr.org/2012/718),
+  Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth,
+  Theory of Cryptography Conference 2013
 
-\[BCTV14] [
+\[BCTV14a] [
   _Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture_
-](http://eprint.iacr.org/2013/879)
-  Eli Ben-Sasson and Alessandro Chiesa and Eran Tromer, Madars Virza
+](http://eprint.iacr.org/2013/879),
+  Eli Ben-Sasson and Alessandro Chiesa and Eran Tromer, Madars Virza,
   USENIX Security 2014
+
+\[BCTV14b] [
+  _Scalable succinct non-interactive arguments via cycles of elliptic curves_
+](https://eprint.iacr.org/2014/595),
+  Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
+  CRYPTO 2014
+
+\[CTV15] [
+  _Cluster computing in zero knowledge_
+](https://eprint.iacr.org/2015/377),
+  Alessandro Chiesa, Eran Tromer, Madars Virza,
+  Eurocrypt 2015
+
+\[DFGK14] [
+  Square span programs with applications to succinct NIZK arguments
+](https://eprint.iacr.org/2014/718),
+  George Danezis, Cedric Fournet, Jens Groth, Markulf Kohlweiss,
+  ASIACCS 2014
 
 \[GGPR13] [
   _Quadratic span programs and succinct NIZKs without PCPs_
-](http://eprint.iacr.org/2012/215)
-  Rosario Gennaro, Craig Gentry, Bryan Parno, Mariana Raykova
+](http://eprint.iacr.org/2012/215),
+  Rosario Gennaro, Craig Gentry, Bryan Parno, Mariana Raykova,
   EUROCRYPT 2013
 
 \[ate-pairing] [
   _High-Speed Software Implementation of the Optimal Ate Pairing over Barreto-Naehrig Curves_
-](https://github.com/herumi/ate-pairing)
+](https://github.com/herumi/ate-pairing),
   MITSUNARI Shigeo, TERUYA Tadanori
 
 \[PGHR13] [
   _Pinocchio: Nearly Practical Verifiable Computation_
-](http://eprint.iacr.org/2013/279)
-  Bryan Parno, Craig Gentry, Jon Howell, Mariana Raykova
-  IEEE S&P 2013
-
+](http://eprint.iacr.org/2013/279),
+  Bryan Parno, Craig Gentry, Jon Howell, Mariana Raykova,
+  IEEE Symposium on Security and Privacy (Oakland) 2013
 
 [SCIPR Lab]: http://www.scipr-lab.org/ (Succinct Computational Integrity and Privacy Research Lab)
 
