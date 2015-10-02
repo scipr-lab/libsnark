@@ -17,7 +17,8 @@ Copyright (c) 2012-2014 SCIPR Lab and contributors (see [AUTHORS] file).
   NOTE: the file you are reading is in Markdown format, which is is fairly readable
   directly, but can be converted into an HTML file with much nicer formatting.
   To do so, run "make doc" (this requires the python-markdown package) and view
-  the resulting file README.html.
+  the resulting file README.html. Alternatively, view the latest HTML version at
+  https://github.com/scipr-lab/libsnark .
 -->
 
 --------------------------------------------------------------------------------
@@ -29,14 +30,15 @@ for proving/verifying, in zero knowledge, the integrity of computations.
 
 A computation can be expressed as an NP statement, in forms such as the following:
 
-- "The C program _foo_, when executed, returns exit code 0 if given the input _bar_ and some auxiliary input _qux_."
+- "The C program _foo_, when executed, returns exit code 0 if given the input _bar_ and some additional input _qux_."
+- "The Boolean circuit _foo_ is satisfiable by some input _qux_."
 - "The arithmetic circuit _foo_ accepts the partial assignment _bar_, when extended into some full assignment _qux_."
 - "The set of constraints _foo_ is satisfiable by the partial assignment _bar_, when extended into some full assignment _qux_."
 
-A prover who knows the witness for the NP statement (i.e., a satisfying input/assignment) can produce a short proof attesting to the truth of the NP statement. This proof can be verified by anyone, and enjoys the following properties.
+A prover who knows the witness for the NP statement (i.e., a satisfying input/assignment) can produce a short proof attesting to the truth of the NP statement. This proof can be verified by anyone, and offers the following properties.
 
 -   __Zero knowledge:__
-    the verifier learns nothing from the proof beside the truth of the statement.
+    the verifier learns nothing from the proof beside the truth of the statement (i.e., the value _qux_, in the above examples, remains secret).
 -   __Succinctness:__
     the proof is short and easy to verify.
 -   __Non-interactivity:__
@@ -340,10 +342,15 @@ Build options
 --------------------------------------------------------------------------------
 
 The following flags change the behavior of the compiled code.
-(To override the active conditional define, use `make FEATUREFLAGS='-Dname -Dname ...`. 
-You can see the default at the top of the Makefile.)
 
-*    define `BINARY_OUTPUT`
+*    `make FEATUREFLAGS='-Dname1 -Dname2 ...'`
+
+     Override the active conditional #define names (you can see the default at the top of the Makefile).
+     The next bullets list the most important conditionally-#defined features.
+     For example, `make FEATUREFLAGS='-DBINARY_OUTPUT'` enables binary output and disables the default
+     assembly optimizations and Montgomery-representation output.
+
+*    #define `BINARY_OUTPUT`
 
      In serialization, output raw binary data (instead of decimal, when not set).
 
@@ -352,11 +359,11 @@ You can see the default at the top of the Makefile.)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
-*   `make DEBUG=1` / define `DEBUG`
+*   `make DEBUG=1` / #define `DEBUG`
 
     Print additional information for debugging purposes.
 
-*   `make LOWMEM=1` / define `LOWMEM`
+*   `make LOWMEM=1` / #define `LOWMEM`
 
     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
@@ -379,33 +386,34 @@ You can see the default at the top of the Makefile.)
 *   `make MULTICORE=1`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
-     (The default is single-core.)
+     This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
+     FFT and multiexponentiation. The default is single-core.
 
-*   define `NO_PT_COMPRESSION`
+*   #define `NO_PT_COMPRESSION`
 
     Do not use point compression.
     This gives much faster serialization times, at the expense of ~2x larger
     sizes for serialized keys and proofs.
 
-*   define `MONTGOMERY_OUTPUT` (on by default)
+*   #define `MONTGOMERY_OUTPUT` (on by default)
 
     Serialize Fp elements as their Montgomery representations. If this
     option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
 
-*   `make PROFILE_OP_COUNTS=1` / define `PROFILE_OP_COUNTS`
+*   `make PROFILE_OP_COUNTS=1` / #define `PROFILE_OP_COUNTS`
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
     curves except bn128.
 
-*   define `USE_ASM` (on by default)
+*   #define `USE_ASM` (on by default)
 
     Use unrolled assembly routines for F[p] arithmetic and faster heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
-*   define `USE_MIXED_ADDITION`
+*   #define `USE_MIXED_ADDITION`
 
     Convert each element of the proving key and verification key to
     affine coordinates. This allows using mixed addition formulas in
@@ -414,7 +422,7 @@ You can see the default at the top of the Makefile.)
 
 *   `make PERFORMANCE=1`
 
-    Enables various compiler optimizations for the current CPU, and disables debugging aids.
+    Enables various compiler optimizations and disables debugging aids.
 
 Not all combinations are tested together or supported by every part of the codebase.
 
@@ -452,7 +460,7 @@ Tested configurations include:
 
 * Debian jessie with g++ 4.7 on x86-64
 * Debian jessie with clang 3.4 on x86-64
-* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64
+* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64 and i686
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
@@ -544,7 +552,7 @@ References
 \[BCGTV13] [
   _SNARKs for C: Verifying Program Executions Succinctly and in Zero Knowledge_
 ](http://eprint.iacr.org/2013/507),
-  Eli Ben-Sasson and Alessandro Chiesa and Daniel Genkin and Eran Tromer, Madars Virza,
+  Eli Ben-Sasson, Alessandro Chiesa, Daniel Genkin, Eran Tromer, Madars Virza,
   CRYPTO 2013
 
 \[BCIOP13] [
@@ -556,7 +564,7 @@ References
 \[BCTV14a] [
   _Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture_
 ](http://eprint.iacr.org/2013/879),
-  Eli Ben-Sasson and Alessandro Chiesa and Eran Tromer, Madars Virza,
+  Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
   USENIX Security 2014
 
 \[BCTV14b] [
