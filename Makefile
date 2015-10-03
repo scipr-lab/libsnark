@@ -193,6 +193,8 @@ endif
 
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
+EXEC_OBJS=$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) )
+
 all: $(if $(NO_GTEST),,$(if $(COMPILE_GTEST),libgtest.a) $(EXECUTABLES_WITH_GTEST)) \
      $(EXECUTABLES) \
      $(if $(NO_SUPERCOP),,$(EXECUTABLES_WITH_SUPERCOP)) \
@@ -207,8 +209,8 @@ deplib:
 # In order to detect changes to #include dependencies. -MMD below generates a .d file for .cpp file. Include the .d file.
 -include $(SRCS:.cpp=.d)
 
-$(OBJS): %.o: %.cpp
-	$(CXX) -o $@ $< -c -MMD $(CXXFLAGS)
+$(OBJS) $(EXEC_OBJS): %.o: %.cpp
+	$(CXX) -o $@   $< -c -MMD $(CXXFLAGS)
 
 libgtest.a: $(GTESTDIR)/src/gtest-all.cc deplib
 	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
