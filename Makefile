@@ -14,19 +14,23 @@ FEATUREFLAGS = -DUSE_ASM -DMONTGOMERY_OUTPUT
 # Initialize this using "CXXFLAGS=... make". The makefile appends to that.
 CXXFLAGS += -std=c++11 -Wall -Wextra -Wno-unused-parameter -Wno-comment -Wfatal-errors $(OPTFLAGS) $(FEATUREFLAGS) -DCURVE_$(CURVE)
 
-DEPSRC=depsrc
-DEPINST=depinst
+DEPSRC = depsrc
+DEPINST = depinst
 
-LDFLAGS += -L $(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
+LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
 LDLIBS += -lgmpxx -lgmp -lboost_program_options
-LDLIBS += -lcrypto -ldl -lz       # OpenSSL and its dependencies (needed explicitly for static builds)
-CXXFLAGS += -I $(DEPINST)/include -I src
+# OpenSSL and its dependencies (needed explicitly for static builds):
+LDLIBS += -lcrypto -ldl -lz
+CXXFLAGS += -I$(DEPINST)/include -Isrc
+# Sentinel file to check existence of this directory (since directories don't work as a Make dependency):
+DEPLIB_EXISTS = $(DEPINST)/lib/.exists    
 
+COMPILE_GTEST :=
 ifneq ($(NO_GTEST),1)
 	GTESTDIR=/usr/src/gtest
 # Compile GTest from sourcecode if we can (e.g., Ubuntu). Otherwise use precompiled one (e.g., Fedora).
 # See https://code.google.com/p/googletest/wiki/FAQ#Why_is_it_not_recommended_to_install_a_pre-compiled_copy_of_Goog .
-	COMPILE_GTEST:=$(shell test -d $(GTESTDIR) && echo -n 1)
+	COMPILE_GTEST :=$(shell test -d $(GTESTDIR) && echo -n 1)
 	GTEST_LDLIBS += -lgtest -lpthread
 endif
 
@@ -142,7 +146,7 @@ EXECUTABLES_WITH_GTEST = \
 EXECUTABLES_WITH_SUPERCOP = \
 	src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
 
-DOCS= README.html
+DOCS = README.html
 
 # For documentation of the following options, see README.md .
 
@@ -183,7 +187,8 @@ endif
 ifeq ($(PERFORMANCE),1)
         OPTFLAGS = -O3 -march=native -mtune=native
         CXXFLAGS += -DNDEBUG
-        CXXFLAGS += -flto -fuse-linker-plugin    # enable link-time optimization
+        # Enable link-time optimization:
+        CXXFLAGS += -flto -fuse-linker-plugin
         LDFLAGS += -flto
 endif
 
@@ -191,16 +196,17 @@ OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
 EXEC_OBJS=$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP))
 
-all: $(if $(NO_GTEST),,$(if $(COMPILE_GTEST),libgtest.a) $(EXECUTABLES_WITH_GTEST)) \
-     $(EXECUTABLES) \
+all: \
+     $(if $(NO_GTEST),,$(EXECUTABLES_WITH_GTEST)) \
      $(if $(NO_SUPERCOP),,$(EXECUTABLES_WITH_SUPERCOP)) \
+     $(EXECUTABLES) \
      $(if $(NO_DOCS),,doc)
 
 doc: $(DOCS)
 
-deplib:
-# Placeholder. Some make settings (including the default) require actually running ./prepare-depends
-	mkdir -p $(DEPINST)/lib
+$(DEPLIB_EXISTS):
+	mkdir -p $(DEPINST)/lib   # Placeholder. Some make settings (including the default) require actually running ./prepare-depends .
+	touch $@
 
 # In order to detect changes to #include dependencies. -MMD below generates a .d file for .cpp file. Include the .d file.
 -include $(SRCS:.cpp=.d)
@@ -208,9 +214,11 @@ deplib:
 $(OBJS) $(EXEC_OBJS): %.o: %.cpp
 	$(CXX) -o $@   $< -c -MMD $(CXXFLAGS)
 
-libgtest.a: $(GTESTDIR)/src/gtest-all.cc deplib
-	$(CXX) -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS) -o $(DEPINST)/lib/gtest-all.o
-	$(AR) -rv $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
+LIBGTESTA = $(DEPINST)/lib/libgtest.a
+
+$(LIBGTESTA): $(GTESTDIR)/src/gtest-all.cc $(DEPLIB_EXISTS)
+	$(CXX) -o $(DEPINST)/lib/gtest-all.o   -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS)
+	$(AR) -rv $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
 
 src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/adapters_UTEST.cpp \
@@ -220,14 +228,14 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/protoboard_UTEST.cpp \
 	src/gadgetlib2/tests/variable_UTEST.cpp
 
-$(EXECUTABLES): %: %.o $(OBJS) deplib
-	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+$(EXECUTABLES): %: %.o $(OBJS) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS) deplib
-	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
+$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(OBJS) deplib
-	$(CXX) -o $@ $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
+$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(OBJS) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
 
 ifeq ($(STATIC),1)
 libsnark.a: $(OBJS)
@@ -235,7 +243,7 @@ libsnark.a: $(OBJS)
 LIBOBJ=libsnark.a
 else
 libsnark.so: $(OBJS)
-	$(CXX) -o $@ $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+	$(CXX) -o $@   $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 LIBOBJ=libsnark.so
 endif
 
@@ -258,7 +266,7 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 	mkdir -p $(shell dirname $@)
 	cp $< $@
 
-install: lib $(HEADERS_DEST) deplib
+install: lib $(HEADERS_DEST) (DEPINST)/lib/.exists
 	mkdir -p $(PREFIX)/lib
 	cp $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
 	cp -rv $(DEPINST)/lib $(PREFIX)
@@ -277,10 +285,10 @@ clean:
 		${patsubst %.cpp,%.d,${SRCS}} \
 		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
-	$(RM) $(DEPINST)/lib/libgtest.a $(DEPINST)/lib/gtest-all.o
+	$(RM) $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
 
 # Clean all, including locally-compiled dependencies
 clean-all: clean
 	$(RM) -fr $(DEPSRC) $(DEPINST)
 
-.PHONY: all clean clean-all doc doxy lib deplib
+.PHONY: all clean clean-all doc doxy lib
