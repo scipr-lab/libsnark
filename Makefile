@@ -185,7 +185,7 @@ ifeq ($(DEBUG),1)
 endif
 
 ifeq ($(PERFORMANCE),1)
-        # OPTFLAGS could be changed here, but the default set above is already OK
+        OPTFLAGS = -O3 -march=native -mtune=native
         CXXFLAGS += -DNDEBUG
         CXXFLAGS += -flto -fuse-linker-plugin    # enable link-time optimization
         LDFLAGS += -flto
