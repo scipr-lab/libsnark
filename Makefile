@@ -135,16 +135,12 @@ EXECUTABLES = \
 	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 
-ifneq ($(NO_GTEST),1)
-	EXECUTABLES_WITH_GTEST = \
-		src/gadgetlib2/examples/tutorial \
-		src/gadgetlib2/tests/gadgetlib2_test
-endif
+EXECUTABLES_WITH_GTEST = \
+	src/gadgetlib2/examples/tutorial \
+	src/gadgetlib2/tests/gadgetlib2_test
 
-ifneq ($(NO_SUPERCOP),1)
-	EXECUTABLES_WITH_SUPERCOP = \
-		src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
-endif
+EXECUTABLES_WITH_SUPERCOP = \
+	src/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark
 
 DOCS= README.html
 
@@ -193,7 +189,7 @@ endif
 
 OBJS=$(patsubst %.cpp,%.o,$(SRCS))
 
-EXEC_OBJS=$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) )
+EXEC_OBJS=$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP))
 
 all: $(if $(NO_GTEST),,$(if $(COMPILE_GTEST),libgtest.a) $(EXECUTABLES_WITH_GTEST)) \
      $(EXECUTABLES) \
@@ -275,10 +271,9 @@ doxy:
 # Clean generated files, except locally-compiled dependencies
 clean:
 	$(RM) \
-		$(OBJS) \
-		$(EXECUTABLES) \
+		$(OBJS) $(EXEC_OBJS) \
+		$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) \
 		$(DOCS) \
-		${patsubst %,%.o,${EXECUTABLES}} \
 		${patsubst %.cpp,%.d,${SRCS}} \
 		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
