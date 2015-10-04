@@ -280,7 +280,7 @@ clean:
 		$(LIB_OBJS) $(EXEC_OBJS) \
 		$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) \
 		$(DOCS) \
-		${patsubst %.cpp,%.d,${LIB_SRCS} ${EXEC_SRCS}} \
+		${patsubst %.o,%.d,${LIB_OBJS} ${EXEC_OBJS}} \
 		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
 	$(RM) $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
