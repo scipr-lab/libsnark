@@ -38,7 +38,7 @@ ifneq ($(NO_SUPERCOP),1)
 	SUPERCOP_LDLIBS += -lsupercop
 endif
 
-SRCS = \
+LIB_SRCS = \
 	src/algebra/curves/alt_bn128/alt_bn128_g1.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_g2.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
@@ -89,7 +89,7 @@ SRCS = \
 	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
 
 ifeq ($(CURVE),BN128)
-	SRCS += \
+	LIB_SRCS += \
 	        src/algebra/curves/bn128/bn128_g1.cpp \
 		src/algebra/curves/bn128/bn128_g2.cpp \
 		src/algebra/curves/bn128/bn128_gt.cpp \
@@ -192,9 +192,8 @@ ifeq ($(PERFORMANCE),1)
         LDFLAGS += -flto
 endif
 
-OBJS=$(patsubst %.cpp,%.o,$(SRCS))
-
-EXEC_OBJS=$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP))
+LIB_OBJS  =$(patsubst %.cpp,%.o,$(LIB_SRCS))
+EXEC_OBJS =$(patsubst %,%.o,$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP))
 
 all: \
      $(if $(NO_GTEST),,$(EXECUTABLES_WITH_GTEST)) \
@@ -208,10 +207,10 @@ $(DEPLIB_EXISTS):
 	mkdir -p $(DEPINST)/lib   # Placeholder. Some make settings (including the default) require actually running ./prepare-depends .
 	touch $@
 
-# In order to detect changes to #include dependencies. -MMD below generates a .d file for .cpp file. Include the .d file.
--include $(SRCS:.cpp=.d)
+# In order to detect changes to #include dependencies. -MMD below generates a .d file for each .o file. Include the .d file.
+-include $(patsubst %.o,%.d, $(LIB_OBJS) $(EXEC_OBJS) )
 
-$(OBJS) $(EXEC_OBJS): %.o: %.cpp
+$(LIB_OBJS) $(EXEC_OBJS): %.o: %.cpp
 	$(CXX) -o $@   $< -c -MMD $(CXXFLAGS)
 
 LIBGTESTA = $(DEPINST)/lib/libgtest.a
@@ -228,27 +227,26 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/protoboard_UTEST.cpp \
 	src/gadgetlib2/tests/variable_UTEST.cpp
 
-$(EXECUTABLES): %: %.o $(OBJS) $(DEPLIB_EXISTS)
-	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+$(EXECUTABLES): %: %.o $(LIB_OBJS) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_GTEST): %: %.o $(OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPLIB_EXISTS)
-	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
+$(EXECUTABLES_WITH_GTEST): %: %.o $(LIB_OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(OBJS) $(DEPLIB_EXISTS)
-	$(CXX) -o $@   $@.o $(OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
+$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIB_OBJS) $(DEPLIB_EXISTS)
+	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
+
+libsnark.a: $(LIB_OBJS)
+	$(AR) crs $@ $^
+
+libsnark.so: $(LIB_OBJS)
+	$(CXX) -o $@   $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
 ifeq ($(STATIC),1)
-libsnark.a: $(OBJS)
-	$(AR) cr $@ $^
-LIBOBJ=libsnark.a
+lib: libsnark.a
 else
-libsnark.so: $(OBJS)
-	$(CXX) -o $@   $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
-LIBOBJ=libsnark.so
+lib: libsnark.so
 endif
-
-lib:	$(LIBOBJ)
-
 
 $(DOCS): %.html: %.md
 	markdown_py -f $@ $^ -x toc -x extra --noisy
@@ -279,10 +277,10 @@ doxy:
 # Clean generated files, except locally-compiled dependencies
 clean:
 	$(RM) \
-		$(OBJS) $(EXEC_OBJS) \
+		$(LIB_OBJS) $(EXEC_OBJS) \
 		$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) \
 		$(DOCS) \
-		${patsubst %.cpp,%.d,${SRCS}} \
+		${patsubst %.cpp,%.d,${LIB_SRCS} ${EXEC_SRCS}} \
 		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
 	$(RM) $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
