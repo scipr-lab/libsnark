@@ -348,7 +348,7 @@ uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key
     G2<ppT> V_g2       = pk.V_g2_query[0]+ssp_wit.d*pk.V_g2_query[pk.V_g2_query.size()-1];
 
 #ifdef MULTICORE
-    const size_t chunks = 4; //omp_get_max_threads();
+    const size_t chunks = omp_get_max_threads(); // to override, set OMP_NUM_THREADS env var or call omp_set_num_threads()
 #else
     const size_t chunks = 1;
 #endif

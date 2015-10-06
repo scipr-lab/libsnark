@@ -527,7 +527,7 @@ r1cs_ppzkadsnark_keypair<ppT> r1cs_ppzkadsnark_generator(const r1cs_ppzkadsnark_
     print_indent(); printf("* G2 window: %zu\n", g2_window);
 
 #ifdef MULTICORE
-    const size_t chunks = 4; //omp_get_max_threads();
+    const size_t chunks = omp_get_max_threads(); // to override, set OMP_NUM_THREADS env var or call omp_set_num_threads()
 #else
     const size_t chunks = 1;
 #endif
@@ -687,7 +687,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
 #endif
 
 #ifdef MULTICORE
-    const size_t chunks = 4; //omp_get_max_threads();
+    const size_t chunks = omp_get_max_threads(); // to override, set OMP_NUM_THREADS env var or call omp_set_num_threads()
 #else
     const size_t chunks = 1;
 #endif
