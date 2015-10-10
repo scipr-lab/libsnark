@@ -116,7 +116,7 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
     }
     leave_block("Shuffle inputs");
 
-    enter_block("Execute FFTs");
+    enter_block("Execute sub-FFTs");
     const FieldT omega_num_cpus = omega^num_cpus;
 
 #ifdef MULTICORE
@@ -126,7 +126,7 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
     {
         _basic_serial_radix2_FFT(tmp[j], omega_num_cpus);
     }
-    leave_block("Execute FFTs");
+    leave_block("Execute sub-FFTs");
 
     enter_block("Re-shuffle outputs");
 
@@ -171,12 +171,14 @@ void _basic_parallel_radix2_FFT(std::vector<FieldT> &a, const FieldT &omega)
 template<typename FieldT>
 void _multiply_by_coset(std::vector<FieldT> &a, const FieldT &g)
 {
+    //enter_block("Multiply by coset");
     FieldT u = g;
     for (size_t i = 1; i < a.size(); ++i)
     {
         a[i] *= u;
         u *= g;
     }
+    //leave_block("Multiply by coset");
 }
 
 template<typename FieldT>

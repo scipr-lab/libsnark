@@ -31,13 +31,16 @@ basic_radix2_domain<FieldT>::basic_radix2_domain(const size_t m) : evaluation_do
 template<typename FieldT>
 void basic_radix2_domain<FieldT>::FFT(std::vector<FieldT> &a)
 {
+    enter_block("Execute FFT");
     assert(a.size() == this->m);
     _basic_radix2_FFT(a, omega);
+    leave_block("Execute FFT");
 }
 
 template<typename FieldT>
 void basic_radix2_domain<FieldT>::iFFT(std::vector<FieldT> &a)
 {
+    enter_block("Execute inverse FFT");
     assert(a.size() == this->m);
     _basic_radix2_FFT(a, omega.inverse());
 
@@ -46,20 +49,25 @@ void basic_radix2_domain<FieldT>::iFFT(std::vector<FieldT> &a)
     {
         a[i] *= sconst;
     }
+    leave_block("Execute inverse FFT");
 }
 
 template<typename FieldT>
 void basic_radix2_domain<FieldT>::cosetFFT(std::vector<FieldT> &a, const FieldT &g)
 {
+    enter_block("Execute coset FFT");
     _multiply_by_coset(a, g);
     FFT(a);
+    leave_block("Execute coset FFT");
 }
 
 template<typename FieldT>
 void basic_radix2_domain<FieldT>::icosetFFT(std::vector<FieldT> &a, const FieldT &g)
 {
+    enter_block("Execute inverse coset IFFT");
     iFFT(a);
     _multiply_by_coset(a, g.inverse());
+    leave_block("Execute inverse coset IFFT");
 }
 
 template<typename FieldT>
