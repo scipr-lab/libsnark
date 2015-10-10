@@ -13,10 +13,12 @@
 
 #include "common/profiling.hpp"
 #include <cassert>
+#include <stdexcept>
 #include <chrono>
 #include <cstdio>
 #include <list>
 #include <vector>
+#include <ctime>
 #include "common/default_types/ec_pp.hpp"
 
 #ifndef NO_PROCPS
@@ -31,21 +33,38 @@ long long get_nsec_time()
     return std::chrono::duration_cast<std::chrono::nanoseconds>(timepoint.time_since_epoch()).count();
 }
 
+/* Return total CPU time consumsed by all threads of the process, in nanoseconds. */
+long long get_nsec_cpu_time()
+{
+    ::timespec ts;
+    if ( ::clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts) )
+        throw ::std::runtime_error("clock_gettime(CLOCK_PROCESS_CPUTIME_ID) failed");
+        // If we expected this to work, don't silently ignore failures, because that would hide the problem and incur an unnecessarily system-call overhead. So if we ever observe this exception, we should probably add a suitable #ifdef .
+        //TODO: clock_gettime(CLOCK_PROCESS_CPUTIME_ID) is not supported by native Windows. What about Cygwin? Should we #ifdef on CLOCK_PROCESS_CPUTIME_ID or on __linux__?
+    return ts.tv_sec * 1000000000ll + ts.tv_nsec;
+}
+
 long long start_time, last_time;
+long long start_cpu_time, last_cpu_time;
 
 void start_profiling()
 {
     printf("Reset time counters for profiling\n");
 
     last_time = start_time = get_nsec_time();
+    last_cpu_time = start_cpu_time = get_nsec_cpu_time();
 }
 
 std::map<std::string, size_t> invocation_counts;
 std::map<std::string, long long> enter_times;
 std::map<std::string, long long> last_times;
 std::map<std::string, long long> cumulative_times;
+//TODO: Instead of analogous maps for time and cpu_time, use a single struct-valued map
+std::map<std::string, long long> enter_cpu_times;
+std::map<std::string, long long> last_cpu_times;
 std::map<std::pair<std::string, std::string>, long long> op_counts;
 std::map<std::pair<std::string, std::string>, long long> cumulative_op_counts; // ((msg, data_point), value)
+    // TODO: Convert op_counts and cumulative_op_counts from pair to structs
 size_t indentation = 0;
 
 std::vector<std::string> block_names;
@@ -74,6 +93,7 @@ void clear_profiling_counters()
 {
     invocation_counts.clear();
     last_times.clear();
+    last_cpu_times.clear();
     cumulative_times.clear();
 }
 
@@ -146,6 +166,27 @@ void print_op_profiling(const std::string &msg)
 #endif
 }
 
+static void print_times_from_last_and_start(long long     now, long long     last,
+                                            long long cpu_now, long long cpu_last)
+{
+    long long time_from_start = now - start_time;
+    long long time_from_last = now - last;
+
+    long long cpu_time_from_start = cpu_now - start_cpu_time;
+    long long cpu_time_from_last = cpu_now - cpu_last;
+
+    if (time_from_last != 0) {
+        double parallelism_from_last = 1.0 * cpu_time_from_last / time_from_last;
+        printf("[%0.4fs x%0.2f]", time_from_last * 1e-9, parallelism_from_last);
+    } else {
+        printf("[             ]");
+    }
+    if (time_from_start != 0) {
+        double parallelism_from_start = 1.0 * cpu_time_from_start / time_from_start;
+        printf("\t(%0.4fs x%0.2f from start)", time_from_start * 1e-9, parallelism_from_start);
+    }
+}
+
 void print_time(const char* msg)
 {
     if (inhibit_profiling_info)
@@ -153,18 +194,19 @@ void print_time(const char* msg)
         return;
     }
 
-    long long t = get_nsec_time();
+    long long now = get_nsec_time();
+    long long cpu_now = get_nsec_cpu_time();
 
-    printf("%-35s\t[%0.4fs]\t(%0.4fs from start)",
-           msg, (t - last_time) * 1e-9, (t - start_time) * 1e-9);
-
+    printf("%-35s\t", msg);
+    print_times_from_last_and_start(now, last_time, cpu_now, last_cpu_time);
 #ifdef PROFILE_OP_COUNTS
     print_op_profiling(msg);
 #endif
     printf("\n");
 
     fflush(stdout);
-    last_time = t;
+    last_time = now;
+    last_cpu_time = cpu_now;
 }
 
 void print_header(const char *msg)
@@ -200,6 +242,8 @@ void enter_block(const std::string &msg, const bool indent)
     block_names.emplace_back(msg);
     long long t = get_nsec_time();
     enter_times[msg] = t;
+    long long cpu_t = get_nsec_cpu_time();
+    enter_cpu_times[msg] = cpu_t;
 
     if (inhibit_profiling_info)
     {
@@ -213,8 +257,9 @@ void enter_block(const std::string &msg, const bool indent)
         op_profiling_enter(msg);
 
         print_indent();
-        printf("(enter) %-35s\t[0s]\t(%0.4fs from start)\n",
-               msg.c_str(), (t - start_time) * 1e-9);
+        printf("(enter) %-35s\t", msg.c_str());
+        print_times_from_last_and_start(t, t, cpu_t, cpu_t);
+        printf("\n");
         fflush(stdout);
 
         if (indent)
@@ -242,6 +287,9 @@ void leave_block(const std::string &msg, const bool indent)
     last_times[msg] = (t - enter_times[msg]);
     cumulative_times[msg] += (t - enter_times[msg]);
 
+    long long cpu_t = get_nsec_cpu_time();
+    last_cpu_times[msg] = (cpu_t - enter_cpu_times[msg]);
+
 #ifdef PROFILE_OP_COUNTS
     for (std::pair<std::string, long long*> p : op_data_points)
     {
@@ -264,8 +312,8 @@ void leave_block(const std::string &msg, const bool indent)
         }
 
         print_indent();
-        printf("(leave) %-35s\t[%0.4fs]\t(%0.4fs from start)",
-               msg.c_str(), (t - enter_times[msg]) * 1e-9, (t - start_time) * 1e-9);
+        printf("(leave) %-35s\t", msg.c_str());
+        print_times_from_last_and_start(t, enter_times[msg], cpu_t, enter_cpu_times[msg]);
         print_op_profiling(msg);
         printf("\n");
         fflush(stdout);
