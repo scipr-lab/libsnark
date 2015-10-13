@@ -258,11 +258,16 @@ with some (currently sparse) comments, install the `doxygen` and `graphviz` pack
 
 (this may take a few minutes). Then view the resulting [`doxygen/index.html`](doxygen/index.html).
 
-To build the shared object library `libsnark.so`, run:
+### Using libsnark as a library
+
+To develop an application that uses libsnark, you could add it within the libsnark directory tree and adjust the Makefile, but it is far better to build libsnark as a (shared or static) library. You can then write your code in a separate directory tree, and link it against libsnark.
+
+
+To build just the shared object library `libsnark.so`, run:
 
     $ make lib
 
-To build the static library `libsnark.a`, run:
+To build just the static library `libsnark.a`, run:
 
     $ make lib STATIC=1
 
@@ -272,6 +277,14 @@ It may help to minize these dependencies by appending
 library RPM dependencies are then: 
 `boost-static glibc-static gmp-static libstdc++-static openssl-static zlib-static
  boost-devel glibc-devel gmp-devel gmp-devel libstdc++-devel openssl-devel openssl-devel`.
+
+To build *and install* the libsnark library:
+
+    $ make install PREFIX=/install/path
+
+This will install `libsnark.so` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
+
+In addition, unless you use `NO_SUPERCOP=1`, `libsupercop.a` will be installed and should be linked in using `-lsupercop`. Likewise, if you use the default `CURVE=BN128`, `libzm.a` will be installed and should be linked in using `-lzm`.
 
 
 ### Building on Windows using Cygwin
