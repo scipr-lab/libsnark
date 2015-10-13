@@ -23,7 +23,7 @@ LDLIBS += -lgmpxx -lgmp -lboost_program_options
 LDLIBS += -lcrypto -ldl -lz
 CXXFLAGS += -I$(DEPINST)/include -Isrc
 # Sentinel file to check existence of this directory (since directories don't work as a Make dependency):
-DEPLIB_EXISTS = $(DEPINST)/lib/.exists
+DEPINST_EXISTS = $(DEPINST)/.exists
 
 COMPILE_GTEST :=
 ifneq ($(NO_GTEST),1)
@@ -203,8 +203,9 @@ all: \
 
 doc: $(DOCS)
 
-$(DEPLIB_EXISTS):
-	mkdir -p $(DEPINST)/lib   # Placeholder. Some make settings (including the default) require actually running ./prepare-depends .
+$(DEPINST_EXISTS):
+	# Create placeholder directories for installed dependencies. Some make settings (including the default) require actually running ./prepare-depends to populate this directory.
+	mkdir -p $(DEPINST)/lib $(DEPINST)/include
 	touch $@
 
 # In order to detect changes to #include dependencies. -MMD below generates a .d file for each .o file. Include the .d file.
@@ -215,7 +216,7 @@ $(LIB_OBJS) $(EXEC_OBJS): %.o: %.cpp
 
 LIBGTESTA = $(DEPINST)/lib/libgtest.a
 
-$(LIBGTESTA): $(GTESTDIR)/src/gtest-all.cc $(DEPLIB_EXISTS)
+$(LIBGTESTA): $(GTESTDIR)/src/gtest-all.cc $(DEPINST_EXISTS)
 	$(CXX) -o $(DEPINST)/lib/gtest-all.o   -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS)
 	$(AR) -rv $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
 
@@ -227,13 +228,13 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/protoboard_UTEST.cpp \
 	src/gadgetlib2/tests/variable_UTEST.cpp
 
-$(EXECUTABLES): %: %.o $(LIB_OBJS) $(DEPLIB_EXISTS)
+$(EXECUTABLES): %: %.o $(LIB_OBJS) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_GTEST): %: %.o $(LIB_OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPLIB_EXISTS)
+$(EXECUTABLES_WITH_GTEST): %: %.o $(LIB_OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIB_OBJS) $(DEPLIB_EXISTS)
+$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIB_OBJS) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
 
 libsnark.a: $(LIB_OBJS)
@@ -242,11 +243,14 @@ libsnark.a: $(LIB_OBJS)
 libsnark.so: $(LIB_OBJS)
 	$(CXX) -o $@   $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
+
 ifeq ($(STATIC),1)
-lib: libsnark.a
+LIB_FILE =libsnark.a
 else
-lib: libsnark.so
+LIB_FILE =libsnark.so
 endif
+
+lib: $(LIB_FILE)
 
 $(DOCS): %.html: %.md
 	markdown_py -f $@ $^ -x toc -x extra --noisy
@@ -264,12 +268,11 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 	mkdir -p $(shell dirname $@)
 	cp $< $@
 
-install: lib $(HEADERS_DEST) $(DEPLIB_EXISTS)
+install: lib $(HEADERS_DEST) $(DEPINST_EXISTS)
 	mkdir -p $(PREFIX)/lib
-	cp $(LIB_OBJS) $(PREFIX)/lib/
+	cp $(LIB_FILE) $(PREFIX)/lib/$(LIB_FILE)
 	cp -rv $(DEPINST)/lib $(PREFIX)
 	cp -rv $(DEPINST)/include $(PREFIX)
-#TODO: Avoid copying the .exists sentinel into $(PREFIX)/lib/
 endif
 
 doxy:
@@ -290,4 +293,4 @@ clean:
 clean-all: clean
 	$(RM) -fr $(DEPSRC) $(DEPINST)
 
-.PHONY: all clean clean-all doc doxy lib
+.PHONY: all clean clean-all doc doxy lib install
