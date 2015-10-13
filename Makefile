@@ -23,7 +23,7 @@ LDLIBS += -lgmpxx -lgmp -lboost_program_options
 LDLIBS += -lcrypto -ldl -lz
 CXXFLAGS += -I$(DEPINST)/include -Isrc
 # Sentinel file to check existence of this directory (since directories don't work as a Make dependency):
-DEPLIB_EXISTS = $(DEPINST)/lib/.exists    
+DEPLIB_EXISTS = $(DEPINST)/lib/.exists
 
 COMPILE_GTEST :=
 ifneq ($(NO_GTEST),1)
@@ -264,7 +264,7 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 	mkdir -p $(shell dirname $@)
 	cp $< $@
 
-install: lib $(HEADERS_DEST) (DEPINST)/lib/.exists
+install: lib $(HEADERS_DEST) $(DEPLIB_EXISTS)
 	mkdir -p $(PREFIX)/lib
 	cp $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
 	cp -rv $(DEPINST)/lib $(PREFIX)
