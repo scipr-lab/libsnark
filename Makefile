@@ -266,9 +266,10 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 
 install: lib $(HEADERS_DEST) $(DEPLIB_EXISTS)
 	mkdir -p $(PREFIX)/lib
-	cp $(LIBOBJ) $(PREFIX)/lib/$(LIBOBJ)
+	cp $(LIB_OBJS) $(PREFIX)/lib/
 	cp -rv $(DEPINST)/lib $(PREFIX)
 	cp -rv $(DEPINST)/include $(PREFIX)
+#TODO: Avoid copying the .exists sentinel into $(PREFIX)/lib/
 endif
 
 doxy:
