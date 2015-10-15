@@ -148,6 +148,8 @@ EXECUTABLES_WITH_SUPERCOP = \
 
 DOCS = README.html
 
+LIBSNARK_A = libsnark.a
+
 # For documentation of the following options, see README.md .
 
 ifeq ($(NO_PROCPS),1)
@@ -204,7 +206,7 @@ all: \
 doc: $(DOCS)
 
 $(DEPINST_EXISTS):
-	# Create placeholder directories for installed dependencies. Some make settings (including the default) require actually running ./prepare-depends to populate this directory.
+	# Create placeholder directories for installed dependencies. Some make settings (including the default) require actually running ./prepare-depends.sh to populate this directory.
 	mkdir -p $(DEPINST)/lib $(DEPINST)/include
 	touch $@
 
@@ -214,11 +216,18 @@ $(DEPINST_EXISTS):
 $(LIB_OBJS) $(EXEC_OBJS): %.o: %.cpp
 	$(CXX) -o $@   $< -c -MMD $(CXXFLAGS)
 
-LIBGTESTA = $(DEPINST)/lib/libgtest.a
+LIBGTEST_A = $(DEPINST)/lib/libgtest.a
 
-$(LIBGTESTA): $(GTESTDIR)/src/gtest-all.cc $(DEPINST_EXISTS)
+$(LIBGTEST_A): $(GTESTDIR)/src/gtest-all.cc $(DEPINST_EXISTS)
 	$(CXX) -o $(DEPINST)/lib/gtest-all.o   -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS)
-	$(AR) -rv $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
+	$(AR) -rv $(LIBGTEST_A) $(DEPINST)/lib/gtest-all.o
+
+libsnark.a: $(LIB_OBJS)
+	$(AR) crs $@ $^
+
+libsnark.so: $(LIBSNARK_A) $(DEPINST_EXISTS)
+#	# $(CXX)  -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) -o $@ $(LIBSNARK_A)
+	$(CXX) -o $@   --shared -Wl,--whole-archive $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) -Wl,--no-whole-archive $(LDLIBS)
 
 src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/adapters_UTEST.cpp \
@@ -228,20 +237,14 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 	src/gadgetlib2/tests/protoboard_UTEST.cpp \
 	src/gadgetlib2/tests/variable_UTEST.cpp
 
-$(EXECUTABLES): %: %.o $(LIB_OBJS) $(DEPINST_EXISTS)
-	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+$(EXECUTABLES): %: %.o $(LIBSNARK_A) $(DEPINST_EXISTS)
+	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_GTEST): %: %.o $(LIB_OBJS) $(if $(COMPILE_GTEST),$(LIBGTESTA)) $(DEPINST_EXISTS)
-	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
+$(EXECUTABLES_WITH_GTEST): %: %.o $(LIBSNARK_A) $(if $(COMPILE_GTEST),$(LIBGTEST_A)) $(DEPINST_EXISTS)
+	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 
-$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIB_OBJS) $(DEPINST_EXISTS)
-	$(CXX) -o $@   $@.o $(LIB_OBJS) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
-
-libsnark.a: $(LIB_OBJS)
-	$(AR) crs $@ $^
-
-libsnark.so: $(LIB_OBJS)
-	$(CXX) -o $@   $^ -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
+$(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIBSNARK_A) $(DEPINST_EXISTS)
+	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(SUPERCOP_LDLIBS) $(LDLIBS)
 
 
 ifeq ($(STATIC),1)
@@ -287,7 +290,7 @@ clean:
 		${patsubst %.o,%.d,${LIB_OBJS} ${EXEC_OBJS}} \
 		libsnark.so libsnark.a \
 	$(RM) -fr doxygen/ \
-	$(RM) $(LIBGTESTA) $(DEPINST)/lib/gtest-all.o
+	$(RM) $(LIBGTEST_A) $(DEPINST)/lib/gtest-all.o
 
 # Clean all, including locally-compiled dependencies
 clean-all: clean
