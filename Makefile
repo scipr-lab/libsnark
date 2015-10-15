@@ -222,7 +222,7 @@ $(LIBGTEST_A): $(GTESTDIR)/src/gtest-all.cc $(DEPINST_EXISTS)
 	$(CXX) -o $(DEPINST)/lib/gtest-all.o   -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS)
 	$(AR) -rv $(LIBGTEST_A) $(DEPINST)/lib/gtest-all.o
 
-libsnark.a: $(LIB_OBJS)
+$(LIBSNARK_A): $(LIB_OBJS)
 	$(AR) crs $@ $^
 
 libsnark.so: $(LIBSNARK_A) $(DEPINST_EXISTS)
@@ -248,9 +248,9 @@ $(EXECUTABLES_WITH_SUPERCOP): %: %.o $(LIBSNARK_A) $(DEPINST_EXISTS)
 
 
 ifeq ($(STATIC),1)
-LIB_FILE =libsnark.a
+LIB_FILE = $(LIBSNARK_A)
 else
-LIB_FILE =libsnark.so
+LIB_FILE = libsnark.so
 endif
 
 lib: $(LIB_FILE)
@@ -288,7 +288,7 @@ clean:
 		$(EXECUTABLES) $(EXECUTABLES_WITH_GTEST) $(EXECUTABLES_WITH_SUPERCOP) \
 		$(DOCS) \
 		${patsubst %.o,%.d,${LIB_OBJS} ${EXEC_OBJS}} \
-		libsnark.so libsnark.a \
+		libsnark.so $(LIBSNARK_A) \
 	$(RM) -fr doxygen/ \
 	$(RM) $(LIBGTEST_A) $(DEPINST)/lib/gtest-all.o
 
