@@ -284,7 +284,7 @@ To build *and install* the libsnark library:
 
 This will install `libsnark.so` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
 
-In addition, unless you use `NO_SUPERCOP=1`, `libsupercop.a` will be installed and should be linked in using `-lsupercop`. Likewise, if you use the default `CURVE=BN128`, `libzm.a` will be installed and should be linked in using `-lzm`.
+In addition, unless you use `NO_SUPERCOP=1`, `libsupercop.a` will be installed and should be linked in using `-lsupercop`.
 
 
 ### Building on Windows using Cygwin
@@ -363,7 +363,7 @@ The following flags change the behavior of the compiled code.
      For example, `make FEATUREFLAGS='-DBINARY_OUTPUT'` enables binary output and disables the default
      assembly optimizations and Montgomery-representation output.
 
-*    #define `BINARY_OUTPUT`
+*    define `BINARY_OUTPUT`
 
      In serialization, output raw binary data (instead of decimal, when not set).
 
@@ -372,11 +372,11 @@ The following flags change the behavior of the compiled code.
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
-*   `make DEBUG=1` / #define `DEBUG`
+*   `make DEBUG=1` / define `DEBUG`
 
     Print additional information for debugging purposes.
 
-*   `make LOWMEM=1` / #define `LOWMEM`
+*   `make LOWMEM=1` / define `LOWMEM`
 
     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
@@ -402,31 +402,31 @@ The following flags change the behavior of the compiled code.
      This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
      FFT and multiexponentiation. The default is single-core.
 
-*   #define `NO_PT_COMPRESSION`
+*   define `NO_PT_COMPRESSION`
 
     Do not use point compression.
     This gives much faster serialization times, at the expense of ~2x larger
     sizes for serialized keys and proofs.
 
-*   #define `MONTGOMERY_OUTPUT` (on by default)
+*   define `MONTGOMERY_OUTPUT` (on by default)
 
     Serialize Fp elements as their Montgomery representations. If this
     option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
 
-*   `make PROFILE_OP_COUNTS=1` / #define `PROFILE_OP_COUNTS`
+*   `make PROFILE_OP_COUNTS=1` / define `PROFILE_OP_COUNTS`
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
     curves except bn128.
 
-*   #define `USE_ASM` (on by default)
+*   define `USE_ASM` (on by default)
 
     Use unrolled assembly routines for F[p] arithmetic and faster heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
-*   #define `USE_MIXED_ADDITION`
+*   define `USE_MIXED_ADDITION`
 
     Convert each element of the proving key and verification key to
     affine coordinates. This allows using mixed addition formulas in
@@ -435,7 +435,8 @@ The following flags change the behavior of the compiled code.
 
 *   `make PERFORMANCE=1`
 
-    Enables various compiler optimizations and disables debugging aids.
+    Enables compiler optimizations such as link-time optimization, and disables debugging aids.
+    (On some distributions this causes a `plugin needed to handle lto object` link error and `undefined reference`s, which can be remedied by `AR=gcc-ar make ...`.)
 
 Not all combinations are tested together or supported by every part of the codebase.
 
