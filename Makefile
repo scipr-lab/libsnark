@@ -17,13 +17,18 @@ CXXFLAGS += -std=c++11 -Wall -Wextra -Wno-unused-parameter -Wno-comment -Wfatal-
 DEPSRC = depsrc
 DEPINST = depinst
 
+CXXFLAGS += -I$(DEPINST)/include -Isrc
 LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
 LDLIBS += -lgmpxx -lgmp -lboost_program_options
 # OpenSSL and its dependencies (needed explicitly for static builds):
 LDLIBS += -lcrypto -ldl -lz
-CXXFLAGS += -I$(DEPINST)/include -Isrc
+# List of .a files to include within libsnark.a and libsnark.so:
+AR_LIBS =
+# List of library files to install:
+INSTALL_LIBS = $(LIB_FILE)
 # Sentinel file to check existence of this directory (since directories don't work as a Make dependency):
 DEPINST_EXISTS = $(DEPINST)/.exists
+
 
 COMPILE_GTEST :=
 ifneq ($(NO_GTEST),1)
@@ -36,6 +41,8 @@ endif
 
 ifneq ($(NO_SUPERCOP),1)
 	SUPERCOP_LDLIBS += -lsupercop
+	INSTALL_LIBS += depinst/lib/libsupercop.a
+	# Would have been nicer to roll supercop into libsnark.a ("AR_LIBS += $(DEPINST)/lib/libsupercop.a"), but it doesn't support position-independent code (libsnark issue #20).
 endif
 
 LIB_SRCS = \
@@ -98,7 +105,7 @@ ifeq ($(CURVE),BN128)
 		src/algebra/curves/bn128/bn128_pp.cpp
 
 	CXXFLAGS += -DBN_SUPPORT_SNARK
-	LDLIBS += -lzm
+	AR_LIBS += $(DEPINST)/lib/libzm.a
 endif
 
 EXECUTABLES = \
@@ -222,11 +229,18 @@ $(LIBGTEST_A): $(GTESTDIR)/src/gtest-all.cc $(DEPINST_EXISTS)
 	$(CXX) -o $(DEPINST)/lib/gtest-all.o   -I $(GTESTDIR) -c -isystem $(GTESTDIR)/include $< $(CXXFLAGS)
 	$(AR) -rv $(LIBGTEST_A) $(DEPINST)/lib/gtest-all.o
 
-$(LIBSNARK_A): $(LIB_OBJS)
-	$(AR) crs $@ $^
+# libsnark.a will contains all of our relevant object files, and we also mash in the .a files of relevant dependencies built by ./prepare-depends.sh
+$(LIBSNARK_A): $(LIB_OBJS) $(AR_LIBS)
+	( \
+	  echo "create $(LIBSNARK_A)"; \
+	  echo "addmod $(LIB_OBJS)"; \
+	  if [ -n "$(AR_LIBS)" ]; then for AR_LIB in $(AR_LIBS); do echo addlib $$AR_LIB; done; fi; \
+	  echo "save"; \
+	  echo "end"; \
+	) | $(AR) -M
+	$(AR) s $(LIBSNARK_A)
 
 libsnark.so: $(LIBSNARK_A) $(DEPINST_EXISTS)
-#	# $(CXX)  -shared $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) -o $@ $(LIBSNARK_A)
 	$(CXX) -o $@   --shared -Wl,--whole-archive $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) -Wl,--no-whole-archive $(LDLIBS)
 
 src/gadgetlib2/tests/gadgetlib2_test: \
@@ -271,10 +285,9 @@ $(HEADERS_DEST): $(PREFIX)/include/libsnark/%: src/%
 	mkdir -p $(shell dirname $@)
 	cp $< $@
 
-install: lib $(HEADERS_DEST) $(DEPINST_EXISTS)
+install: $(INSTALL_LIBS) $(HEADERS_DEST) $(DEPINST_EXISTS)
 	mkdir -p $(PREFIX)/lib
-	cp $(LIB_FILE) $(PREFIX)/lib/$(LIB_FILE)
-	cp -rv $(DEPINST)/lib $(PREFIX)
+	cp -v $(INSTALL_LIBS) $(PREFIX)/lib/
 	cp -rv $(DEPINST)/include $(PREFIX)
 endif
 
