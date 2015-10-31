@@ -80,7 +80,7 @@ void ErrorHandling::fatalError(const ::std::stringstream& msg) {
 }
 
 void ErrorHandling::printStacktrace() {
-#ifdef __linux__
+#ifdef __GLIBC__
     std::cerr << "Stack trace (pipe through c++filt to demangle identifiers):" << std::endl;
     const int maxFrames = 100;
     void* frames[maxFrames];
@@ -89,7 +89,7 @@ void ErrorHandling::printStacktrace() {
     // Decode frames and print them to stderr
     backtrace_symbols_fd(frames, numFrames, STDERR_FILENO);
 #else
-    //TODO make this available for Windows
+    //TODO make this available for non-glibc platforms (e.g. musl libc on Linux and Windows)
     std::cerr << "  (stack trace not available on this platform)" << std::endl;
 #endif // __GNUC__
 }
