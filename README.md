@@ -402,6 +402,11 @@ The following flags change the behavior of the compiled code.
      This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
      FFT and multiexponentiation. The default is single-core.
 
+     To override the maximum number of cores used, set the environment variable `OMP_NUM_THREADS`
+     at runtime (not compile time), e.g., `OMP_NUM_THREADS=8 test_r1cs_sp_ppzkpc`. It defaults
+     to the autodetected number of cores, but on some devices, dynamic core management confused
+     OpenMP's autodetection, so setting `OMP_NUM_THREADS` is necessary for full utilization.
+
 *   define `NO_PT_COMPRESSION`
 
     Do not use point compression.
