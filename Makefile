@@ -9,7 +9,10 @@
 # To override these, use "make OPTFLAGS=..." etc.
 CURVE = BN128
 OPTFLAGS = -O2 -march=native -mtune=native
-FEATUREFLAGS = -DUSE_ASM -DMONTGOMERY_OUTPUT
+FEATUREFLAGS = -DUSE_ASM #-DMONTGOMERY_OUTPUT
+
+NO_GTEST=1
+NO_SUPERCOP=1
 
 # Initialize this using "CXXFLAGS=... make". The makefile appends to that.
 CXXFLAGS += -std=c++11 -Wall -Wextra -Wno-unused-parameter -Wno-comment -Wfatal-errors $(OPTFLAGS) $(FEATUREFLAGS) -DCURVE_$(CURVE)
@@ -93,7 +96,9 @@ LIB_SRCS = \
 	src/relations/ram_computations/memory/memory_store_trace.cpp \
 	src/relations/ram_computations/memory/ra_memory.cpp \
 	src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
-	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
+	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp \
+	src/interface/CircuitReader.cpp \
+	src/interface/Util.cpp 
 
 ifeq ($(CURVE),BN128)
 	LIB_SRCS += \
@@ -109,41 +114,42 @@ ifeq ($(CURVE),BN128)
 endif
 
 EXECUTABLES = \
-	src/algebra/curves/tests/test_bilinearity \
-	src/algebra/curves/tests/test_groups \
-	src/algebra/fields/tests/test_fields \
-	src/common/routing_algorithms/profiling/profile_routing_algorithms \
-	src/common/routing_algorithms/tests/test_routing_algorithms \
-	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
-	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
-	src/gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget \
-	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
-	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
-	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
-	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
-	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
-	src/relations/arithmetic_programs/qap/tests/test_qap \
-	src/relations/arithmetic_programs/ssp/tests/test_ssp \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/profiling/profile_r1cs_mp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd \
-	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd \
-	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark \
-	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
-	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
-	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
+	src/interface/run_libsnark 
+#	src/algebra/curves/tests/test_bilinearity \
+#	src/algebra/curves/tests/test_groups \
+#	src/algebra/fields/tests/test_fields \
+#	src/common/routing_algorithms/profiling/profile_routing_algorithms \
+#	src/common/routing_algorithms/tests/test_routing_algorithms \
+#	src/gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram \
+#	src/gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget \
+#	src/gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget \
+#	src/gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets \
+#	src/gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets \
+#	src/gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget \
+#	src/gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget \
+#	src/reductions/ram_to_r1cs/examples/demo_arithmetization \
+#	src/relations/arithmetic_programs/qap/tests/test_qap \
+#	src/relations/arithmetic_programs/ssp/tests/test_ssp \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/profiling/profile_r1cs_mp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd \
+#	src/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd \
+#	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark \
+#	src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark \
+#	src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark \
+#	src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
 
 EXECUTABLES_WITH_GTEST = \
@@ -253,7 +259,7 @@ src/gadgetlib2/tests/gadgetlib2_test: \
 
 $(EXECUTABLES): %: %.o $(LIBSNARK_A) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS)
-
+	
 $(EXECUTABLES_WITH_GTEST): %: %.o $(LIBSNARK_A) $(if $(COMPILE_GTEST),$(LIBGTEST_A)) $(DEPINST_EXISTS)
 	$(CXX) -o $@   $@.o $(LIBSNARK_A) $(CXXFLAGS) $(LDFLAGS) $(GTEST_LDLIBS) $(LDLIBS)
 

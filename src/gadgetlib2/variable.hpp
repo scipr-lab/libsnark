@@ -298,6 +298,9 @@ public:
     typedef ::std::set<Variable, VariableStrictOrder> set;
     typedef ::std::multiset<Variable, VariableStrictOrder> multiset;
 
+    // jSNARK-edit: A simple getter for the Variable index
+    int getIndex() const { return index_;}
+
     friend class GadgetLibAdapter;
 }; // class Variable
 /***********************************/
@@ -434,11 +437,19 @@ public:
     LinearTerm(const Variable& v, const FElem& coeff) : variable_(v), coeff_(coeff) {}
     LinearTerm(const Variable& v, long n) : variable_(v), coeff_(n) {}
     LinearTerm operator-() const {return LinearTerm(variable_, -coeff_);}
+
+    // jSNARK-edit: These two operators are overloaded to support combining common factors for the same variables.
+    LinearTerm& operator-=(const FElem& other) {coeff_ -= other; return *this;}
+    LinearTerm& operator+=(const FElem& other) {coeff_ += other; return *this;}
+
     LinearTerm& operator*=(const FElem& other) {coeff_ *= other; return *this;}
     FieldType fieldtype() const {return coeff_.fieldType();}
     ::std::string asString() const;
     FElem eval(const VariableAssignment& assignment) const;
     Variable variable() const {return variable_;}
+
+    // jSNARK-edit: A simple getter for the coefficient
+    FElem coeff() const {return coeff_;}
 
     friend class Monomial;
     friend class GadgetLibAdapter;
@@ -461,6 +472,7 @@ public:
 class LinearCombination {
 protected:
     ::std::vector<LinearTerm> linearTerms_;
+    std::map<int, int> indexMap_; // jSNARK-edit: This map is used to reduce memory consumption. Can be helpful for some circuits produced by Pinocchio compiler.
     FElem constant_;
     typedef ::std::vector<LinearTerm>::size_type size_type;
 public:
