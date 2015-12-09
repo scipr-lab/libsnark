@@ -219,7 +219,6 @@ void CircuitReader::constructCircuit(char* arithFilepath) {
 		variableMap[inputWireIds[i]] = currentVariableIdx;
 		currentVariableIdx++;
 	}
-	printf("Num outs %d\n", numOutputs);
 	for (i = 0; i < numOutputs; i++) {
 		variables.push_back(make_shared<Variable>("output"));
 		variableMap[outputWireIds[i]] = currentVariableIdx;
@@ -306,10 +305,10 @@ void CircuitReader::constructCircuit(char* arithFilepath) {
 
 	ifs2.close();
 
-	printf("Constraint translation done\n");
+	printf("\tConstraint translation done\n");
 	look_up_our_self(&usage2);
 	unsigned long diff = usage2.vsize - usage1.vsize;
-	printf("Memory usage for translation: %lu MB\n", diff >> 20);
+	printf("\tMemory usage for constraint translation: %lu MB\n", diff >> 20);
 
 }
 

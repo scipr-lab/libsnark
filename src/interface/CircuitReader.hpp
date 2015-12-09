@@ -51,12 +51,10 @@ class CircuitReader {
 public:
 	CircuitReader(char* arithFilepath, char* inputsFilepath, ProtoboardPtr pb);
 
-	int getNumInputs() {
-		return numInputs;
-	}
-	int getNumOutputs() {
-		return numOutputs;
-	}
+	int getNumInputs() { return numInputs;}
+	int getNumOutputs() { return numOutputs;}
+	std::vector<Wire> getInputWireIds() const { return inputWireIds; }
+	std::vector<Wire> getOutputWireIds() const { return outputWireIds; }
 
 private:
 	ProtoboardPtr pb;

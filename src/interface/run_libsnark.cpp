@@ -18,7 +18,11 @@ int main(int argc, char **argv) {
 	gadgetlib2::GadgetLibAdapter::resetVariableIndex();
 	ProtoboardPtr pb = gadgetlib2::Protoboard::create(gadgetlib2::R1P);
 
+
+	// Read the circuit, evaluate, and translate constraints
 	CircuitReader reader(argv[1], argv[2], pb);
+
+
 	r1cs_constraint_system<FieldT> cs = get_constraint_system_from_gadgetlib2(
 			*pb);
 	const r1cs_variable_assignment<FieldT> full_assignment =
@@ -36,11 +40,16 @@ int main(int argc, char **argv) {
 	vector<FieldT>::const_iterator last = full_assignment.begin()
 			+ reader.getNumInputs() + reader.getNumOutputs();
 	vector<FieldT> newVec(first, last);
-	cout << "Printing client I/O assignment:: " << endl;
-	for (int i = 0; i < reader.getNumInputs() + reader.getNumOutputs(); i++) {
-		cout << primary_input[i] << endl;
+
+	cout << endl << "Printing output assignment:: " << endl;
+	std::vector<Wire> outputList = reader.getOutputWireIds();
+	int start = reader.getNumInputs();
+	int end = reader.getNumInputs() +reader.getNumOutputs();
+	for (int i = start ; i < end; i++) {
+		cout << "[output]" << " Value of Wire # " << outputList[i-reader.getNumInputs()] << " :: " << primary_input[i] << endl;
 	}
-	cout << "Length " << cs.num_inputs() << endl;
+	cout << endl;
+
 	assert(cs.is_valid());
 	assert(cs.is_satisfied(primary_input, auxiliary_input));
 	r1cs_example<FieldT> example(cs, primary_input, auxiliary_input);
