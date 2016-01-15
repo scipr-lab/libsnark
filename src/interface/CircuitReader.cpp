@@ -493,6 +493,7 @@ void CircuitReader::addSplitConstraint(char* inputStr, char* outputStr,
 	LinearCombination sum;
 	FElem two_i = Fr<default_ec_pp>("1");
 
+	/*
 	for (int i = 0; i < n; i++) {
 		Wire bitWireId;
 		iss_o >> bitWireId;
@@ -503,7 +504,25 @@ void CircuitReader::addSplitConstraint(char* inputStr, char* outputStr,
 		sum += LinearTerm(*vptr, two_i);
 		two_i += two_i;
 		currentVariableIdx++;
+	} */
+
+	for (int i = 0; i < n; i++) {
+		Wire bitWireId;
+		iss_o >> bitWireId;
+		VariablePtr vptr;
+		if (variableMap.find(bitWireId) == variableMap.end()) {
+			variables.push_back(make_shared<Variable>("bit out"));
+			variableMap[bitWireId] = currentVariableIdx;
+			vptr = variables[currentVariableIdx];
+			currentVariableIdx++;
+		} else {
+			vptr = variables[variableMap[bitWireId]];
+		}
+		pb->enforceBooleanity(*vptr);
+		sum += LinearTerm(*vptr, two_i);
+		two_i += two_i;
 	}
+
 
 	pb->addRank1Constraint(*l, 1, sum, "Split Constraint");
 }
