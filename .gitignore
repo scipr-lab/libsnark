@@ -1,4 +1,5 @@
 *.o
+*.a
 *.so
 *.d
 depinst/
