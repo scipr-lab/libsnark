@@ -9,7 +9,7 @@
 #define BN128_INIT_HPP_
 #include "algebra/curves/public_params.hpp"
 #include "algebra/fields/fp.hpp"
-#include "bn.h"   // If you're missing this file, run libsnark's ./prepare-depends.sh
+#include "third_party/ate-pairing/include/bn.h"
 
 namespace libsnark {
 

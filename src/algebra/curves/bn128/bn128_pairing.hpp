@@ -13,7 +13,7 @@
 #include "algebra/curves/bn128/bn128_g1.hpp"
 #include "algebra/curves/bn128/bn128_g2.hpp"
 #include "algebra/curves/bn128/bn128_gt.hpp"
-#include "bn.h"
+#include "third_party/ate-pairing/include/bn.h"
 
 namespace libsnark {
 

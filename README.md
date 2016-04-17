@@ -219,9 +219,10 @@ Build instructions
 The libsnark library relies on the following:
 
 - C++ build environment
+- CMake build infrastructure
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
-- GTest for some of the unit tests
+- third-party libraries via git submodules (included)
 
 So far we have tested these only on Linux, though we have been able to make the library work,
 with some features disabled (such as memory profiling or GTest tests), on Windows via Cygwin
@@ -230,84 +231,57 @@ let us know!) See also the notes on [portability](#portability) below.
 
 For example, on a fresh install of Ubuntu 14.04, install the following packages:
 
-    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev python-markdown libboost-all-dev libssl-dev
+    $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps3-dev python-markdown libboost-all-dev libssl-dev
 
 Or, on Fedora 20:
 
-    $ sudo yum install gcc-c++ make git gmp-devel procps-ng-devel gtest-devel python-markdown
+    $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
 
-Run the following, to fetch dependencies from their GitHub repos and compile them.
-(Not required if you set `CURVE` to other than the default `BN128` and also set `NO_SUPERCOP=1`.)
+Run the following, to fetch dependencies from their GitHub repos.
+    $ git submodule init && git submodule update
 
-    $ ./prepare-depends.sh
+Then, to compile the library, tests, and profiling harness, run:
 
-Then, to compile the library, tests, profiling harness and documentation, run:
-
-    $ make
+    $ mkdir build && cd build && cmake .. && make
 
 To create just the HTML documentation, run
 
-    $ make doc
+    $ cd build && make doc
 
 and then view the resulting `README.html` (which contains the very text you are reading now).
 
-To create Doxygen documentation summarizing all files, classes and functions,
-with some (currently sparse) comments, install the `doxygen` and `graphviz` packages, then run
-
-    $ make doxy
-
-(this may take a few minutes). Then view the resulting [`doxygen/index.html`](doxygen/index.html).
-
 ### Using libsnark as a library
 
-To develop an application that uses libsnark, you could add it within the libsnark directory tree and adjust the Makefile, but it is far better to build libsnark as a (shared or static) library. You can then write your code in a separate directory tree, and link it against libsnark.
-
-
-To build just the shared object library `libsnark.so`, run:
-
-    $ make lib
-
-To build just the static library `libsnark.a`, run:
-
-    $ make lib STATIC=1
-
-Note that static compilation requires static versions of all libraries it depends on.
-It may help to minize these dependencies by appending
-`CURVE=ALT_BN128 NO_PROCPS=1 NO_GTEST=1 NO_SUPERCOP=1`. On Fedora 21, the requisite 
-library RPM dependencies are then: 
-`boost-static glibc-static gmp-static libstdc++-static openssl-static zlib-static
- boost-devel glibc-devel gmp-devel gmp-devel libstdc++-devel openssl-devel openssl-devel`.
+To develop an application that uses libsnark, it's recommended to use your own build system that incorporates libsnark and dependencies. If you're using CMake, add libsnark as a git submodule, and then add it as a subdirectory. Then, add `snark` as a library dependency to the appropriate rules.
 
 To build *and install* the libsnark library:
 
-    $ make install PREFIX=/install/path
+    $ DESTDIR=/install/path make install
 
-This will install `libsnark.so` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
+This will install `libsnark.a` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
 
-In addition, unless you use `NO_SUPERCOP=1`, `libsupercop.a` will be installed and should be linked in using `-lsupercop`.
+In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be installed and should be linked in using `-lsnark_adsnark`.
 
 
 ### Building on Windows using Cygwin
-Install Cygwin using the graphical installer, including the `g++`, `libgmp`
+Install Cygwin using the graphical installer, including the `g++`, `libgmp`, `cmake`,
 and `git` packages. Then disable the dependencies not easily supported under CygWin,
 using:
 
-    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
+    $ cmake -DWITH_PROCPS=OFF ..
 
 
 ### Building on Mac OS X
 
 On Mac OS X, install GMP from MacPorts (`port install gmp`). Then disable the
-dependencies not easily supported under CygWin, using:
+dependencies not easily supported under OS X, using:
 
-    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
+    $ cmake -DWITH_PROCPS=OFF ..
 
 MacPorts does not write its libraries into standard system folders, so you
 might need to explicitly provide the paths to the header files and libraries by
 appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line
-above. Similarly, to pass the paths to ate-pairing you would run
-`INC_DIR=-I/opt/local/include LIB_DIR=-L/opt/local/lib ./prepare-depends.sh`
-instead of `./prepare-depends.sh` above.
+above.
 
 --------------------------------------------------------------------------------
 Tutorials
@@ -356,7 +330,7 @@ Build options
 
 The following flags change the behavior of the compiled code.
 
-*    `make FEATUREFLAGS='-Dname1 -Dname2 ...'`
+*    `cmake -Dname1=ON -Dname2=OFF ...'`
 
      Override the active conditional #define names (you can see the default at the top of the Makefile).
      The next bullets list the most important conditionally-#defined features.
@@ -367,36 +341,24 @@ The following flags change the behavior of the compiled code.
 
      In serialization, output raw binary data (instead of decimal, when not set).
 
-*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: 
+*   `cmake -DCURVE=choice` / define `CURVE_choice` (where `choice` is one of: 
      ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
-*   `make DEBUG=1` / define `DEBUG`
-
-    Print additional information for debugging purposes.
-
-*   `make LOWMEM=1` / define `LOWMEM`
+*   `cmake -DLOWMEM=ON` / define `LOWMEM`
 
     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
-*   `make NO_DOCS=1`
-
-     Do not generate HTML documentation, e.g. on platforms where Markdown is not easily available.
-
-*   `make NO_PROCPS=1`
+*   `cmake -DWITH_PROCPS=OFF`
 
      Do not link against libprocps. This disables memory profiling.
 
-*   `make NO_GTEST=1`
-
-     Do not link against GTest. The tutorial and test suite of gadgetlib2 tutorial won't be compiled.
-
-*   `make NO_SUPERCOP=1`
+*   `cmake -DWITH_SUPERCOP=OFF`
 
      Do not link against SUPERCOP for optimized crypto. The ADSNARK executables will not be built.
 
-*   `make MULTICORE=1`
+*   `cmake -DMULTICORE=ON`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
      This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
@@ -407,7 +369,7 @@ The following flags change the behavior of the compiled code.
      to the autodetected number of cores, but on some devices, dynamic core management confused
      OpenMP's autodetection, so setting `OMP_NUM_THREADS` is necessary for full utilization.
 
-*   define `NO_PT_COMPRESSION`
+*   `cmake -DUSE_PT_COMPRESSION=OFF`
 
     Do not use point compression.
     This gives much faster serialization times, at the expense of ~2x larger
@@ -420,7 +382,7 @@ The following flags change the behavior of the compiled code.
     equivalence classes, which is slower but produces human-readable
     output.
 
-*   `make PROFILE_OP_COUNTS=1` / define `PROFILE_OP_COUNTS`
+*   `cmake -DPROFILE_OP_COUNTS=ON` / define `PROFILE_OP_COUNTS`
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
@@ -431,14 +393,14 @@ The following flags change the behavior of the compiled code.
     Use unrolled assembly routines for F[p] arithmetic and faster heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
-*   define `USE_MIXED_ADDITION`
+*   `cmake -DUSE_MIXED_ADDITION=ON`
 
     Convert each element of the proving key and verification key to
     affine coordinates. This allows using mixed addition formulas in
     multiexponentiation and results in slightly faster prover and
     verifier runtime at expense of increased proving time.
 
-*   `make PERFORMANCE=1`
+*   `cmake -DPERFORMANCE=ON`
 
     Enables compiler optimizations such as link-time optimization, and disables debugging aids.
     (On some distributions this causes a `plugin needed to handle lto object` link error and `undefined reference`s, which can be remedied by `AR=gcc-ar make ...`.)
@@ -516,14 +478,6 @@ The directory structure of the libsnark library is as follows:
         * tests/ --- unit tests for this module
 
     In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples/` and `src/gadgetlib2/examples/`.
-
-* depsrc/ --- created by `prepare_depends.sh` for retrieved sourcecode and local builds of external code
-  (currently: \[ate-pairing], and its dependency xbyak).
-
-* depinst/ --- created by `prepare_depends.sh` and `Makefile`
-  for local installation of locally-compiled dependencies.
-
-* doxygen/ --- created by `make doxy` and contains a Doxygen summary of all files, classes etc. in libsnark.
 
 
 --------------------------------------------------------------------------------

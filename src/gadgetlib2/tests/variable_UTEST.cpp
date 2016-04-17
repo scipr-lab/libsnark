@@ -8,9 +8,10 @@
  *****************************************************************************/
 
 #include <set>
-#include <gtest/gtest.h>
 #include <gadgetlib2/pp.hpp>
 #include <gadgetlib2/variable.hpp>
+
+#include "third_party/gtest/googletest/include/gtest/gtest.h"
 
 using ::std::set;
 using namespace gadgetlib2;

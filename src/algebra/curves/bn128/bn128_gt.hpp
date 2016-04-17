@@ -10,7 +10,7 @@
 #include "algebra/fields/fp.hpp"
 #include "algebra/fields/field_utils.hpp"
 #include <iostream>
-#include "bn.h"
+#include "third_party/ate-pairing/include/bn.h"
 
 namespace libsnark {
 

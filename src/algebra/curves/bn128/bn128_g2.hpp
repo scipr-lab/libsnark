@@ -11,7 +11,7 @@
 #include <vector>
 #include "algebra/curves/bn128/bn128_init.hpp"
 #include "algebra/curves/curve_utils.hpp"
-#include "bn.h"
+#include "third_party/ate-pairing/include/bn.h"
 
 namespace libsnark {
 

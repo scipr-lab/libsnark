@@ -16,7 +16,7 @@
  *****************************************************************************/
 
 #include "common/default_types/r1cs_ppzkadsnark_pp.hpp"
-#include "supercop/crypto_sign.h"
+#include "third_party/libsnark-supercop/include/crypto_sign.h"
 
 namespace libsnark {
 

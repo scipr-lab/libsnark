@@ -1,0 +1,12 @@
+[submodule "third_party/gtest"]
+	path = third_party/gtest
+	url = git://github.com/google/googletest.git
+[submodule "third_party/ate-pairing"]
+	path = third_party/ate-pairing
+	url = git://github.com/herumi/ate-pairing.git
+[submodule "third_party/xbyak"]
+	path = third_party/xbyak
+	url = git://github.com/herumi/xbyak.git
+[submodule "third_party/libsnark-supercop"]
+	path = third_party/libsnark-supercop
+	url = git://github.com/mbbarbosa/libsnark-supercop.git

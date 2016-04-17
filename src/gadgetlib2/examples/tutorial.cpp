@@ -10,11 +10,11 @@ This file is meant to be read top-down as a tutorial for gadget writing.
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <gtest/gtest.h>
-#include <gadgetlib2/gadget.hpp>
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 #include "gadgetlib2/examples/simple_example.hpp"
+#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include "third_party/gtest/googletest/include/gtest/gtest.h"
 #include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp"
+#include <gadgetlib2/gadget.hpp>
 
 namespace gadgetExamples {
 
