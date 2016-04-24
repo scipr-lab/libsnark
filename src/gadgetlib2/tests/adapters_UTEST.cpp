@@ -22,7 +22,7 @@ TEST(GadgetLibAdapter, LinearTerm) {
     const Variable x("x");
     const LinearTerm lt = 5 * x;
     const auto new_lt = adapter.convert(lt);
-    EXPECT_EQ(new_lt.first, 0);
+    EXPECT_EQ(new_lt.first, 0u);
     EXPECT_EQ(new_lt.second, Fp(5));
 }
 
@@ -34,7 +34,7 @@ TEST(GadgetLibAdapter, LinearCombination) {
     const LinearCombination lc = 5*x + 3*y + 42;
     const auto new_lc = adapter.convert(lc);
     EXPECT_EQ(new_lc.second, Fp(42));
-    EXPECT_EQ(new_lc.first.size(), 2);
+    EXPECT_EQ(new_lc.first.size(), 2u);
     EXPECT_EQ(new_lc.first[0], adapter.convert(5 * x));
     EXPECT_EQ(new_lc.first[1], adapter.convert(3 * y));
 }
@@ -63,7 +63,7 @@ TEST(GadgetLibAdapter, ConstraintSystem) {
     system.addConstraint(constraint0);
     system.addConstraint(constraint1);
     const auto new_constraint_sys = adapter.convert(system);
-    EXPECT_EQ(new_constraint_sys.size(), 2);
+    EXPECT_EQ(new_constraint_sys.size(), 2u);
     EXPECT_EQ(new_constraint_sys.at(0), adapter.convert(constraint0));
     EXPECT_EQ(new_constraint_sys.at(1), adapter.convert(constraint1));
 }

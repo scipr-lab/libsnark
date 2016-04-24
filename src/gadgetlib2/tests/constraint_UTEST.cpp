@@ -37,7 +37,7 @@ TEST(gadgetLib2, Rank1Constraint) {
     EXPECT_TRUE(c1.isSatisfied(assignment));
     EXPECT_TRUE(c1.isSatisfied(assignment, PrintOptions::NO_DBG_PRINT));
     const Variable::set varSet = c1.getUsedVariables();
-    EXPECT_EQ(varSet.size(), 5);
+    EXPECT_EQ(varSet.size(), 5u);
     EXPECT_TRUE(varSet.find(x[0]) != varSet.end());
     EXPECT_TRUE(varSet.find(x[1]) != varSet.end());
     EXPECT_TRUE(varSet.find(x[2]) != varSet.end());

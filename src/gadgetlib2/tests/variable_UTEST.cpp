@@ -42,20 +42,20 @@ TEST(gadgetLib2, VariableSet) {
     Variable v1;
     Variable::set s1;
     s1.insert(v1);
-    EXPECT_EQ(s1.size(), 1);
+    EXPECT_EQ(s1.size(), 1u);
     Variable v2;
     v2 = v1;
     s1.insert(v2);
-    EXPECT_EQ(s1.size(), 1);
+    EXPECT_EQ(s1.size(), 1u);
     Variable v3;
     s1.insert(v3);
-    EXPECT_EQ(s1.size(), 2);
+    EXPECT_EQ(s1.size(), 2u);
     Variable v4;
     s1.erase(v4);
-    EXPECT_EQ(s1.size(), 2);
+    EXPECT_EQ(s1.size(), 2u);
     v4 = v1;
     s1.erase(v4);
-    EXPECT_EQ(s1.size(), 1);
+    EXPECT_EQ(s1.size(), 1u);
 }
 
 TEST(gadgetLib2, VariableArray) {
@@ -64,7 +64,7 @@ TEST(gadgetLib2, VariableArray) {
     VariableArray vArr;
     vArr.push_back(v1);
     vArr.push_back(v2);
-    EXPECT_EQ(vArr.size(),2);
+    EXPECT_EQ(vArr.size(),2u);
     Variable::VariableStrictOrder orderFunc;
     EXPECT_TRUE(orderFunc(vArr[0],vArr[1]) || orderFunc(vArr[1],vArr[0])); // check strict ordering
     vArr[1] = vArr[0];
@@ -495,7 +495,7 @@ TEST(gadgetLib2, LinearCombination) {
 #   endif // ifdef DEBUG
 //    Variable::set getUsedVariables() const;
     Variable::set sVar = lc1.getUsedVariables();
-    EXPECT_EQ(sVar.size(),1);
+    EXPECT_EQ(sVar.size(),1u);
     assignment[x[2]] = 83;
     EXPECT_EQ(assignment[*sVar.begin()], 83);
     assignment[x[2]] = 2;
@@ -557,7 +557,7 @@ TEST(gadgetLib2, MonomialUsedVariables) {
     Monomial m4 = -3 * x[3];
     Monomial m3 = m4 *= m0;
     Variable::set varSet = m3.getUsedVariables();
-    ASSERT_EQ(varSet.size(), 2);
+    ASSERT_EQ(varSet.size(), 2u);
     EXPECT_TRUE(varSet.find(x[0]) != varSet.end());
     EXPECT_TRUE(varSet.find(x[3]) != varSet.end());
     EXPECT_TRUE(varSet.find(x[4]) == varSet.end());
@@ -612,7 +612,7 @@ TEST(gadgetLib2, PolynomialUsedVariables) {
     VariableArray x(10, "x");
     Polynomial p4 = x[0] + x[2];
     const Variable::set varSet = p4.getUsedVariables();
-    EXPECT_EQ(varSet.size(), 2);
+    EXPECT_EQ(varSet.size(), 2u);
     EXPECT_TRUE(varSet.find(x[0]) != varSet.end());
     EXPECT_TRUE(varSet.find(x[2]) != varSet.end());
 }
