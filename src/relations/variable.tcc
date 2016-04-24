@@ -344,12 +344,20 @@ bool linear_combination<FieldT>::operator==(const linear_combination<FieldT> &ot
 template<typename FieldT>
 bool linear_combination<FieldT>::is_valid(const size_t num_variables) const
 {
+    /* check that all terms in linear combination are sorted */
     for (size_t i = 1; i < terms.size(); ++i)
     {
         if (terms[i-1].index >= terms[i].index)
         {
             return false;
         }
+    }
+
+    /* check that the variables are in proper range. as the variables
+       are sorted, it suffices to check the last term */
+    if ((--terms.end())->index >= num_variables)
+    {
+        return false;
     }
 
     return true;
