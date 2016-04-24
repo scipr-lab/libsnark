@@ -116,6 +116,8 @@ int FElem::getBit(unsigned int i, const FieldType& fieldType) {
     promoteToFieldType(fieldType);
     if (this->fieldType() == fieldType) {
         return elem_->getBit(i);
+    } else {
+        GADGETLIB_FATAL("Attempted to extract bits from incompatible field type.");
     }
 }
 
