@@ -6,6 +6,7 @@
  *****************************************************************************/
 #include "common/default_types/r1cs_ppzksnark_pp.hpp"
 #include "common/default_types/r1cs_ppzkpcd_pp.hpp"
+#include "common/utils.hpp"
 #include "zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp"
 #include "zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp"
 
@@ -65,6 +66,7 @@ void profile_ram_ppzksnark(const size_t w)
 
 int main(int argc, const char* argv[])
 {
+    UNUSED(argv);
     start_profiling();
     default_fooram_ppzksnark_pp::init_public_params();
     default_fooram_zksnark_pp::init_public_params();

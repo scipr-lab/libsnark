@@ -248,6 +248,7 @@ Variable::Variable(const string& name) : index_(nextFreeIndex_++), name_(name) {
 }
 #else
 Variable::Variable(const string& name) : index_(nextFreeIndex_++) {
+    UNUSED(name);
     GADGETLIB_ASSERT(nextFreeIndex_ > 0, GADGETLIB2_FMT("Variable index overflow has occured, maximum number of "
                                          "Variables is %lu", ULONG_MAX));
 }
@@ -301,9 +302,9 @@ VariableArray::VariableArray(const int size, const ::std::string& name) : Variab
     return "";
 }
 
-VariableArray::VariableArray(const string& name) : VariableArrayContents() {}
+VariableArray::VariableArray(const string& name) : VariableArrayContents() { UNUSED(name); }
 VariableArray::VariableArray(const int size, const ::std::string& name)
-        : VariableArrayContents(size) {}
+    : VariableArrayContents(size) { UNUSED(name); }
 #endif
 
 /***********************************/

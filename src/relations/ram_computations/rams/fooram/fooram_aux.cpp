@@ -1,7 +1,7 @@
 /** @file
  *****************************************************************************
 
- Implementation of auxiliary functions for TinyRAM.
+ Implementation of auxiliary functions for fooram.
 
  See fooram_aux.hpp .
 
@@ -50,6 +50,8 @@ memory_contents fooram_architecture_params::initial_memory_contents(const fooram
                                                                     const fooram_input_tape &primary_input) const
 {
     memory_contents m;
+    /* fooram memory contents do not depend on program/input. */
+    UNUSED(program, primary_input);
     return m;
 }
 

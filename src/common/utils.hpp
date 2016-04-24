@@ -36,10 +36,14 @@ bool is_little_endian();
 
 std::string FORMAT(const std::string &prefix, const char* format, ...);
 
+/* A variadic template to suppress unused argument warnings */
+template<typename ... Types>
+void UNUSED(Types&&...) {}
+
 #ifdef DEBUG
 #define FMT FORMAT
 #else
-#define FMT(...) ""
+#define FMT(...) (UNUSED(__VA_ARGS__), "")
 #endif
 
 void serialize_bit_vector(std::ostream &out, const bit_vector &v);

@@ -43,7 +43,7 @@ const static size_t MAX_FMT = 256;
     return ::std::string(buf);
 }
 #else // not DEBUG
-::std::string GADGETLIB2_FMT(const char* format, ...) {return "";}
+::std::string GADGETLIB2_FMT(const char* format, ...) {UNUSED(format); return "";}
 #endif
 
 /** Safely converts 64-bit types to 32-bit. */
@@ -68,6 +68,7 @@ void ErrorHandling::fatalError(const ::std::string& msg) {
         printStacktrace();
         throw ::std::runtime_error(msg);
 #   else // not DEBUG
+        UNUSED(msg);
         const ::std::string releaseMsg("Fatal error encoutered. Run debug build for more"
                                                                   " information and stack trace.");
         ::std::cerr << "ERROR:  " << releaseMsg << ::std::endl << ::std::endl;

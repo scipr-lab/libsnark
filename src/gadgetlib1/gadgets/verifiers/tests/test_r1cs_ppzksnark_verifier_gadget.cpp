@@ -96,7 +96,8 @@ void test_verifier(const std::string &annotation_A, const std::string &annotatio
     printf("negative test:\n");
     assert(!pb.is_satisfied());
     PRINT_CONSTRAINT_PROFILING();
-    printf("number of constraints for verifier: %zu\n", pb.num_constraints());
+    printf("number of constraints for verifier: %zu (verifier is implemented in %s constraints and verifies %s proofs))\n",
+           pb.num_constraints(), annotation_B.c_str(), annotation_A.c_str());
 }
 
 template<typename ppT_A, typename ppT_B>
@@ -161,7 +162,8 @@ void test_hardcoded_verifier(const std::string &annotation_A, const std::string 
     printf("negative test:\n");
     assert(!pb.is_satisfied());
     PRINT_CONSTRAINT_PROFILING();
-    printf("number of constraints for verifier: %zu\n", pb.num_constraints());
+    printf("number of constraints for verifier: %zu (verifier is implemented in %s constraints and verifies %s proofs))\n",
+           pb.num_constraints(), annotation_B.c_str(), annotation_A.c_str());
 }
 
 template<typename FpExtT, template<class> class VarT, template<class> class MulT>

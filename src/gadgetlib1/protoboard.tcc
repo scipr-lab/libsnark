@@ -39,6 +39,8 @@ var_index_t protoboard<FieldT>::allocate_var_index(const std::string &annotation
 #ifdef DEBUG
     assert(annotation != "");
     constraint_system.variable_annotations[next_free_var] = annotation;
+#else
+    UNUSED(annotation);
 #endif
     ++constraint_system.auxiliary_input_size;
     values.emplace_back(FieldT::zero());
@@ -100,6 +102,8 @@ void protoboard<FieldT>::add_r1cs_constraint(const r1cs_constraint<FieldT> &cons
 #ifdef DEBUG
     assert(annotation != "");
     constraint_system.constraint_annotations[constraint_system.constraints.size()] = annotation;
+#else
+    UNUSED(annotation);
 #endif
     constraint_system.constraints.emplace_back(constr);
 }

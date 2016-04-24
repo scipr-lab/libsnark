@@ -44,6 +44,7 @@ test_affine_verifier(const r1cs_gg_ppzksnark_verification_key<ppT> &vk,
                      const bool expected_answer)
 {
     print_header("R1CS GG-ppzkSNARK Affine Verifier");
+    UNUSED(vk, primary_input, proof, expected_answer);
     printf("Affine verifier is not supported; not testing anything.\n");
 }
 

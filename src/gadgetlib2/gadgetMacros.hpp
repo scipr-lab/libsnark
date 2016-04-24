@@ -17,7 +17,8 @@
 ///* The PP_NARG macro returns the number of arguments that have been
 // * passed to it.
 // */
-//
+
+/*
 //#define PP_NARG(...)                          \
 //         PP_NARG_(__VA_ARGS__,PP_RSEQ_N())
 //#define PP_NARG_(...) \
@@ -38,6 +39,8 @@
 //         29,28,27,26,25,24,23,22,21,20, \
 //         19,18,17,16,15,14,13,12,11,10, \
 //         9,8,7,6,5,4,3,2,1,0
+*/
+
 /**
     Macro which creates Base classes for function specific gadgets. For instance
     CREATE_GADGET_BASE_CLASS(AND_GadgetBase) will create a base class which should be inherited by

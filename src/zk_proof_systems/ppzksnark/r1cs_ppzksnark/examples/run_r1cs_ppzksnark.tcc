@@ -43,6 +43,7 @@ test_affine_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
                      const r1cs_ppzksnark_proof<ppT> &proof,
                      const bool expected_answer)
 {
+    UNUSED(vk, primary_input, proof, expected_answer);
     print_header("R1CS ppzkSNARK Affine Verifier");
     printf("Affine verifier is not supported; not testing anything.\n");
 }

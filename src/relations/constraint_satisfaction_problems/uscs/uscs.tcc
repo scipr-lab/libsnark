@@ -110,6 +110,8 @@ void uscs_constraint_system<FieldT>::add_constraint(const uscs_constraint<FieldT
 {
 #ifdef DEBUG
     constraint_annotations[constraints.size()] = annotation;
+#else
+    UNUSED(annotation);
 #endif
     constraints.emplace_back(c);
 }

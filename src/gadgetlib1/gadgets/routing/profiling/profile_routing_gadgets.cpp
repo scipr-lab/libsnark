@@ -98,7 +98,7 @@ void profile_num_switches(const size_t l)
     }
 }
 
-int main(int argc, const char * argv[])
+int main()
 {
     start_profiling();
     default_ec_pp::init_public_params();

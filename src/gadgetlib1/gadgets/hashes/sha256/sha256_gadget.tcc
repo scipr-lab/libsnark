@@ -181,6 +181,7 @@ sha256_two_to_one_hash_gadget<FieldT>::sha256_two_to_one_hash_gadget(protoboard<
 template<typename FieldT>
 void sha256_two_to_one_hash_gadget<FieldT>::generate_r1cs_constraints(const bool ensure_output_bitness)
 {
+    UNUSED(ensure_output_bitness);
     f->generate_r1cs_constraints();
 }
 
@@ -220,6 +221,7 @@ bit_vector sha256_two_to_one_hash_gadget<FieldT>::get_hash(const bit_vector &inp
 template<typename FieldT>
 size_t sha256_two_to_one_hash_gadget<FieldT>::expected_constraints(const bool ensure_output_bitness)
 {
+    UNUSED(ensure_output_bitness);
     return 27280; /* hardcoded for now */
 }
 

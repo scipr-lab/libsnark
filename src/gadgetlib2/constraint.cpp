@@ -36,7 +36,7 @@ namespace gadgetlib2 {
 #ifdef DEBUG
 Constraint::Constraint(const string& name) : name_(name) {}
 #else
-Constraint::Constraint(const string& name) {}
+Constraint::Constraint(const string& name) { UNUSED(name); }
 #endif
 
 string Constraint::name() const {
@@ -90,6 +90,8 @@ bool Rank1Constraint::isSatisfied(const VariableAssignment& assignment,
             cerr << "a*b: " << (ares*bres).asString() << endl;
             cerr << "c:   " << cres.asString() << endl;
         }
+#       else
+        UNUSED(printOnFail);
 #       endif
         return false;
     }
@@ -146,6 +148,8 @@ bool PolynomialConstraint::isSatisfied(const VariableAssignment& assignment,
                     cerr <<  var.name() << ": " << assignment.at(var).asString() << endl;
                 }
             }
+#       else
+            UNUSED(printOnFail);
 #       endif
 
         return false;

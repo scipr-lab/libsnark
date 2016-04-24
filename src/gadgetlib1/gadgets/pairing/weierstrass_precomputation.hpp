@@ -59,7 +59,7 @@ public:
                          const G1_variable<ppT> &P,
                          G1_precomputation<ppT> &precomp, // will allocate this inside
                          const std::string &annotation_prefix,
-                         const typename std::enable_if<Fqk<other_curve<ppT> >::extension_degree() == 4, FieldT>::type &dummy = FieldT()) :
+                         const typename std::enable_if<Fqk<other_curve<ppT> >::extension_degree() == 4, FieldT>::type& = FieldT()) :
             gadget<FieldT>(pb, annotation_prefix),
             precomp(precomp)
     {
@@ -76,7 +76,7 @@ public:
                          const G1_variable<ppT> &P,
                          G1_precomputation<ppT> &precomp, // will allocate this inside
                          const std::string &annotation_prefix,
-                         const typename std::enable_if<Fqk<other_curve<ppT> >::extension_degree() == 6, FieldT>::type &dummy = FieldT()) :
+                         const typename std::enable_if<Fqk<other_curve<ppT> >::extension_degree() == 6, FieldT>::type& = FieldT()) :
         gadget<FieldT>(pb, annotation_prefix),
             precomp(precomp)
     {

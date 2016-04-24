@@ -180,6 +180,8 @@ template<typename FieldT>
 void fooram_cpu_checker<FieldT>::generate_r1cs_witness_other(fooram_input_tape_iterator &aux_it,
                                                              const fooram_input_tape_iterator &aux_end)
 {
+    /* fooram memory contents do not depend on program/input. */
+    UNUSED(aux_it, aux_end);
     /* packed_store_val = prev_state_bits + prev_pc_addr */
     compute_packed_store_val->generate_r1cs_witness();
 

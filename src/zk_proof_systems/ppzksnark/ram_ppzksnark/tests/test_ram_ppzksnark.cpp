@@ -40,7 +40,7 @@ void test_ram_ppzksnark(const size_t w,
     print_header("(leave) Test RAM ppzkSNARK");
 }
 
-int main(int argc, const char * argv[])
+int main()
 {
     ram_ppzksnark_snark_pp<default_ram_ppzksnark_pp>::init_public_params();
     start_profiling();

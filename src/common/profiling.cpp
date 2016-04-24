@@ -20,6 +20,7 @@
 #include <vector>
 #include <ctime>
 #include "common/default_types/ec_pp.hpp"
+#include "common/utils.hpp"
 
 #ifndef NO_PROCPS
 #include <proc/readproc.h>
@@ -141,6 +142,8 @@ void print_cumulative_op_counts(const bool only_fq)
         }
         printf("\n");
     }
+#else
+    UNUSED(only_fq);
 #endif
 }
 
@@ -163,6 +166,8 @@ void print_op_profiling(const std::string &msg)
         first = false;
     }
     printf(")");
+#else
+    UNUSED(msg);
 #endif
 }
 

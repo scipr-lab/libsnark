@@ -47,7 +47,7 @@ void profile_as_waksman_algorithm(const size_t n)
     leave_block("Generate AS-Waksman routing assignment");
 }
 
-int main(int argc, const char * argv[])
+int main()
 {
     start_profiling();
 

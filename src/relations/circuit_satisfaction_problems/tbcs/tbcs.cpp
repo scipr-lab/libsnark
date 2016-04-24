@@ -280,6 +280,8 @@ void tbcs_circuit::add_gate(const tbcs_gate &g, const std::string &annotation)
     gates.emplace_back(g);
 #ifdef DEBUG
     gate_annotations[g.output] = annotation;
+#else
+    UNUSED(annotation);
 #endif
 }
 
