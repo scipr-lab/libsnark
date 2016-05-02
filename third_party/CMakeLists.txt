@@ -2,30 +2,39 @@ add_subdirectory(gtest EXCLUDE_FROM_ALL)
 
 # TODO(scripr-lab): upstream these buildsystems to the respective
 # projects.
-include_directories(ate-pairing/include)
-include_directories(xbyak)
-add_library(
-  zm
-  STATIC
 
-  ate-pairing/src/zm.cpp
-  ate-pairing/src/zm2.cpp
-)
 
-include_directories(libsnark-supercop/include)
+if(${CURVE} STREQUAL "BN128")
+  include_directories(ate-pairing/include)
+  include_directories(xbyak)
+  add_library(
+    zm
+    STATIC
 
-enable_language(ASM)
+    ate-pairing/src/zm.cpp
+    ate-pairing/src/zm2.cpp
+  )
+endif()
 
-file(GLOB_RECURSE SUPERCOP_SRCS libsnark-supercop/*.c libsnark-supercop/*.s)
 
-add_library(
-  snark_supercop
-  STATIC
 
-  ${SUPERCOP_SRCS}
-)
-target_link_libraries(
-  snark_supercop
+if("${WITH_SUPERCOP}")
+  include_directories(libsnark-supercop/include)
 
-  ${CRYPTO_LIBRARIES}
-)
+  enable_language(ASM)
+
+  file(GLOB_RECURSE SUPERCOP_SRCS libsnark-supercop/*.c libsnark-supercop/*.s)
+
+  add_library(
+    snark_supercop
+    STATIC
+
+    ${SUPERCOP_SRCS}
+  )
+
+  target_link_libraries(
+    snark_supercop
+
+    ${CRYPTO_LIBRARIES}
+  )
+endif()
