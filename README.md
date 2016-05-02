@@ -216,6 +216,8 @@ Known issues include the following:
 Build instructions
 --------------------------------------------------------------------------------
 
+### Dependencies
+
 The libsnark library relies on the following:
 
 - C++ build environment
@@ -224,29 +226,47 @@ The libsnark library relies on the following:
 - libprocps for reporting memory usage
 - third-party libraries via git submodules (included)
 
-So far we have tested these only on Linux, though we have been able to make the library work,
-with some features disabled (such as memory profiling or GTest tests), on Windows via Cygwin
-and on Mac OS X. (If you succeed in achieving more complete ports of the library, please
-let us know!) See also the notes on [portability](#portability) below.
+So far we have tested these only on Linux, though we have been able to make the
+libsnark work, with some features disabled (such as memory profiling or GTest tests),
+on Windows via Cygwin and on Mac OS X. See also the notes on [portability](#portability)
+below. (If you port libsnark to additional platforms, please let us know!) 
 
-For example, on a fresh install of Ubuntu 14.04, install the following packages:
+Concretely, here are the requisite packages in some Linux distributions:
 
-    $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps3-dev python-markdown libboost-all-dev libssl-dev
+* On Ubuntu 16.04 LTS:
 
-Or, on Fedora 20:
+        $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps4-dev python-markdown libboost-all-dev libssl-dev
 
-    $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
+* On Ubuntu 14.04 LTS:
 
-Run the following, to fetch dependencies from their GitHub repos.
+        $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps3-dev python-markdown libboost-all-dev libssl-dev
+
+* On Fedora 21 through 23:
+
+        $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python2-markdown
+
+* On Fedora 20:
+
+        $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
+
+
+### Building
+
+Fetch dependencies from their GitHub repos:
+
     $ git submodule init && git submodule update
 
-Then, to compile the library, tests, and profiling harness, run:
+Create the Makefile:
 
-    $ mkdir build && cd build && cmake .. && make
+    $ mkdir build && cd build && cmake .. 
 
-To create just the HTML documentation, run
+Then, to compile the library, tests, and profiling harness, run this within the `build directory:
 
-    $ cd build && make doc
+    $ make
+
+To create the HTML documentation, run
+
+    $ make doc
 
 and then view the resulting `README.html` (which contains the very text you are reading now).
 
