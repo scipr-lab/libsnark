@@ -26,6 +26,16 @@ option(
   OFF
 )
 option(
+  BINARY_OUTPUT
+  "In serialization, output raw binary data (instead of decimal), which is smaller and faster."
+  OFF
+)
+option(
+  MONTGOMERY_OUTPUT
+  "Serialize Fp elements as their Montgomery representations (faster but not human-readable)"
+  ON
+)
+option(
   USE_PT_COMPRESSION
   "Use point compression"
   ON
@@ -63,6 +73,12 @@ option(
   PERFORMANCE
   "Enable link-time and aggressive optimizations"
   OFF
+)
+
+option(
+  USE_ASM
+  "Use architecture-specific optimized assembly code"
+  ON
 )
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -110,12 +126,6 @@ endif()
 FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
-# Default feature flags.
-add_definitions(
-  -DUSE_ASM
-  -DMONTGOMERY_OUTPUT
-)
-
 add_definitions(
   -DCURVE_${CURVE}
 )
@@ -140,6 +150,14 @@ endif()
 
 if("${MULTICORE}")
   add_definitions(-DMULTICORE=1)
+endif()
+
+if("${BINARY_OUTPUT}")
+  add_definitions(-DBINARY_OUTPUT)
+endif()
+
+if("${MONTGOMERY_OUTPUT}")
+  add_definitions(-DMONTGOMERY_OUTPUT)
 endif()
 
 if(NOT "${USE_PT_COMPRESSION}")
@@ -168,6 +186,10 @@ if("${PERFORMANCE}")
     CMAKE_EXE_LINKER_FLAGS
     "${CMAKE_EXE_LINKER_FLAGS} -flto"
   )
+endif()
+
+if("${USE_ASM}")
+  add_definitions(-DUSE_ASM)
 endif()
 
 find_program(

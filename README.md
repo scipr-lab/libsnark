@@ -349,27 +349,23 @@ does the same but now the input consists of 10 bytes.
 Build options
 --------------------------------------------------------------------------------
 
-The following flags change the behavior of the compiled code.
+The following flags change the behavior of the compiled code. Use
 
-*    `cmake -Dname1=ON -Dname2=OFF ...'`
+     $ cmake -Dname1=ON -Dname2=OFF ...
 
-     Override the active conditional #define names (you can see the default at the top of the Makefile).
-     The next bullets list the most important conditionally-#defined features.
-     For example, `make FEATUREFLAGS='-DBINARY_OUTPUT'` enables binary output and disables the default
-     assembly optimizations and Montgomery-representation output.
+to control these (you can see the default at the top of CMakeLists.txt).
 
-*    define `BINARY_OUTPUT`
+*    `cmake -DBINARY_PUTPUT=ON`
 
-     In serialization, output raw binary data (instead of decimal, when not set).
+     In serialization, output raw binary data (instead of decimal), which is smaller and faster. *You probably want to enable this.*
 
-*   `cmake -DCURVE=choice` / define `CURVE_choice` (where `choice` is one of: 
-     ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
+*   `cmake -DCURVE=choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
-*   `cmake -DLOWMEM=ON` / define `LOWMEM`
+*   `cmake -DLOWMEM=ON`
 
-    Limit the size of multi-exponentiation tables, for low-memory platforms.
+     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
 *   `cmake -DWITH_PROCPS=OFF`
 
@@ -396,23 +392,23 @@ The following flags change the behavior of the compiled code.
     This gives much faster serialization times, at the expense of ~2x larger
     sizes for serialized keys and proofs.
 
-*   define `MONTGOMERY_OUTPUT` (on by default)
+*   `cmake -DMONTGOMERY_OUTPUT=ON` (enabled by default)
 
     Serialize Fp elements as their Montgomery representations. If this
     option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
 
-*   `cmake -DPROFILE_OP_COUNTS=ON` / define `PROFILE_OP_COUNTS`
+*   `cmake -DPROFILE_OP_COUNTS=ON`
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
     curves except bn128.
 
-*   define `USE_ASM` (on by default)
+*    `cmake -DUSE_ASM=ON` (enabled by default)
 
     Use architecture-specific assembly routines for F[p] arithmetic and heap in
-    multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
+    multi-exponentiation. (If disabled, use GMP's `mpn_*` routines instead.)
 
 *   `cmake -DUSE_MIXED_ADDITION=ON`
 
