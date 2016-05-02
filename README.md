@@ -282,6 +282,7 @@ This will install `libsnark.a` into `/install/path/lib`; so your application sho
 
 In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be installed and should be linked in using `-lsnark_adsnark`.
 
+When you use compile you application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/src/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
 
 ### Building on Windows using Cygwin
 Install Cygwin using the graphical installer, including the `g++`, `libgmp`, `cmake`,
@@ -410,7 +411,7 @@ The following flags change the behavior of the compiled code.
 
 *   define `USE_ASM` (on by default)
 
-    Use unrolled assembly routines for F[p] arithmetic and faster heap in
+    Use architecture-specific assembly routines for F[p] arithmetic and heap in
     multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
 
 *   `cmake -DUSE_MIXED_ADDITION=ON`
