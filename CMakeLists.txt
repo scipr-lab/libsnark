@@ -57,7 +57,7 @@ option(
 )
 
 option(
-  PERFORMANCE,
+  PERFORMANCE
   "Enable link-time and aggressive optimizations"
   OFF
 )
