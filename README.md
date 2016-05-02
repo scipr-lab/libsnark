@@ -422,6 +422,10 @@ to control these (you can see the default at the top of CMakeLists.txt).
     Enables compiler optimizations such as link-time optimization, and disables debugging aids.
     (On some distributions this causes a `plugin needed to handle lto object` link error and `undefined reference`s, which can be remedied by `AR=gcc-ar make ...`.)
 
+*   `cmake -DOPT_FLAGS=...`
+
+    Set the C++ compiler optimization flags, overriding the default (e.g., `-DOPT_FLAGS="-Os -march=i386"`).
+
 Not all combinations are tested together or supported by every part of the codebase.
 
 

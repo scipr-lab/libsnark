@@ -81,21 +81,36 @@ option(
   ON
 )
 
+set(
+  OPT_FLAGS
+  ""
+  CACHE
+  STRING
+  "Override C++ compiler optimization flags"
+)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  # Tuning and common compilation flags
+  # Common compilation flags and warning configuration
   set(
     CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -ggdb3 -std=c++11 -O2 -march=native -mtune=native"
-  )
-  # Warning configuration
-  set(
-    CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wfatal-errors"
+    "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wfatal-errors"
   )
   if("${MULTICORE}")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
   endif()
+  # Default optimizations flags (to override, use -DOPT_FLAGS=...)
+  if("${OPT_FLAGS}" STREQUAL "")
+    set(
+      OPT_FLAGS
+      "-ggdb3 -O2 -march=native -mtune=native"
+    )
+  endif()
 endif()
+
+set(
+  CMAKE_CXX_FLAGS
+  "${CMAKE_CXX_FLAGS} ${OPT_FLAGS}"
+)
 
 find_path(GMP_INCLUDE_DIR NAMES gmp.h)
 find_library(GMP_LIBRARIES NAMES gmp libgmp)
