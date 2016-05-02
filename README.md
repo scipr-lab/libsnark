@@ -355,10 +355,6 @@ The following flags change the behavior of the compiled code. Use
 
 to control these (you can see the default at the top of CMakeLists.txt).
 
-*    `cmake -DBINARY_PUTPUT=ON`
-
-     In serialization, output raw binary data (instead of decimal), which is smaller and faster. *You probably want to enable this.*
-
 *   `cmake -DCURVE=choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
@@ -398,6 +394,10 @@ to control these (you can see the default at the top of CMakeLists.txt).
     option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
+
+*    `cmake -DBINARY_PUTPUT=ON` (enabled by default)
+
+     In serialization, output raw binary data (instead of decimal), which is smaller and faster.
 
 *   `cmake -DPROFILE_OP_COUNTS=ON`
 

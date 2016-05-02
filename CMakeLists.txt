@@ -28,7 +28,7 @@ option(
 option(
   BINARY_OUTPUT
   "In serialization, output raw binary data (instead of decimal), which is smaller and faster."
-  OFF
+  ON
 )
 option(
   MONTGOMERY_OUTPUT
