@@ -16,6 +16,7 @@
 
 #include <cassert>
 #include <sstream>
+#include "common/utils.hpp"
 
 namespace libsnark {
 
@@ -29,6 +30,7 @@ inline void consume_OUTPUT_NEWLINE(std::istream &in)
 {
 #ifdef BINARY_OUTPUT
     // nothing to consume
+    UNUSED(in);
 #else
     char c;
     in.read(&c, 1);
@@ -39,6 +41,7 @@ inline void consume_OUTPUT_SEPARATOR(std::istream &in)
 {
 #ifdef BINARY_OUTPUT
     // nothing to consume
+    UNUSED(in);
 #else
     char c;
     in.read(&c, 1);
