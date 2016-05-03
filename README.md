@@ -452,22 +452,28 @@ with respect to portability. Specifically:
    (The decimal serialization routines have no such limitation.)
 
 5. libsnark requires a C++ compiler with good C++11 support. It has been
-   tested with g++ 4.7, g++ 4.8, and clang 3.4.
+   tested with g++ 4.7 and newer, and clang 3.4 and newer.
 
 6. On x86-64, we by default use highly optimized assembly implementations for some
    operations (see `USE_ASM` above). On other architectures we fall back to a
    portable C++ implementation, which is slower.
 
+7. The ate-pairing library, require by the BN128 curve, can be compiled only on i686 and x86-64. (On other platforms, use other `-DCURVE=...` choices.)
+
+8. The SUPERCOP library, required by ADSNARK, can be compiled only on i686 and x86-64. (On other platforms, use `WITH_SUPERCOP=OFF`.)
+
 Tested configurations include:
 
 * Debian jessie with g++ 4.7 on x86-64
 * Debian jessie with clang 3.4 on x86-64
-* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64 and i686
+* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64
+* Fedora 21 with g++ 4.9.2 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
-* Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
+* Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
+* Ubuntu 15.04/16.04 LTS with g++ 4.9.2/5.3.1 on ARM AArch32/AArch64, for non-BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
-* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1, for EDWARDS and ALT_BN128 curve choices
-* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`DWITH_PROCPS=OFF` and GTEST disabled)
+* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 (`DWITH_PROCPS=OFF` and GTEST disabled)
 
 
 --------------------------------------------------------------------------------
