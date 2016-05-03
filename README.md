@@ -460,7 +460,7 @@ with respect to portability. Specifically:
 
 7. The ate-pairing library, require by the BN128 curve, can be compiled only on i686 and x86-64. (On other platforms, use other `-DCURVE=...` choices.)
 
-8. The SUPERCOP library, required by ADSNARK, can be compiled only on i686 and x86-64. (On other platforms, use `WITH_SUPERCOP=OFF`.)
+8. The SUPERCOP library, required by ADSNARK, can be compiled only on i686 and x86-64. (On other platforms, use `-DWITH_SUPERCOP=OFF`.)
 
 Tested configurations include:
 
@@ -472,8 +472,8 @@ Tested configurations include:
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
 * Ubuntu 15.04/16.04 LTS with g++ 4.9.2/5.3.1 on ARM AArch32/AArch64, for non-BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
-* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`DWITH_PROCPS=OFF` and GTEST disabled)
-* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 (`DWITH_PROCPS=OFF` and GTEST disabled)
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`-DWITH_PROCPS=OFF` and GTestdisabled)
+* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 (`-DWITH_PROCPS=OFF` and GTest disabled)
 
 
 --------------------------------------------------------------------------------
@@ -519,7 +519,7 @@ on the size of the multiexponentiation instance *and* the platform.
 
 On our benchmarking platform (a 3.40 GHz Intel Core i7-4770 CPU), we have
 computed for each curve optimal windows, provided as
-"fixed_base_exp_window_table" initialization sequences, for each curve; see
+`fixed_base_exp_window_table` initialization sequences, for each curve; see
 `X_init.cpp` for X=edwards,bn128,alt_bn128.
 
 Performance on other platforms may not be optimal (but probably not be far off).
