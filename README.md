@@ -415,7 +415,7 @@ to control these (you can see the default at the top of CMakeLists.txt).
     Convert each element of the proving key and verification key to
     affine coordinates. This allows using mixed addition formulas in
     multiexponentiation and results in slightly faster prover and
-    verifier runtime at expense of increased proving time.
+    verifier runtime at expense of increased generator runtime.
 
 *   `cmake -DPERFORMANCE=ON`
 
