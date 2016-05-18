@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <numeric>
 #include <unordered_set>
 
 namespace libsnark {
