@@ -16,6 +16,8 @@
 
 #include "algebra/scalar_multiplication/multiexp.hpp"
 
+#include <numeric>
+
 namespace libsnark {
 
 template<typename T>
