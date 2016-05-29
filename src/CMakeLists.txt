@@ -126,6 +126,8 @@ endif()
 # Demos
 add_executable(
   demo_arithmetization
+  EXCLUDE_FROM_ALL
+
   reductions/ram_to_r1cs/examples/demo_arithmetization.cpp
 )
 target_link_libraries(
@@ -137,6 +139,8 @@ target_link_libraries(
 
 add_executable(
   demo_ram_ppzksnark
+  EXCLUDE_FROM_ALL
+
   zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark.cpp
 )
 target_link_libraries(
@@ -148,6 +152,8 @@ target_link_libraries(
 
 add_executable(
   demo_ram_ppzksnark_generator
+  EXCLUDE_FROM_ALL
+
   zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_generator.cpp
 )
 target_link_libraries(
@@ -159,6 +165,7 @@ target_link_libraries(
 
 add_executable(
   demo_ram_ppzksnark_prover
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_prover.cpp
 )
@@ -171,6 +178,7 @@ target_link_libraries(
 
 add_executable(
   demo_ram_ppzksnark_verifier
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/ram_ppzksnark/examples/demo_ram_ppzksnark_verifier.cpp
 )
@@ -184,6 +192,7 @@ target_link_libraries(
 if("${WITH_SUPERCOP}")
   add_executable(
     demo_r1cs_ppzkadsnark
+    EXCLUDE_FROM_ALL
 
     zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/demo_r1cs_ppzkadsnark.cpp
   )
@@ -197,6 +206,7 @@ endif()
 # Profiling
 add_executable(
   profile_routing_algorithms
+  EXCLUDE_FROM_ALL
 
   common/routing_algorithms/profiling/profile_routing_algorithms.cpp
 )
@@ -208,6 +218,7 @@ target_link_libraries(
 
 add_executable(
   profile_routing_gadgets
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/routing/profiling/profile_routing_gadgets.cpp
 )
@@ -219,6 +230,7 @@ target_link_libraries(
 
 add_executable(
   profile_r1cs_mp_ppzkpcd
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/profiling/profile_r1cs_mp_ppzkpcd.cpp
 )
@@ -230,6 +242,7 @@ target_link_libraries(
 
 add_executable(
   profile_r1cs_sp_ppzkpcd
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/profiling/profile_r1cs_sp_ppzkpcd.cpp
 )
@@ -241,6 +254,7 @@ target_link_libraries(
 
 add_executable(
   profile_bacs_ppzksnark
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/bacs_ppzksnark/profiling/profile_bacs_ppzksnark.cpp
 )
@@ -252,6 +266,7 @@ target_link_libraries(
 
 add_executable(
   profile_r1cs_gg_ppzksnark
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/profiling/profile_r1cs_gg_ppzksnark.cpp
 )
@@ -263,6 +278,7 @@ target_link_libraries(
 
 add_executable(
   profile_ram_ppzksnark
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/ram_ppzksnark/profiling/profile_ram_ppzksnark.cpp
 )
@@ -274,6 +290,7 @@ target_link_libraries(
 
 add_executable(
   profile_tbcs_ppzksnark
+  EXCLUDE_FROM_ALL
 
   relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp
   zk_proof_systems/ppzksnark/tbcs_ppzksnark/profiling/profile_tbcs_ppzksnark.cpp
@@ -286,6 +303,7 @@ target_link_libraries(
 
 add_executable(
   profile_uscs_ppzksnark
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/uscs_ppzksnark/profiling/profile_uscs_ppzksnark.cpp
 )
@@ -297,6 +315,7 @@ target_link_libraries(
 
 add_executable(
   profile_ram_zksnark
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark.cpp
 )
@@ -310,6 +329,7 @@ target_link_libraries(
 # Tests
 add_executable(
   algebra_bilinearity_test
+  EXCLUDE_FROM_ALL
 
   algebra/curves/tests/test_bilinearity.cpp
 )
@@ -321,6 +341,7 @@ target_link_libraries(
 
 add_executable(
   algebra_groups_test
+  EXCLUDE_FROM_ALL
 
   algebra/curves/tests/test_groups.cpp
 )
@@ -332,6 +353,7 @@ target_link_libraries(
 
 add_executable(
   algebra_fields_test
+  EXCLUDE_FROM_ALL
 
   algebra/fields/tests/test_fields.cpp
 )
@@ -343,6 +365,7 @@ target_link_libraries(
 
 add_executable(
   common_routing_algorithms_test
+  EXCLUDE_FROM_ALL
 
   common/routing_algorithms/tests/test_routing_algorithms.cpp
 )
@@ -354,6 +377,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib1_fooram_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram.cpp
 )
@@ -365,6 +389,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget.cpp
 )
@@ -376,6 +401,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_adapters_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib2/tests/adapters_UTEST.cpp
 )
@@ -388,6 +414,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_constraint_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib2/tests/constraint_UTEST.cpp
 )
@@ -400,6 +427,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_gadget_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib2/tests/gadget_UTEST.cpp
 )
@@ -412,6 +440,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_integration_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib2/examples/simple_example.hpp
   gadgetlib2/tests/integration_UTEST.cpp
@@ -431,6 +460,7 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_protoboard_test
+  EXCLUDE_FROM_ALL
 
   gadgetlib2/tests/protoboard_UTEST.cpp
 )
@@ -443,6 +473,8 @@ target_link_libraries(
 
 add_executable(
   gadgetlib2_variable_test
+  EXCLUDE_FROM_ALL
+
 
   gadgetlib2/tests/variable_UTEST.cpp
 )
@@ -455,6 +487,7 @@ target_link_libraries(
 
 add_executable(
   relations_qap_test
+  EXCLUDE_FROM_ALL
 
   relations/arithmetic_programs/qap/tests/test_qap.cpp
 )
@@ -466,6 +499,7 @@ target_link_libraries(
 
 add_executable(
   relations_ssp_test
+  EXCLUDE_FROM_ALL
 
   relations/arithmetic_programs/ssp/tests/test_ssp.cpp
 )
@@ -477,6 +511,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_r1cs_mp_ppzkpcd_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd.cpp
 )
@@ -488,6 +523,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_r1cs_sp_ppzkpcd_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd.cpp
 )
@@ -499,6 +535,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_bacs_ppzksnark_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark.cpp
 )
@@ -510,6 +547,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_r1cs_ppzksnark_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark.cpp
 )
@@ -521,6 +559,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_ram_ppzksnark_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark.cpp
 )
@@ -532,6 +571,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_tbcs_ppzksnark_test
+  EXCLUDE_FROM_ALL
 
   relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp
   zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark.cpp
@@ -544,6 +584,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_uscs_ppzksnark_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark.cpp
 )
@@ -555,6 +596,7 @@ target_link_libraries(
 
 add_executable(
   zk_proof_systems_ram_zksnark_test
+  EXCLUDE_FROM_ALL
 
   zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark.cpp
 )
@@ -565,6 +607,7 @@ target_link_libraries(
 )
 add_executable(
   test_knapsack_gadget
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget.cpp
 )
@@ -576,6 +619,7 @@ target_link_libraries(
 
 add_executable(
   test_merkle_tree_gadgets
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets.cpp
 )
@@ -587,6 +631,7 @@ target_link_libraries(
 
 add_executable(
   test_set_commitment_gadget
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget.cpp
 )
@@ -598,6 +643,7 @@ target_link_libraries(
 
 add_executable(
   test_sha256_gadget
+  EXCLUDE_FROM_ALL
 
   gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget.cpp
 )
@@ -712,3 +758,30 @@ add_test(
   NAME test_sha256_gadget
   COMMAND test_sha256_gadget
 )
+
+add_dependencies(check algebra_bilinearity_test)
+add_dependencies(check algebra_groups_test)
+add_dependencies(check algebra_fields_test)
+add_dependencies(check common_routing_algorithms_test)
+add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
+add_dependencies(check gadgetlib1_fooram_test)
+add_dependencies(check gadgetlib2_adapters_test)
+add_dependencies(check gadgetlib2_constraint_test)
+add_dependencies(check gadgetlib2_gadget_test)
+add_dependencies(check gadgetlib2_integration_test)
+add_dependencies(check gadgetlib2_protoboard_test)
+add_dependencies(check gadgetlib2_variable_test)
+add_dependencies(check relations_qap_test)
+add_dependencies(check relations_ssp_test)
+add_dependencies(check zk_proof_systems_bacs_ppzksnark_test)
+add_dependencies(check zk_proof_systems_r1cs_mp_ppzkpcd_test)
+add_dependencies(check zk_proof_systems_r1cs_ppzksnark_test)
+add_dependencies(check zk_proof_systems_r1cs_sp_ppzkpcd_test)
+add_dependencies(check zk_proof_systems_ram_ppzksnark_test)
+add_dependencies(check zk_proof_systems_ram_zksnark_test)
+add_dependencies(check zk_proof_systems_tbcs_ppzksnark_test)
+add_dependencies(check zk_proof_systems_uscs_ppzksnark_test)
+add_dependencies(check test_knapsack_gadget)
+add_dependencies(check test_merkle_tree_gadgets)
+add_dependencies(check test_set_commitment_gadget)
+add_dependencies(check test_sha256_gadget)
