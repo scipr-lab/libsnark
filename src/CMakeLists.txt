@@ -1,27 +1,5 @@
 include_directories(.)
 
-set(SNARK_EXTRASRCS)
-set(SNARK_EXTRALIBS)
-if(${CURVE} STREQUAL "BN128")
-  set(
-    SNARK_EXTRASRCS
-
-    ${SNARK_EXTRASRCS}
-    algebra/curves/bn128/bn128_g1.cpp
-    algebra/curves/bn128/bn128_g2.cpp
-    algebra/curves/bn128/bn128_gt.cpp
-    algebra/curves/bn128/bn128_init.cpp
-    algebra/curves/bn128/bn128_pairing.cpp
-    algebra/curves/bn128/bn128_pp.cpp
-  )
-  set(
-    SNARK_EXTRALIBS
-
-    ${SNARK_EXTRALIBS}
-    zm
-  )
-endif()
-
 # TODO(madars): Revisit the decision to only offer a static
 # library. In theory, it might be nice to offer a shared object, but
 # it may be impractical for users, since many of the build-time
@@ -32,36 +10,11 @@ add_library(
   snark
   STATIC
 
-  algebra/curves/alt_bn128/alt_bn128_g1.cpp
-  algebra/curves/alt_bn128/alt_bn128_g2.cpp
-  algebra/curves/alt_bn128/alt_bn128_init.cpp
-  algebra/curves/alt_bn128/alt_bn128_pairing.cpp
-  algebra/curves/alt_bn128/alt_bn128_pp.cpp
-  algebra/curves/edwards/edwards_g1.cpp
-  algebra/curves/edwards/edwards_g2.cpp
-  algebra/curves/edwards/edwards_init.cpp
-  algebra/curves/edwards/edwards_pairing.cpp
-  algebra/curves/edwards/edwards_pp.cpp
-  algebra/curves/mnt/mnt4/mnt4_g1.cpp
-  algebra/curves/mnt/mnt4/mnt4_g2.cpp
-  algebra/curves/mnt/mnt4/mnt4_init.cpp
-  algebra/curves/mnt/mnt4/mnt4_pairing.cpp
-  algebra/curves/mnt/mnt4/mnt4_pp.cpp
-  algebra/curves/mnt/mnt46_common.cpp
-  algebra/curves/mnt/mnt6/mnt6_g1.cpp
-  algebra/curves/mnt/mnt6/mnt6_g2.cpp
-  algebra/curves/mnt/mnt6/mnt6_init.cpp
-  algebra/curves/mnt/mnt6/mnt6_pairing.cpp
-  algebra/curves/mnt/mnt6/mnt6_pp.cpp
-  common/data_structures/integer_permutation.cpp
-  common/data_structures/set_commitment.cpp
   common/default_types/r1cs_ppzkpcd_pp.cpp
   common/default_types/tinyram_ppzksnark_pp.cpp
   common/default_types/tinyram_zksnark_pp.cpp
-  common/profiling.cpp
   common/routing_algorithms/as_waksman_routing_algorithm.cpp
   common/routing_algorithms/benes_routing_algorithm.cpp
-  common/utils.cpp
   gadgetlib1/constraint_profiling.cpp
   gadgetlib2/adapters.cpp
   gadgetlib2/constraint.cpp
@@ -76,8 +29,6 @@ add_library(
   relations/ram_computations/memory/ra_memory.cpp
   relations/ram_computations/rams/fooram/fooram_aux.cpp
   relations/ram_computations/rams/tinyram/tinyram_aux.cpp
-
-  ${SNARK_EXTRASRCS}
 )
 target_link_libraries(
   snark
@@ -86,7 +37,6 @@ target_link_libraries(
   ${GMPXX_LIBRARIES}
   ${CRYPTO_LIBRARIES}
   ${PROCPS_LIBRARIES}
-  ${SNARK_EXTRALIBS}
 )
 
 install(
@@ -329,42 +279,6 @@ target_link_libraries(
 )
 
 # Tests
-add_executable(
-  algebra_bilinearity_test
-  EXCLUDE_FROM_ALL
-
-  algebra/curves/tests/test_bilinearity.cpp
-)
-target_link_libraries(
-  algebra_bilinearity_test
-
-  snark
-)
-
-add_executable(
-  algebra_groups_test
-  EXCLUDE_FROM_ALL
-
-  algebra/curves/tests/test_groups.cpp
-)
-target_link_libraries(
-  algebra_groups_test
-
-  snark
-)
-
-add_executable(
-  algebra_fields_test
-  EXCLUDE_FROM_ALL
-
-  algebra/fields/tests/test_fields.cpp
-)
-target_link_libraries(
-  algebra_fields_test
-
-  snark
-)
-
 add_executable(
   common_routing_algorithms_test
   EXCLUDE_FROM_ALL
@@ -657,18 +571,6 @@ target_link_libraries(
 
 include(CTest)
 add_test(
-  NAME algebra_bilinearity_test
-  COMMAND algebra_bilinearity_test
-)
-add_test(
-  NAME algebra_groups_test
-  COMMAND algebra_groups_test
-)
-add_test(
-  NAME algebra_fields_test
-  COMMAND algebra_fields_test
-)
-add_test(
   NAME common_routing_algorithms_test
   COMMAND common_routing_algorithms_test
 )
@@ -761,9 +663,6 @@ add_test(
   COMMAND test_sha256_gadget
 )
 
-add_dependencies(check algebra_bilinearity_test)
-add_dependencies(check algebra_groups_test)
-add_dependencies(check algebra_fields_test)
 add_dependencies(check common_routing_algorithms_test)
 add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
 add_dependencies(check gadgetlib1_fooram_test)

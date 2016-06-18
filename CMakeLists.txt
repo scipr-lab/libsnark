@@ -141,6 +141,15 @@ endif()
 FIND_PACKAGE( Boost 1.40 COMPONENTS program_options REQUIRED )
 INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
+# libfqfft
+find_path(LIBFQFFT_INCLUDE_DIR NAMES libfqfft)
+include_directories(${LIBFQFFT_INCLUDE_DIR}/libfqfft)
+
+# libff
+find_path(LIBFF_INCLUDE_DIR NAMES libff)
+include_directories(${LIBFF_INCLUDE_DIR}/libff)
+find_library(LIBFF_LIBRARIES NAMES ff libff)
+
 add_definitions(
   -DCURVE_${CURVE}
 )
