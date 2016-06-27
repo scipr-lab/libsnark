@@ -26,7 +26,7 @@ namespace gadgetlib2 {
 /*************************************************************************************************/
 
 /* curve-specific public parameters */
-typedef libsnark::Fr<libsnark::default_ec_pp> Fp;
+typedef libff::Fr<libff::default_ec_pp> Fp;
 
 typedef std::vector<Fp> FpVector;
 

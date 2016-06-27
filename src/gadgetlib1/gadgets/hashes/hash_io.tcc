@@ -15,7 +15,7 @@ digest_variable<FieldT>::digest_variable(protoboard<FieldT> &pb,
                                          const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), digest_size(digest_size)
 {
-    bits.allocate(pb, digest_size, FMT(this->annotation_prefix, " bits"));
+    bits.allocate(pb, digest_size, libff::FMT(this->annotation_prefix, " bits"));
 }
 
 template<typename FieldT>
@@ -39,18 +39,18 @@ void digest_variable<FieldT>::generate_r1cs_constraints()
 {
     for (size_t i = 0; i < digest_size; ++i)
     {
-        generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], FMT(this->annotation_prefix, " bits_%zu", i));
+        generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], libff::FMT(this->annotation_prefix, " bits_%zu", i));
     }
 }
 
 template<typename FieldT>
-void digest_variable<FieldT>::generate_r1cs_witness(const bit_vector& contents)
+void digest_variable<FieldT>::generate_r1cs_witness(const libff::bit_vector& contents)
 {
     bits.fill_with_bits(this->pb, contents);
 }
 
 template<typename FieldT>
-bit_vector digest_variable<FieldT>::get_digest() const
+libff::bit_vector digest_variable<FieldT>::get_digest() const
 {
     return bits.get_bits(this->pb);
 }
@@ -61,7 +61,7 @@ block_variable<FieldT>::block_variable(protoboard<FieldT> &pb,
                                        const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), block_size(block_size)
 {
-    bits.allocate(pb, block_size, FMT(this->annotation_prefix, " bits"));
+    bits.allocate(pb, block_size, libff::FMT(this->annotation_prefix, " bits"));
 }
 
 template<typename FieldT>
@@ -90,13 +90,13 @@ block_variable<FieldT>::block_variable(protoboard<FieldT> &pb,
 }
 
 template<typename FieldT>
-void block_variable<FieldT>::generate_r1cs_witness(const bit_vector& contents)
+void block_variable<FieldT>::generate_r1cs_witness(const libff::bit_vector& contents)
 {
     bits.fill_with_bits(this->pb, contents);
 }
 
 template<typename FieldT>
-bit_vector block_variable<FieldT>::get_block() const
+libff::bit_vector block_variable<FieldT>::get_block() const
 {
     return bits.get_bits(this->pb);
 }

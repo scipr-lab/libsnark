@@ -23,7 +23,7 @@ r1cs_pcd_message_variable<FieldT>::r1cs_pcd_message_variable(protoboard<FieldT> 
                                                              const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix)
 {
-    type.allocate(pb, FMT(annotation_prefix, " type"));
+    type.allocate(pb, libff::FMT(annotation_prefix, " type"));
     all_vars.emplace_back(type);
 
     num_vars_at_construction = pb.num_variables();

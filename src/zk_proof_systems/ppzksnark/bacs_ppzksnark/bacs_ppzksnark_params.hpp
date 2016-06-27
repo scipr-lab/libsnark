@@ -21,13 +21,13 @@ namespace libsnark {
  */
 
 template<typename ppT>
-using bacs_ppzksnark_circuit = bacs_circuit<Fr<ppT> >;
+using bacs_ppzksnark_circuit = bacs_circuit<libff::Fr<ppT> >;
 
 template<typename ppT>
-using bacs_ppzksnark_primary_input = bacs_primary_input<Fr<ppT> >;
+using bacs_ppzksnark_primary_input = bacs_primary_input<libff::Fr<ppT> >;
 
 template<typename ppT>
-using bacs_ppzksnark_auxiliary_input = bacs_auxiliary_input<Fr<ppT> >;
+using bacs_ppzksnark_auxiliary_input = bacs_auxiliary_input<libff::Fr<ppT> >;
 
 } // libsnark
 

@@ -28,7 +28,7 @@ using namespace libsnark;
 int main(int argc, const char * argv[])
 {
     default_tbcs_ppzksnark_pp::init_public_params();
-    start_profiling();
+    libff::start_profiling();
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
@@ -47,12 +47,12 @@ int main(int argc, const char * argv[])
     const size_t auxiliary_input_size = 0;
     const size_t num_outputs = num_gates / 2;
 
-    enter_block("Generate TBCS example");
+    libff::enter_block("Generate TBCS example");
     tbcs_example example = generate_tbcs_example(primary_input_size, auxiliary_input_size, num_gates, num_outputs);
-    leave_block("Generate TBCS example");
+    libff::leave_block("Generate TBCS example");
 
-    print_header("(enter) Profile TBCS ppzkSNARK");
+    libff::print_header("(enter) Profile TBCS ppzkSNARK");
     const bool test_serialization = true;
     run_tbcs_ppzksnark<default_tbcs_ppzksnark_pp>(example, test_serialization);
-    print_header("(leave) Profile TBCS ppzkSNARK");
+    libff::print_header("(leave) Profile TBCS ppzkSNARK");
 }

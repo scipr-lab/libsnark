@@ -30,13 +30,13 @@ template<typename r1cs_ppzkadsnark_ppT>
 using snark_pp = typename r1cs_ppzkadsnark_ppT::snark_pp;
 
 template<typename r1cs_ppzkadsnark_ppT>
-using r1cs_ppzkadsnark_constraint_system = r1cs_constraint_system<Fr<snark_pp<r1cs_ppzkadsnark_ppT>>>;
+using r1cs_ppzkadsnark_constraint_system = r1cs_constraint_system<libff::Fr<snark_pp<r1cs_ppzkadsnark_ppT>>>;
 
 template<typename r1cs_ppzkadsnark_ppT>
-using r1cs_ppzkadsnark_primary_input = r1cs_primary_input<Fr<snark_pp<r1cs_ppzkadsnark_ppT>> >;
+using r1cs_ppzkadsnark_primary_input = r1cs_primary_input<libff::Fr<snark_pp<r1cs_ppzkadsnark_ppT>> >;
 
 template<typename r1cs_ppzkadsnark_ppT>
-using r1cs_ppzkadsnark_auxiliary_input = r1cs_auxiliary_input<Fr<snark_pp<r1cs_ppzkadsnark_ppT>> >;
+using r1cs_ppzkadsnark_auxiliary_input = r1cs_auxiliary_input<libff::Fr<snark_pp<r1cs_ppzkadsnark_ppT>> >;
 
 template<typename r1cs_ppzkadsnark_ppT>
 using r1cs_ppzkadsnark_skT = typename r1cs_ppzkadsnark_ppT::skT;

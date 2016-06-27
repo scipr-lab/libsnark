@@ -148,14 +148,14 @@ public:
     reg_count_t k; /* number of registers */
 
     tinyram_architecture_params() {};
-    tinyram_architecture_params(const reg_width_t w, const reg_count_t k) : w(w), k(k) { assert(w == 1ul << log2(w)); };
+    tinyram_architecture_params(const reg_width_t w, const reg_count_t k) : w(w), k(k) { assert(w == 1ul << libff::log2(w)); };
 
     size_t address_size() const;
     size_t value_size() const;
     size_t cpu_state_size() const;
     size_t initial_pc_addr() const;
 
-    bit_vector initial_cpu_state() const;
+    libff::bit_vector initial_cpu_state() const;
     memory_contents initial_memory_contents(const tinyram_program &program,
                                             const tinyram_input_tape &primary_input) const;
 

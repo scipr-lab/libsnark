@@ -24,11 +24,11 @@ namespace libsnark {
  * Gadget that represents a G2 variable.
  */
 template<typename ppT>
-class G2_variable : public gadget<Fr<ppT> > {
+class G2_variable : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     std::shared_ptr<Fqe_variable<ppT> > X;
     std::shared_ptr<Fqe_variable<ppT> > Y;
@@ -38,10 +38,10 @@ public:
     G2_variable(protoboard<FieldT> &pb,
                 const std::string &annotation_prefix);
     G2_variable(protoboard<FieldT> &pb,
-                const G2<other_curve<ppT> > &Q,
+                const libff::G2<other_curve<ppT> > &Q,
                 const std::string &annotation_prefix);
 
-    void generate_r1cs_witness(const G2<other_curve<ppT> > &Q);
+    void generate_r1cs_witness(const libff::G2<other_curve<ppT> > &Q);
 
     // (See a comment in r1cs_ppzksnark_verifier_gadget.hpp about why
     // we mark this function noinline.) TODO: remove later
@@ -53,11 +53,11 @@ public:
  * Gadget that creates constraints for the validity of a G2 variable.
  */
 template<typename ppT>
-class G2_checker_gadget : public gadget<Fr<ppT> > {
+class G2_checker_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     G2_variable<ppT> Q;
 

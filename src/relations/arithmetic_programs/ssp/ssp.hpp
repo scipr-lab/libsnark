@@ -22,7 +22,7 @@
 #ifndef SSP_HPP_
 #define SSP_HPP_
 
-#include "algebra/evaluation_domain/evaluation_domain.hpp"
+#include "evaluation_domain/evaluation_domain.hpp"
 
 namespace libsnark {
 
@@ -49,16 +49,16 @@ private:
     size_t num_inputs_;
 
 public:
-    std::shared_ptr<evaluation_domain<FieldT> > domain;
+    std::shared_ptr<libfqfft::evaluation_domain<FieldT> > domain;
 
     std::vector<std::map<size_t, FieldT> > V_in_Lagrange_basis;
 
-    ssp_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+    ssp_instance(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                  const size_t num_variables,
                  const size_t degree,
                  const size_t num_inputs,
                  const std::vector<std::map<size_t, FieldT> > &V_in_Lagrange_basis);
-    ssp_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+    ssp_instance(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                  const size_t num_variables,
                  const size_t degree,
                  const size_t num_inputs,
@@ -95,7 +95,7 @@ private:
     size_t num_inputs_;
 
 public:
-    std::shared_ptr<evaluation_domain<FieldT> > domain;
+    std::shared_ptr<libfqfft::evaluation_domain<FieldT> > domain;
 
     FieldT t;
 
@@ -103,7 +103,7 @@ public:
 
     FieldT Zt;
 
-    ssp_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+    ssp_instance_evaluation(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                             const size_t num_variables,
                             const size_t degree,
                             const size_t num_inputs,
@@ -111,7 +111,7 @@ public:
                             const std::vector<FieldT> &Vt,
                             const std::vector<FieldT> &Ht,
                             const FieldT &Zt);
-    ssp_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+    ssp_instance_evaluation(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                             const size_t num_variables,
                             const size_t degree,
                             const size_t num_inputs,

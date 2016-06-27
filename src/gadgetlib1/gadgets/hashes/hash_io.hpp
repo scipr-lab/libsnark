@@ -29,8 +29,8 @@ public:
                             const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const bit_vector& contents);
-    bit_vector get_digest() const;
+    void generate_r1cs_witness(const libff::bit_vector& contents);
+    libff::bit_vector get_digest() const;
 };
 
 template<typename FieldT>
@@ -53,8 +53,8 @@ public:
                    const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const bit_vector& contents);
-    bit_vector get_block() const;
+    void generate_r1cs_witness(const libff::bit_vector& contents);
+    libff::bit_vector get_block() const;
 };
 
 } // libsnark

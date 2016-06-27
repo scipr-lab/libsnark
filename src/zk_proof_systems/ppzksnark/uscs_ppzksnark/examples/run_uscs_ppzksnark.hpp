@@ -25,7 +25,7 @@ namespace libsnark {
  * (This takes additional time.)
  */
 template<typename ppT>
-bool run_uscs_ppzksnark(const uscs_example<Fr<ppT> > &example,
+bool run_uscs_ppzksnark(const uscs_example<libff::Fr<ppT> > &example,
                         const bool test_serialization);
 
 } // libsnark

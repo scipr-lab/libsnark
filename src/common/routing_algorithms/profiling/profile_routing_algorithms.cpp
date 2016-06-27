@@ -21,35 +21,35 @@ void profile_benes_algorithm(const size_t n)
 {
     printf("* Size: %zu\n", n);
 
-    assert(n == 1ul<<log2(n));
+    assert(n == 1ul<<libff::log2(n));
 
-    enter_block("Generate permutation");
-    integer_permutation permutation(n);
+    libff::enter_block("Generate permutation");
+    libff::integer_permutation permutation(n);
     permutation.random_shuffle();
-    leave_block("Generate permutation");
+    libff::leave_block("Generate permutation");
 
-    enter_block("Generate Benes routing assignment");
+    libff::enter_block("Generate Benes routing assignment");
     const benes_routing routing = get_benes_routing(permutation);
-    leave_block("Generate Benes routing assignment");
+    libff::leave_block("Generate Benes routing assignment");
 }
 
 void profile_as_waksman_algorithm(const size_t n)
 {
     printf("* Size: %zu\n", n);
 
-    enter_block("Generate permutation");
-    integer_permutation permutation(n);
+    libff::enter_block("Generate permutation");
+    libff::integer_permutation permutation(n);
     permutation.random_shuffle();
-    leave_block("Generate permutation");
+    libff::leave_block("Generate permutation");
 
-    enter_block("Generate AS-Waksman routing assignment");
+    libff::enter_block("Generate AS-Waksman routing assignment");
     const as_waksman_routing routing = get_as_waksman_routing(permutation);
-    leave_block("Generate AS-Waksman routing assignment");
+    libff::leave_block("Generate AS-Waksman routing assignment");
 }
 
 int main()
 {
-    start_profiling();
+    libff::start_profiling();
 
     for (size_t n = 1ul<<10; n <= 1ul<<20; n <<= 1)
     {

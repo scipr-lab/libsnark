@@ -120,12 +120,12 @@ as_waksman_topology generate_as_waksman_topology(const size_t num_packets);
 /**
  * Route the given permutation on an AS-Waksman network of suitable size.
  */
-as_waksman_routing get_as_waksman_routing(const integer_permutation &permutation);
+as_waksman_routing get_as_waksman_routing(const libff::integer_permutation &permutation);
 
 /**
  * Check if a routing "implements" the given permutation.
  */
-bool valid_as_waksman_routing(const integer_permutation &permutation, const as_waksman_routing &routing);
+bool valid_as_waksman_routing(const libff::integer_permutation &permutation, const as_waksman_routing &routing);
 
 } // libsnark
 

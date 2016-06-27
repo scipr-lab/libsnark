@@ -21,7 +21,7 @@ void test_tally(const size_t arity, const size_t max_layer, const bool test_mult
 
 int main(void)
 {
-    start_profiling();
+    libff::start_profiling();
     default_r1cs_ppzkpcd_pp::init_public_params();
 
     const size_t max_arity = 2;

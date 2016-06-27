@@ -14,9 +14,9 @@
 namespace libsnark {
 
 /* NOTE: all examples here actually generate one constraint less to account for soundness constraint in QAP */
-r1cs_example<Fr<default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size)
+r1cs_example<libff::Fr<libff::default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size)
 {
-    typedef Fr<default_ec_pp> FieldT;
+    typedef libff::Fr<libff::default_ec_pp> FieldT;
 
     gadgetlib2::initPublicParamsFromDefaultPp();
     // necessary in case a protoboard was built before,  libsnark assumes variable indices always

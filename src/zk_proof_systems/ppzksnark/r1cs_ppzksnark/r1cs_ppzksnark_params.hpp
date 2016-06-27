@@ -21,13 +21,13 @@ namespace libsnark {
  */
 
 template<typename ppT>
-using r1cs_ppzksnark_constraint_system = r1cs_constraint_system<Fr<ppT> >;
+using r1cs_ppzksnark_constraint_system = r1cs_constraint_system<libff::Fr<ppT> >;
 
 template<typename ppT>
-using r1cs_ppzksnark_primary_input = r1cs_primary_input<Fr<ppT> >;
+using r1cs_ppzksnark_primary_input = r1cs_primary_input<libff::Fr<ppT> >;
 
 template<typename ppT>
-using r1cs_ppzksnark_auxiliary_input = r1cs_auxiliary_input<Fr<ppT> >;
+using r1cs_ppzksnark_auxiliary_input = r1cs_auxiliary_input<libff::Fr<ppT> >;
 
 } // libsnark
 

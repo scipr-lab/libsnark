@@ -57,7 +57,7 @@ std::istream& operator>>(std::istream &in, tbcs_ppzksnark_proving_key<ppT> &pk);
 template<typename ppT>
 class tbcs_ppzksnark_proving_key {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     tbcs_ppzksnark_circuit circuit;
     uscs_ppzksnark_proving_key<ppT> uscs_pk;

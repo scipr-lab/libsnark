@@ -31,8 +31,8 @@ void dump_constraints(const protoboard<FieldT> &pb)
 template<typename ppT_A, typename ppT_B>
 void test_verifier(const std::string &annotation_A, const std::string &annotation_B)
 {
-    typedef Fr<ppT_A> FieldT_A;
-    typedef Fr<ppT_B> FieldT_B;
+    typedef libff::Fr<ppT_A> FieldT_A;
+    typedef libff::Fr<ppT_B> FieldT_B;
 
     const size_t num_constraints = 50;
     const size_t primary_input_size = 3;
@@ -72,10 +72,10 @@ void test_verifier(const std::string &annotation_A, const std::string &annotatio
     }
     verifier.generate_r1cs_constraints();
 
-    bit_vector input_as_bits;
+    libff::bit_vector input_as_bits;
     for (const FieldT_A &el : example.primary_input)
     {
-        bit_vector v = convert_field_element_to_bit_vector<FieldT_A>(el, elt_size);
+        libff::bit_vector v = libff::convert_field_element_to_bit_vector<FieldT_A>(el, elt_size);
         input_as_bits.insert(input_as_bits.end(), v.begin(), v.end());
     }
 
@@ -103,8 +103,8 @@ void test_verifier(const std::string &annotation_A, const std::string &annotatio
 template<typename ppT_A, typename ppT_B>
 void test_hardcoded_verifier(const std::string &annotation_A, const std::string &annotation_B)
 {
-    typedef Fr<ppT_A> FieldT_A;
-    typedef Fr<ppT_B> FieldT_B;
+    typedef libff::Fr<ppT_A> FieldT_A;
+    typedef libff::Fr<ppT_B> FieldT_B;
 
     const size_t num_constraints = 50;
     const size_t primary_input_size = 3;
@@ -139,10 +139,10 @@ void test_hardcoded_verifier(const std::string &annotation_A, const std::string 
     }
     online_verifier.generate_r1cs_constraints();
 
-    bit_vector input_as_bits;
+    libff::bit_vector input_as_bits;
     for (const FieldT_A &el : example.primary_input)
     {
-        bit_vector v = convert_field_element_to_bit_vector<FieldT_A>(el, elt_size);
+        libff::bit_vector v = libff::convert_field_element_to_bit_vector<FieldT_A>(el, elt_size);
         input_as_bits.insert(input_as_bits.end(), v.begin(), v.end());
     }
 
@@ -218,7 +218,7 @@ void test_sqr(const std::string &annotation)
 template<typename ppT, template<class> class VarT, template<class> class CycloSqrT>
 void test_cyclotomic_sqr(const std::string &annotation)
 {
-    typedef Fqk<ppT> FpExtT;
+    typedef libff::Fqk<ppT> FpExtT;
     typedef typename FpExtT::my_Fp FieldT;
 
 
@@ -267,11 +267,11 @@ void test_Frobenius(const std::string &annotation)
 template<typename ppT>
 void test_full_pairing(const std::string &annotation)
 {
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     protoboard<FieldT> pb;
-    G1<other_curve<ppT> > P_val = Fr<other_curve<ppT> >::random_element() * G1<other_curve<ppT> >::one();
-    G2<other_curve<ppT> > Q_val = Fr<other_curve<ppT> >::random_element() * G2<other_curve<ppT> >::one();
+    libff::G1<other_curve<ppT> > P_val = libff::Fr<other_curve<ppT> >::random_element() * libff::G1<other_curve<ppT> >::one();
+    libff::G2<other_curve<ppT> > Q_val = libff::Fr<other_curve<ppT> >::random_element() * libff::G2<other_curve<ppT> >::one();
 
     G1_variable<ppT> P(pb, "P");
     G2_variable<ppT> Q(pb, "Q");
@@ -313,11 +313,11 @@ void test_full_pairing(const std::string &annotation)
     finexp.generate_r1cs_witness();
     assert(pb.is_satisfied());
 
-    affine_ate_G1_precomp<other_curve<ppT> > native_prec_P = other_curve<ppT>::affine_ate_precompute_G1(P_val);
-    affine_ate_G2_precomp<other_curve<ppT> > native_prec_Q = other_curve<ppT>::affine_ate_precompute_G2(Q_val);
-    Fqk<other_curve<ppT> > native_miller_result = other_curve<ppT>::affine_ate_miller_loop(native_prec_P, native_prec_Q);
+    libff::affine_ate_G1_precomp<other_curve<ppT> > native_prec_P = other_curve<ppT>::affine_ate_precompute_G1(P_val);
+    libff::affine_ate_G2_precomp<other_curve<ppT> > native_prec_Q = other_curve<ppT>::affine_ate_precompute_G2(Q_val);
+    libff::Fqk<other_curve<ppT> > native_miller_result = other_curve<ppT>::affine_ate_miller_loop(native_prec_P, native_prec_Q);
 
-    Fqk<other_curve<ppT> > native_finexp_result = other_curve<ppT>::final_exponentiation(native_miller_result);
+    libff::Fqk<other_curve<ppT> > native_finexp_result = other_curve<ppT>::final_exponentiation(native_miller_result);
     printf("Must match:\n");
     finexp.result->get_element().print();
     native_finexp_result.print();
@@ -330,11 +330,11 @@ void test_full_pairing(const std::string &annotation)
 template<typename ppT>
 void test_full_precomputed_pairing(const std::string &annotation)
 {
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     protoboard<FieldT> pb;
-    G1<other_curve<ppT> > P_val = Fr<other_curve<ppT> >::random_element() * G1<other_curve<ppT> >::one();
-    G2<other_curve<ppT> > Q_val = Fr<other_curve<ppT> >::random_element() * G2<other_curve<ppT> >::one();
+    libff::G1<other_curve<ppT> > P_val = libff::Fr<other_curve<ppT> >::random_element() * libff::G1<other_curve<ppT> >::one();
+    libff::G2<other_curve<ppT> > Q_val = libff::Fr<other_curve<ppT> >::random_element() * libff::G2<other_curve<ppT> >::one();
 
     G1_precomputation<ppT> prec_P(pb, P_val, "prec_P");
     G2_precomputation<ppT> prec_Q(pb, Q_val, "prec_Q");
@@ -359,11 +359,11 @@ void test_full_precomputed_pairing(const std::string &annotation)
     finexp.generate_r1cs_witness();
     assert(pb.is_satisfied());
 
-    affine_ate_G1_precomp<other_curve<ppT> > native_prec_P = other_curve<ppT>::affine_ate_precompute_G1(P_val);
-    affine_ate_G2_precomp<other_curve<ppT> > native_prec_Q = other_curve<ppT>::affine_ate_precompute_G2(Q_val);
-    Fqk<other_curve<ppT> > native_miller_result = other_curve<ppT>::affine_ate_miller_loop(native_prec_P, native_prec_Q);
+    libff::affine_ate_G1_precomp<other_curve<ppT> > native_prec_P = other_curve<ppT>::affine_ate_precompute_G1(P_val);
+    libff::affine_ate_G2_precomp<other_curve<ppT> > native_prec_Q = other_curve<ppT>::affine_ate_precompute_G2(Q_val);
+    libff::Fqk<other_curve<ppT> > native_miller_result = other_curve<ppT>::affine_ate_miller_loop(native_prec_P, native_prec_Q);
 
-    Fqk<other_curve<ppT> > native_finexp_result = other_curve<ppT>::final_exponentiation(native_miller_result);
+    libff::Fqk<other_curve<ppT> > native_finexp_result = other_curve<ppT>::final_exponentiation(native_miller_result);
     printf("Must match:\n");
     finexp.result->get_element().print();
     native_finexp_result.print();
@@ -375,55 +375,55 @@ void test_full_precomputed_pairing(const std::string &annotation)
 
 int main(void)
 {
-    start_profiling();
-    mnt4_pp::init_public_params();
-    mnt6_pp::init_public_params();
+    libff::start_profiling();
+    libff::mnt4_pp::init_public_params();
+    libff::mnt6_pp::init_public_params();
 
-    test_mul<mnt4_Fq2, Fp2_variable, Fp2_mul_gadget>("mnt4_Fp2");
-    test_sqr<mnt4_Fq2, Fp2_variable, Fp2_sqr_gadget>("mnt4_Fp2");
+    test_mul<libff::mnt4_Fq2, Fp2_variable, Fp2_mul_gadget>("mnt4_Fp2");
+    test_sqr<libff::mnt4_Fq2, Fp2_variable, Fp2_sqr_gadget>("mnt4_Fp2");
 
-    test_mul<mnt4_Fq4, Fp4_variable, Fp4_mul_gadget>("mnt4_Fp4");
-    test_sqr<mnt4_Fq4, Fp4_variable, Fp4_sqr_gadget>("mnt4_Fp4");
-    test_cyclotomic_sqr<mnt4_pp, Fp4_variable, Fp4_cyclotomic_sqr_gadget>("mnt4_Fp4");
-    test_exponentiation_gadget<mnt4_Fq4, Fp4_variable, Fp4_mul_gadget, Fp4_sqr_gadget, mnt4_q_limbs>(mnt4_final_exponent_last_chunk_abs_of_w0, "mnt4_Fq4");
-    test_Frobenius<mnt4_Fq4, Fp4_variable>("mnt4_Fq4");
+    test_mul<libff::mnt4_Fq4, Fp4_variable, Fp4_mul_gadget>("mnt4_Fp4");
+    test_sqr<libff::mnt4_Fq4, Fp4_variable, Fp4_sqr_gadget>("mnt4_Fp4");
+    test_cyclotomic_sqr<libff::mnt4_pp, Fp4_variable, Fp4_cyclotomic_sqr_gadget>("mnt4_Fp4");
+    test_exponentiation_gadget<libff::mnt4_Fq4, Fp4_variable, Fp4_mul_gadget, Fp4_sqr_gadget, libff::mnt4_q_limbs>(libff::mnt4_final_exponent_last_chunk_abs_of_w0, "mnt4_Fq4");
+    test_Frobenius<libff::mnt4_Fq4, Fp4_variable>("mnt4_Fq4");
 
-    test_mul<mnt6_Fq3, Fp3_variable, Fp3_mul_gadget>("mnt6_Fp3");
-    test_sqr<mnt6_Fq3, Fp3_variable, Fp3_sqr_gadget>("mnt6_Fp3");
+    test_mul<libff::mnt6_Fq3, Fp3_variable, Fp3_mul_gadget>("mnt6_Fp3");
+    test_sqr<libff::mnt6_Fq3, Fp3_variable, Fp3_sqr_gadget>("mnt6_Fp3");
 
-    test_mul<mnt6_Fq6, Fp6_variable, Fp6_mul_gadget>("mnt6_Fp6");
-    test_sqr<mnt6_Fq6, Fp6_variable, Fp6_sqr_gadget>("mnt6_Fp6");
-    test_cyclotomic_sqr<mnt6_pp, Fp6_variable, Fp6_cyclotomic_sqr_gadget>("mnt6_Fp6");
-    test_exponentiation_gadget<mnt6_Fq6, Fp6_variable, Fp6_mul_gadget, Fp6_sqr_gadget, mnt6_q_limbs>(mnt6_final_exponent_last_chunk_abs_of_w0, "mnt6_Fq6");
-    test_Frobenius<mnt6_Fq6, Fp6_variable>("mnt6_Fq6");
+    test_mul<libff::mnt6_Fq6, Fp6_variable, Fp6_mul_gadget>("mnt6_Fp6");
+    test_sqr<libff::mnt6_Fq6, Fp6_variable, Fp6_sqr_gadget>("mnt6_Fp6");
+    test_cyclotomic_sqr<libff::mnt6_pp, Fp6_variable, Fp6_cyclotomic_sqr_gadget>("mnt6_Fp6");
+    test_exponentiation_gadget<libff::mnt6_Fq6, Fp6_variable, Fp6_mul_gadget, Fp6_sqr_gadget, libff::mnt6_q_limbs>(libff::mnt6_final_exponent_last_chunk_abs_of_w0, "mnt6_Fq6");
+    test_Frobenius<libff::mnt6_Fq6, Fp6_variable>("mnt6_Fq6");
 
-    test_G2_checker_gadget<mnt4_pp>("mnt4");
-    test_G2_checker_gadget<mnt6_pp>("mnt6");
+    test_G2_checker_gadget<libff::mnt4_pp>("mnt4");
+    test_G2_checker_gadget<libff::mnt6_pp>("mnt6");
 
-    test_G1_variable_precomp<mnt4_pp>("mnt4");
-    test_G1_variable_precomp<mnt6_pp>("mnt6");
+    test_G1_variable_precomp<libff::mnt4_pp>("mnt4");
+    test_G1_variable_precomp<libff::mnt6_pp>("mnt6");
 
-    test_G2_variable_precomp<mnt4_pp>("mnt4");
-    test_G2_variable_precomp<mnt6_pp>("mnt6");
+    test_G2_variable_precomp<libff::mnt4_pp>("mnt4");
+    test_G2_variable_precomp<libff::mnt6_pp>("mnt6");
 
-    test_mnt_miller_loop<mnt4_pp>("mnt4");
-    test_mnt_miller_loop<mnt6_pp>("mnt6");
+    test_mnt_miller_loop<libff::mnt4_pp>("mnt4");
+    test_mnt_miller_loop<libff::mnt6_pp>("mnt6");
 
-    test_mnt_e_over_e_miller_loop<mnt4_pp>("mnt4");
-    test_mnt_e_over_e_miller_loop<mnt6_pp>("mnt6");
+    test_mnt_e_over_e_miller_loop<libff::mnt4_pp>("mnt4");
+    test_mnt_e_over_e_miller_loop<libff::mnt6_pp>("mnt6");
 
-    test_mnt_e_times_e_over_e_miller_loop<mnt4_pp>("mnt4");
-    test_mnt_e_times_e_over_e_miller_loop<mnt6_pp>("mnt6");
+    test_mnt_e_times_e_over_e_miller_loop<libff::mnt4_pp>("mnt4");
+    test_mnt_e_times_e_over_e_miller_loop<libff::mnt6_pp>("mnt6");
 
-    test_full_pairing<mnt4_pp>("mnt4");
-    test_full_pairing<mnt6_pp>("mnt6");
+    test_full_pairing<libff::mnt4_pp>("mnt4");
+    test_full_pairing<libff::mnt6_pp>("mnt6");
 
-    test_full_precomputed_pairing<mnt4_pp>("mnt4");
-    test_full_precomputed_pairing<mnt6_pp>("mnt6");
+    test_full_precomputed_pairing<libff::mnt4_pp>("mnt4");
+    test_full_precomputed_pairing<libff::mnt6_pp>("mnt6");
 
-    test_verifier<mnt4_pp, mnt6_pp>("mnt4", "mnt6");
-    test_verifier<mnt6_pp, mnt4_pp>("mnt6", "mnt4");
+    test_verifier<libff::mnt4_pp, libff::mnt6_pp>("mnt4", "mnt6");
+    test_verifier<libff::mnt6_pp, libff::mnt4_pp>("mnt6", "mnt4");
 
-    test_hardcoded_verifier<mnt4_pp, mnt6_pp>("mnt4", "mnt6");
-    test_hardcoded_verifier<mnt6_pp, mnt4_pp>("mnt6", "mnt4");
+    test_hardcoded_verifier<libff::mnt4_pp, libff::mnt6_pp>("mnt4", "mnt6");
+    test_hardcoded_verifier<libff::mnt6_pp, libff::mnt4_pp>("mnt6", "mnt4");
 }

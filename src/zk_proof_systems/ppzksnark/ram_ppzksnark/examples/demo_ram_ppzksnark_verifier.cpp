@@ -80,7 +80,7 @@ int main(int argc, const char * argv[])
         return 1;
     }
 #endif
-    start_profiling();
+    libff::start_profiling();
 
     ram_ppzksnark_verification_key<default_tinyram_ppzksnark_pp> vk;
     std::ifstream vk_file(verification_key_fn);

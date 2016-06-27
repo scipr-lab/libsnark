@@ -36,48 +36,48 @@ namespace libsnark {
  *     a primary input for CS, and a proof.
  */
 template<typename ppT>
-bool run_uscs_ppzksnark(const uscs_example<Fr<ppT> > &example,
+bool run_uscs_ppzksnark(const uscs_example<libff::Fr<ppT> > &example,
                         const bool test_serialization)
 {
-    enter_block("Call to run_uscs_ppzksnark");
+    libff::enter_block("Call to run_uscs_ppzksnark");
 
-    print_header("USCS ppzkSNARK Generator");
+    libff::print_header("USCS ppzkSNARK Generator");
     uscs_ppzksnark_keypair<ppT> keypair = uscs_ppzksnark_generator<ppT>(example.constraint_system);
-    printf("\n"); print_indent(); print_mem("after generator");
+    printf("\n"); libff::print_indent(); libff::print_mem("after generator");
 
-    print_header("Preprocess verification key");
+    libff::print_header("Preprocess verification key");
     uscs_ppzksnark_processed_verification_key<ppT> pvk = uscs_ppzksnark_verifier_process_vk<ppT>(keypair.vk);
 
     if (test_serialization)
     {
-        enter_block("Test serialization of keys");
-        keypair.pk = reserialize<uscs_ppzksnark_proving_key<ppT> >(keypair.pk);
-        keypair.vk = reserialize<uscs_ppzksnark_verification_key<ppT> >(keypair.vk);
-        pvk = reserialize<uscs_ppzksnark_processed_verification_key<ppT> >(pvk);
-        leave_block("Test serialization of keys");
+        libff::enter_block("Test serialization of keys");
+        keypair.pk = libff::reserialize<uscs_ppzksnark_proving_key<ppT> >(keypair.pk);
+        keypair.vk = libff::reserialize<uscs_ppzksnark_verification_key<ppT> >(keypair.vk);
+        pvk = libff::reserialize<uscs_ppzksnark_processed_verification_key<ppT> >(pvk);
+        libff::leave_block("Test serialization of keys");
     }
 
-    print_header("USCS ppzkSNARK Prover");
+    libff::print_header("USCS ppzkSNARK Prover");
     uscs_ppzksnark_proof<ppT> proof = uscs_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
-    printf("\n"); print_indent(); print_mem("after prover");
+    printf("\n"); libff::print_indent(); libff::print_mem("after prover");
 
     if (test_serialization)
     {
-        enter_block("Test serialization of proof");
-        proof = reserialize<uscs_ppzksnark_proof<ppT> >(proof);
-        leave_block("Test serialization of proof");
+        libff::enter_block("Test serialization of proof");
+        proof = libff::reserialize<uscs_ppzksnark_proof<ppT> >(proof);
+        libff::leave_block("Test serialization of proof");
     }
 
-    print_header("USCS ppzkSNARK Verifier");
+    libff::print_header("USCS ppzkSNARK Verifier");
     bool ans = uscs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.primary_input, proof);
-    printf("\n"); print_indent(); print_mem("after verifier");
+    printf("\n"); libff::print_indent(); libff::print_mem("after verifier");
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
 
-    print_header("USCS ppzkSNARK Online Verifier");
+    libff::print_header("USCS ppzkSNARK Online Verifier");
     bool ans2 = uscs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
     assert(ans == ans2);
 
-    leave_block("Call to run_uscs_ppzksnark");
+    libff::leave_block("Call to run_uscs_ppzksnark");
 
     return ans;
 }

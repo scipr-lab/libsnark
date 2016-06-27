@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream &out, const r1cs_sp_ppzkpcd_processed_veri
 {
     out << pvk.compliance_step_r1cs_pvk;
     out << pvk.translation_step_r1cs_pvk;
-    serialize_bit_vector(out, pvk.translation_step_r1cs_vk_bits);
+    libff::serialize_bit_vector(out, pvk.translation_step_r1cs_vk_bits);
 
     return out;
 }
@@ -119,7 +119,7 @@ std::istream& operator>>(std::istream &in, r1cs_sp_ppzkpcd_processed_verificatio
 {
     in >> pvk.compliance_step_r1cs_pvk;
     in >> pvk.translation_step_r1cs_pvk;
-    deserialize_bit_vector(in, pvk.translation_step_r1cs_vk_bits);
+    libff::deserialize_bit_vector(in, pvk.translation_step_r1cs_vk_bits);
 
     return in;
 }
@@ -127,43 +127,43 @@ std::istream& operator>>(std::istream &in, r1cs_sp_ppzkpcd_processed_verificatio
 template<typename PCD_ppT>
 r1cs_sp_ppzkpcd_keypair<PCD_ppT> r1cs_sp_ppzkpcd_generator(const r1cs_sp_ppzkpcd_compliance_predicate<PCD_ppT> &compliance_predicate)
 {
-    assert(Fr<typename PCD_ppT::curve_A_pp>::mod == Fq<typename PCD_ppT::curve_B_pp>::mod);
-    assert(Fq<typename PCD_ppT::curve_A_pp>::mod == Fr<typename PCD_ppT::curve_B_pp>::mod);
+    assert(libff::Fr<typename PCD_ppT::curve_A_pp>::mod == libff::Fq<typename PCD_ppT::curve_B_pp>::mod);
+    assert(libff::Fq<typename PCD_ppT::curve_A_pp>::mod == libff::Fr<typename PCD_ppT::curve_B_pp>::mod);
 
-    typedef Fr<typename PCD_ppT::curve_A_pp> FieldT_A;
-    typedef Fr<typename PCD_ppT::curve_B_pp> FieldT_B;
+    typedef libff::Fr<typename PCD_ppT::curve_A_pp> FieldT_A;
+    typedef libff::Fr<typename PCD_ppT::curve_B_pp> FieldT_B;
 
     typedef typename PCD_ppT::curve_A_pp curve_A_pp;
     typedef typename PCD_ppT::curve_B_pp curve_B_pp;
 
-    enter_block("Call to r1cs_sp_ppzkpcd_generator");
+    libff::enter_block("Call to r1cs_sp_ppzkpcd_generator");
 
     assert(compliance_predicate.is_well_formed());
 
-    enter_block("Construct compliance step PCD circuit");
+    libff::enter_block("Construct compliance step PCD circuit");
     sp_compliance_step_pcd_circuit_maker<curve_A_pp> compliance_step_pcd_circuit(compliance_predicate);
     compliance_step_pcd_circuit.generate_r1cs_constraints();
     const r1cs_constraint_system<FieldT_A> compliance_step_pcd_circuit_cs = compliance_step_pcd_circuit.get_circuit();
     compliance_step_pcd_circuit_cs.report_linear_constraint_statistics();
-    leave_block("Construct compliance step PCD circuit");
+    libff::leave_block("Construct compliance step PCD circuit");
 
-    enter_block("Generate key pair for compliance step PCD circuit");
+    libff::enter_block("Generate key pair for compliance step PCD circuit");
     r1cs_ppzksnark_keypair<curve_A_pp> compliance_step_keypair = r1cs_ppzksnark_generator<curve_A_pp>(compliance_step_pcd_circuit_cs);
-    leave_block("Generate key pair for compliance step PCD circuit");
+    libff::leave_block("Generate key pair for compliance step PCD circuit");
 
-    enter_block("Construct translation step PCD circuit");
+    libff::enter_block("Construct translation step PCD circuit");
     sp_translation_step_pcd_circuit_maker<curve_B_pp> translation_step_pcd_circuit(compliance_step_keypair.vk);
     translation_step_pcd_circuit.generate_r1cs_constraints();
     const r1cs_constraint_system<FieldT_B> translation_step_pcd_circuit_cs = translation_step_pcd_circuit.get_circuit();
     translation_step_pcd_circuit_cs.report_linear_constraint_statistics();
-    leave_block("Construct translation step PCD circuit");
+    libff::leave_block("Construct translation step PCD circuit");
 
-    enter_block("Generate key pair for translation step PCD circuit");
+    libff::enter_block("Generate key pair for translation step PCD circuit");
     r1cs_ppzksnark_keypair<curve_B_pp> translation_step_keypair = r1cs_ppzksnark_generator<curve_B_pp>(translation_step_pcd_circuit_cs);
-    leave_block("Generate key pair for translation step PCD circuit");
+    libff::leave_block("Generate key pair for translation step PCD circuit");
 
-    print_indent(); print_mem("in generator");
-    leave_block("Call to r1cs_sp_ppzkpcd_generator");
+    libff::print_indent(); libff::print_mem("in generator");
+    libff::leave_block("Call to r1cs_sp_ppzkpcd_generator");
 
     return r1cs_sp_ppzkpcd_keypair<PCD_ppT>(r1cs_sp_ppzkpcd_proving_key<PCD_ppT>(compliance_predicate,
                                                                                  std::move(compliance_step_keypair.pk),
@@ -180,21 +180,21 @@ r1cs_sp_ppzkpcd_proof<PCD_ppT> r1cs_sp_ppzkpcd_prover(const r1cs_sp_ppzkpcd_prov
                                                       const r1cs_sp_ppzkpcd_auxiliary_input<PCD_ppT> &auxiliary_input,
                                                       const std::vector<r1cs_sp_ppzkpcd_proof<PCD_ppT> > &incoming_proofs)
 {
-    typedef Fr<typename PCD_ppT::curve_A_pp> FieldT_A;
-    typedef Fr<typename PCD_ppT::curve_B_pp> FieldT_B;
+    typedef libff::Fr<typename PCD_ppT::curve_A_pp> FieldT_A;
+    typedef libff::Fr<typename PCD_ppT::curve_B_pp> FieldT_B;
 
     typedef typename PCD_ppT::curve_A_pp curve_A_pp;
     typedef typename PCD_ppT::curve_B_pp curve_B_pp;
 
-    enter_block("Call to r1cs_sp_ppzkpcd_prover");
+    libff::enter_block("Call to r1cs_sp_ppzkpcd_prover");
 
-    const bit_vector translation_step_r1cs_vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(pk.translation_step_r1cs_vk);
+    const libff::bit_vector translation_step_r1cs_vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(pk.translation_step_r1cs_vk);
 #ifdef DEBUG
     printf("Outgoing message:\n");
     primary_input.outgoing_message->print();
 #endif
 
-    enter_block("Prove compliance step");
+    libff::enter_block("Prove compliance step");
     sp_compliance_step_pcd_circuit_maker<curve_A_pp> compliance_step_pcd_circuit(pk.compliance_predicate);
     compliance_step_pcd_circuit.generate_r1cs_witness(pk.translation_step_r1cs_vk,
                                                       primary_input,
@@ -205,7 +205,7 @@ r1cs_sp_ppzkpcd_proof<PCD_ppT> r1cs_sp_ppzkpcd_prover(const r1cs_sp_ppzkpcd_prov
     const r1cs_auxiliary_input<FieldT_A> compliance_step_auxiliary_input = compliance_step_pcd_circuit.get_auxiliary_input();
 
     const r1cs_ppzksnark_proof<curve_A_pp> compliance_step_proof = r1cs_ppzksnark_prover<curve_A_pp>(pk.compliance_step_r1cs_pk, compliance_step_primary_input, compliance_step_auxiliary_input);
-    leave_block("Prove compliance step");
+    libff::leave_block("Prove compliance step");
 
 #ifdef DEBUG
     const r1cs_primary_input<FieldT_A> compliance_step_input = get_sp_compliance_step_pcd_circuit_input<curve_A_pp>(translation_step_r1cs_vk_bits, primary_input);
@@ -213,7 +213,7 @@ r1cs_sp_ppzkpcd_proof<PCD_ppT> r1cs_sp_ppzkpcd_prover(const r1cs_sp_ppzkpcd_prov
     assert(compliance_step_ok);
 #endif
 
-    enter_block("Prove translation step");
+    libff::enter_block("Prove translation step");
     sp_translation_step_pcd_circuit_maker<curve_B_pp> translation_step_pcd_circuit(pk.compliance_step_r1cs_vk);
 
     const r1cs_primary_input<FieldT_B> translation_step_primary_input = get_sp_translation_step_pcd_circuit_input<curve_B_pp>(translation_step_r1cs_vk_bits, primary_input);
@@ -221,15 +221,15 @@ r1cs_sp_ppzkpcd_proof<PCD_ppT> r1cs_sp_ppzkpcd_prover(const r1cs_sp_ppzkpcd_prov
 
     const r1cs_auxiliary_input<FieldT_B> translation_step_auxiliary_input = translation_step_pcd_circuit.get_auxiliary_input();
     const r1cs_ppzksnark_proof<curve_B_pp> translation_step_proof = r1cs_ppzksnark_prover<curve_B_pp>(pk.translation_step_r1cs_pk, translation_step_primary_input, translation_step_auxiliary_input);
-    leave_block("Prove translation step");
+    libff::leave_block("Prove translation step");
 
 #ifdef DEBUG
     const bool translation_step_ok = r1cs_ppzksnark_verifier_strong_IC<curve_B_pp>(pk.translation_step_r1cs_vk, translation_step_primary_input, translation_step_proof);
     assert(translation_step_ok);
 #endif
 
-    print_indent(); print_mem("in prover");
-    leave_block("Call to r1cs_sp_ppzkpcd_prover");
+    libff::print_indent(); libff::print_mem("in prover");
+    libff::leave_block("Call to r1cs_sp_ppzkpcd_prover");
 
     return translation_step_proof;
 }
@@ -242,11 +242,11 @@ bool r1cs_sp_ppzkpcd_online_verifier(const r1cs_sp_ppzkpcd_processed_verificatio
 {
     typedef typename PCD_ppT::curve_B_pp curve_B_pp;
 
-    enter_block("Call to r1cs_sp_ppzkpcd_online_verifier");
-    const r1cs_primary_input<Fr<curve_B_pp> > r1cs_input = get_sp_translation_step_pcd_circuit_input<curve_B_pp>(pvk.translation_step_r1cs_vk_bits, primary_input);
+    libff::enter_block("Call to r1cs_sp_ppzkpcd_online_verifier");
+    const r1cs_primary_input<libff::Fr<curve_B_pp> > r1cs_input = get_sp_translation_step_pcd_circuit_input<curve_B_pp>(pvk.translation_step_r1cs_vk_bits, primary_input);
     const bool result = r1cs_ppzksnark_online_verifier_strong_IC(pvk.translation_step_r1cs_pvk, r1cs_input, proof);
-    print_indent(); print_mem("in online verifier");
-    leave_block("Call to r1cs_sp_ppzkpcd_online_verifier");
+    libff::print_indent(); libff::print_mem("in online verifier");
+    libff::leave_block("Call to r1cs_sp_ppzkpcd_online_verifier");
 
     return result;
 }
@@ -257,11 +257,11 @@ r1cs_sp_ppzkpcd_processed_verification_key<PCD_ppT> r1cs_sp_ppzkpcd_process_vk(c
     typedef typename PCD_ppT::curve_A_pp curve_A_pp;
     typedef typename PCD_ppT::curve_B_pp curve_B_pp;
 
-    enter_block("Call to r1cs_sp_ppzkpcd_processed_verification_key");
+    libff::enter_block("Call to r1cs_sp_ppzkpcd_processed_verification_key");
     r1cs_ppzksnark_processed_verification_key<curve_A_pp> compliance_step_r1cs_pvk = r1cs_ppzksnark_verifier_process_vk<curve_A_pp>(vk.compliance_step_r1cs_vk);
     r1cs_ppzksnark_processed_verification_key<curve_B_pp> translation_step_r1cs_pvk = r1cs_ppzksnark_verifier_process_vk<curve_B_pp>(vk.translation_step_r1cs_vk);
-    const bit_vector translation_step_r1cs_vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(vk.translation_step_r1cs_vk);
-    leave_block("Call to r1cs_sp_ppzkpcd_processed_verification_key");
+    const libff::bit_vector translation_step_r1cs_vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(vk.translation_step_r1cs_vk);
+    libff::leave_block("Call to r1cs_sp_ppzkpcd_processed_verification_key");
 
     return r1cs_sp_ppzkpcd_processed_verification_key<PCD_ppT>(std::move(compliance_step_r1cs_pvk),
                                                                std::move(translation_step_r1cs_pvk),
@@ -274,11 +274,11 @@ bool r1cs_sp_ppzkpcd_verifier(const r1cs_sp_ppzkpcd_verification_key<PCD_ppT> &v
                                      const r1cs_sp_ppzkpcd_primary_input<PCD_ppT> &primary_input,
                               const r1cs_sp_ppzkpcd_proof<PCD_ppT> &proof)
 {
-    enter_block("Call to r1cs_sp_ppzkpcd_verifier");
+    libff::enter_block("Call to r1cs_sp_ppzkpcd_verifier");
     const r1cs_sp_ppzkpcd_processed_verification_key<PCD_ppT> pvk = r1cs_sp_ppzkpcd_process_vk(vk);
     const bool result = r1cs_sp_ppzkpcd_online_verifier(pvk, primary_input, proof);
-    print_indent(); print_mem("in verifier");
-    leave_block("Call to r1cs_sp_ppzkpcd_verifier");
+    libff::print_indent(); libff::print_mem("in verifier");
+    libff::leave_block("Call to r1cs_sp_ppzkpcd_verifier");
 
     return result;
 }

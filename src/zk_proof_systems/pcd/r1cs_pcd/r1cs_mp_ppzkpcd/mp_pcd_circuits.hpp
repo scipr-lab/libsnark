@@ -45,7 +45,7 @@ namespace libsnark {
 template<typename ppT>
 class mp_compliance_step_pcd_circuit_maker {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     r1cs_pcd_compliance_predicate<FieldT> compliance_predicate;
 
@@ -105,9 +105,9 @@ public:
     void generate_r1cs_constraints();
     r1cs_constraint_system<FieldT> get_circuit() const;
 
-    void generate_r1cs_witness(const set_commitment &commitment_to_translation_step_r1cs_vks,
+    void generate_r1cs_witness(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
                                const std::vector<r1cs_ppzksnark_verification_key<other_curve<ppT> > > &mp_translation_step_pcd_circuit_vks,
-                               const std::vector<set_membership_proof> &vk_membership_proofs,
+                               const std::vector<libff::set_membership_proof> &vk_membership_proofs,
                                const r1cs_pcd_compliance_predicate_primary_input<FieldT> &compliance_predicate_primary_input,
                                const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> &compliance_predicate_auxiliary_input,
                                const std::vector<r1cs_ppzksnark_proof<other_curve<ppT> > > &translation_step_proofs);
@@ -131,7 +131,7 @@ public:
 template<typename ppT>
 class mp_translation_step_pcd_circuit_maker {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     protoboard<FieldT> pb;
 
@@ -148,7 +148,7 @@ public:
     void generate_r1cs_constraints();
     r1cs_constraint_system<FieldT> get_circuit() const;
 
-    void generate_r1cs_witness(const r1cs_primary_input<Fr<ppT> > translation_step_input,
+    void generate_r1cs_witness(const r1cs_primary_input<libff::Fr<ppT> > translation_step_input,
                                const r1cs_ppzksnark_proof<other_curve<ppT> > &prev_proof);
     r1cs_primary_input<FieldT> get_primary_input() const;
     r1cs_auxiliary_input<FieldT> get_auxiliary_input() const;
@@ -166,15 +166,15 @@ public:
  * Obtain the primary input for a compliance-step PCD circuit.
  */
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(const set_commitment &commitment_to_translation_step_r1cs_vks,
-                                                                      const r1cs_pcd_compliance_predicate_primary_input<Fr<ppT> > &primary_input);
+r1cs_primary_input<libff::Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+                                                                      const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<ppT> > &primary_input);
 
 /**
  * Obtain the primary input for a translation-step PCD circuit.
  */
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_mp_translation_step_pcd_circuit_input(const set_commitment &commitment_to_translation_step_r1cs_vks,
-                                                                       const r1cs_pcd_compliance_predicate_primary_input<Fr<other_curve<ppT> > > &primary_input);
+r1cs_primary_input<libff::Fr<ppT> > get_mp_translation_step_pcd_circuit_input(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+                                                                       const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<other_curve<ppT> > > &primary_input);
 
 } // libsnark
 

@@ -24,10 +24,10 @@
 namespace libsnark {
 
 template<typename ppT>
-class check_e_equals_e_gadget : public gadget<Fr<ppT> > {
+class check_e_equals_e_gadget : public gadget<libff::Fr<ppT> > {
 public:
 
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<Fqk_variable<ppT> > ratio;
     std::shared_ptr<e_over_e_miller_loop_gadget<ppT> > compute_ratio;
@@ -54,10 +54,10 @@ public:
 };
 
 template<typename ppT>
-class check_e_equals_ee_gadget : public gadget<Fr<ppT> > {
+class check_e_equals_ee_gadget : public gadget<libff::Fr<ppT> > {
 public:
 
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<Fqk_variable<ppT> > ratio;
     std::shared_ptr<e_times_e_over_e_miller_loop_gadget<ppT> > compute_ratio;

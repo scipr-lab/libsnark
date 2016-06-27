@@ -33,12 +33,12 @@ lastbits_gadget<FieldT>::lastbits_gadget(protoboard<FieldT> &pb,
     for (size_t i = result_bits.size(); i < X_bits; ++i)
     {
         pb_variable<FieldT> full_bits_overflow;
-        full_bits_overflow.allocate(pb, FMT(this->annotation_prefix, " full_bits_%zu", i));
+        full_bits_overflow.allocate(pb, libff::FMT(this->annotation_prefix, " full_bits_%zu", i));
         full_bits.emplace_back(full_bits_overflow);
     }
 
-    unpack_bits.reset(new packing_gadget<FieldT>(pb, full_bits, X, FMT(this->annotation_prefix, " unpack_bits")));
-    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, FMT(this->annotation_prefix, " pack_result")));
+    unpack_bits.reset(new packing_gadget<FieldT>(pb, full_bits, X, libff::FMT(this->annotation_prefix, " unpack_bits")));
+    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, libff::FMT(this->annotation_prefix, " pack_result")));
 }
 
 template<typename FieldT>
@@ -72,7 +72,7 @@ XOR3_gadget<FieldT>::XOR3_gadget(protoboard<FieldT> &pb,
 {
     if (!assume_C_is_zero)
     {
-        tmp.allocate(pb, FMT(this->annotation_prefix, " tmp"));
+        tmp.allocate(pb, libff::FMT(this->annotation_prefix, " tmp"));
     }
 }
 
@@ -85,12 +85,12 @@ void XOR3_gadget<FieldT>::generate_r1cs_constraints()
     */
     if (assume_C_is_zero)
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2*A, B, A + B - out), FMT(this->annotation_prefix, " implicit_tmp_equals_out"));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2*A, B, A + B - out), libff::FMT(this->annotation_prefix, " implicit_tmp_equals_out"));
     }
     else
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2*A, B, A + B - tmp), FMT(this->annotation_prefix, " tmp"));
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2 * tmp, C, tmp + C - out), FMT(this->annotation_prefix, " out"));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2*A, B, A + B - tmp), libff::FMT(this->annotation_prefix, " tmp"));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2 * tmp, C, tmp + C - out), libff::FMT(this->annotation_prefix, " out"));
     }
 }
 
@@ -123,16 +123,16 @@ small_sigma_gadget<FieldT>::small_sigma_gadget(protoboard<FieldT> &pb,
     W(W),
     result(result)
 {
-    result_bits.allocate(pb, 32, FMT(this->annotation_prefix, " result_bits"));
+    result_bits.allocate(pb, 32, libff::FMT(this->annotation_prefix, " result_bits"));
     compute_bits.resize(32);
     for (size_t i = 0; i < 32; ++i)
     {
         compute_bits[i].reset(new XOR3_gadget<FieldT>(pb, SHA256_GADGET_ROTR(W, i, rot1), SHA256_GADGET_ROTR(W, i, rot2),
                                               (i + shift < 32 ? W[i+shift] : ONE),
                                               (i + shift >= 32), result_bits[i],
-                                              FMT(this->annotation_prefix, " compute_bits_%zu", i)));
+                                              libff::FMT(this->annotation_prefix, " compute_bits_%zu", i)));
     }
-    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, FMT(this->annotation_prefix, " pack_result")));
+    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, libff::FMT(this->annotation_prefix, " pack_result")));
 }
 
 template<typename FieldT>
@@ -169,15 +169,15 @@ big_sigma_gadget<FieldT>::big_sigma_gadget(protoboard<FieldT> &pb,
     W(W),
     result(result)
 {
-    result_bits.allocate(pb, 32, FMT(this->annotation_prefix, " result_bits"));
+    result_bits.allocate(pb, 32, libff::FMT(this->annotation_prefix, " result_bits"));
     compute_bits.resize(32);
     for (size_t i = 0; i < 32; ++i)
     {
         compute_bits[i].reset(new XOR3_gadget<FieldT>(pb, SHA256_GADGET_ROTR(W, i, rot1), SHA256_GADGET_ROTR(W, i, rot2), SHA256_GADGET_ROTR(W, i, rot3), false, result_bits[i],
-                                                      FMT(this->annotation_prefix, " compute_bits_%zu", i)));
+                                                      libff::FMT(this->annotation_prefix, " compute_bits_%zu", i)));
     }
 
-    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, FMT(this->annotation_prefix, " pack_result")));
+    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, libff::FMT(this->annotation_prefix, " pack_result")));
 }
 
 template<typename FieldT>
@@ -215,8 +215,8 @@ choice_gadget<FieldT>::choice_gadget(protoboard<FieldT> &pb,
     Z(Z),
     result(result)
 {
-    result_bits.allocate(pb, 32, FMT(this->annotation_prefix, " result_bits"));
-    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, FMT(this->annotation_prefix, " result")));
+    result_bits.allocate(pb, 32, libff::FMT(this->annotation_prefix, " result_bits"));
+    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, libff::FMT(this->annotation_prefix, " result")));
 }
 
 template<typename FieldT>
@@ -228,7 +228,7 @@ void choice_gadget<FieldT>::generate_r1cs_constraints()
           result = x * y + (1-x) * z
           result - z = x * (y - z)
         */
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(X[i], Y[i] - Z[i], result_bits[i] - Z[i]), FMT(this->annotation_prefix, " result_bits_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(X[i], Y[i] - Z[i], result_bits[i] - Z[i]), libff::FMT(this->annotation_prefix, " result_bits_%zu", i));
     }
     pack_result->generate_r1cs_constraints(false);
 }
@@ -257,8 +257,8 @@ majority_gadget<FieldT>::majority_gadget(protoboard<FieldT> &pb,
     Z(Z),
     result(result)
 {
-    result_bits.allocate(pb, 32, FMT(this->annotation_prefix, " result_bits"));
-    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, FMT(this->annotation_prefix, " result")));
+    result_bits.allocate(pb, 32, libff::FMT(this->annotation_prefix, " result_bits"));
+    pack_result.reset(new packing_gadget<FieldT>(pb, result_bits, result, libff::FMT(this->annotation_prefix, " result")));
 }
 
 template<typename FieldT>
@@ -271,11 +271,11 @@ void majority_gadget<FieldT>::generate_r1cs_constraints()
           x, y, z, aux -- bits
           aux = x + y + z - 2*result
         */
-        generate_boolean_r1cs_constraint<FieldT>(this->pb, result_bits[i], FMT(this->annotation_prefix, " result_%zu", i));
+        generate_boolean_r1cs_constraint<FieldT>(this->pb, result_bits[i], libff::FMT(this->annotation_prefix, " result_%zu", i));
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(X[i] + Y[i] + Z[i] - 2 * result_bits[i],
                                                              1 - (X[i] + Y[i] + Z[i] -  2 * result_bits[i]),
                                                              0),
-                                     FMT(this->annotation_prefix, " result_bits_%zu", i));
+                                     libff::FMT(this->annotation_prefix, " result_bits_%zu", i));
     }
     pack_result->generate_r1cs_constraints(false);
 }

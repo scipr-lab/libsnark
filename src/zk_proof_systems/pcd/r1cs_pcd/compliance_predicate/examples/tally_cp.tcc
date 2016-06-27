@@ -33,8 +33,8 @@ r1cs_variable_assignment<FieldT> tally_pcd_message<FieldT>::payload_as_r1cs_vari
 {
     std::function<FieldT(bool)> bit_to_FieldT = [] (const bool bit) { return bit ? FieldT::one() : FieldT::zero(); };
 
-    const bit_vector sum_bits = convert_field_element_to_bit_vector<FieldT>(sum, wordsize);
-    const bit_vector count_bits = convert_field_element_to_bit_vector<FieldT>(count, wordsize);
+    const libff::bit_vector sum_bits = libff::convert_field_element_to_bit_vector<FieldT>(sum, wordsize);
+    const libff::bit_vector count_bits = libff::convert_field_element_to_bit_vector<FieldT>(count, wordsize);
 
     r1cs_variable_assignment<FieldT> result(2 * wordsize);
     std::transform(sum_bits.begin(), sum_bits.end(), result.begin() , bit_to_FieldT);
@@ -84,8 +84,8 @@ public:
                                const std::string &annotation_prefix) :
         r1cs_pcd_message_variable<FieldT>(pb, annotation_prefix), wordsize(wordsize)
     {
-        sum_bits.allocate(pb, wordsize, FMT(annotation_prefix, " sum_bits"));
-        count_bits.allocate(pb, wordsize, FMT(annotation_prefix, " count_bits"));
+        sum_bits.allocate(pb, wordsize, libff::FMT(annotation_prefix, " sum_bits"));
+        count_bits.allocate(pb, wordsize, libff::FMT(annotation_prefix, " count_bits"));
 
         this->update_all_vars();
     }
@@ -114,7 +114,7 @@ public:
                                   const std::string &annotation_prefix) :
         r1cs_pcd_local_data_variable<FieldT>(pb, annotation_prefix)
     {
-        summand.allocate(pb, FMT(annotation_prefix, " summand"));
+        summand.allocate(pb, libff::FMT(annotation_prefix, " summand"));
 
         this->update_all_vars();
     }
@@ -148,7 +148,7 @@ tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_a
 
     for (size_t i = 0; i < max_arity; ++i)
     {
-        this->incoming_messages[i].reset(new tally_pcd_message_variable<FieldT>(this->pb, wordsize, FMT("", "incoming_messages_%zu", i)));
+        this->incoming_messages[i].reset(new tally_pcd_message_variable<FieldT>(this->pb, wordsize, libff::FMT("", "incoming_messages_%zu", i)));
     }
 
     this->local_data.reset(new tally_pcd_local_data_variable<FieldT>(this->pb, "local_data"));
@@ -175,8 +175,8 @@ tally_cp_handler<FieldT>::tally_cp_handler(const size_t type, const size_t max_a
 
     for (size_t i = 0; i < max_arity; ++i)
     {
-        pack_sum_in.emplace_back(packing_gadget<FieldT>(this->pb, std::dynamic_pointer_cast<tally_pcd_message_variable<FieldT> >(this->incoming_messages[i])->sum_bits, sum_in_packed[i], FMT("", "pack_sum_in_%zu", i)));
-        pack_count_in.emplace_back(packing_gadget<FieldT>(this->pb, std::dynamic_pointer_cast<tally_pcd_message_variable<FieldT> >(this->incoming_messages[i])->sum_bits, count_in_packed[i], FMT("", "pack_count_in_%zu", i)));
+        pack_sum_in.emplace_back(packing_gadget<FieldT>(this->pb, std::dynamic_pointer_cast<tally_pcd_message_variable<FieldT> >(this->incoming_messages[i])->sum_bits, sum_in_packed[i], libff::FMT("", "pack_sum_in_%zu", i)));
+        pack_count_in.emplace_back(packing_gadget<FieldT>(this->pb, std::dynamic_pointer_cast<tally_pcd_message_variable<FieldT> >(this->incoming_messages[i])->sum_bits, count_in_packed[i], libff::FMT("", "pack_count_in_%zu", i)));
     }
 
     arity_indicators.allocate(this->pb, max_arity+1, "arity_indicators");
@@ -196,14 +196,14 @@ void tally_cp_handler<FieldT>::generate_r1cs_constraints()
 
     for (size_t i = 0; i < this->max_arity; ++i)
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_types[i], sum_in_packed_aux[i], sum_in_packed[i]), FMT("", "initial_sum_%zu_is_zero", i));
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_types[i], count_in_packed_aux[i], count_in_packed[i]), FMT("", "initial_sum_%zu_is_zero", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_types[i], sum_in_packed_aux[i], sum_in_packed[i]), libff::FMT("", "initial_sum_%zu_is_zero", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(incoming_types[i], count_in_packed_aux[i], count_in_packed[i]), libff::FMT("", "initial_sum_%zu_is_zero", i));
     }
 
     /* constrain arity indicator variables so that arity_indicators[arity] = 1 and arity_indicators[i] = 0 for any other i */
     for (size_t i = 0; i < this->max_arity; ++i)
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(this->arity - FieldT(i), arity_indicators[i], 0), FMT("", "arity_indicators_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(this->arity - FieldT(i), arity_indicators[i], 0), libff::FMT("", "arity_indicators_%zu", i));
     }
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_sum<FieldT>(arity_indicators), 1), "arity_indicators");
@@ -211,7 +211,7 @@ void tally_cp_handler<FieldT>::generate_r1cs_constraints()
     /* require that types of messages that are past arity (i.e. unbound wires) carry 0 */
     for (size_t i = 0; i < this->max_arity; ++i)
     {
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(0 + pb_sum<FieldT>(pb_variable_array<FieldT>(arity_indicators.begin(), arity_indicators.begin() + i)), incoming_types[i], 0), FMT("", "unbound_types_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(0 + pb_sum<FieldT>(pb_variable_array<FieldT>(arity_indicators.begin(), arity_indicators.begin() + i)), incoming_types[i], 0), libff::FMT("", "unbound_types_%zu", i));
     }
 
     /* sum_out = local_data + \sum_i type[i] * sum_in[i] */

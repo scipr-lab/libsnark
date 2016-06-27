@@ -76,8 +76,8 @@ public:
     std::vector<r1cs_ppzksnark_verification_key<A_pp> > compliance_step_r1cs_vks;
     std::vector<r1cs_ppzksnark_verification_key<B_pp> > translation_step_r1cs_vks;
 
-    set_commitment commitment_to_translation_step_r1cs_vks;
-    std::vector<set_membership_proof> compliance_step_r1cs_vk_membership_proofs;
+    libff::set_commitment commitment_to_translation_step_r1cs_vks;
+    std::vector<libff::set_membership_proof> compliance_step_r1cs_vk_membership_proofs;
 
     std::map<size_t, size_t> compliance_predicate_name_to_idx;
 
@@ -89,8 +89,8 @@ public:
                                 const std::vector<r1cs_ppzksnark_proving_key<B_pp> > &translation_step_r1cs_pk,
                                 const std::vector<r1cs_ppzksnark_verification_key<A_pp> > &compliance_step_r1cs_vk,
                                 const std::vector<r1cs_ppzksnark_verification_key<B_pp> > &translation_step_r1cs_vk,
-                                const set_commitment &commitment_to_translation_step_r1cs_vks,
-                                const std::vector<set_membership_proof> &compliance_step_r1cs_vk_membership_proofs,
+                                const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+                                const std::vector<libff::set_membership_proof> &compliance_step_r1cs_vk_membership_proofs,
                                 const std::map<size_t, size_t> &compliance_predicate_name_to_idx) :
     compliance_predicates(compliance_predicates),
         compliance_step_r1cs_pks(compliance_step_r1cs_pks),
@@ -136,14 +136,14 @@ public:
 
     std::vector<r1cs_ppzksnark_verification_key<A_pp> > compliance_step_r1cs_vks;
     std::vector<r1cs_ppzksnark_verification_key<B_pp> > translation_step_r1cs_vks;
-    set_commitment commitment_to_translation_step_r1cs_vks;
+    libff::set_commitment commitment_to_translation_step_r1cs_vks;
 
     r1cs_mp_ppzkpcd_verification_key() = default;
     r1cs_mp_ppzkpcd_verification_key(const r1cs_mp_ppzkpcd_verification_key<PCD_ppT> &other) = default;
     r1cs_mp_ppzkpcd_verification_key(r1cs_mp_ppzkpcd_verification_key<PCD_ppT> &&other) = default;
     r1cs_mp_ppzkpcd_verification_key(const std::vector<r1cs_ppzksnark_verification_key<A_pp> > &compliance_step_r1cs_vks,
                                      const std::vector<r1cs_ppzksnark_verification_key<B_pp> > &translation_step_r1cs_vks,
-                                     const set_commitment &commitment_to_translation_step_r1cs_vks) :
+                                     const libff::set_commitment &commitment_to_translation_step_r1cs_vks) :
         compliance_step_r1cs_vks(compliance_step_r1cs_vks),
         translation_step_r1cs_vks(translation_step_r1cs_vks),
         commitment_to_translation_step_r1cs_vks(commitment_to_translation_step_r1cs_vks)
@@ -185,14 +185,14 @@ public:
 
     std::vector<r1cs_ppzksnark_processed_verification_key<A_pp> > compliance_step_r1cs_pvks;
     std::vector<r1cs_ppzksnark_processed_verification_key<B_pp> > translation_step_r1cs_pvks;
-    set_commitment commitment_to_translation_step_r1cs_vks;
+    libff::set_commitment commitment_to_translation_step_r1cs_vks;
 
     r1cs_mp_ppzkpcd_processed_verification_key() = default;
     r1cs_mp_ppzkpcd_processed_verification_key(const r1cs_mp_ppzkpcd_processed_verification_key<PCD_ppT> &other) = default;
     r1cs_mp_ppzkpcd_processed_verification_key(r1cs_mp_ppzkpcd_processed_verification_key<PCD_ppT> &&other) = default;
     r1cs_mp_ppzkpcd_processed_verification_key(std::vector<r1cs_ppzksnark_processed_verification_key<A_pp> > &&compliance_step_r1cs_pvks,
                                                std::vector<r1cs_ppzksnark_processed_verification_key<B_pp> > &&translation_step_r1cs_pvks,
-                                               const set_commitment &commitment_to_translation_step_r1cs_vks) :
+                                               const libff::set_commitment &commitment_to_translation_step_r1cs_vks) :
         compliance_step_r1cs_pvks(std::move(compliance_step_r1cs_pvks)),
         translation_step_r1cs_pvks(std::move(translation_step_r1cs_pvks)),
         commitment_to_translation_step_r1cs_vks(commitment_to_translation_step_r1cs_vks)

@@ -53,14 +53,14 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_constraints()
                                                              pb_coeff_sum<FieldT>(input_block.bits,
                                                                                   std::vector<FieldT>(knapsack_coefficients.begin() + input_len * i,
                                                                                                       knapsack_coefficients.begin() + input_len * (i+1))),
-                                                             output[i]), FMT(this->annotation_prefix, " knapsack_%zu", i));
+                                                             output[i]), libff::FMT(this->annotation_prefix, " knapsack_%zu", i));
     }
 }
 
 template<typename FieldT>
 void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_witness()
 {
-    const bit_vector input = input_block.get_block();
+    const libff::bit_vector input = input_block.get_block();
 
     for (size_t i = 0; i < dimension; ++i)
     {
@@ -90,7 +90,7 @@ size_t knapsack_CRH_with_field_out_gadget<FieldT>::get_block_len()
 }
 
 template<typename FieldT>
-std::vector<FieldT> knapsack_CRH_with_field_out_gadget<FieldT>::get_hash(const bit_vector &input)
+std::vector<FieldT> knapsack_CRH_with_field_out_gadget<FieldT>::get_hash(const libff::bit_vector &input)
 {
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
     if (num_cached_coefficients < dimension * input.size())
@@ -129,7 +129,7 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::sample_randomness(const size_t 
         knapsack_coefficients.resize(num_coefficients);
         for (size_t i = num_cached_coefficients; i < num_coefficients; ++i)
         {
-            knapsack_coefficients[i] = SHA512_rng<FieldT>(i);
+            knapsack_coefficients[i] = libff::SHA512_rng<FieldT>(i);
         }
         num_cached_coefficients = num_coefficients;
     }
@@ -157,7 +157,7 @@ knapsack_CRH_with_bit_out_gadget<FieldT>::knapsack_CRH_with_bit_out_gadget(proto
                                                                               output_digest.bits.begin() + (i + 1) * FieldT::size_in_bits())));
     }
 
-    hasher.reset(new knapsack_CRH_with_field_out_gadget<FieldT>(pb, input_len, input_block, output, FMT(annotation_prefix, " hasher")));
+    hasher.reset(new knapsack_CRH_with_field_out_gadget<FieldT>(pb, input_len, input_block, output, libff::FMT(annotation_prefix, " hasher")));
 }
 
 
@@ -170,7 +170,7 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_constraints(const b
     {
         for (size_t k = 0; k < output_digest.bits.size(); ++k)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, output_digest.bits[k], FMT(this->annotation_prefix, " output_digest_%zu", k));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, output_digest.bits[k], libff::FMT(this->annotation_prefix, " output_digest_%zu", k));
         }
     }
 }
@@ -181,7 +181,7 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_witness()
     hasher->generate_r1cs_witness();
 
     /* do unpacking in place */
-    const bit_vector input = input_block.bits.get_bits(this->pb);
+    const libff::bit_vector input = input_block.bits.get_bits(this->pb);
     for (size_t i = 0; i < dimension; ++i)
     {
         pb_variable_array<FieldT> va(output_digest.bits.begin() + i * FieldT::size_in_bits(),
@@ -203,14 +203,14 @@ size_t knapsack_CRH_with_bit_out_gadget<FieldT>::get_block_len()
 }
 
 template<typename FieldT>
-bit_vector knapsack_CRH_with_bit_out_gadget<FieldT>::get_hash(const bit_vector &input)
+libff::bit_vector knapsack_CRH_with_bit_out_gadget<FieldT>::get_hash(const libff::bit_vector &input)
 {
     const std::vector<FieldT> hash_elems = knapsack_CRH_with_field_out_gadget<FieldT>::get_hash(input);
     hash_value_type result;
 
     for (const FieldT &elt : hash_elems)
     {
-        bit_vector elt_bits = convert_field_element_to_bit_vector<FieldT>(elt);
+        libff::bit_vector elt_bits = libff::convert_field_element_to_bit_vector<FieldT>(elt);
         result.insert(result.end(), elt_bits.begin(), elt_bits.end());
     }
 
@@ -232,7 +232,7 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(const size_t in
 }
 
 template<typename FieldT>
-void test_knapsack_CRH_with_bit_out_gadget_internal(const size_t dimension, const bit_vector &input_bits, const bit_vector &digest_bits)
+void test_knapsack_CRH_with_bit_out_gadget_internal(const size_t dimension, const libff::bit_vector &input_bits, const libff::bit_vector &digest_bits)
 {
     assert(knapsack_dimension<FieldT>::dimension == dimension);
     knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(input_bits.size());

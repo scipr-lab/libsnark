@@ -135,7 +135,7 @@ std::ostream& operator<<(std::ostream &out, const tbcs_gate &g)
     out << g.right_wire << "\n";
     out << (int)g.type << "\n";
     out << g.output << "\n";
-    output_bool(out, g.is_circuit_output);
+    libff::output_bool(out, g.is_circuit_output);
 
     return out;
 }
@@ -143,15 +143,15 @@ std::ostream& operator<<(std::ostream &out, const tbcs_gate &g)
 std::istream& operator>>(std::istream &in, tbcs_gate &g)
 {
     in >> g.left_wire;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> g.right_wire;
-    consume_newline(in);
+    libff::consume_newline(in);
     int tmp;
     in >> tmp;
     g.type = (tbcs_gate_type)tmp;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> g.output;
-    input_bool(in, g.is_circuit_output);
+    libff::input_bool(in, g.is_circuit_output);
 
     return in;
 }
@@ -281,7 +281,7 @@ void tbcs_circuit::add_gate(const tbcs_gate &g, const std::string &annotation)
 #ifdef DEBUG
     gate_annotations[g.output] = annotation;
 #else
-    UNUSED(annotation);
+    libff::UNUSED(annotation);
 #endif
 }
 
@@ -296,7 +296,7 @@ std::ostream& operator<<(std::ostream &out, const tbcs_circuit &circuit)
 {
     out << circuit.primary_input_size << "\n";
     out << circuit.auxiliary_input_size << "\n";
-    out << circuit.gates << OUTPUT_NEWLINE;
+    libff::operator<<(out, circuit.gates); out << OUTPUT_NEWLINE;
 
     return out;
 }
@@ -304,20 +304,20 @@ std::ostream& operator<<(std::ostream &out, const tbcs_circuit &circuit)
 std::istream& operator>>(std::istream &in, tbcs_circuit &circuit)
 {
     in >> circuit.primary_input_size;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> circuit.auxiliary_input_size;
-    consume_newline(in);
-    in >> circuit.gates;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_newline(in);
+    libff::operator>>(in, circuit.gates);
+    libff::consume_OUTPUT_NEWLINE(in);
 
     return in;
 }
 
 void tbcs_circuit::print() const
 {
-    print_indent(); printf("General information about the circuit:\n");
+    libff::print_indent(); printf("General information about the circuit:\n");
     this->print_info();
-    print_indent(); printf("All gates:\n");
+    libff::print_indent(); printf("All gates:\n");
     for (size_t i = 0; i < gates.size(); ++i)
     {
         std::string annotation = "no annotation";
@@ -339,10 +339,10 @@ void tbcs_circuit::print() const
 
 void tbcs_circuit::print_info() const
 {
-    print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
-    print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
-    print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
-    print_indent(); printf("* Depth: %zu\n", this->depth());
+    libff::print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
+    libff::print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
+    libff::print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
+    libff::print_indent(); printf("* Depth: %zu\n", this->depth());
 }
 
 } // libsnark

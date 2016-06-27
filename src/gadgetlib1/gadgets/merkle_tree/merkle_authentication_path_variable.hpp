@@ -27,8 +27,8 @@ public:
                                         const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const size_t address, const merkle_authentication_path &path);
-    merkle_authentication_path get_authentication_path(const size_t address) const;
+    void generate_r1cs_witness(const size_t address, const libff::merkle_authentication_path &path);
+    libff::merkle_authentication_path get_authentication_path(const size_t address) const;
 };
 
 } // libsnark

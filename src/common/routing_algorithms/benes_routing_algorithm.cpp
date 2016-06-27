@@ -114,7 +114,7 @@ size_t benes_packet_cross_source(const size_t dimension, const size_t column_idx
 
 size_t benes_num_columns(const size_t num_packets)
 {
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
     assert(num_packets == 1ul<<dimension);
 
     return 2*dimension;
@@ -123,7 +123,7 @@ size_t benes_num_columns(const size_t num_packets)
 benes_topology generate_benes_topology(const size_t num_packets)
 {
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
     assert(num_packets == 1ul<<dimension);
 
     benes_topology result(num_columns);
@@ -152,8 +152,8 @@ benes_topology generate_benes_topology(const size_t num_packets)
  * - piinv is the inverse of pi.
  */
 void route_benes_inner(const size_t dimension,
-                       const integer_permutation &permutation,
-                       const integer_permutation &permutation_inv,
+                       const libff::integer_permutation &permutation,
+                       const libff::integer_permutation &permutation_inv,
                        const size_t column_idx_start,
                        const size_t column_idx_end,
                        const size_t subnetwork_offset,
@@ -171,13 +171,13 @@ void route_benes_inner(const size_t dimension,
         /* nothing to route */
         return;
     }
-    bit_vector lhs_routed(subnetwork_size, false); /* adjusted by subnetwork_offset */
+    libff::bit_vector lhs_routed(subnetwork_size, false); /* adjusted by subnetwork_offset */
 
     size_t w = subnetwork_offset; /* left-hand-side vertex to be routed. */
     size_t last_unrouted = subnetwork_offset;
 
-    integer_permutation new_permutation(subnetwork_offset, subnetwork_offset + subnetwork_size - 1);
-    integer_permutation new_permutation_inv(subnetwork_offset, subnetwork_offset + subnetwork_size - 1);
+    libff::integer_permutation new_permutation(subnetwork_offset, subnetwork_offset + subnetwork_size - 1);
+    libff::integer_permutation new_permutation_inv(subnetwork_offset, subnetwork_offset + subnetwork_size - 1);
 
     while (true)
     {
@@ -236,11 +236,11 @@ void route_benes_inner(const size_t dimension,
         }
     }
 
-    const integer_permutation new_permutation_upper = new_permutation.slice(subnetwork_offset, subnetwork_offset + subnetwork_size/2 - 1);
-    const integer_permutation new_permutation_lower = new_permutation.slice(subnetwork_offset + subnetwork_size/2, subnetwork_offset + subnetwork_size - 1);
+    const libff::integer_permutation new_permutation_upper = new_permutation.slice(subnetwork_offset, subnetwork_offset + subnetwork_size/2 - 1);
+    const libff::integer_permutation new_permutation_lower = new_permutation.slice(subnetwork_offset + subnetwork_size/2, subnetwork_offset + subnetwork_size - 1);
 
-    const integer_permutation new_permutation_inv_upper = new_permutation_inv.slice(subnetwork_offset, subnetwork_offset + subnetwork_size/2 - 1);
-    const integer_permutation new_permutation_inv_lower = new_permutation_inv.slice(subnetwork_offset + subnetwork_size/2, subnetwork_offset + subnetwork_size - 1);
+    const libff::integer_permutation new_permutation_inv_upper = new_permutation_inv.slice(subnetwork_offset, subnetwork_offset + subnetwork_size/2 - 1);
+    const libff::integer_permutation new_permutation_inv_lower = new_permutation_inv.slice(subnetwork_offset + subnetwork_size/2, subnetwork_offset + subnetwork_size - 1);
 
     /* route upper part */
     route_benes_inner(dimension, new_permutation_upper, new_permutation_inv_upper, column_idx_start+1, column_idx_end-1,
@@ -251,13 +251,13 @@ void route_benes_inner(const size_t dimension,
                       subnetwork_offset+subnetwork_size/2, subnetwork_size/2, routing);
 }
 
-benes_routing get_benes_routing(const integer_permutation &permutation)
+benes_routing get_benes_routing(const libff::integer_permutation &permutation)
 {
     const size_t num_packets = permutation.size();
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
 
-    benes_routing routing(num_columns, bit_vector(num_packets));
+    benes_routing routing(num_columns, libff::bit_vector(num_packets));
 
     route_benes_inner(dimension, permutation, permutation.inverse(), 0, num_columns, 0, num_packets, routing);
 
@@ -270,7 +270,7 @@ std::vector<std::vector<T> > route_by_benes(const benes_routing &routing, const 
 {
     const size_t num_packets = start.size();
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
 
     std::vector<std::vector<T> > res(num_columns+1, std::vector<T>(num_packets));
     res[0] = start;
@@ -289,7 +289,7 @@ std::vector<std::vector<T> > route_by_benes(const benes_routing &routing, const 
     return res;
 }
 
-bool valid_benes_routing(const integer_permutation &permutation, const benes_routing &routing)
+bool valid_benes_routing(const libff::integer_permutation &permutation, const benes_routing &routing)
 {
     const size_t num_packets = permutation.size();
     const size_t num_columns = benes_num_columns(num_packets);

@@ -53,9 +53,9 @@ def generate_knapsack_test(p_name, dimension, bits):
     print "// tests for knapsack_CRH_with_bit_output<%s> and dimension %d" % (p_name, dimension)
     p = globals()[p_name]
     print 'const size_t dimension = %d;' % dimension
-    print 'const bit_vector input_bits = %s;' % bool_arr(bits)
+    print 'const libff::bit_vector input_bits = %s;' % bool_arr(bits)
     h = knapsack_hash(bits, p, dimension)
-    print 'const bit_vector digest_bits = %s;' % bool_arr(h)
+    print 'const libff::bit_vector digest_bits = %s;' % bool_arr(h)
 
 def rand_bits(count):
     return [random.randint(0, 1) for i in xrange(count)]

@@ -19,8 +19,8 @@ merkle_authentication_path_variable<FieldT, HashT>::merkle_authentication_path_v
 {
     for (size_t i = 0; i < tree_depth; ++i)
     {
-        left_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), FMT(annotation_prefix, " left_digests_%zu", i)));
-        right_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), FMT(annotation_prefix, " right_digests_%zu", i)));
+        left_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), libff::FMT(annotation_prefix, " left_digests_%zu", i)));
+        right_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), libff::FMT(annotation_prefix, " right_digests_%zu", i)));
     }
 }
 
@@ -35,7 +35,7 @@ void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_constrain
 }
 
 template<typename FieldT, typename HashT>
-void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(const size_t address, const merkle_authentication_path &path)
+void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(const size_t address, const libff::merkle_authentication_path &path)
 {
     assert(path.size() == tree_depth);
 
@@ -53,9 +53,9 @@ void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(c
 }
 
 template<typename FieldT, typename HashT>
-merkle_authentication_path merkle_authentication_path_variable<FieldT, HashT>::get_authentication_path(const size_t address) const
+libff::merkle_authentication_path merkle_authentication_path_variable<FieldT, HashT>::get_authentication_path(const size_t address) const
 {
-    merkle_authentication_path result;
+    libff::merkle_authentication_path result;
     for (size_t i = 0; i < tree_depth; ++i)
     {
         if (address & (1ul << (tree_depth-1-i)))

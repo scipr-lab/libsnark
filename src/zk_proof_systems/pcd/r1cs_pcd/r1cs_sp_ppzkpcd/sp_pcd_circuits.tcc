@@ -58,8 +58,8 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
     incoming_message_vars.resize(compliance_predicate_arity);
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        incoming_message_types[i].allocate(pb, FMT("", "incoming_message_type_%zu", i));
-        incoming_message_payloads[i].allocate(pb, compliance_predicate.outgoing_message_payload_length, FMT("", "incoming_message_payloads_%zu", i));
+        incoming_message_types[i].allocate(pb, libff::FMT("", "incoming_message_type_%zu", i));
+        incoming_message_payloads[i].allocate(pb, compliance_predicate.outgoing_message_payload_length, libff::FMT("", "incoming_message_payloads_%zu", i));
 
         incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_types[i]);
         incoming_message_vars[i].insert(incoming_message_vars[i].end(), incoming_message_payloads[i].begin(), incoming_message_payloads[i].end());
@@ -90,15 +90,15 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
     incoming_messages_bits.resize(compliance_predicate_arity);
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        incoming_messages_bits[i].allocate(pb, msg_size_in_bits, FMT("", "incoming_messages_bits_%zu", i));
-        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_message_vars[i], field_logsize(), FMT("", "unpack_incoming_messages_%zu", i)));
+        incoming_messages_bits[i].allocate(pb, msg_size_in_bits, libff::FMT("", "incoming_messages_bits_%zu", i));
+        unpack_incoming_messages.emplace_back(multipacking_gadget<FieldT>(pb, incoming_messages_bits[i], incoming_message_vars[i], field_logsize(), libff::FMT("", "unpack_incoming_messages_%zu", i)));
     }
 
     /* allocate digests */
     sp_translation_step_vk_and_incoming_message_payload_digests.resize(compliance_predicate_arity);
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        sp_translation_step_vk_and_incoming_message_payload_digests[i].allocate(pb, digest_size, FMT("", "sp_translation_step_vk_and_incoming_message_payload_digests_%zu", i));
+        sp_translation_step_vk_and_incoming_message_payload_digests[i].allocate(pb, digest_size, libff::FMT("", "sp_translation_step_vk_and_incoming_message_payload_digests_%zu", i));
     }
 
     /* allocate blocks */
@@ -112,7 +112,7 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
     {
         blocks_for_incoming_messages.emplace_back(block_variable<FieldT>(pb, {
                     sp_translation_step_vk_bits,
-                    incoming_messages_bits[i] }, FMT("", "blocks_for_incoming_messages_zu", i)));
+                    incoming_messages_bits[i] }, libff::FMT("", "blocks_for_incoming_messages_zu", i)));
     }
 
     /* allocate hash checkers */
@@ -120,7 +120,7 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
 
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        hash_incoming_messages.emplace_back(CRH_with_field_out_gadget<FieldT>(pb, block_size, blocks_for_incoming_messages[i], sp_translation_step_vk_and_incoming_message_payload_digests[i], FMT("", "hash_incoming_messages_%zu", i)));
+        hash_incoming_messages.emplace_back(CRH_with_field_out_gadget<FieldT>(pb, block_size, blocks_for_incoming_messages[i], sp_translation_step_vk_and_incoming_message_payload_digests[i], libff::FMT("", "hash_incoming_messages_%zu", i)));
     }
 
     /* allocate useful zero variable */
@@ -134,12 +134,12 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
 
     for (size_t i = 0; i < compliance_predicate_arity; ++i)
     {
-        sp_translation_step_vk_and_incoming_message_payload_digest_bits[i].allocate(pb, digest_size * field_logsize(), FMT("", "sp_translation_step_vk_and_incoming_message_payload_digest_bits_%zu", i));
+        sp_translation_step_vk_and_incoming_message_payload_digest_bits[i].allocate(pb, digest_size * field_logsize(), libff::FMT("", "sp_translation_step_vk_and_incoming_message_payload_digest_bits_%zu", i));
         unpack_sp_translation_step_vk_and_incoming_message_payload_digests.emplace_back(multipacking_gadget<FieldT>(pb,
                                                                                                             sp_translation_step_vk_and_incoming_message_payload_digest_bits[i],
                                                                                                             sp_translation_step_vk_and_incoming_message_payload_digests[i],
                                                                                                             field_logsize(),
-                                                                                                            FMT("", "unpack_sp_translation_step_vk_and_incoming_message_payload_digests_%zu", i)));
+                                                                                                            libff::FMT("", "unpack_sp_translation_step_vk_and_incoming_message_payload_digests_%zu", i)));
 
         verifier_input.emplace_back(sp_translation_step_vk_and_incoming_message_payload_digest_bits[i]);
         while (verifier_input[i].size() < padded_verifier_input_size)
@@ -147,14 +147,14 @@ sp_compliance_step_pcd_circuit_maker<ppT>::sp_compliance_step_pcd_circuit_maker(
             verifier_input[i].emplace_back(zero);
         }
 
-        proof.emplace_back(r1cs_ppzksnark_proof_variable<ppT>(pb, FMT("", "proof_%zu", i)));
+        proof.emplace_back(r1cs_ppzksnark_proof_variable<ppT>(pb, libff::FMT("", "proof_%zu", i)));
         verifiers.emplace_back(r1cs_ppzksnark_verifier_gadget<ppT>(pb,
                                                     *sp_translation_step_vk,
                                                     verifier_input[i],
                                                     sp_translation_step_pcd_circuit_maker<other_curve<ppT> >::field_capacity(),
                                                     proof[i],
                                                     verification_result,
-                                                    FMT("", "verifiers_%zu", i)));
+                                                    libff::FMT("", "verifiers_%zu", i)));
     }
 
     pb.set_input_sizes(input_size_in_elts());
@@ -166,13 +166,13 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
 {
     const size_t digest_size = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    print_indent(); printf("* Knapsack dimension: %zu\n", dimension);
+    libff::print_indent(); printf("* Knapsack dimension: %zu\n", dimension);
 
     const size_t compliance_predicate_arity = compliance_predicate.max_arity;
-    print_indent(); printf("* Compliance predicate arity: %zu\n", compliance_predicate_arity);
-    print_indent(); printf("* Compliance predicate payload length: %zu\n", compliance_predicate.outgoing_message_payload_length);
-    print_indent(); printf("* Compliance predicate local data length: %zu\n", compliance_predicate.local_data_length);
-    print_indent(); printf("* Compliance predicate witness length: %zu\n", compliance_predicate.witness_length);
+    libff::print_indent(); printf("* Compliance predicate arity: %zu\n", compliance_predicate_arity);
+    libff::print_indent(); printf("* Compliance predicate payload length: %zu\n", compliance_predicate.outgoing_message_payload_length);
+    libff::print_indent(); printf("* Compliance predicate local data length: %zu\n", compliance_predicate.local_data_length);
+    libff::print_indent(); printf("* Compliance predicate witness length: %zu\n", compliance_predicate.witness_length);
 
     PROFILE_CONSTRAINTS(pb, "booleanity")
     {
@@ -197,7 +197,7 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
 
     PROFILE_CONSTRAINTS(pb, "(1+s) copies of hash")
     {
-        print_indent(); printf("* Digest-size: %zu\n", digest_size);
+        libff::print_indent(); printf("* Digest-size: %zu\n", digest_size);
         hash_outgoing_message->generate_r1cs_constraints();
 
         for (size_t i = 0; i < compliance_predicate_arity; ++i)
@@ -247,7 +247,7 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
         for (size_t i = 1; i < compliance_predicate.max_arity; ++i)
         {
             pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, incoming_message_types[0], incoming_message_types[i]),
-                                   FMT("", "type_%zu_equal_to_type_0", i));
+                                   libff::FMT("", "type_%zu_equal_to_type_0", i));
         }
 
         pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, arity, compliance_predicate_arity), "full_arity");
@@ -255,23 +255,23 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
     }
 
     PRINT_CONSTRAINT_PROFILING();
-    print_indent(); printf("* Number of constraints in sp_compliance_step_pcd_circuit: %zu\n", pb.num_constraints());
+    libff::print_indent(); printf("* Number of constraints in sp_compliance_step_pcd_circuit: %zu\n", pb.num_constraints());
 }
 
 template<typename ppT>
-r1cs_constraint_system<Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_circuit() const
+r1cs_constraint_system<libff::Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_circuit() const
 {
     return pb.get_constraint_system();
 }
 
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_primary_input() const
+r1cs_primary_input<libff::Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_primary_input() const
 {
     return pb.primary_input();
 }
 
 template<typename ppT>
-r1cs_auxiliary_input<Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_auxiliary_input() const
+r1cs_auxiliary_input<libff::Fr<ppT> > sp_compliance_step_pcd_circuit_maker<ppT>::get_auxiliary_input() const
 {
     return pb.auxiliary_input();
 }
@@ -323,13 +323,13 @@ void sp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs
 template<typename ppT>
 size_t sp_compliance_step_pcd_circuit_maker<ppT>::field_logsize()
 {
-    return Fr<ppT>::size_in_bits();
+    return libff::Fr<ppT>::size_in_bits();
 }
 
 template<typename ppT>
 size_t sp_compliance_step_pcd_circuit_maker<ppT>::field_capacity()
 {
-    return Fr<ppT>::capacity();
+    return libff::Fr<ppT>::capacity();
 }
 
 template<typename ppT>
@@ -397,17 +397,17 @@ void sp_translation_step_pcd_circuit_maker<ppT>::generate_r1cs_constraints()
     }
 
     PRINT_CONSTRAINT_PROFILING();
-    print_indent(); printf("* Number of constraints in sp_translation_step_pcd_circuit: %zu\n", pb.num_constraints());
+    libff::print_indent(); printf("* Number of constraints in sp_translation_step_pcd_circuit: %zu\n", pb.num_constraints());
 }
 
 template<typename ppT>
-r1cs_constraint_system<Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_circuit() const
+r1cs_constraint_system<libff::Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_circuit() const
 {
     return pb.get_constraint_system();
 }
 
 template<typename ppT>
-void sp_translation_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs_primary_input<Fr<ppT> > sp_translation_step_input,
+void sp_translation_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1cs_primary_input<libff::Fr<ppT> > sp_translation_step_input,
                                                                        const r1cs_ppzksnark_proof<other_curve<ppT> > &compliance_step_proof)
 {
     this->pb.clear_values();
@@ -431,13 +431,13 @@ void sp_translation_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const r1c
 }
 
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_primary_input() const
+r1cs_primary_input<libff::Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_primary_input() const
 {
     return pb.primary_input();
 }
 
 template<typename ppT>
-r1cs_auxiliary_input<Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_auxiliary_input() const
+r1cs_auxiliary_input<libff::Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_auxiliary_input() const
 {
     return pb.auxiliary_input();
 }
@@ -445,19 +445,19 @@ r1cs_auxiliary_input<Fr<ppT> > sp_translation_step_pcd_circuit_maker<ppT>::get_a
 template<typename ppT>
 size_t sp_translation_step_pcd_circuit_maker<ppT>::field_logsize()
 {
-    return Fr<ppT>::size_in_bits();
+    return libff::Fr<ppT>::size_in_bits();
 }
 
 template<typename ppT>
 size_t sp_translation_step_pcd_circuit_maker<ppT>::field_capacity()
 {
-    return Fr<ppT>::capacity();
+    return libff::Fr<ppT>::capacity();
 }
 
 template<typename ppT>
 size_t sp_translation_step_pcd_circuit_maker<ppT>::input_size_in_elts()
 {
-    return div_ceil(sp_compliance_step_pcd_circuit_maker<other_curve<ppT> >::input_size_in_bits(), sp_translation_step_pcd_circuit_maker<ppT>::field_capacity());
+    return libff::div_ceil(sp_compliance_step_pcd_circuit_maker<other_curve<ppT> >::input_size_in_bits(), sp_translation_step_pcd_circuit_maker<ppT>::field_capacity());
 }
 
 template<typename ppT>
@@ -473,53 +473,53 @@ size_t sp_translation_step_pcd_circuit_maker<ppT>::input_size_in_bits()
 }
 
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_sp_compliance_step_pcd_circuit_input(const bit_vector &sp_translation_step_vk_bits,
-                                                                      const r1cs_pcd_compliance_predicate_primary_input<Fr<ppT> > &primary_input)
+r1cs_primary_input<libff::Fr<ppT> > get_sp_compliance_step_pcd_circuit_input(const libff::bit_vector &sp_translation_step_vk_bits,
+                                                                      const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<ppT> > &primary_input)
 {
-    enter_block("Call to get_sp_compliance_step_pcd_circuit_input");
-    typedef Fr<ppT> FieldT;
+    libff::enter_block("Call to get_sp_compliance_step_pcd_circuit_input");
+    typedef libff::Fr<ppT> FieldT;
 
     const r1cs_variable_assignment<FieldT> outgoing_message_as_va = primary_input.outgoing_message->as_r1cs_variable_assignment();
-    bit_vector msg_bits;
+    libff::bit_vector msg_bits;
     for (const FieldT &elt : outgoing_message_as_va)
     {
-        const bit_vector elt_bits = convert_field_element_to_bit_vector(elt);
+        const libff::bit_vector elt_bits = libff::convert_field_element_to_bit_vector(elt);
         msg_bits.insert(msg_bits.end(), elt_bits.begin(), elt_bits.end());
     }
 
-    bit_vector block;
+    libff::bit_vector block;
     block.insert(block.end(), sp_translation_step_vk_bits.begin(), sp_translation_step_vk_bits.end());
     block.insert(block.end(), msg_bits.begin(), msg_bits.end());
 
-    enter_block("Sample CRH randomness");
+    libff::enter_block("Sample CRH randomness");
     CRH_with_field_out_gadget<FieldT>::sample_randomness(block.size());
-    leave_block("Sample CRH randomness");
+    libff::leave_block("Sample CRH randomness");
 
     const std::vector<FieldT> digest = CRH_with_field_out_gadget<FieldT>::get_hash(block);
-    leave_block("Call to get_sp_compliance_step_pcd_circuit_input");
+    libff::leave_block("Call to get_sp_compliance_step_pcd_circuit_input");
 
     return digest;
 }
 
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_sp_translation_step_pcd_circuit_input(const bit_vector &sp_translation_step_vk_bits,
-                                                                       const r1cs_pcd_compliance_predicate_primary_input<Fr<other_curve<ppT> > > &primary_input)
+r1cs_primary_input<libff::Fr<ppT> > get_sp_translation_step_pcd_circuit_input(const libff::bit_vector &sp_translation_step_vk_bits,
+                                                                       const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<other_curve<ppT> > > &primary_input)
 {
-    enter_block("Call to get_sp_translation_step_pcd_circuit_input");
-    typedef Fr<ppT> FieldT;
+    libff::enter_block("Call to get_sp_translation_step_pcd_circuit_input");
+    typedef libff::Fr<ppT> FieldT;
 
-    const std::vector<Fr<other_curve<ppT> > > sp_compliance_step_pcd_circuit_input = get_sp_compliance_step_pcd_circuit_input<other_curve<ppT> >(sp_translation_step_vk_bits, primary_input);
-    bit_vector sp_compliance_step_pcd_circuit_input_bits;
-    for (const Fr<other_curve<ppT> > &elt : sp_compliance_step_pcd_circuit_input)
+    const std::vector<libff::Fr<other_curve<ppT> > > sp_compliance_step_pcd_circuit_input = get_sp_compliance_step_pcd_circuit_input<other_curve<ppT> >(sp_translation_step_vk_bits, primary_input);
+    libff::bit_vector sp_compliance_step_pcd_circuit_input_bits;
+    for (const libff::Fr<other_curve<ppT> > &elt : sp_compliance_step_pcd_circuit_input)
     {
-        const bit_vector elt_bits = convert_field_element_to_bit_vector<Fr<other_curve<ppT> > >(elt);
+        const libff::bit_vector elt_bits = libff::convert_field_element_to_bit_vector<libff::Fr<other_curve<ppT> > >(elt);
         sp_compliance_step_pcd_circuit_input_bits.insert(sp_compliance_step_pcd_circuit_input_bits.end(), elt_bits.begin(), elt_bits.end());
     }
 
     sp_compliance_step_pcd_circuit_input_bits.resize(sp_translation_step_pcd_circuit_maker<ppT>::input_capacity_in_bits(), false);
 
-    const r1cs_primary_input<FieldT> result = pack_bit_vector_into_field_element_vector<FieldT>(sp_compliance_step_pcd_circuit_input_bits, sp_translation_step_pcd_circuit_maker<ppT>::field_capacity());
-    leave_block("Call to get_sp_translation_step_pcd_circuit_input");
+    const r1cs_primary_input<FieldT> result = libff::pack_bit_vector_into_field_element_vector<FieldT>(sp_compliance_step_pcd_circuit_input_bits, sp_translation_step_pcd_circuit_maker<ppT>::field_capacity());
+    libff::leave_block("Call to get_sp_translation_step_pcd_circuit_input");
 
     return result;
 }

@@ -16,12 +16,12 @@ set_membership_proof_variable<FieldT, HashT>::set_membership_proof_variable(prot
                                                                             const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix),
     max_entries(max_entries),
-    tree_depth(log2(max_entries))
+    tree_depth(libff::log2(max_entries))
 {
     if (tree_depth > 0)
     {
-        address_bits.allocate(pb, tree_depth, FMT(annotation_prefix, " address_bits"));
-        merkle_path.reset(new merkle_authentication_path_variable<FieldT, HashT>(pb, tree_depth, FMT(annotation_prefix, " merkle_path")));
+        address_bits.allocate(pb, tree_depth, libff::FMT(annotation_prefix, " address_bits"));
+        merkle_path.reset(new merkle_authentication_path_variable<FieldT, HashT>(pb, tree_depth, libff::FMT(annotation_prefix, " merkle_path")));
     }
 }
 
@@ -32,14 +32,14 @@ void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_constraints()
     {
         for (size_t i = 0; i < tree_depth; ++i)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, address_bits[i], FMT(this->annotation_prefix, " address_bits"));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, address_bits[i], libff::FMT(this->annotation_prefix, " address_bits"));
         }
         merkle_path->generate_r1cs_constraints();
     }
 }
 
 template<typename FieldT, typename HashT>
-void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const set_membership_proof &proof)
+void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const libff::set_membership_proof &proof)
 {
     if (tree_depth > 0)
     {
@@ -49,9 +49,9 @@ void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const s
 }
 
 template<typename FieldT, typename HashT>
-set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membership_proof() const
+libff::set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membership_proof() const
 {
-    set_membership_proof result;
+    libff::set_membership_proof result;
 
     if (tree_depth == 0)
     {
@@ -67,7 +67,7 @@ set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membershi
 }
 
 template<typename FieldT, typename HashT>
-r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT, HashT>::as_r1cs_variable_assignment(const set_membership_proof &proof)
+r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT, HashT>::as_r1cs_variable_assignment(const libff::set_membership_proof &proof)
 {
     protoboard<FieldT> pb;
     const size_t max_entries = (1ul << (proof.merkle_path.size()));

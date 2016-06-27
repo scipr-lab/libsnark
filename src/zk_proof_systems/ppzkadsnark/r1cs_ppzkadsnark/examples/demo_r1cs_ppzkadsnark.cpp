@@ -19,7 +19,7 @@ using namespace libsnark;
 int main(int argc, const char * argv[])
 {
     default_r1cs_ppzkadsnark_pp::init_public_params();
-    start_profiling();
+    libff::start_profiling();
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
@@ -39,18 +39,18 @@ int main(int argc, const char * argv[])
         assert(strcmp(argv[3], "Fr") == 0 || strcmp(argv[3], "bytes") == 0);
         if (strcmp(argv[3], "bytes") == 0)
         {
-            input_size = div_ceil(8 * input_size, Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::num_bits - 1);
+            input_size = libff::div_ceil(8 * input_size, libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::num_bits - 1);
         }
     }
 
-    enter_block("Generate R1CS example");
-    r1cs_example<Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>> example =
-        generate_r1cs_example_with_field_input<Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>>
+    libff::enter_block("Generate R1CS example");
+    r1cs_example<libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>> example =
+        generate_r1cs_example_with_field_input<libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>>
         (num_constraints, input_size);
-    leave_block("Generate R1CS example");
+    libff::leave_block("Generate R1CS example");
 
-    print_header("(enter) Profile R1CS ppzkADSNARK");
+    libff::print_header("(enter) Profile R1CS ppzkADSNARK");
     const bool test_serialization = true;
     run_r1cs_ppzkadsnark<default_r1cs_ppzkadsnark_pp>(example, test_serialization);
-    print_header("(leave) Profile R1CS ppzkADSNARK");
+    libff::print_header("(leave) Profile R1CS ppzkADSNARK");
 }

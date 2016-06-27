@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
         return 1;
     }
 #endif
-    start_profiling();
+    libff::start_profiling();
 
     /* load everything */
     ram_ppzksnark_proving_key<default_tinyram_ppzksnark_pp> pk;

@@ -28,7 +28,7 @@ void test_ram_zksnark(const size_t w,
 
 int main(void)
 {
-    start_profiling();
+    libff::start_profiling();
     ram_zksnark_PCD_pp<default_ram_zksnark_pp>::init_public_params();
 
     const size_t w = 32;

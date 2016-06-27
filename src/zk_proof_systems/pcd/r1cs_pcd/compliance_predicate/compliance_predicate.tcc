@@ -172,9 +172,9 @@ std::ostream& operator<<(std::ostream &out, const r1cs_pcd_compliance_predicate<
     out << cp.outgoing_message_payload_length << "\n";
     out << cp.local_data_length << "\n";
     out << cp.witness_length << "\n";
-    output_bool(out, cp.relies_on_same_type_inputs);
-    out << cp.accepted_input_types << "\n";
-    out << cp.constraint_system << "\n";
+    libff::output_bool(out, cp.relies_on_same_type_inputs);
+    libff::operator<<(out, cp.accepted_input_types);
+    out << "\n" << cp.constraint_system << "\n";
 
     return out;
 }
@@ -183,28 +183,28 @@ template<typename FieldT>
 std::istream& operator>>(std::istream &in, r1cs_pcd_compliance_predicate<FieldT> &cp)
 {
     in >> cp.name;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> cp.type;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> cp.max_arity;
-    consume_newline(in);
+    libff::consume_newline(in);
     cp.incoming_message_payload_lengths.resize(cp.max_arity);
     for (size_t i = 0; i < cp.max_arity; ++i)
     {
         in >> cp.incoming_message_payload_lengths[i];
-        consume_newline(in);
+        libff::consume_newline(in);
     }
     in >> cp.outgoing_message_payload_length;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> cp.local_data_length;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> cp.witness_length;
-    consume_newline(in);
-    input_bool(in, cp.relies_on_same_type_inputs);
-    in >> cp.accepted_input_types;
-    consume_newline(in);
+    libff::consume_newline(in);
+    libff::input_bool(in, cp.relies_on_same_type_inputs);
+    libff::operator>>(in, cp.accepted_input_types);
+    libff::consume_newline(in);
     in >> cp.constraint_system;
-    consume_newline(in);
+    libff::consume_newline(in);
 
     return in;
 }

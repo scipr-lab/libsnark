@@ -72,13 +72,13 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_pub_auth_prms<ppT> &
 template<typename ppT>
 class r1cs_ppzkadsnark_pub_auth_prms {
 public:
-    G1<snark_pp<ppT>> I1;
+    libff::G1<snark_pp<ppT>> I1;
 
     r1cs_ppzkadsnark_pub_auth_prms() {};
     r1cs_ppzkadsnark_pub_auth_prms<ppT>& operator=(const r1cs_ppzkadsnark_pub_auth_prms<ppT> &other) = default;
     r1cs_ppzkadsnark_pub_auth_prms(const r1cs_ppzkadsnark_pub_auth_prms<ppT> &other) = default;
     r1cs_ppzkadsnark_pub_auth_prms(r1cs_ppzkadsnark_pub_auth_prms<ppT> &&other) = default;
-    r1cs_ppzkadsnark_pub_auth_prms(G1<snark_pp<ppT>> &&I1) : I1(std::move(I1)) {};
+    r1cs_ppzkadsnark_pub_auth_prms(libff::G1<snark_pp<ppT>> &&I1) : I1(std::move(I1)) {};
 
     bool operator==(const r1cs_ppzkadsnark_pub_auth_prms<ppT> &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzkadsnark_pub_auth_prms<ppT> &pap);
@@ -102,7 +102,7 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_sec_auth_key<ppT> &k
 template<typename ppT>
 class r1cs_ppzkadsnark_sec_auth_key {
 public:
-    Fr<snark_pp<ppT>> i;
+    libff::Fr<snark_pp<ppT>> i;
     r1cs_ppzkadsnark_skT<ppT>skp;
     r1cs_ppzkadsnark_prfKeyT<ppT>S;
 
@@ -110,7 +110,7 @@ public:
     r1cs_ppzkadsnark_sec_auth_key<ppT>& operator=(const r1cs_ppzkadsnark_sec_auth_key<ppT> &other) = default;
     r1cs_ppzkadsnark_sec_auth_key(const r1cs_ppzkadsnark_sec_auth_key<ppT> &other) = default;
     r1cs_ppzkadsnark_sec_auth_key(r1cs_ppzkadsnark_sec_auth_key<ppT> &&other) = default;
-    r1cs_ppzkadsnark_sec_auth_key(Fr<snark_pp<ppT>> &&i,
+    r1cs_ppzkadsnark_sec_auth_key(libff::Fr<snark_pp<ppT>> &&i,
                                   r1cs_ppzkadsnark_skT<ppT>&&skp, r1cs_ppzkadsnark_prfKeyT<ppT>&&S) :
         i(std::move(i)),
         skp(std::move(skp)),
@@ -138,14 +138,14 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_pub_auth_key<ppT> &k
 template<typename ppT>
 class r1cs_ppzkadsnark_pub_auth_key {
 public:
-    G2<snark_pp<ppT>> minusI2;
+    libff::G2<snark_pp<ppT>> minusI2;
     r1cs_ppzkadsnark_vkT<ppT>vkp;
 
     r1cs_ppzkadsnark_pub_auth_key() {};
     r1cs_ppzkadsnark_pub_auth_key<ppT>& operator=(const r1cs_ppzkadsnark_pub_auth_key<ppT> &other) = default;
     r1cs_ppzkadsnark_pub_auth_key(const r1cs_ppzkadsnark_pub_auth_key<ppT> &other) = default;
     r1cs_ppzkadsnark_pub_auth_key(r1cs_ppzkadsnark_pub_auth_key<ppT> &&other) = default;
-    r1cs_ppzkadsnark_pub_auth_key(G2<snark_pp<ppT>> &&minusI2, r1cs_ppzkadsnark_vkT<ppT>&&vkp) :
+    r1cs_ppzkadsnark_pub_auth_key(libff::G2<snark_pp<ppT>> &&minusI2, r1cs_ppzkadsnark_vkT<ppT>&&vkp) :
         minusI2(std::move(minusI2)),
         vkp(std::move(vkp)) {};
 
@@ -191,16 +191,16 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_auth_data<ppT> &data
 template<typename ppT>
 class r1cs_ppzkadsnark_auth_data {
 public:
-    Fr<snark_pp<ppT>> mu;
-    G2<snark_pp<ppT>> Lambda;
+    libff::Fr<snark_pp<ppT>> mu;
+    libff::G2<snark_pp<ppT>> Lambda;
     r1cs_ppzkadsnark_sigT<ppT>sigma;
 
     r1cs_ppzkadsnark_auth_data() {};
     r1cs_ppzkadsnark_auth_data<ppT>& operator=(const r1cs_ppzkadsnark_auth_data<ppT> &other) = default;
     r1cs_ppzkadsnark_auth_data(const r1cs_ppzkadsnark_auth_data<ppT> &other) = default;
     r1cs_ppzkadsnark_auth_data(r1cs_ppzkadsnark_auth_data<ppT> &&other) = default;
-    r1cs_ppzkadsnark_auth_data(Fr<snark_pp<ppT>> &&mu,
-                               G2<snark_pp<ppT>> &&Lambda,
+    r1cs_ppzkadsnark_auth_data(libff::Fr<snark_pp<ppT>> &&mu,
+                               libff::G2<snark_pp<ppT>> &&Lambda,
                                r1cs_ppzkadsnark_sigT<ppT>&&sigma) :
         mu(std::move(mu)),
         Lambda(std::move(Lambda)),
@@ -228,13 +228,13 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_proving_key<ppT> &pk
 template<typename ppT>
 class r1cs_ppzkadsnark_proving_key {
 public:
-    knowledge_commitment_vector<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> > A_query;
-    knowledge_commitment_vector<G2<snark_pp<ppT>>, G1<snark_pp<ppT>> > B_query;
-    knowledge_commitment_vector<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> > C_query;
-    G1_vector<snark_pp<ppT>> H_query; // t powers
-    G1_vector<snark_pp<ppT>> K_query;
+    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > A_query;
+    libff::knowledge_commitment_vector<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > B_query;
+    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > C_query;
+    libff::G1_vector<snark_pp<ppT>> H_query; // t powers
+    libff::G1_vector<snark_pp<ppT>> K_query;
     /* Now come the additional elements for ad */
-    G1<snark_pp<ppT>> rA_i_Z_g1;
+    libff::G1<snark_pp<ppT>> rA_i_Z_g1;
 
     r1cs_ppzkadsnark_constraint_system<ppT> constraint_system;
 
@@ -242,15 +242,15 @@ public:
     r1cs_ppzkadsnark_proving_key<ppT>& operator=(const r1cs_ppzkadsnark_proving_key<ppT> &other) = default;
     r1cs_ppzkadsnark_proving_key(const r1cs_ppzkadsnark_proving_key<ppT> &other) = default;
     r1cs_ppzkadsnark_proving_key(r1cs_ppzkadsnark_proving_key<ppT> &&other) = default;
-    r1cs_ppzkadsnark_proving_key(knowledge_commitment_vector<G1<snark_pp<ppT>>,
-                                 G1<snark_pp<ppT>> > &&A_query,
-                                 knowledge_commitment_vector<G2<snark_pp<ppT>>,
-                                 G1<snark_pp<ppT>> > &&B_query,
-                                 knowledge_commitment_vector<G1<snark_pp<ppT>>,
-                                 G1<snark_pp<ppT>> > &&C_query,
-                                 G1_vector<snark_pp<ppT>> &&H_query,
-                                 G1_vector<snark_pp<ppT>> &&K_query,
-                                 G1<snark_pp<ppT>> &&rA_i_Z_g1,
+    r1cs_ppzkadsnark_proving_key(libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
+                                 libff::G1<snark_pp<ppT>> > &&A_query,
+                                 libff::knowledge_commitment_vector<libff::G2<snark_pp<ppT>>,
+                                 libff::G1<snark_pp<ppT>> > &&B_query,
+                                 libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
+                                 libff::G1<snark_pp<ppT>> > &&C_query,
+                                 libff::G1_vector<snark_pp<ppT>> &&H_query,
+                                 libff::G1_vector<snark_pp<ppT>> &&K_query,
+                                 libff::G1<snark_pp<ppT>> &&rA_i_Z_g1,
                                  r1cs_ppzkadsnark_constraint_system<ppT> &&constraint_system) :
         A_query(std::move(A_query)),
         B_query(std::move(B_query)),
@@ -283,16 +283,16 @@ public:
 
     size_t size_in_bits() const
     {
-        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + libsnark::size_in_bits(H_query) + libsnark::size_in_bits(K_query) + G1<snark_pp<ppT>>::size_in_bits();
+        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + libff::size_in_bits(H_query) + libff::size_in_bits(K_query) + libff::G1<snark_pp<ppT>>::size_in_bits();
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in PK: %zu\n", this->G1_size());
-        print_indent(); printf("* Non-zero G1 elements in PK: %zu\n", this->G1_sparse_size());
-        print_indent(); printf("* G2 elements in PK: %zu\n", this->G2_size());
-        print_indent(); printf("* Non-zero G2 elements in PK: %zu\n", this->G2_sparse_size());
-        print_indent(); printf("* PK size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in PK: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* Non-zero G1 elements in PK: %zu\n", this->G1_sparse_size());
+        libff::print_indent(); printf("* G2 elements in PK: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* Non-zero G2 elements in PK: %zu\n", this->G2_sparse_size());
+        libff::print_indent(); printf("* PK size in bits: %zu\n", this->size_in_bits());
     }
 
     bool operator==(const r1cs_ppzkadsnark_proving_key<ppT> &other) const;
@@ -318,27 +318,27 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_verification_key<ppT
 template<typename ppT>
 class r1cs_ppzkadsnark_verification_key {
 public:
-    G2<snark_pp<ppT>> alphaA_g2;
-    G1<snark_pp<ppT>> alphaB_g1;
-    G2<snark_pp<ppT>> alphaC_g2;
-    G2<snark_pp<ppT>> gamma_g2;
-    G1<snark_pp<ppT>> gamma_beta_g1;
-    G2<snark_pp<ppT>> gamma_beta_g2;
-    G2<snark_pp<ppT>> rC_Z_g2;
+    libff::G2<snark_pp<ppT>> alphaA_g2;
+    libff::G1<snark_pp<ppT>> alphaB_g1;
+    libff::G2<snark_pp<ppT>> alphaC_g2;
+    libff::G2<snark_pp<ppT>> gamma_g2;
+    libff::G1<snark_pp<ppT>> gamma_beta_g1;
+    libff::G2<snark_pp<ppT>> gamma_beta_g2;
+    libff::G2<snark_pp<ppT>> rC_Z_g2;
 
-    G1<snark_pp<ppT>> A0;
-    G1_vector<snark_pp<ppT>> Ain;
+    libff::G1<snark_pp<ppT>> A0;
+    libff::G1_vector<snark_pp<ppT>> Ain;
 
     r1cs_ppzkadsnark_verification_key() = default;
-    r1cs_ppzkadsnark_verification_key(const G2<snark_pp<ppT>> &alphaA_g2,
-                                      const G1<snark_pp<ppT>> &alphaB_g1,
-                                      const G2<snark_pp<ppT>> &alphaC_g2,
-                                      const G2<snark_pp<ppT>> &gamma_g2,
-                                      const G1<snark_pp<ppT>> &gamma_beta_g1,
-                                      const G2<snark_pp<ppT>> &gamma_beta_g2,
-                                      const G2<snark_pp<ppT>> &rC_Z_g2,
-                                      const G1<snark_pp<ppT>> A0,
-                                      const G1_vector<snark_pp<ppT>> Ain) :
+    r1cs_ppzkadsnark_verification_key(const libff::G2<snark_pp<ppT>> &alphaA_g2,
+                                      const libff::G1<snark_pp<ppT>> &alphaB_g1,
+                                      const libff::G2<snark_pp<ppT>> &alphaC_g2,
+                                      const libff::G2<snark_pp<ppT>> &gamma_g2,
+                                      const libff::G1<snark_pp<ppT>> &gamma_beta_g1,
+                                      const libff::G2<snark_pp<ppT>> &gamma_beta_g2,
+                                      const libff::G2<snark_pp<ppT>> &rC_Z_g2,
+                                      const libff::G1<snark_pp<ppT>> A0,
+                                      const libff::G1_vector<snark_pp<ppT>> Ain) :
         alphaA_g2(alphaA_g2),
         alphaB_g1(alphaB_g1),
         alphaC_g2(alphaC_g2),
@@ -362,14 +362,14 @@ public:
 
     size_t size_in_bits() const
     {
-        return G1_size() * G1<snark_pp<ppT>>::size_in_bits() + G2_size() * G2<snark_pp<ppT>>::size_in_bits(); // possible zksnark bug
+        return G1_size() * libff::G1<snark_pp<ppT>>::size_in_bits() + G2_size() * libff::G2<snark_pp<ppT>>::size_in_bits(); // possible zksnark bug
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in VK: %zu\n", this->G1_size());
-        print_indent(); printf("* G2 elements in VK: %zu\n", this->G2_size());
-        print_indent(); printf("* VK size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in VK: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* G2 elements in VK: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* VK size in bits: %zu\n", this->size_in_bits());
     }
 
     bool operator==(const r1cs_ppzkadsnark_verification_key<ppT> &other) const;
@@ -401,20 +401,20 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_processed_verificati
 template<typename ppT>
 class r1cs_ppzkadsnark_processed_verification_key {
 public:
-    G2_precomp<snark_pp<ppT>> pp_G2_one_precomp;
-    G2_precomp<snark_pp<ppT>> vk_alphaA_g2_precomp;
-    G1_precomp<snark_pp<ppT>> vk_alphaB_g1_precomp;
-    G2_precomp<snark_pp<ppT>> vk_alphaC_g2_precomp;
-    G2_precomp<snark_pp<ppT>> vk_rC_Z_g2_precomp;
-    G2_precomp<snark_pp<ppT>> vk_gamma_g2_precomp;
-    G1_precomp<snark_pp<ppT>> vk_gamma_beta_g1_precomp;
-    G2_precomp<snark_pp<ppT>> vk_gamma_beta_g2_precomp;
-    G2_precomp<snark_pp<ppT>> vk_rC_i_g2_precomp;
+    libff::G2_precomp<snark_pp<ppT>> pp_G2_one_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_alphaA_g2_precomp;
+    libff::G1_precomp<snark_pp<ppT>> vk_alphaB_g1_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_alphaC_g2_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_rC_Z_g2_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_gamma_g2_precomp;
+    libff::G1_precomp<snark_pp<ppT>> vk_gamma_beta_g1_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_gamma_beta_g2_precomp;
+    libff::G2_precomp<snark_pp<ppT>> vk_rC_i_g2_precomp;
 
-    G1<snark_pp<ppT>> A0;
-    G1_vector<snark_pp<ppT>> Ain;
+    libff::G1<snark_pp<ppT>> A0;
+    libff::G1_vector<snark_pp<ppT>> Ain;
 
-    std::vector<G1_precomp<snark_pp<ppT>>> proof_g_vki_precomp;
+    std::vector<libff::G1_precomp<snark_pp<ppT>>> proof_g_vki_precomp;
 
     bool operator==(const r1cs_ppzkadsnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzkadsnark_processed_verification_key<ppT> &pvk);
@@ -466,40 +466,40 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_proof<ppT> &proof);
 template<typename ppT>
 class r1cs_ppzkadsnark_proof {
 public:
-    knowledge_commitment<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> > g_A;
-    knowledge_commitment<G2<snark_pp<ppT>>, G1<snark_pp<ppT>> > g_B;
-    knowledge_commitment<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> > g_C;
-    G1<snark_pp<ppT>> g_H;
-    G1<snark_pp<ppT>> g_K;
-    knowledge_commitment<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> > g_Aau;
-    G1<snark_pp<ppT>> muA;
+    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_A;
+    libff::knowledge_commitment<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_B;
+    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_C;
+    libff::G1<snark_pp<ppT>> g_H;
+    libff::G1<snark_pp<ppT>> g_K;
+    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_Aau;
+    libff::G1<snark_pp<ppT>> muA;
 
     r1cs_ppzkadsnark_proof()
     {
         // invalid proof with valid curve points
-        this->g_A.g = G1<snark_pp<ppT>> ::one();
-        this->g_A.h = G1<snark_pp<ppT>>::one();
-        this->g_B.g = G2<snark_pp<ppT>> ::one();
-        this->g_B.h = G1<snark_pp<ppT>>::one();
-        this->g_C.g = G1<snark_pp<ppT>> ::one();
-        this->g_C.h = G1<snark_pp<ppT>>::one();
-        this->g_H = G1<snark_pp<ppT>>::one();
-        this->g_K = G1<snark_pp<ppT>>::one();
-        g_Aau = knowledge_commitment<G1<snark_pp<ppT>>, G1<snark_pp<ppT>> >
-            (G1<snark_pp<ppT>>::one(),G1<snark_pp<ppT>>::one());
-        this->muA = G1<snark_pp<ppT>>::one();
+        this->g_A.g = libff::G1<snark_pp<ppT>> ::one();
+        this->g_A.h = libff::G1<snark_pp<ppT>>::one();
+        this->g_B.g = libff::G2<snark_pp<ppT>> ::one();
+        this->g_B.h = libff::G1<snark_pp<ppT>>::one();
+        this->g_C.g = libff::G1<snark_pp<ppT>> ::one();
+        this->g_C.h = libff::G1<snark_pp<ppT>>::one();
+        this->g_H = libff::G1<snark_pp<ppT>>::one();
+        this->g_K = libff::G1<snark_pp<ppT>>::one();
+        g_Aau = libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> >
+            (libff::G1<snark_pp<ppT>>::one(),libff::G1<snark_pp<ppT>>::one());
+        this->muA = libff::G1<snark_pp<ppT>>::one();
     }
-    r1cs_ppzkadsnark_proof(knowledge_commitment<G1<snark_pp<ppT>>,
-                           G1<snark_pp<ppT>> > &&g_A,
-                           knowledge_commitment<G2<snark_pp<ppT>>,
-                           G1<snark_pp<ppT>> > &&g_B,
-                           knowledge_commitment<G1<snark_pp<ppT>>,
-                           G1<snark_pp<ppT>> > &&g_C,
-                           G1<snark_pp<ppT>> &&g_H,
-                           G1<snark_pp<ppT>> &&g_K,
-                           knowledge_commitment<G1<snark_pp<ppT>>,
-                           G1<snark_pp<ppT>> > &&g_Aau,
-                           G1<snark_pp<ppT>> &&muA) :
+    r1cs_ppzkadsnark_proof(libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+                           libff::G1<snark_pp<ppT>> > &&g_A,
+                           libff::knowledge_commitment<libff::G2<snark_pp<ppT>>,
+                           libff::G1<snark_pp<ppT>> > &&g_B,
+                           libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+                           libff::G1<snark_pp<ppT>> > &&g_C,
+                           libff::G1<snark_pp<ppT>> &&g_H,
+                           libff::G1<snark_pp<ppT>> &&g_K,
+                           libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+                           libff::G1<snark_pp<ppT>> > &&g_Aau,
+                           libff::G1<snark_pp<ppT>> &&muA) :
         g_A(std::move(g_A)),
         g_B(std::move(g_B)),
         g_C(std::move(g_C)),
@@ -521,14 +521,14 @@ public:
 
     size_t size_in_bits() const
     {
-        return G1_size() * G1<snark_pp<ppT>>::size_in_bits() + G2_size() * G2<snark_pp<ppT>>::size_in_bits();
+        return G1_size() * libff::G1<snark_pp<ppT>>::size_in_bits() + G2_size() * libff::G2<snark_pp<ppT>>::size_in_bits();
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in proof: %zu\n", this->G1_size());
-        print_indent(); printf("* G2 elements in proof: %zu\n", this->G2_size());
-        print_indent(); printf("* Proof size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in proof: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* G2 elements in proof: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* Proof size in bits: %zu\n", this->size_in_bits());
     }
 
     bool is_well_formed() const
@@ -561,7 +561,7 @@ r1cs_ppzkadsnark_auth_keys<ppT> r1cs_ppzkadsnark_auth_generator(void);
  */
 template<typename ppT>
 std::vector<r1cs_ppzkadsnark_auth_data<ppT>> r1cs_ppzkadsnark_auth_sign(
-    const std::vector<Fr<snark_pp<ppT>>> &ins,
+    const std::vector<libff::Fr<snark_pp<ppT>>> &ins,
     const r1cs_ppzkadsnark_sec_auth_key<ppT> &sk,
     const std::vector<labelT> labels);
 
@@ -569,13 +569,13 @@ std::vector<r1cs_ppzkadsnark_auth_data<ppT>> r1cs_ppzkadsnark_auth_sign(
  * R1CS ppZKADSNARK authentication verification algorithms.
  */
 template<typename ppT>
-bool r1cs_ppzkadsnark_auth_verify(const std::vector<Fr<snark_pp<ppT>>> &data,
+bool r1cs_ppzkadsnark_auth_verify(const std::vector<libff::Fr<snark_pp<ppT>>> &data,
                                   const std::vector<r1cs_ppzkadsnark_auth_data<ppT>> & auth_data,
                                   const r1cs_ppzkadsnark_sec_auth_key<ppT> &sak,
                                   const std::vector<labelT> &labels);
 
 template<typename ppT>
-bool r1cs_ppzkadsnark_auth_verify(const std::vector<Fr<snark_pp<ppT>>> &data,
+bool r1cs_ppzkadsnark_auth_verify(const std::vector<libff::Fr<snark_pp<ppT>>> &data,
                                   const std::vector<r1cs_ppzkadsnark_auth_data<ppT>> & auth_data,
                                   const r1cs_ppzkadsnark_pub_auth_key<ppT> &pak,
                                   const std::vector<labelT> &labels);

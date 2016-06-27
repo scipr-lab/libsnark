@@ -57,7 +57,7 @@ size_t as_waksman_switch_input(const size_t num_packets, const size_t row_offset
 
 size_t as_waksman_num_columns(const size_t num_packets)
 {
-    return (num_packets > 1 ? 2*log2(num_packets)-1 : 0);
+    return (num_packets > 1 ? 2*libff::log2(num_packets)-1 : 0);
 }
 
 /**
@@ -267,14 +267,14 @@ size_t as_waksman_other_input_position(const size_t row_offset, const size_t pac
  * - pi maps [lo, lo+1, ... hi] to itself, offset by lo, and
  * - piinv is the inverse of pi.
  *
- * NOTE: due to offsets, neither pi or piinv are instances of integer_permutation.
+ * NOTE: due to offsets, neither pi or piinv are instances of libff::integer_permutation.
  */
 void as_waksman_route_inner(const size_t left,
                             const size_t right,
                             const size_t lo,
                             const size_t hi,
-                            const integer_permutation &permutation,
-                            const integer_permutation &permutation_inv,
+                            const libff::integer_permutation &permutation,
+                            const libff::integer_permutation &permutation_inv,
                             as_waksman_routing &routing)
 {
     if (left > right)
@@ -323,8 +323,8 @@ void as_waksman_route_inner(const size_t left,
          * If this enforces a LHS switch setting, then forward-route that;
          * otherwise we will select the next value from LHS to route.
          */
-        integer_permutation new_permutation(lo, hi);
-        integer_permutation new_permutation_inv(lo, hi);
+        libff::integer_permutation new_permutation(lo, hi);
+        libff::integer_permutation new_permutation_inv(lo, hi);
         std::vector<bool> lhs_routed(subnetwork_size, false); /* offset by lo, i.e. lhs_routed[packet_idx-lo] is set if packet packet_idx is routed */
 
         size_t to_route;
@@ -488,18 +488,18 @@ void as_waksman_route_inner(const size_t left,
         }
 
         const size_t d = as_waksman_top_height(subnetwork_size);
-        const integer_permutation new_permutation_upper = new_permutation.slice(lo, lo + d - 1);
-        const integer_permutation new_permutation_lower = new_permutation.slice(lo + d, hi);
+        const libff::integer_permutation new_permutation_upper = new_permutation.slice(lo, lo + d - 1);
+        const libff::integer_permutation new_permutation_lower = new_permutation.slice(lo + d, hi);
 
-        const integer_permutation new_permutation_inv_upper = new_permutation_inv.slice(lo, lo + d - 1);
-        const integer_permutation new_permutation_inv_lower = new_permutation_inv.slice(lo + d, hi);
+        const libff::integer_permutation new_permutation_inv_upper = new_permutation_inv.slice(lo, lo + d - 1);
+        const libff::integer_permutation new_permutation_inv_lower = new_permutation_inv.slice(lo + d, hi);
 
         as_waksman_route_inner(left+1, right-1, lo, lo + d - 1, new_permutation_upper, new_permutation_inv_upper, routing);
         as_waksman_route_inner(left+1, right-1, lo + d, hi, new_permutation_lower, new_permutation_inv_lower, routing);
     }
 }
 
-as_waksman_routing get_as_waksman_routing(const integer_permutation &permutation)
+as_waksman_routing get_as_waksman_routing(const libff::integer_permutation &permutation)
 {
     const size_t num_packets = permutation.size();
     const size_t width = as_waksman_num_columns(num_packets);
@@ -509,17 +509,17 @@ as_waksman_routing get_as_waksman_routing(const integer_permutation &permutation
     return routing;
 }
 
-bool valid_as_waksman_routing(const integer_permutation &permutation, const as_waksman_routing &routing)
+bool valid_as_waksman_routing(const libff::integer_permutation &permutation, const as_waksman_routing &routing)
 {
     const size_t num_packets = permutation.size();
     const size_t width = as_waksman_num_columns(num_packets);
     as_waksman_topology neighbors = generate_as_waksman_topology(num_packets);
 
-    integer_permutation curperm(num_packets);
+    libff::integer_permutation curperm(num_packets);
 
     for (size_t column_idx = 0; column_idx < width; ++column_idx)
     {
-        integer_permutation nextperm(num_packets);
+        libff::integer_permutation nextperm(num_packets);
         for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
         {
             size_t routed_packet_idx;

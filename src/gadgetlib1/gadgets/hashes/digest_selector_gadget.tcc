@@ -31,7 +31,7 @@ void digest_selector_gadget<FieldT>::generate_r1cs_constraints()
           input - left = is_right(right - left)
         */
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(is_right, right.bits[i] - left.bits[i], input.bits[i] - left.bits[i]),
-                                     FMT(this->annotation_prefix, " propagate_%zu", i));
+                                     libff::FMT(this->annotation_prefix, " propagate_%zu", i));
     }
 }
 

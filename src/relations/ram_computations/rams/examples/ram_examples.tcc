@@ -22,7 +22,7 @@ namespace libsnark {
 template<typename ramT>
 ram_example<ramT> gen_ram_example_simple(const ram_architecture_params<ramT> &ap, const size_t boot_trace_size_bound, const size_t time_bound, const bool satisfiable)
 {
-    enter_block("Call to gen_ram_example_simple");
+    libff::enter_block("Call to gen_ram_example_simple");
 
     const size_t program_size = boot_trace_size_bound / 2;
     const size_t input_size = boot_trace_size_bound - program_size;
@@ -55,14 +55,14 @@ ram_example<ramT> gen_ram_example_simple(const ram_architecture_params<ramT> &ap
 
     assert(boot_pos == boot_trace_size_bound);
 
-    leave_block("Call to gen_ram_example_simple");
+    libff::leave_block("Call to gen_ram_example_simple");
     return result;
 }
 
 template<typename ramT>
 ram_example<ramT> gen_ram_example_complex(const ram_architecture_params<ramT> &ap, const size_t boot_trace_size_bound, const size_t time_bound, const bool satisfiable)
 {
-    enter_block("Call to gen_ram_example_complex");
+    libff::enter_block("Call to gen_ram_example_complex");
 
     const size_t program_size = boot_trace_size_bound / 2;
     const size_t input_size = boot_trace_size_bound - program_size;
@@ -112,7 +112,7 @@ ram_example<ramT> gen_ram_example_complex(const ram_architecture_params<ramT> &a
         result.boot_trace.set_trace_entry(boot_pos++, std::make_pair((1ul<<(ap.dwaddr_len()-1)) + i + 1, std::rand() % (1ul<<(2*ap.w))));
     }
 
-    leave_block("Call to gen_ram_example_complex");
+    libff::leave_block("Call to gen_ram_example_complex");
     return result;
 }
 

@@ -27,7 +27,7 @@ void ALU_jmp_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->argval2.packed },
             { this->result }),
-        FMT(this->annotation_prefix, " jmp_result"));
+        libff::FMT(this->annotation_prefix, " jmp_result"));
 }
 
 template<typename FieldT>
@@ -39,7 +39,7 @@ void ALU_jmp_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_jmp_gadget()
 {
-    print_time("starting jmp test");
+    libff::print_time("starting jmp test");
 
     tinyram_architecture_params ap(16, 16);
     tinyram_program P; P.instructions = generate_tinyram_prelude(ap);
@@ -63,11 +63,11 @@ void test_ALU_jmp_gadget()
 
     assert(pb.val(result) == FieldT(123));
     assert(pb.is_satisfied());
-    print_time("positive jmp test successful");
+    libff::print_time("positive jmp test successful");
 
     pb.val(result) = FieldT(1);
     assert(!pb.is_satisfied());
-    print_time("negative jmp test successful");
+    libff::print_time("negative jmp test successful");
 }
 
 /* cjmp */
@@ -89,7 +89,7 @@ void ALU_cjmp_gadget<FieldT>::generate_r1cs_constraints()
             this->flag,
             pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end())) - this->pc.packed - 1,
             this->result - this->pc.packed - 1),
-        FMT(this->annotation_prefix, " cjmp_result"));
+        libff::FMT(this->annotation_prefix, " cjmp_result"));
 }
 
 template<typename FieldT>
@@ -104,7 +104,7 @@ template<typename FieldT>
 void test_ALU_cjmp_gadget()
 {
     // TODO: update
-    print_time("starting cjmp test");
+    libff::print_time("starting cjmp test");
 
     tinyram_architecture_params ap(16, 16);
     tinyram_program P; P.instructions = generate_tinyram_prelude(ap);
@@ -131,22 +131,22 @@ void test_ALU_cjmp_gadget()
 
     assert(pb.val(result) == FieldT(123));
     assert(pb.is_satisfied());
-    print_time("positive cjmp test successful");
+    libff::print_time("positive cjmp test successful");
 
     pb.val(flag) = FieldT(0);
     assert(!pb.is_satisfied());
-    print_time("negative cjmp test successful");
+    libff::print_time("negative cjmp test successful");
 
     pb.val(flag) = FieldT(0);
     cjmp.generate_r1cs_witness();
 
     assert(pb.val(result) == FieldT(456+2*ap.w/8));
     assert(pb.is_satisfied());
-    print_time("positive cjmp test successful");
+    libff::print_time("positive cjmp test successful");
 
     pb.val(flag) = FieldT(1);
     assert(!pb.is_satisfied());
-    print_time("negative cjmp test successful");
+    libff::print_time("negative cjmp test successful");
 }
 
 /* cnjmp */
@@ -168,7 +168,7 @@ void ALU_cnjmp_gadget<FieldT>::generate_r1cs_constraints()
             this->flag,
             this->pc.packed + 1 - pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end())),
             this->result - pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end()))),
-        FMT(this->annotation_prefix, " cnjmp_result"));
+        libff::FMT(this->annotation_prefix, " cnjmp_result"));
 }
 
 template<typename FieldT>
@@ -183,7 +183,7 @@ template<typename FieldT>
 void test_ALU_cnjmp_gadget()
 {
     // TODO: update
-    print_time("starting cnjmp test");
+    libff::print_time("starting cnjmp test");
 
     tinyram_architecture_params ap(16, 16);
     tinyram_program P; P.instructions = generate_tinyram_prelude(ap);
@@ -210,22 +210,22 @@ void test_ALU_cnjmp_gadget()
 
     assert(pb.val(result) == FieldT(123));
     assert(pb.is_satisfied());
-    print_time("positive cnjmp test successful");
+    libff::print_time("positive cnjmp test successful");
 
     pb.val(flag) = FieldT(1);
     assert(!pb.is_satisfied());
-    print_time("negative cnjmp test successful");
+    libff::print_time("negative cnjmp test successful");
 
     pb.val(flag) = FieldT(1);
     cnjmp.generate_r1cs_witness();
 
     assert(pb.val(result) == FieldT(456 + (2*pb.ap.w/8)));
     assert(pb.is_satisfied());
-    print_time("positive cnjmp test successful");
+    libff::print_time("positive cnjmp test successful");
 
     pb.val(flag) = FieldT(0);
     assert(!pb.is_satisfied());
-    print_time("negative cnjmp test successful");
+    libff::print_time("negative cnjmp test successful");
 }
 
 } // libsnark

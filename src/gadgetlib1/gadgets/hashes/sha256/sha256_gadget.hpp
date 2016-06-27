@@ -65,8 +65,8 @@ public:
 template<typename FieldT>
 class sha256_two_to_one_hash_gadget : public gadget<FieldT> {
 public:
-    typedef bit_vector hash_value_type;
-    typedef merkle_authentication_path merkle_authentication_path_type;
+    typedef libff::bit_vector hash_value_type;
+    typedef libff::merkle_authentication_path merkle_authentication_path_type;
 
     std::shared_ptr<sha256_compression_function_gadget<FieldT> > f;
 
@@ -86,7 +86,7 @@ public:
 
     static size_t get_block_len();
     static size_t get_digest_len();
-    static bit_vector get_hash(const bit_vector &input);
+    static libff::bit_vector get_hash(const libff::bit_vector &input);
 
     static size_t expected_constraints(const bool ensure_output_bitness=true); // TODO: ignored for now
 };

@@ -37,7 +37,7 @@ namespace libsnark {
  * - e_times_e_over_e_miller_loop_gadget_type
  * - final_exp_gadget_type
  * and also containing a static constant
- * - const constexpr bigint<m> pairing_loop_count
+ * - const constexpr libff::bigint<m> pairing_loop_count
  *
  * For example, if you want to use the types my_Field, my_Fqe, etc,
  * then you would do as follows. First declare a new type:
@@ -64,7 +64,7 @@ namespace libsnark {
  *       typedef my_e_over_e_miller_loop_gadget_type e_over_e_miller_loop_gadget_type;
  *       typedef my_e_times_e_over_e_miller_loop_gadget_type e_times_e_over_e_miller_loop_gadget_type;
  *       typedef my_final_exp_gadget_type final_exp_gadget_type;
- *       static const constexpr bigint<...> &pairing_loop_count = ...;
+ *       static const constexpr libff::bigint<...> &pairing_loop_count = ...;
  *   };
  *
  * Having done the above, my_ec_pp can be used as a template parameter.

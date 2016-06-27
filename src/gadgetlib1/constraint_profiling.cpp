@@ -22,7 +22,7 @@ std::vector<constraint_profiling_entry> constraint_profiling_table;
 size_t PRINT_CONSTRAINT_PROFILING()
 {
     size_t accounted = 0;
-    print_indent();
+    libff::print_indent();
     printf("Constraint profiling:\n");
     for (constraint_profiling_entry &ent : constraint_profiling_table)
     {
@@ -31,7 +31,7 @@ size_t PRINT_CONSTRAINT_PROFILING()
             accounted += ent.count;
         }
 
-        print_indent();
+        libff::print_indent();
         for (size_t i = 0; i < ent.indent; ++i)
         {
             printf("  ");

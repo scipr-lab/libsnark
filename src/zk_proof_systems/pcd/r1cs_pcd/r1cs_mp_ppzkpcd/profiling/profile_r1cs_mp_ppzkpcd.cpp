@@ -25,7 +25,7 @@ int main(void)
 {
     typedef default_r1cs_ppzkpcd_pp PCD_pp;
 
-    start_profiling();
+    libff::start_profiling();
     PCD_pp::init_public_params();
 
     const size_t arity = 2;

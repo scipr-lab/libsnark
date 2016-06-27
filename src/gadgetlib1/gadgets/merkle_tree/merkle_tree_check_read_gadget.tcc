@@ -48,17 +48,17 @@ merkle_tree_check_read_gadget<FieldT, HashT>::merkle_tree_check_read_gadget(prot
 
     for (size_t i = 0; i < tree_depth-1; ++i)
     {
-        internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " internal_output_%zu", i)));
+        internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, libff::FMT(this->annotation_prefix, " internal_output_%zu", i)));
     }
 
-    computed_root.reset(new digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " computed_root")));
+    computed_root.reset(new digest_variable<FieldT>(pb, digest_size, libff::FMT(this->annotation_prefix, " computed_root")));
 
     for (size_t i = 0; i < tree_depth; ++i)
     {
-        block_variable<FieldT> inp(pb, path.left_digests[i], path.right_digests[i], FMT(this->annotation_prefix, " inp_%zu", i));
+        block_variable<FieldT> inp(pb, path.left_digests[i], path.right_digests[i], libff::FMT(this->annotation_prefix, " inp_%zu", i));
         hasher_inputs.emplace_back(inp);
         hashers.emplace_back(HashT(pb, 2*digest_size, inp, (i == 0 ? *computed_root : internal_output[i-1]),
-                                   FMT(this->annotation_prefix, " load_hashers_%zu", i)));
+                                   libff::FMT(this->annotation_prefix, " load_hashers_%zu", i)));
     }
 
     for (size_t i = 0; i < tree_depth; ++i)
@@ -70,10 +70,10 @@ merkle_tree_check_read_gadget<FieldT, HashT>::merkle_tree_check_read_gadget(prot
         */
         propagators.emplace_back(digest_selector_gadget<FieldT>(pb, digest_size, i < tree_depth - 1 ? internal_output[i] : leaf,
                                                                 address_bits[tree_depth-1-i], path.left_digests[i], path.right_digests[i],
-                                                                FMT(this->annotation_prefix, " digest_selector_%zu", i)));
+                                                                libff::FMT(this->annotation_prefix, " digest_selector_%zu", i)));
     }
 
-    check_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_root->bits, root.bits, read_successful, FieldT::capacity(), FMT(annotation_prefix, " check_root")));
+    check_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_root->bits, root.bits, read_successful, FieldT::capacity(), libff::FMT(annotation_prefix, " check_root")));
 }
 
 template<typename FieldT, typename HashT>
@@ -124,7 +124,7 @@ size_t merkle_tree_check_read_gadget<FieldT, HashT>::expected_constraints(const 
     const size_t hasher_constraints = tree_depth * HashT::expected_constraints(false);
     const size_t propagator_constraints = tree_depth * HashT::get_digest_len();
     const size_t authentication_path_constraints = 2 * tree_depth * HashT::get_digest_len();
-    const size_t check_root_constraints = 3 * div_ceil(HashT::get_digest_len(), FieldT::capacity());
+    const size_t check_root_constraints = 3 * libff::div_ceil(HashT::get_digest_len(), FieldT::capacity());
 
     return hasher_constraints + propagator_constraints + authentication_path_constraints + check_root_constraints;
 }
@@ -135,13 +135,13 @@ void test_merkle_tree_check_read_gadget()
     /* prepare test */
     const size_t digest_len = HashT::get_digest_len();
     const size_t tree_depth = 16;
-    std::vector<merkle_authentication_node> path(tree_depth);
+    std::vector<libff::merkle_authentication_node> path(tree_depth);
 
-    bit_vector prev_hash(digest_len);
+    libff::bit_vector prev_hash(digest_len);
     std::generate(prev_hash.begin(), prev_hash.end(), [&]() { return std::rand() % 2; });
-    bit_vector leaf = prev_hash;
+    libff::bit_vector leaf = prev_hash;
 
-    bit_vector address_bits;
+    libff::bit_vector address_bits;
 
     size_t address = 0;
     for (long level = tree_depth-1; level >= 0; --level)
@@ -149,18 +149,18 @@ void test_merkle_tree_check_read_gadget()
         const bool computed_is_right = (std::rand() % 2);
         address |= (computed_is_right ? 1ul << (tree_depth-1-level) : 0);
         address_bits.push_back(computed_is_right);
-        bit_vector other(digest_len);
+        libff::bit_vector other(digest_len);
         std::generate(other.begin(), other.end(), [&]() { return std::rand() % 2; });
 
-        bit_vector block = prev_hash;
+        libff::bit_vector block = prev_hash;
         block.insert(computed_is_right ? block.begin() : block.end(), other.begin(), other.end());
-        bit_vector h = HashT::get_hash(block);
+        libff::bit_vector h = HashT::get_hash(block);
 
         path[level] = other;
 
         prev_hash = h;
     }
-    bit_vector root = prev_hash;
+    libff::bit_vector root = prev_hash;
 
     /* execute test */
     protoboard<FieldT> pb;

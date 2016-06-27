@@ -21,11 +21,11 @@ namespace libsnark {
 
 class default_r1cs_ppzkpcd_pp {
 public:
-    typedef mnt4_pp curve_A_pp;
-    typedef mnt6_pp curve_B_pp;
+    typedef libff::mnt4_pp curve_A_pp;
+    typedef libff::mnt6_pp curve_B_pp;
 
-    typedef Fr<curve_A_pp> scalar_field_A;
-    typedef Fr<curve_B_pp> scalar_field_B;
+    typedef libff::Fr<curve_A_pp> scalar_field_A;
+    typedef libff::Fr<curve_B_pp> scalar_field_B;
 
     static void init_public_params();
 };
