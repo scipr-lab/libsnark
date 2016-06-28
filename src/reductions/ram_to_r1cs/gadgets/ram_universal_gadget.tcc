@@ -322,7 +322,7 @@ void ram_universal_gadget<ramT>::generate_r1cs_witness(const ram_boot_trace<ramT
 
     std::sort(mem_pairs.begin(), mem_pairs.end());
 
-    libff::integer_permutation pi(this->num_memory_lines);
+    integer_permutation pi(this->num_memory_lines);
     for (size_t i = 0; i < this->num_memory_lines; ++i)
     {
         const size_t timestamp = this->pb.val(unrouted_memory_lines[i]->timestamp->packed).as_ulong();

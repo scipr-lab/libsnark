@@ -179,7 +179,7 @@ void as_waksman_routing_gadget<FieldT>::generate_r1cs_constraints()
 }
 
 template<typename FieldT>
-void as_waksman_routing_gadget<FieldT>::generate_r1cs_witness(const libff::integer_permutation& permutation)
+void as_waksman_routing_gadget<FieldT>::generate_r1cs_witness(const integer_permutation& permutation)
 {
     /* pack inputs */
     for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
@@ -246,7 +246,7 @@ void test_as_waksman_routing_gadget(const size_t num_packets, const size_t packe
 {
     printf("testing as_waksman_routing_gadget by routing %zu element vector of %zu bits (Fp fits all %zu bit integers)\n", num_packets, packet_size, FieldT::capacity());
     protoboard<FieldT> pb;
-    libff::integer_permutation permutation(num_packets);
+    integer_permutation permutation(num_packets);
     permutation.random_shuffle();
     libff::print_time("generated permutation");
 

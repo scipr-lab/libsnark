@@ -39,7 +39,7 @@ void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_constraints()
 }
 
 template<typename FieldT, typename HashT>
-void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const libff::set_membership_proof &proof)
+void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const set_membership_proof &proof)
 {
     if (tree_depth > 0)
     {
@@ -49,9 +49,9 @@ void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_witness(const l
 }
 
 template<typename FieldT, typename HashT>
-libff::set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membership_proof() const
+set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_membership_proof() const
 {
-    libff::set_membership_proof result;
+    set_membership_proof result;
 
     if (tree_depth == 0)
     {
@@ -67,7 +67,7 @@ libff::set_membership_proof set_membership_proof_variable<FieldT, HashT>::get_me
 }
 
 template<typename FieldT, typename HashT>
-r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT, HashT>::as_r1cs_variable_assignment(const libff::set_membership_proof &proof)
+r1cs_variable_assignment<FieldT> set_membership_proof_variable<FieldT, HashT>::as_r1cs_variable_assignment(const set_membership_proof &proof)
 {
     protoboard<FieldT> pb;
     const size_t max_entries = (1ul << (proof.merkle_path.size()));

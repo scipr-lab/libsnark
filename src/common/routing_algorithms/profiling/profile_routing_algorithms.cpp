@@ -24,7 +24,7 @@ void profile_benes_algorithm(const size_t n)
     assert(n == 1ul<<libff::log2(n));
 
     libff::enter_block("Generate permutation");
-    libff::integer_permutation permutation(n);
+    integer_permutation permutation(n);
     permutation.random_shuffle();
     libff::leave_block("Generate permutation");
 
@@ -38,7 +38,7 @@ void profile_as_waksman_algorithm(const size_t n)
     printf("* Size: %zu\n", n);
 
     libff::enter_block("Generate permutation");
-    libff::integer_permutation permutation(n);
+    integer_permutation permutation(n);
     permutation.random_shuffle();
     libff::leave_block("Generate permutation");
 

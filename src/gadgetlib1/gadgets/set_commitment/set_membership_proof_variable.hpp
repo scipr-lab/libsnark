@@ -29,11 +29,11 @@ public:
                                   const std::string &annotation_prefix);
 
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const libff::set_membership_proof &proof);
+    void generate_r1cs_witness(const set_membership_proof &proof);
 
-    libff::set_membership_proof get_membership_proof() const;
+    set_membership_proof get_membership_proof() const;
 
-    static r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment(const libff::set_membership_proof &proof);
+    static r1cs_variable_assignment<FieldT> as_r1cs_variable_assignment(const set_membership_proof &proof);
 };
 
 } // libsnark

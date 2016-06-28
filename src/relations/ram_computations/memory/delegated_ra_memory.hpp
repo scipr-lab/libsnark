@@ -27,7 +27,7 @@ private:
     libff::bit_vector int_to_tree_elem(const size_t i) const;
     size_t int_from_tree_elem(const libff::bit_vector &v) const;
 
-    std::unique_ptr<libff::merkle_tree<HashT> > contents;
+    std::unique_ptr<merkle_tree<HashT> > contents;
 
 public:
     delegated_ra_memory(const size_t num_addresses, const size_t value_size);

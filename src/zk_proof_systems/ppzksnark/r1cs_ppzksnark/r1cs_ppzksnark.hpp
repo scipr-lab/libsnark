@@ -50,7 +50,7 @@
 
 #include "algebra/curves/public_params.hpp"
 #include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark_params.hpp"
 
@@ -73,9 +73,9 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proving_key<ppT> &pk);
 template<typename ppT>
 class r1cs_ppzksnark_proving_key {
 public:
-    libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > A_query;
-    libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query;
-    libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > C_query;
+    knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > A_query;
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query;
+    knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > C_query;
     libff::G1_vector<ppT> H_query;
     libff::G1_vector<ppT> K_query;
 
@@ -85,9 +85,9 @@ public:
     r1cs_ppzksnark_proving_key<ppT>& operator=(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(r1cs_ppzksnark_proving_key<ppT> &&other) = default;
-    r1cs_ppzksnark_proving_key(libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > &&A_query,
-                               libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
-                               libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > &&C_query,
+    r1cs_ppzksnark_proving_key(knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > &&A_query,
+                               knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
+                               knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > &&C_query,
                                libff::G1_vector<ppT> &&H_query,
                                libff::G1_vector<ppT> &&K_query,
                                r1cs_ppzksnark_constraint_system<ppT> &&constraint_system) :
@@ -164,7 +164,7 @@ public:
     libff::G2<ppT> gamma_beta_g2;
     libff::G2<ppT> rC_Z_g2;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     r1cs_ppzksnark_verification_key() = default;
     r1cs_ppzksnark_verification_key(const libff::G2<ppT> &alphaA_g2,
@@ -174,7 +174,7 @@ public:
                                     const libff::G1<ppT> &gamma_beta_g1,
                                     const libff::G2<ppT> &gamma_beta_g2,
                                     const libff::G2<ppT> &rC_Z_g2,
-                                    const libff::accumulation_vector<libff::G1<ppT> > &eIC) :
+                                    const accumulation_vector<libff::G1<ppT> > &eIC) :
         alphaA_g2(alphaA_g2),
         alphaB_g1(alphaB_g1),
         alphaC_g2(alphaC_g2),
@@ -245,7 +245,7 @@ public:
     libff::G1_precomp<ppT> vk_gamma_beta_g1_precomp;
     libff::G2_precomp<ppT> vk_gamma_beta_g2_precomp;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     bool operator==(const r1cs_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
@@ -297,9 +297,9 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proof<ppT> &proof);
 template<typename ppT>
 class r1cs_ppzksnark_proof {
 public:
-    libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_A;
-    libff::knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > g_B;
-    libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_C;
+    knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_A;
+    knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > g_B;
+    knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_C;
     libff::G1<ppT> g_H;
     libff::G1<ppT> g_K;
 
@@ -315,9 +315,9 @@ public:
         this->g_H = libff::G1<ppT>::one();
         this->g_K = libff::G1<ppT>::one();
     }
-    r1cs_ppzksnark_proof(libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > &&g_A,
-                         libff::knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > &&g_B,
-                         libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > &&g_C,
+    r1cs_ppzksnark_proof(knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > &&g_A,
+                         knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > &&g_B,
+                         knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > &&g_C,
                          libff::G1<ppT> &&g_H,
                          libff::G1<ppT> &&g_K) :
         g_A(std::move(g_A)),

@@ -82,7 +82,7 @@ std::ostream& operator<<(std::ostream &out, const r1cs_mp_ppzkpcd_proving_key<PC
     out << pk.translation_step_r1cs_vks;
     libff::output_bool_vector(out, pk.commitment_to_translation_step_r1cs_vks);
     out << pk.compliance_step_r1cs_vk_membership_proofs;
-    libff::operator<<(out, pk.compliance_predicate_name_to_idx);
+    out << pk.compliance_predicate_name_to_idx;
 
     return out;
 }
@@ -97,7 +97,7 @@ std::istream& operator>>(std::istream &in, r1cs_mp_ppzkpcd_proving_key<PCD_ppT> 
     in >> pk.translation_step_r1cs_vks;
     libff::input_bool_vector(in, pk.commitment_to_translation_step_r1cs_vks);
     in >> pk.compliance_step_r1cs_vk_membership_proofs;
-    libff::operator>>(in, pk.compliance_predicate_name_to_idx);
+    in >> pk.compliance_predicate_name_to_idx;
 
     return in;
 }
@@ -237,7 +237,7 @@ r1cs_mp_ppzkpcd_keypair<PCD_ppT> r1cs_mp_ppzkpcd_generator(const std::vector<r1c
     const size_t vk_size_in_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::size_in_bits(translation_input_size);
     printf("%zu %zu\n", translation_input_size, vk_size_in_bits);
 
-    libff::set_commitment_accumulator<CRH_with_bit_out_gadget<FieldT_A> > all_translation_vks(compliance_predicates.size(), vk_size_in_bits);
+    set_commitment_accumulator<CRH_with_bit_out_gadget<FieldT_A> > all_translation_vks(compliance_predicates.size(), vk_size_in_bits);
 
     libff::enter_block("Perform type checks");
     std::map<size_t, size_t> type_counts;
@@ -311,13 +311,13 @@ r1cs_mp_ppzkpcd_keypair<PCD_ppT> r1cs_mp_ppzkpcd_generator(const std::vector<r1c
     }
 
     libff::enter_block("Compute set commitment and corresponding membership proofs");
-    const libff::set_commitment cm = all_translation_vks.get_commitment();
+    const set_commitment cm = all_translation_vks.get_commitment();
     keypair.pk.commitment_to_translation_step_r1cs_vks = cm;
     keypair.vk.commitment_to_translation_step_r1cs_vks = cm;
     for (size_t i = 0; i < compliance_predicates.size(); ++i)
     {
         const libff::bit_vector vk_bits = r1cs_ppzksnark_verification_key_variable<curve_A_pp>::get_verification_key_bits(keypair.vk.translation_step_r1cs_vks[i]);
-        const libff::set_membership_proof proof = all_translation_vks.get_membership_proof(vk_bits);
+        const set_membership_proof proof = all_translation_vks.get_membership_proof(vk_bits);
 
         keypair.pk.compliance_step_r1cs_vk_membership_proofs.emplace_back(proof);
     }
@@ -379,7 +379,7 @@ r1cs_mp_ppzkpcd_proof<PCD_ppT> r1cs_mp_ppzkpcd_prover(const r1cs_mp_ppzkpcd_prov
     }
 
     std::vector<r1cs_ppzksnark_verification_key<curve_B_pp> > translation_step_vks;
-    std::vector<libff::set_membership_proof> membership_proofs;
+    std::vector<set_membership_proof> membership_proofs;
 
     for (size_t i = 0; i < arity; ++i)
     {

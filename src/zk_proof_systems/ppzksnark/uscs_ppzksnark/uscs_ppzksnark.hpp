@@ -50,7 +50,7 @@
 
 #include "algebra/curves/public_params.hpp"
 #include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
 #include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark_params.hpp"
 
@@ -157,13 +157,13 @@ public:
     libff::G2<ppT> alpha_tilde_g2;
     libff::G2<ppT> Z_g2;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     uscs_ppzksnark_verification_key() = default;
     uscs_ppzksnark_verification_key(const libff::G2<ppT> &tilde_g2,
                                     const libff::G2<ppT> &alpha_tilde_g2,
                                     const libff::G2<ppT> &Z_g2,
-                                    const libff::accumulation_vector<libff::G1<ppT> > &eIC) :
+                                    const accumulation_vector<libff::G1<ppT> > &eIC) :
         tilde_g2(tilde_g2),
         alpha_tilde_g2(alpha_tilde_g2),
         Z_g2(Z_g2),
@@ -228,7 +228,7 @@ public:
     libff::G2_precomp<ppT> vk_Z_g2_precomp;
     libff::GT<ppT> pairing_of_g1_and_g2;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     bool operator==(const uscs_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const uscs_ppzksnark_processed_verification_key<ppT> &pvk);

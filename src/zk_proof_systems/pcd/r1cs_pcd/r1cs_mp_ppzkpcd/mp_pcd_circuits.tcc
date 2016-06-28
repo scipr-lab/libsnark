@@ -389,9 +389,9 @@ r1cs_auxiliary_input<libff::Fr<ppT> > mp_compliance_step_pcd_circuit_maker<ppT>:
 }
 
 template<typename ppT>
-void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_commitment &commitment_to_translation_step_r1cs_vks,
                                                                       const std::vector<r1cs_ppzksnark_verification_key<other_curve<ppT> > > &mp_translation_step_pcd_circuit_vks,
-                                                                      const std::vector<libff::set_membership_proof> &vk_membership_proofs,
+                                                                      const std::vector<set_membership_proof> &vk_membership_proofs,
                                                                       const r1cs_pcd_compliance_predicate_primary_input<FieldT> &compliance_predicate_primary_input,
                                                                       const r1cs_pcd_compliance_predicate_auxiliary_input<FieldT> &compliance_predicate_auxiliary_input,
                                                                       const std::vector<r1cs_ppzksnark_proof<other_curve<ppT> > > &translation_step_proofs)
@@ -623,7 +623,7 @@ size_t mp_translation_step_pcd_circuit_maker<ppT>::input_size_in_bits()
 }
 
 template<typename ppT>
-r1cs_primary_input<libff::Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+r1cs_primary_input<libff::Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(const set_commitment &commitment_to_translation_step_r1cs_vks,
                                                                       const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<ppT> > &primary_input)
 {
     libff::enter_block("Call to get_mp_compliance_step_pcd_circuit_input");
@@ -652,7 +652,7 @@ r1cs_primary_input<libff::Fr<ppT> > get_mp_compliance_step_pcd_circuit_input(con
 }
 
 template<typename ppT>
-r1cs_primary_input<libff::Fr<ppT> > get_mp_translation_step_pcd_circuit_input(const libff::set_commitment &commitment_to_translation_step_r1cs_vks,
+r1cs_primary_input<libff::Fr<ppT> > get_mp_translation_step_pcd_circuit_input(const set_commitment &commitment_to_translation_step_r1cs_vks,
                                                                        const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<other_curve<ppT> > > &primary_input)
 {
     libff::enter_block("Call to get_mp_translation_step_pcd_circuit_input");

@@ -47,7 +47,7 @@ IEEE Symposium on Security and Privacy 2015,
 
 #include "algebra/curves/public_params.hpp"
 #include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_params.hpp"
 #include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_signature.hpp"
@@ -228,9 +228,9 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_proving_key<ppT> &pk
 template<typename ppT>
 class r1cs_ppzkadsnark_proving_key {
 public:
-    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > A_query;
-    libff::knowledge_commitment_vector<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > B_query;
-    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > C_query;
+    knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > A_query;
+    knowledge_commitment_vector<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > B_query;
+    knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > C_query;
     libff::G1_vector<snark_pp<ppT>> H_query; // t powers
     libff::G1_vector<snark_pp<ppT>> K_query;
     /* Now come the additional elements for ad */
@@ -242,11 +242,11 @@ public:
     r1cs_ppzkadsnark_proving_key<ppT>& operator=(const r1cs_ppzkadsnark_proving_key<ppT> &other) = default;
     r1cs_ppzkadsnark_proving_key(const r1cs_ppzkadsnark_proving_key<ppT> &other) = default;
     r1cs_ppzkadsnark_proving_key(r1cs_ppzkadsnark_proving_key<ppT> &&other) = default;
-    r1cs_ppzkadsnark_proving_key(libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
+    r1cs_ppzkadsnark_proving_key(knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
                                  libff::G1<snark_pp<ppT>> > &&A_query,
-                                 libff::knowledge_commitment_vector<libff::G2<snark_pp<ppT>>,
+                                 knowledge_commitment_vector<libff::G2<snark_pp<ppT>>,
                                  libff::G1<snark_pp<ppT>> > &&B_query,
-                                 libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
+                                 knowledge_commitment_vector<libff::G1<snark_pp<ppT>>,
                                  libff::G1<snark_pp<ppT>> > &&C_query,
                                  libff::G1_vector<snark_pp<ppT>> &&H_query,
                                  libff::G1_vector<snark_pp<ppT>> &&K_query,
@@ -466,12 +466,12 @@ std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_proof<ppT> &proof);
 template<typename ppT>
 class r1cs_ppzkadsnark_proof {
 public:
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_A;
-    libff::knowledge_commitment<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_B;
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_C;
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_A;
+    knowledge_commitment<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_B;
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_C;
     libff::G1<snark_pp<ppT>> g_H;
     libff::G1<snark_pp<ppT>> g_K;
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_Aau;
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_Aau;
     libff::G1<snark_pp<ppT>> muA;
 
     r1cs_ppzkadsnark_proof()
@@ -485,19 +485,19 @@ public:
         this->g_C.h = libff::G1<snark_pp<ppT>>::one();
         this->g_H = libff::G1<snark_pp<ppT>>::one();
         this->g_K = libff::G1<snark_pp<ppT>>::one();
-        g_Aau = libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> >
+        g_Aau = knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> >
             (libff::G1<snark_pp<ppT>>::one(),libff::G1<snark_pp<ppT>>::one());
         this->muA = libff::G1<snark_pp<ppT>>::one();
     }
-    r1cs_ppzkadsnark_proof(libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+    r1cs_ppzkadsnark_proof(knowledge_commitment<libff::G1<snark_pp<ppT>>,
                            libff::G1<snark_pp<ppT>> > &&g_A,
-                           libff::knowledge_commitment<libff::G2<snark_pp<ppT>>,
+                           knowledge_commitment<libff::G2<snark_pp<ppT>>,
                            libff::G1<snark_pp<ppT>> > &&g_B,
-                           libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+                           knowledge_commitment<libff::G1<snark_pp<ppT>>,
                            libff::G1<snark_pp<ppT>> > &&g_C,
                            libff::G1<snark_pp<ppT>> &&g_H,
                            libff::G1<snark_pp<ppT>> &&g_K,
-                           libff::knowledge_commitment<libff::G1<snark_pp<ppT>>,
+                           knowledge_commitment<libff::G1<snark_pp<ppT>>,
                            libff::G1<snark_pp<ppT>> > &&g_Aau,
                            libff::G1<snark_pp<ppT>> &&muA) :
         g_A(std::move(g_A)),

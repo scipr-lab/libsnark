@@ -21,6 +21,8 @@ add_library(
   snark
   STATIC
 
+  common/data_structures/integer_permutation.cpp
+  common/data_structures/set_commitment.cpp
   common/default_types/r1cs_ppzkpcd_pp.cpp
   common/default_types/tinyram_ppzksnark_pp.cpp
   common/default_types/tinyram_zksnark_pp.cpp

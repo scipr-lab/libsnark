@@ -79,7 +79,7 @@ void test_set_commitment_gadget()
     const size_t max_set_size = 16;
     const size_t value_size = (HashT::get_block_len() > 0 ? HashT::get_block_len() : 10);
 
-    libff::set_commitment_accumulator<HashT> accumulator(max_set_size, value_size);
+    set_commitment_accumulator<HashT> accumulator(max_set_size, value_size);
 
     std::vector<libff::bit_vector> set_elems;
     for (size_t i = 0; i < max_set_size; ++i)

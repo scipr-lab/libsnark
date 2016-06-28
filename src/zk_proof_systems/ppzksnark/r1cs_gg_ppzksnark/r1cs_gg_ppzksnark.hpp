@@ -45,7 +45,7 @@ References:
 
 #include "algebra/curves/public_params.hpp"
 #include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_params.hpp"
 
@@ -72,7 +72,7 @@ public:
     libff::G2<ppT> delta_g2;
 
     libff::G1_vector<ppT> A_query; // this could be a sparse vector if we had multiexp for those
-    libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query;
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query;
     libff::G1_vector<ppT> H_query;
     libff::G1_vector<ppT> L_query;
 
@@ -85,7 +85,7 @@ public:
     r1cs_gg_ppzksnark_proving_key(libff::G1<ppT> &&delta_g1,
                                   libff::G2<ppT> &&delta_g2,
                                   libff::G1_vector<ppT> &&A_query,
-                                  libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
+                                  knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
                                   libff::G1_vector<ppT> &&H_query,
                                   libff::G1_vector<ppT> &&L_query,
                                   r1cs_gg_ppzksnark_constraint_system<ppT> &&constraint_system) :
@@ -161,13 +161,13 @@ public:
     libff::G2<ppT> gamma_g2;
     libff::G2<ppT> delta_g2;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     r1cs_gg_ppzksnark_verification_key() = default;
     r1cs_gg_ppzksnark_verification_key(const libff::GT<ppT> &alpha_g1_beta_g2,
                                        const libff::G2<ppT> &gamma_g2,
                                        const libff::G2<ppT> &delta_g2,
-                                       const libff::accumulation_vector<libff::G1<ppT> > &eIC) :
+                                       const accumulation_vector<libff::G1<ppT> > &eIC) :
         alpha_g1_beta_g2(alpha_g1_beta_g2),
         gamma_g2(gamma_g2),
         delta_g2(delta_g2),
@@ -236,7 +236,7 @@ public:
     libff::G2_precomp<ppT> vk_gamma_g2_precomp;
     libff::G2_precomp<ppT> vk_delta_g2_precomp;
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     bool operator==(const r1cs_gg_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_gg_ppzksnark_processed_verification_key<ppT> &pvk);

@@ -49,7 +49,7 @@ delegated_ra_memory<HashT>::delegated_ra_memory(const size_t num_addresses,
                                                 const size_t value_size) :
     memory_interface(num_addresses, value_size)
 {
-    contents.reset(new libff::merkle_tree<HashT>(libff::log2(num_addresses), value_size));
+    contents.reset(new merkle_tree<HashT>(libff::log2(num_addresses), value_size));
 }
 
 template<typename HashT>
@@ -60,7 +60,7 @@ delegated_ra_memory<HashT>::delegated_ra_memory(const size_t num_addresses,
 {
     std::vector<libff::bit_vector> contents_as_bit_vector_vector(contents.size());
     std::transform(contents_as_vector.begin(), contents_as_vector.end(), contents_as_bit_vector_vector, [this](size_t value) { return int_to_tree_elem(value); });
-    contents.reset(new libff::merkle_tree<HashT>(libff::log2(num_addresses), value_size, contents_as_bit_vector_vector));
+    contents.reset(new merkle_tree<HashT>(libff::log2(num_addresses), value_size, contents_as_bit_vector_vector));
 }
 
 template<typename HashT>
@@ -75,7 +75,7 @@ delegated_ra_memory<HashT>::delegated_ra_memory(const size_t num_addresses,
         contents_as_bit_vector_map[it.first] = int_to_tree_elem(it.second);
     }
 
-    contents.reset(new libff::merkle_tree<HashT>(libff::log2(num_addresses), value_size, contents_as_bit_vector_map));
+    contents.reset(new merkle_tree<HashT>(libff::log2(num_addresses), value_size, contents_as_bit_vector_map));
 }
 
 template<typename HashT>

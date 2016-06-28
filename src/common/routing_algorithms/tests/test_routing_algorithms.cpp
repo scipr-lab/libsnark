@@ -22,7 +22,7 @@ using namespace libsnark;
  */
 void test_benes(const size_t N)
 {
-    libff::integer_permutation permutation(1ul << libff::log2(N));
+    integer_permutation permutation(1ul << libff::log2(N));
 
     do {
         const benes_routing routing = get_benes_routing(permutation);
@@ -35,7 +35,7 @@ void test_benes(const size_t N)
  */
 void test_as_waksman(const size_t N)
 {
-    libff::integer_permutation permutation(N);
+    integer_permutation permutation(N);
 
     do {
         const as_waksman_routing routing = get_as_waksman_routing(permutation);

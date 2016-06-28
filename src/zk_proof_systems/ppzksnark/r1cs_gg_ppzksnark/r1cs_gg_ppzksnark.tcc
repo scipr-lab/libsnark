@@ -23,7 +23,7 @@ See r1cs_gg_ppzksnark.hpp .
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "algebra/scalar_multiplication/multiexp.hpp"
-#include "algebra/scalar_multiplication/kc_multiexp.hpp"
+#include "knowledge_commitment/kc_multiexp.hpp"
 #include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
 
 namespace libsnark {
@@ -186,7 +186,7 @@ r1cs_gg_ppzksnark_verification_key<ppT> r1cs_gg_ppzksnark_verification_key<ppT>:
         v.emplace_back(libff::G1<ppT>::random_element());
     }
 
-    result.encoded_IC_query = libff::accumulation_vector<libff::G1<ppT> >(std::move(base), std::move(v));
+    result.encoded_IC_query = accumulation_vector<libff::G1<ppT> >(std::move(base), std::move(v));
 
     return result;
 }
@@ -305,7 +305,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::leave_block("Compute the A-query", false);
 
     libff::enter_block("Compute the B-query", false);
-    libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g1_window, g2_table, g1_table, libff::Fr<ppT>::one(), libff::Fr<ppT>::one(), Bt, chunks);
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g1_window, g2_table, g1_table, libff::Fr<ppT>::one(), libff::Fr<ppT>::one(), Bt, chunks);
     libff::leave_block("Compute the B-query", false);
 
     libff::enter_block("Compute the H-query", false);
@@ -335,7 +335,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
 
     libff::leave_block("Call to r1cs_gg_ppzksnark_generator");
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
 
     r1cs_gg_ppzksnark_verification_key<ppT> vk = r1cs_gg_ppzksnark_verification_key<ppT>(alpha_g1_beta_g2,
                                                                                          gamma_g2,
@@ -418,8 +418,8 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::leave_block("Compute answer to A-query", false);
 
     libff::enter_block("Compute answer to B-query", false);
-    libff::knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > B_answer;
-    B_answer = libff::kc_multi_exp_with_mixed_addition<libff::G2<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.B_query,
+    knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > B_answer;
+    B_answer = kc_multi_exp_with_mixed_addition<libff::G2<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.B_query,
                                                                             0, qap_wit.num_variables() + 1,
                                                                             const_padded_assignment.begin(), const_padded_assignment.begin() + qap_wit.num_variables() + 1,
                                                                             chunks, true);
@@ -474,7 +474,7 @@ bool r1cs_gg_ppzksnark_online_verifier_weak_IC(const r1cs_gg_ppzksnark_processed
     assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
     libff::enter_block("Accumulate input");
-    const libff::accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const libff::G1<ppT> &acc = accumulated_IC.first;
     libff::leave_block("Accumulate input");
 
@@ -578,7 +578,7 @@ bool r1cs_gg_ppzksnark_affine_verifier_weak_IC(const r1cs_gg_ppzksnark_verificat
     libff::affine_ate_G2_precomp<ppT> pvk_vk_delta_g2_precomp = ppT::affine_ate_precompute_G2(vk.delta_g2);
 
     libff::enter_block("Accumulate input");
-    const libff::accumulation_vector<libff::G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const accumulation_vector<libff::G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const libff::G1<ppT> &acc = accumulated_IC.first;
     libff::leave_block("Accumulate input");
 

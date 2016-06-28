@@ -23,7 +23,7 @@ See r1cs_ppzkadsnark.hpp .
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "algebra/scalar_multiplication/multiexp.hpp"
-#include "algebra/scalar_multiplication/kc_multiexp.hpp"
+#include "knowledge_commitment/kc_multiexp.hpp"
 #include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
 
 namespace libsnark {
@@ -548,19 +548,19 @@ r1cs_ppzkadsnark_keypair<ppT> r1cs_ppzkadsnark_generator(const r1cs_ppzkadsnark_
 
     libff::enter_block("Generate knowledge commitments");
     libff::enter_block("Compute the A-query", false);
-    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > A_query =
+    knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > A_query =
         kc_batch_exp(libff::Fr<snark_pp<ppT>>::size_in_bits(), g1_window, g1_window, g1_table,
                      g1_table, rA, rA*alphaA, At, chunks);
     libff::leave_block("Compute the A-query", false);
 
     libff::enter_block("Compute the B-query", false);
-    libff::knowledge_commitment_vector<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > B_query =
+    knowledge_commitment_vector<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > B_query =
         kc_batch_exp(libff::Fr<snark_pp<ppT>>::size_in_bits(), g2_window, g1_window, g2_table,
                      g1_table, rB, rB*alphaB, Bt, chunks);
     libff::leave_block("Compute the B-query", false);
 
     libff::enter_block("Compute the C-query", false);
-    libff::knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > C_query =
+    knowledge_commitment_vector<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > C_query =
         kc_batch_exp(libff::Fr<snark_pp<ppT>>::size_in_bits(), g1_window, g1_window, g1_table,
                      g1_table, rC, rC*alphaC, Ct, chunks);
     libff::leave_block("Compute the C-query", false);
@@ -659,14 +659,14 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     assert(qap_inst.is_satisfied(qap_wit));
 #endif
 
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_A =
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_A =
         /* pk.A_query[0] + */ d1*pk.A_query[qap_wit.num_variables()+1];
-    libff::knowledge_commitment<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_B =
+    knowledge_commitment<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_B =
         pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_variables()+1];
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_C =
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_C =
         pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_variables()+1];
 
-    libff::knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_Ain = dauth*pk.A_query[qap_wit.num_variables()+1];
+    knowledge_commitment<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>> > g_Ain = dauth*pk.A_query[qap_wit.num_variables()+1];
 
     libff::G1<snark_pp<ppT>> g_H = libff::G1<snark_pp<ppT>>::zero();
     libff::G1<snark_pp<ppT>> g_K = (pk.K_query[0] +
@@ -695,7 +695,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     libff::enter_block("Compute the proof");
 
     libff::enter_block("Compute answer to A-query", false);
-    g_A = g_A + libff::kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.A_query,
+    g_A = g_A + kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.A_query,
                                                                                                            1+qap_wit.num_inputs(), 1+qap_wit.num_variables(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_inputs(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
@@ -703,7 +703,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     libff::leave_block("Compute answer to A-query", false);
 
     libff::enter_block("Compute answer to Ain-query", false);
-    g_Ain = g_Ain + libff::kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.A_query,
+    g_Ain = g_Ain + kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.A_query,
                                                                                                                1, 1+qap_wit.num_inputs(),
                                                                                                                qap_wit.coefficients_for_ABCs.begin(),
                                                                                                                qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_inputs(),
@@ -712,7 +712,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     libff::leave_block("Compute answer to Ain-query", false);
 
     libff::enter_block("Compute answer to B-query", false);
-    g_B = g_B + libff::kc_multi_exp_with_mixed_addition<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.B_query,
+    g_B = g_B + kc_multi_exp_with_mixed_addition<libff::G2<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.B_query,
                                                                                                            1, 1+qap_wit.num_variables(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
@@ -720,7 +720,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     libff::leave_block("Compute answer to B-query", false);
 
     libff::enter_block("Compute answer to C-query", false);
-    g_C = g_C + libff::kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.C_query,
+    g_C = g_C + kc_multi_exp_with_mixed_addition<libff::G1<snark_pp<ppT>>, libff::G1<snark_pp<ppT>>, libff::Fr<snark_pp<ppT>> >(pk.C_query,
                                                                                                            1, 1+qap_wit.num_variables(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin(),
                                                                                                            qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),

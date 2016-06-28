@@ -69,7 +69,7 @@ public:
                               const std::vector<pb_variable_array<FieldT>> &routing_output_bits,
                               const std::string& annotation_prefix="");
     void generate_r1cs_constraints();
-    void generate_r1cs_witness(const libff::integer_permutation& permutation);
+    void generate_r1cs_witness(const integer_permutation& permutation);
 };
 
 template<typename FieldT>

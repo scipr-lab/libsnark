@@ -192,7 +192,7 @@ uscs_ppzksnark_verification_key<ppT> uscs_ppzksnark_verification_key<ppT>::dummy
         v.emplace_back(libff::Fr<ppT>::random_element() * libff::G1<ppT>::one());
     }
 
-    result.encoded_IC_query = libff::accumulation_vector<libff::G1<ppT> >(v);
+    result.encoded_IC_query = accumulation_vector<libff::G1<ppT> >(v);
 
     return result;
 }
@@ -296,7 +296,7 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constr
 
     libff::leave_block("Call to uscs_ppzksnark_generator");
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
 
     uscs_ppzksnark_verification_key<ppT> vk = uscs_ppzksnark_verification_key<ppT>(tilde_g2,
                                                                                    alpha_tilde_g2,
@@ -428,7 +428,7 @@ bool uscs_ppzksnark_online_verifier_weak_IC(const uscs_ppzksnark_processed_verif
     assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
     libff::enter_block("Compute input-dependent part of V");
-    const libff::accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     assert(accumulated_IC.is_fully_accumulated());
     const libff::G1<ppT> &acc = accumulated_IC.first;
     libff::leave_block("Compute input-dependent part of V");

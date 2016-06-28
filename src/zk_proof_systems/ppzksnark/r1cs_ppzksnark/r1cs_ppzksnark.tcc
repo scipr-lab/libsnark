@@ -23,7 +23,7 @@ See r1cs_ppzksnark.hpp .
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "algebra/scalar_multiplication/multiexp.hpp"
-#include "algebra/scalar_multiplication/kc_multiexp.hpp"
+#include "knowledge_commitment/kc_multiexp.hpp"
 #include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
 
 namespace libsnark {
@@ -229,7 +229,7 @@ r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy
         v.emplace_back(libff::Fr<ppT>::random_element() * libff::G1<ppT>::one());
     }
 
-    result.encoded_IC_query = libff::accumulation_vector<libff::G1<ppT> >(std::move(base), std::move(v));
+    result.encoded_IC_query = accumulation_vector<libff::G1<ppT> >(std::move(base), std::move(v));
 
     return result;
 }
@@ -345,15 +345,15 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
 
     libff::enter_block("Generate knowledge commitments");
     libff::enter_block("Compute the A-query", false);
-    libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > A_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, chunks);
+    knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > A_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rA, rA*alphaA, At, chunks);
     libff::leave_block("Compute the A-query", false);
 
     libff::enter_block("Compute the B-query", false);
-    libff::knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, chunks);
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g1_window, g2_table, g1_table, rB, rB*alphaB, Bt, chunks);
     libff::leave_block("Compute the B-query", false);
 
     libff::enter_block("Compute the C-query", false);
-    libff::knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > C_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, chunks);
+    knowledge_commitment_vector<libff::G1<ppT>, libff::G1<ppT> > C_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_window, g1_table, g1_table, rC, rC*alphaC, Ct, chunks);
     libff::leave_block("Compute the C-query", false);
 
     libff::enter_block("Compute the H-query", false);
@@ -395,7 +395,7 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
 
     libff::leave_block("Call to r1cs_ppzksnark_generator");
 
-    libff::accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query(std::move(encoded_IC_base), std::move(encoded_IC_values));
 
     r1cs_ppzksnark_verification_key<ppT> vk = r1cs_ppzksnark_verification_key<ppT>(alphaA_g2,
                                                                                    alphaB_g1,
@@ -443,9 +443,9 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     assert(qap_inst.is_satisfied(qap_wit));
 #endif
 
-    libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_A = pk.A_query[0] + qap_wit.d1*pk.A_query[qap_wit.num_variables()+1];
-    libff::knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > g_B = pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_variables()+1];
-    libff::knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_C = pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_variables()+1];
+    knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_A = pk.A_query[0] + qap_wit.d1*pk.A_query[qap_wit.num_variables()+1];
+    knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > g_B = pk.B_query[0] + qap_wit.d2*pk.B_query[qap_wit.num_variables()+1];
+    knowledge_commitment<libff::G1<ppT>, libff::G1<ppT> > g_C = pk.C_query[0] + qap_wit.d3*pk.C_query[qap_wit.num_variables()+1];
 
     libff::G1<ppT> g_H = libff::G1<ppT>::zero();
     libff::G1<ppT> g_K = (pk.K_query[0] +
@@ -474,21 +474,21 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     libff::enter_block("Compute the proof");
 
     libff::enter_block("Compute answer to A-query", false);
-    g_A = g_A + libff::kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.A_query,
+    g_A = g_A + kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.A_query,
                                                                              1, 1+qap_wit.num_variables(),
                                                                              qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
                                                                              chunks, true);
     libff::leave_block("Compute answer to A-query", false);
 
     libff::enter_block("Compute answer to B-query", false);
-    g_B = g_B + libff::kc_multi_exp_with_mixed_addition<libff::G2<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.B_query,
+    g_B = g_B + kc_multi_exp_with_mixed_addition<libff::G2<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.B_query,
                                                                              1, 1+qap_wit.num_variables(),
                                                                              qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
                                                                              chunks, true);
     libff::leave_block("Compute answer to B-query", false);
 
     libff::enter_block("Compute answer to C-query", false);
-    g_C = g_C + libff::kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.C_query,
+    g_C = g_C + kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.C_query,
                                                                              1, 1+qap_wit.num_variables(),
                                                                              qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
                                                                              chunks, true);
@@ -547,7 +547,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
     libff::enter_block("Compute input-dependent part of A");
-    const libff::accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const accumulation_vector<libff::G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const libff::G1<ppT> &acc = accumulated_IC.first;
     libff::leave_block("Compute input-dependent part of A");
 
@@ -716,7 +716,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     libff::affine_ate_G2_precomp<ppT> pvk_vk_gamma_beta_g2_precomp = ppT::affine_ate_precompute_G2(vk.gamma_beta_g2);
 
     libff::enter_block("Compute input-dependent part of A");
-    const libff::accumulation_vector<libff::G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const accumulation_vector<libff::G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<libff::Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     assert(accumulated_IC.is_fully_accumulated());
     const libff::G1<ppT> &acc = accumulated_IC.first;
     libff::leave_block("Compute input-dependent part of A");
