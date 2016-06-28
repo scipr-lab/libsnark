@@ -6,7 +6,7 @@
  See accumulation_vector.hpp .
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -14,7 +14,7 @@
 #ifndef ACCUMULATION_VECTOR_TCC_
 #define ACCUMULATION_VECTOR_TCC_
 
-namespace libff {
+namespace libsnark {
 
 template<typename T>
 bool accumulation_vector<T>::operator==(const accumulation_vector<T> &other) const
@@ -72,13 +72,13 @@ template<typename T>
 std::istream& operator>>(std::istream& in, accumulation_vector<T> &v)
 {
     in >> v.first;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> v.rest;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
 
     return in;
 }
 
-} // libff
+} // libsnark
 
 #endif // ACCUMULATION_VECTOR_TCC_

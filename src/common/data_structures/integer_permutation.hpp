@@ -4,7 +4,7 @@
  Declaration of interfaces for a permutation of the integers in {min_element,...,max_element}.
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -15,7 +15,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace libff {
+namespace libsnark {
 
 class integer_permutation {
 private:
@@ -49,6 +49,6 @@ public:
     void random_shuffle();
 };
 
-} // libff
+} // libsnark
 
 #endif // INTEGER_PERMUTATION_HPP_

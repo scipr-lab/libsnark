@@ -6,7 +6,7 @@
  See integer_permutation.hpp .
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -18,7 +18,7 @@
 #include <numeric>
 #include <unordered_set>
 
-namespace libff {
+namespace libsnark {
 
 integer_permutation::integer_permutation(const size_t size) :
     min_element(0), max_element(size-1)
@@ -118,4 +118,4 @@ void integer_permutation::random_shuffle()
     return std::random_shuffle(contents.begin(), contents.end());
 }
 
-} // libff
+} // libsnark

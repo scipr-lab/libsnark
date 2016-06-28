@@ -4,7 +4,7 @@
  Declaration of interfaces for a sparse vector.
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -14,7 +14,7 @@
 
 #include <vector>
 
-namespace libff {
+namespace libsnark {
 
 template<typename T>
 struct sparse_vector;
@@ -72,7 +72,7 @@ std::ostream& operator<<(std::ostream& out, const sparse_vector<T> &v);
 template<typename T>
 std::istream& operator>>(std::istream& in, sparse_vector<T> &v);
 
-} // libff
+} // libsnark
 
 #include "common/data_structures/sparse_vector.tcc"
 

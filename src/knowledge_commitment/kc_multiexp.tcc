@@ -1,6 +1,6 @@
 /** @file
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -8,11 +8,11 @@
 #ifndef KC_MULTIEXP_TCC_
 #define KC_MULTIEXP_TCC_
 
-namespace libff {
+namespace libsnark {
 
 template<typename T1, typename T2, mp_size_t n>
 knowledge_commitment<T1,T2> opt_window_wnaf_exp(const knowledge_commitment<T1,T2> &base,
-                                                const bigint<n> &scalar, const size_t scalar_bits)
+                                                const libff::bigint<n> &scalar, const size_t scalar_bits)
 {
     return knowledge_commitment<T1,T2>(opt_window_wnaf_exp(base.g, scalar, scalar_bits),
                                        opt_window_wnaf_exp(base.h, scalar, scalar_bits));
@@ -27,7 +27,7 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
                                                                 const size_t chunks,
                                                                 const bool use_multiexp)
 {
-    enter_block("Process scalar vector");
+    libff::enter_block("Process scalar vector");
     auto index_it = std::lower_bound(vec.indices.begin(), vec.indices.end(), min_idx);
     const size_t offset = index_it - vec.indices.begin();
 
@@ -81,18 +81,18 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
         ++value_it;
     }
 
-    print_indent(); printf("* Elements of w skipped: %zu (%0.2f%%)\n", num_skip, 100.*num_skip/(num_skip+num_add+num_other));
-    print_indent(); printf("* Elements of w processed with special addition: %zu (%0.2f%%)\n", num_add, 100.*num_add/(num_skip+num_add+num_other));
-    print_indent(); printf("* Elements of w remaining: %zu (%0.2f%%)\n", num_other, 100.*num_other/(num_skip+num_add+num_other));
-    leave_block("Process scalar vector");
+    libff::print_indent(); printf("* Elements of w skipped: %zu (%0.2f%%)\n", num_skip, 100.*num_skip/(num_skip+num_add+num_other));
+    libff::print_indent(); printf("* Elements of w processed with special addition: %zu (%0.2f%%)\n", num_add, 100.*num_add/(num_skip+num_add+num_other));
+    libff::print_indent(); printf("* Elements of w remaining: %zu (%0.2f%%)\n", num_other, 100.*num_other/(num_skip+num_add+num_other));
+    libff::leave_block("Process scalar vector");
 
-    return acc + multi_exp<knowledge_commitment<T1, T2>, FieldT>(g.begin(), g.end(), p.begin(), p.end(), chunks, use_multiexp);
+    return acc + libff::multi_exp<knowledge_commitment<T1, T2>, FieldT>(g.begin(), g.end(), p.begin(), p.end(), chunks, use_multiexp);
 }
 
 template<typename T1, typename T2>
 void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec)
 {
-    enter_block("Batch-convert knowledge-commitments to special form");
+    libff::enter_block("Batch-convert knowledge-commitments to special form");
 
     std::vector<T1> g_vec;
     g_vec.reserve(vec.size());
@@ -105,7 +105,7 @@ void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec)
         }
     }
 
-    batch_to_special_all_non_zeros<T1>(g_vec);
+    libff::batch_to_special_all_non_zeros<T1>(g_vec);
     auto g_it = g_vec.begin();
     T1 T1_zero_special = T1::zero();
     T1_zero_special.to_special();
@@ -136,7 +136,7 @@ void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec)
         }
     }
 
-    batch_to_special_all_non_zeros<T2>(h_vec);
+    libff::batch_to_special_all_non_zeros<T2>(h_vec);
     auto h_it = h_vec.begin();
     T2 T2_zero_special = T2::zero();
     T2_zero_special.to_special();
@@ -156,15 +156,15 @@ void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec)
 
     g_vec.clear();
 
-    leave_block("Batch-convert knowledge-commitments to special form");
+    libff::leave_block("Batch-convert knowledge-commitments to special form");
 }
 
 template<typename T1, typename T2, typename FieldT>
 knowledge_commitment_vector<T1, T2> kc_batch_exp_internal(const size_t scalar_size,
                                                           const size_t T1_window,
                                                           const size_t T2_window,
-                                                          const window_table<T1> &T1_table,
-                                                          const window_table<T2> &T2_table,
+                                                          const libff::window_table<T1> &T1_table,
+                                                          const libff::window_table<T2> &T2_table,
                                                           const FieldT &T1_coeff,
                                                           const FieldT &T2_coeff,
                                                           const std::vector<FieldT> &v,
@@ -194,8 +194,8 @@ template<typename T1, typename T2, typename FieldT>
 knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
                                                  const size_t T1_window,
                                                  const size_t T2_window,
-                                                 const window_table<T1> &T1_table,
-                                                 const window_table<T2> &T2_table,
+                                                 const libff::window_table<T1> &T1_table,
+                                                 const libff::window_table<T2> &T2_table,
                                                  const FieldT &T1_coeff,
                                                  const FieldT &T2_coeff,
                                                  const std::vector<FieldT> &v,
@@ -212,9 +212,9 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
 
     const size_t num_chunks = std::max((size_t)1, std::min(nonzero, suggested_num_chunks));
 
-    if (!inhibit_profiling_info)
+    if (!libff::inhibit_profiling_info)
     {
-        print_indent(); printf("Non-zero coordinate count: %zu/%zu (%0.2f%%)\n", nonzero, v.size(), 100.*nonzero/v.size());
+        libff::print_indent(); printf("Non-zero coordinate count: %zu/%zu (%0.2f%%)\n", nonzero, v.size(), 100.*nonzero/v.size());
     }
 
     std::vector<knowledge_commitment_vector<T1, T2> > tmp(num_chunks);
@@ -269,6 +269,6 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
     }
 }
 
-} // libff
+} // libsnark
 
 #endif // KC_MULTIEXP_TCC_

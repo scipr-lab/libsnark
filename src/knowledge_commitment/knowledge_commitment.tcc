@@ -8,7 +8,7 @@
  See knowledge_commitment.hpp .
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -16,7 +16,7 @@
 #ifndef KNOWLEDGE_COMMITMENT_TCC_
 #define KNOWLEDGE_COMMITMENT_TCC_
 
-namespace libff {
+namespace libsnark {
 
 template<typename T1, typename T2>
 knowledge_commitment<T1,T2>::knowledge_commitment(const T1 &g, const T2 &h) :
@@ -106,6 +106,6 @@ std::istream& operator>>(std::istream& in, knowledge_commitment<T1,T2> &kc)
     return in;
 }
 
-} // libff
+} // libsnark
 
 #endif // KNOWLEDGE_COMMITMENT_TCC_

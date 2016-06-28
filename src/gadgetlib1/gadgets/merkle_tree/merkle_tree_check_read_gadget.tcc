@@ -135,7 +135,7 @@ void test_merkle_tree_check_read_gadget()
     /* prepare test */
     const size_t digest_len = HashT::get_digest_len();
     const size_t tree_depth = 16;
-    std::vector<libff::merkle_authentication_node> path(tree_depth);
+    std::vector<merkle_authentication_node> path(tree_depth);
 
     libff::bit_vector prev_hash(digest_len);
     std::generate(prev_hash.begin(), prev_hash.end(), [&]() { return std::rand() % 2; });

@@ -35,7 +35,7 @@ void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_constrain
 }
 
 template<typename FieldT, typename HashT>
-void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(const size_t address, const libff::merkle_authentication_path &path)
+void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(const size_t address, const merkle_authentication_path &path)
 {
     assert(path.size() == tree_depth);
 
@@ -53,9 +53,9 @@ void merkle_authentication_path_variable<FieldT, HashT>::generate_r1cs_witness(c
 }
 
 template<typename FieldT, typename HashT>
-libff::merkle_authentication_path merkle_authentication_path_variable<FieldT, HashT>::get_authentication_path(const size_t address) const
+merkle_authentication_path merkle_authentication_path_variable<FieldT, HashT>::get_authentication_path(const size_t address) const
 {
-    libff::merkle_authentication_path result;
+    merkle_authentication_path result;
     for (size_t i = 0; i < tree_depth; ++i)
     {
         if (address & (1ul << (tree_depth-1-i)))

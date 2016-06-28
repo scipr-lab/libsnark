@@ -581,7 +581,7 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const std::ve
     std::reverse(pc_val_bv.begin(), pc_val_bv.end());
 
     prev_pc_val.fill_with_bits(this->pb, pc_val_bv);
-    const libff::merkle_authentication_path pc_path = ram_local_data_value->mem.get_path(int_pc_addr);
+    const merkle_authentication_path pc_path = ram_local_data_value->mem.get_path(int_pc_addr);
     instruction_fetch_merkle_proof->generate_r1cs_witness(int_pc_addr, pc_path);
     instruction_fetch->generate_r1cs_witness();
 
@@ -594,7 +594,7 @@ void ram_compliance_predicate_handler<ramT>::generate_r1cs_witness(const std::ve
     cpu_checker->generate_r1cs_witness_address();
     const size_t int_ls_addr = ls_addr.get_field_element_from_bits(this->pb).as_ulong();
     const size_t int_ls_prev_val = ram_local_data_value->mem.get_value(int_ls_addr);
-    const libff::merkle_authentication_path prev_path = ram_local_data_value->mem.get_path(int_ls_addr);
+    const merkle_authentication_path prev_path = ram_local_data_value->mem.get_path(int_ls_addr);
     ls_prev_val.fill_with_bits_of_ulong(this->pb, int_ls_prev_val);
     assert(ls_prev_val.get_field_element_from_bits(this->pb) == FieldT(int_ls_prev_val, true));
     // Step 2: Execute CPU checker and delegated memory

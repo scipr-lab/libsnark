@@ -6,7 +6,7 @@
  - a knowledge commitment vector.
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -17,7 +17,7 @@
 #include "algebra/fields/fp.hpp"
 #include "common/data_structures/sparse_vector.hpp"
 
-namespace libff {
+namespace libsnark {
 
 /********************** Knowledge commitment *********************************/
 
@@ -77,7 +77,7 @@ std::istream& operator>>(std::istream& in, knowledge_commitment<T1,T2> &kc);
 template<typename T1, typename T2>
 using knowledge_commitment_vector = sparse_vector<knowledge_commitment<T1, T2> >;
 
-} // libff
+} // libsnark
 
 #include "knowledge_commitment/knowledge_commitment.tcc"
 

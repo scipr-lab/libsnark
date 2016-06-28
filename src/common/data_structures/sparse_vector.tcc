@@ -6,7 +6,7 @@
  See sparse_vector.hpp .
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -18,7 +18,7 @@
 
 #include <numeric>
 
-namespace libff {
+namespace libsnark {
 
 template<typename T>
 sparse_vector<T>::sparse_vector(std::vector<T> &&v) :
@@ -213,9 +213,9 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
                 copy_over = true;
 
 #ifdef DEBUG
-                print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
+                libff::print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
 #endif
-                accumulated_value = accumulated_value + multi_exp<T, FieldT>(values.begin() + first_pos,
+                accumulated_value = accumulated_value + libff::multi_exp<T, FieldT>(values.begin() + first_pos,
                                                                              values.begin() + last_pos + 1,
                                                                              it_begin + (indices[first_pos] - offset),
                                                                              it_begin + (indices[last_pos] - offset) + 1,
@@ -248,9 +248,9 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
     if (in_block)
     {
 #ifdef DEBUG
-        print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
+        libff::print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
 #endif
-        accumulated_value = accumulated_value + multi_exp<T, FieldT>(values.begin() + first_pos,
+        accumulated_value = accumulated_value + libff::multi_exp<T, FieldT>(values.begin() + first_pos,
                                                                      values.begin() + last_pos + 1,
                                                                      it_begin + (indices[first_pos] - offset),
                                                                      it_begin + (indices[last_pos] - offset) + 1,
@@ -283,34 +283,34 @@ template<typename T>
 std::istream& operator>>(std::istream& in, sparse_vector<T> &v)
 {
     in >> v.domain_size_;
-    consume_newline(in);
+    libff::consume_newline(in);
 
     size_t s;
     in >> s;
-    consume_newline(in);
+    libff::consume_newline(in);
     v.indices.resize(s);
     for (size_t i = 0; i < s; ++i)
     {
         in >> v.indices[i];
-        consume_newline(in);
+        libff::consume_newline(in);
     }
 
     v.values.clear();
     in >> s;
-    consume_newline(in);
+    libff::consume_newline(in);
     v.values.reserve(s);
 
     for (size_t i = 0; i < s; ++i)
     {
         T t;
         in >> t;
-        consume_OUTPUT_NEWLINE(in);
+        libff::consume_OUTPUT_NEWLINE(in);
         v.values.emplace_back(t);
     }
 
     return in;
 }
 
-} // libff
+} // libsnark
 
 #endif // SPARSE_VECTOR_TCC_

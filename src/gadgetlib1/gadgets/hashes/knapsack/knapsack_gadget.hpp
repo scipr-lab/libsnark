@@ -95,7 +95,7 @@ template<typename FieldT>
 class knapsack_CRH_with_bit_out_gadget : public gadget<FieldT> {
 public:
     typedef libff::bit_vector hash_value_type;
-    typedef libff::merkle_authentication_path merkle_authentication_path_type;
+    typedef merkle_authentication_path merkle_authentication_path_type;
 
     size_t input_len;
     size_t dimension;

@@ -4,7 +4,7 @@
  Declaration of interfaces for an accumulation vector.
 
  *****************************************************************************
- * @author     This file is part of libff, developed by SCIPR Lab
+ * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
@@ -14,7 +14,7 @@
 
 #include "common/data_structures/sparse_vector.hpp"
 
-namespace libff {
+namespace libsnark {
 
 template<typename T>
 class accumulation_vector;
@@ -67,7 +67,7 @@ std::ostream& operator<<(std::ostream &out, const accumulation_vector<T> &v);
 template<typename T>
 std::istream& operator>>(std::istream &in, accumulation_vector<T> &v);
 
-} // libff
+} // libsnark
 
 #include "common/data_structures/accumulation_vector.tcc"
 
