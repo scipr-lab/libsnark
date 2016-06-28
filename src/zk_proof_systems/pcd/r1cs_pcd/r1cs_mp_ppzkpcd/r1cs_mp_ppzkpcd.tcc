@@ -82,7 +82,7 @@ std::ostream& operator<<(std::ostream &out, const r1cs_mp_ppzkpcd_proving_key<PC
     out << pk.translation_step_r1cs_vks;
     libff::output_bool_vector(out, pk.commitment_to_translation_step_r1cs_vks);
     out << pk.compliance_step_r1cs_vk_membership_proofs;
-    out << pk.compliance_predicate_name_to_idx;
+    libff::operator<<(out, pk.compliance_predicate_name_to_idx);
 
     return out;
 }
@@ -97,7 +97,7 @@ std::istream& operator>>(std::istream &in, r1cs_mp_ppzkpcd_proving_key<PCD_ppT> 
     in >> pk.translation_step_r1cs_vks;
     libff::input_bool_vector(in, pk.commitment_to_translation_step_r1cs_vks);
     in >> pk.compliance_step_r1cs_vk_membership_proofs;
-    in >> pk.compliance_predicate_name_to_idx;
+    libff::operator>>(in, pk.compliance_predicate_name_to_idx);
 
     return in;
 }
