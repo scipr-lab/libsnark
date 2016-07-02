@@ -20,6 +20,7 @@
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
+#include "common/libsnark_serialization.hpp"
 #include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/mp_pcd_circuits.hpp"
 
 namespace libsnark {
@@ -80,9 +81,9 @@ std::ostream& operator<<(std::ostream &out, const r1cs_mp_ppzkpcd_proving_key<PC
     out << pk.translation_step_r1cs_pks;
     out << pk.compliance_step_r1cs_vks;
     out << pk.translation_step_r1cs_vks;
-    libff::output_bool_vector(out, pk.commitment_to_translation_step_r1cs_vks);
+    output_bool_vector(out, pk.commitment_to_translation_step_r1cs_vks);
     out << pk.compliance_step_r1cs_vk_membership_proofs;
-    libff::operator<<(out, pk.compliance_predicate_name_to_idx);
+    out << pk.compliance_predicate_name_to_idx;
 
     return out;
 }
@@ -95,9 +96,9 @@ std::istream& operator>>(std::istream &in, r1cs_mp_ppzkpcd_proving_key<PCD_ppT> 
     in >> pk.translation_step_r1cs_pks;
     in >> pk.compliance_step_r1cs_vks;
     in >> pk.translation_step_r1cs_vks;
-    libff::input_bool_vector(in, pk.commitment_to_translation_step_r1cs_vks);
+    input_bool_vector(in, pk.commitment_to_translation_step_r1cs_vks);
     in >> pk.compliance_step_r1cs_vk_membership_proofs;
-    libff::operator>>(in, pk.compliance_predicate_name_to_idx);
+    in >> pk.compliance_predicate_name_to_idx;
 
     return in;
 }
