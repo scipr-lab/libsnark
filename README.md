@@ -133,8 +133,8 @@ Elliptic curve choices
 --------------------------------------------------------------------------------
 
 The ppzkSNARK can be instantiated with different parameter choices, depending on
-which elliptic curve is used. The libsnark library currently provides three
-options:
+which elliptic curve is used. The [libff](https://github.com/scipr-lab/libff) library
+currently provides three options:
 
 * "edwards":
    an instantiation based on an Edwards curve, providing 80 bits of security.
@@ -224,6 +224,8 @@ The libsnark library relies on the following:
 - CMake build infrastructure
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
+- [libff](https://github.com/scipr-lab/libff)
+- [libfqfft](https://github.com/scipr-lab/libfqfft)
 - third-party libraries via git submodules (included)
 
 So far we have tested these only on Linux, though we have been able to make the
@@ -249,6 +251,8 @@ Concretely, here are the requisite packages in some Linux distributions:
 
         $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
 
+Follow the build guides in [libff](https://github.com/scipr-lab/libff) and [libfqfft](https://github.com/scipr-lab/libfqfft) to
+install these respective libraries.
 
 ### Building
 
@@ -483,14 +487,10 @@ Directory structure
 The directory structure of the libsnark library is as follows:
 
 * src/ --- main C++ source code, containing the following modules:
-    * algebra/ --- fields and elliptic curve groups
     * common/ --- miscellaneous utilities
     * gadgetlib1/ --- gadgetlib1, a library to construct R1CS instances
         * gadgets/ --- basic gadgets for gadgetlib1
     * gadgetlib2/ --- gadgetlib2, a library to construct R1CS instances
-    * qap/ --- quadratic arithmetic program
-        * domains/ --- support for fast interpolation/evaluation, by providing
-          FFTs and Lagrange-coefficient computations for various domains
     * relations/ --- interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
         * constraint_satisfaction_problems/ --- R1CS and USCS languages
         * circuit_satisfaction_problems/ ---  Boolean and arithmetic circuit satisfiability languages
