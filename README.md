@@ -224,8 +224,8 @@ The libsnark library relies on the following:
 - CMake build infrastructure
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
-- [libff](https://github.com/scipr-lab/libff)
-- [libfqfft](https://github.com/scipr-lab/libfqfft)
+- [libff](https://github.com/scipr-lab/libff) for finite fields and elliptic curves
+- [libfqfft](https://github.com/scipr-lab/libfqfft) for fast interpolation/evaluation on varying domains
 - third-party libraries via git submodules (included)
 
 So far we have tested these only on Linux, though we have been able to make the
