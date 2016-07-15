@@ -51,49 +51,11 @@ LIB_SRCS = \
 	src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pairing.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pp.cpp \
-	src/algebra/curves/edwards/edwards_g1.cpp \
-	src/algebra/curves/edwards/edwards_g2.cpp \
-	src/algebra/curves/edwards/edwards_init.cpp \
-	src/algebra/curves/edwards/edwards_pairing.cpp \
-	src/algebra/curves/edwards/edwards_pp.cpp \
-	src/algebra/curves/mnt/mnt4/mnt4_g1.cpp \
-	src/algebra/curves/mnt/mnt4/mnt4_g2.cpp \
-	src/algebra/curves/mnt/mnt4/mnt4_init.cpp \
-	src/algebra/curves/mnt/mnt4/mnt4_pairing.cpp \
-	src/algebra/curves/mnt/mnt4/mnt4_pp.cpp \
-	src/algebra/curves/mnt/mnt46_common.cpp \
-	src/algebra/curves/mnt/mnt6/mnt6_g1.cpp \
-	src/algebra/curves/mnt/mnt6/mnt6_g2.cpp \
-	src/algebra/curves/mnt/mnt6/mnt6_init.cpp \
-	src/algebra/curves/mnt/mnt6/mnt6_pairing.cpp \
-	src/algebra/curves/mnt/mnt6/mnt6_pp.cpp \
 	src/common/data_structures/integer_permutation.cpp \
 	src/common/data_structures/set_commitment.cpp \
-	src/common/default_types/r1cs_ppzkpcd_pp.cpp \
-	src/common/default_types/tinyram_ppzksnark_pp.cpp \
-	src/common/default_types/r1cs_ppzkadsnark_pp.cpp \
-	src/common/default_types/tinyram_zksnark_pp.cpp \
 	src/common/profiling.cpp \
-	src/common/routing_algorithms/as_waksman_routing_algorithm.cpp \
-	src/common/routing_algorithms/benes_routing_algorithm.cpp \
 	src/common/utils.cpp \
 	src/gadgetlib1/constraint_profiling.cpp \
-	src/gadgetlib2/adapters.cpp \
-	src/gadgetlib2/constraint.cpp \
-	src/gadgetlib2/examples/simple_example.cpp \
-	src/gadgetlib2/gadget.cpp \
-	src/gadgetlib2/infrastructure.cpp \
-	src/gadgetlib2/integration.cpp \
-	src/gadgetlib2/pp.cpp \
-	src/gadgetlib2/protoboard.cpp \
-	src/gadgetlib2/variable.cpp \
-	src/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp \
-	src/relations/circuit_satisfaction_problems/tbcs/tbcs.cpp \
-	src/relations/ram_computations/memory/examples/memory_contents_examples.cpp \
-	src/relations/ram_computations/memory/memory_store_trace.cpp \
-	src/relations/ram_computations/memory/ra_memory.cpp \
-	src/relations/ram_computations/rams/fooram/fooram_aux.cpp \
-	src/relations/ram_computations/rams/tinyram/tinyram_aux.cpp
 
 ifeq ($(CURVE),BN128)
 	LIB_SRCS += \
