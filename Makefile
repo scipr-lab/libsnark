@@ -18,7 +18,7 @@ DEPSRC = depsrc
 DEPINST = depinst
 
 CXXFLAGS += -I$(DEPINST)/include -Isrc
-LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath $(DEPINST)/lib
+LDFLAGS += -L$(DEPINST)/lib -Wl,-rpath,$(DEPINST)/lib
 LDLIBS += -lgmpxx -lgmp -lboost_program_options
 # OpenSSL and its dependencies (needed explicitly for static builds):
 LDLIBS += -lcrypto -ldl -lz
