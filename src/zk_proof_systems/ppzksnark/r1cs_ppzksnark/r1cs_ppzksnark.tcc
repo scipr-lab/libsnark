@@ -35,8 +35,7 @@ bool r1cs_ppzksnark_proving_key<ppT>::operator==(const r1cs_ppzksnark_proving_ke
             this->B_query == other.B_query &&
             this->C_query == other.C_query &&
             this->H_query == other.H_query &&
-            this->K_query == other.K_query &&
-            this->constraint_system == other.constraint_system);
+            this->K_query == other.K_query);
 }
 
 template<typename ppT>
@@ -47,7 +46,6 @@ std::ostream& operator<<(std::ostream &out, const r1cs_ppzksnark_proving_key<ppT
     out << pk.C_query;
     out << pk.H_query;
     out << pk.K_query;
-    out << pk.constraint_system;
 
     return out;
 }
@@ -60,7 +58,6 @@ std::istream& operator>>(std::istream &in, r1cs_ppzksnark_proving_key<ppT> &pk)
     in >> pk.C_query;
     in >> pk.H_query;
     in >> pk.K_query;
-    in >> pk.constraint_system;
 
     return in;
 }
@@ -409,8 +406,7 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
                                                                          std::move(B_query),
                                                                          std::move(C_query),
                                                                          std::move(H_query),
-                                                                         std::move(K_query),
-                                                                         std::move(cs_copy));
+                                                                         std::move(K_query));
 
     pk.print_size();
     vk.print_size();
@@ -421,12 +417,13 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
 template <typename ppT>
 r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key<ppT> &pk,
                                                 const r1cs_ppzksnark_primary_input<ppT> &primary_input,
-                                                const r1cs_ppzksnark_auxiliary_input<ppT> &auxiliary_input)
+                                                const r1cs_ppzksnark_auxiliary_input<ppT> &auxiliary_input,
+                                                const r1cs_ppzksnark_constraint_system<ppT> &constraint_system)
 {
     enter_block("Call to r1cs_ppzksnark_prover");
 
 #ifdef DEBUG
-    assert(pk.constraint_system.is_satisfied(primary_input, auxiliary_input));
+    assert(constraint_system.is_satisfied(primary_input, auxiliary_input));
 #endif
 
     const Fr<ppT> d1 = Fr<ppT>::random_element(),
@@ -434,12 +431,12 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
         d3 = Fr<ppT>::random_element();
 
     enter_block("Compute the polynomial H");
-    const qap_witness<Fr<ppT> > qap_wit = r1cs_to_qap_witness_map(pk.constraint_system, primary_input, auxiliary_input, d1, d2, d3);
+    const qap_witness<Fr<ppT> > qap_wit = r1cs_to_qap_witness_map(constraint_system, primary_input, auxiliary_input, d1, d2, d3);
     leave_block("Compute the polynomial H");
 
 #ifdef DEBUG
     const Fr<ppT> t = Fr<ppT>::random_element();
-    qap_instance_evaluation<Fr<ppT> > qap_inst = r1cs_to_qap_instance_map_with_evaluation(pk.constraint_system, t);
+    qap_instance_evaluation<Fr<ppT> > qap_inst = r1cs_to_qap_instance_map_with_evaluation(constraint_system, t);
     assert(qap_inst.is_satisfied(qap_wit));
 #endif
 

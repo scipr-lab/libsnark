@@ -79,8 +79,6 @@ public:
     G1_vector<ppT> H_query;
     G1_vector<ppT> K_query;
 
-    r1cs_ppzksnark_constraint_system<ppT> constraint_system;
-
     r1cs_ppzksnark_proving_key() {};
     r1cs_ppzksnark_proving_key<ppT>& operator=(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_ppzksnark_proving_key(const r1cs_ppzksnark_proving_key<ppT> &other) = default;
@@ -89,14 +87,12 @@ public:
                                knowledge_commitment_vector<G2<ppT>, G1<ppT> > &&B_query,
                                knowledge_commitment_vector<G1<ppT>, G1<ppT> > &&C_query,
                                G1_vector<ppT> &&H_query,
-                               G1_vector<ppT> &&K_query,
-                               r1cs_ppzksnark_constraint_system<ppT> &&constraint_system) :
+                               G1_vector<ppT> &&K_query) :
         A_query(std::move(A_query)),
         B_query(std::move(B_query)),
         C_query(std::move(C_query)),
         H_query(std::move(H_query)),
-        K_query(std::move(K_query)),
-        constraint_system(std::move(constraint_system))
+        K_query(std::move(K_query))
     {};
 
     size_t G1_size() const

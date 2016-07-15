@@ -33,9 +33,9 @@ private:
     var_index_t next_free_var;
     lc_index_t next_free_lc;
     std::vector<FieldT> lc_values;
-    r1cs_constraint_system<FieldT> constraint_system;
-
 public:
+    r1cs_constraint_system<FieldT> constraint_system;
+    
     protoboard();
 
     void clear_values();
