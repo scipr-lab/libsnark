@@ -428,7 +428,7 @@ std::istream& operator>>(std::istream &in, linear_combination<FieldT> &lc)
     size_t s;
     in >> s;
 
-    consume_newline(in);
+    libff::consume_newline(in);
 
     lc.terms.reserve(s);
 
@@ -436,9 +436,9 @@ std::istream& operator>>(std::istream &in, linear_combination<FieldT> &lc)
     {
         linear_term<FieldT> lt;
         in >> lt.index;
-        consume_newline(in);
+        libff::consume_newline(in);
         in >> lt.coeff;
-        consume_OUTPUT_NEWLINE(in);
+        libff::consume_OUTPUT_NEWLINE(in);
         lc.terms.emplace_back(lt);
     }
 

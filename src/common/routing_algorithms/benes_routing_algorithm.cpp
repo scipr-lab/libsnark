@@ -114,7 +114,7 @@ size_t benes_packet_cross_source(const size_t dimension, const size_t column_idx
 
 size_t benes_num_columns(const size_t num_packets)
 {
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
     assert(num_packets == 1ul<<dimension);
 
     return 2*dimension;
@@ -123,7 +123,7 @@ size_t benes_num_columns(const size_t num_packets)
 benes_topology generate_benes_topology(const size_t num_packets)
 {
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
     assert(num_packets == 1ul<<dimension);
 
     benes_topology result(num_columns);
@@ -171,7 +171,7 @@ void route_benes_inner(const size_t dimension,
         /* nothing to route */
         return;
     }
-    bit_vector lhs_routed(subnetwork_size, false); /* adjusted by subnetwork_offset */
+    libff::bit_vector lhs_routed(subnetwork_size, false); /* adjusted by subnetwork_offset */
 
     size_t w = subnetwork_offset; /* left-hand-side vertex to be routed. */
     size_t last_unrouted = subnetwork_offset;
@@ -255,9 +255,9 @@ benes_routing get_benes_routing(const integer_permutation &permutation)
 {
     const size_t num_packets = permutation.size();
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
 
-    benes_routing routing(num_columns, bit_vector(num_packets));
+    benes_routing routing(num_columns, libff::bit_vector(num_packets));
 
     route_benes_inner(dimension, permutation, permutation.inverse(), 0, num_columns, 0, num_packets, routing);
 
@@ -270,7 +270,7 @@ std::vector<std::vector<T> > route_by_benes(const benes_routing &routing, const 
 {
     const size_t num_packets = start.size();
     const size_t num_columns = benes_num_columns(num_packets);
-    const size_t dimension = log2(num_packets);
+    const size_t dimension = libff::log2(num_packets);
 
     std::vector<std::vector<T> > res(num_columns+1, std::vector<T>(num_packets));
     res[0] = start;

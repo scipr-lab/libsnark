@@ -71,14 +71,14 @@ std::istream& operator>>(std::istream &in, bacs_gate<FieldT> &g)
 {
     size_t tmp;
     in >> tmp;
-    consume_newline(in);
+    libff::consume_newline(in);
     g.is_circuit_output = (tmp != 0 ? true : false);
     in >> g.lhs;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> g.rhs;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> g.output.index;
-    consume_newline(in);
+    libff::consume_newline(in);
 
     return in;
 }
@@ -248,7 +248,7 @@ std::ostream& operator<<(std::ostream &out, const bacs_circuit<FieldT> &circuit)
 {
     out << circuit.primary_input_size << "\n";
     out << circuit.auxiliary_input_size << "\n";
-    out << circuit.gates << OUTPUT_NEWLINE;
+    libff::operator<<(out, circuit.gates); out << OUTPUT_NEWLINE;
 
     return out;
 }
@@ -257,11 +257,11 @@ template<typename FieldT>
 std::istream& operator>>(std::istream &in, bacs_circuit<FieldT> &circuit)
 {
     in >> circuit.primary_input_size;
-    consume_newline(in);
+    libff::consume_newline(in);
     in >> circuit.auxiliary_input_size;
-    consume_newline(in);
-    in >> circuit.gates;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_newline(in);
+    libff::operator>>(in, circuit.gates);
+    libff::consume_OUTPUT_NEWLINE(in);
 
     return in;
 }
@@ -269,9 +269,9 @@ std::istream& operator>>(std::istream &in, bacs_circuit<FieldT> &circuit)
 template<typename FieldT>
 void bacs_circuit<FieldT>::print() const
 {
-    print_indent(); printf("General information about the circuit:\n");
+    libff::print_indent(); printf("General information about the circuit:\n");
     this->print_info();
-    print_indent(); printf("All gates:\n");
+    libff::print_indent(); printf("All gates:\n");
     for (size_t i = 0; i < gates.size(); ++i)
     {
         std::string annotation = "no annotation";
@@ -294,10 +294,10 @@ void bacs_circuit<FieldT>::print() const
 template<typename FieldT>
 void bacs_circuit<FieldT>::print_info() const
 {
-    print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
-    print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
-    print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
-    print_indent(); printf("* Depth: %zu\n", this->depth());
+    libff::print_indent(); printf("* Number of inputs: %zu\n", this->num_inputs());
+    libff::print_indent(); printf("* Number of gates: %zu\n", this->num_gates());
+    libff::print_indent(); printf("* Number of wires: %zu\n", this->num_wires());
+    libff::print_indent(); printf("* Depth: %zu\n", this->depth());
 }
 
 } // libsnark

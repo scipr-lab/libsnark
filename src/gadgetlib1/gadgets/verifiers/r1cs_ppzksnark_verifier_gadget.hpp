@@ -28,9 +28,9 @@
 namespace libsnark {
 
 template<typename ppT>
-class r1cs_ppzksnark_proof_variable : public gadget<Fr<ppT> > {
+class r1cs_ppzksnark_proof_variable : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<G1_variable<ppT> > g_A_g;
     std::shared_ptr<G1_variable<ppT> > g_A_h;
@@ -57,9 +57,9 @@ public:
 };
 
 template<typename ppT>
-class r1cs_ppzksnark_verification_key_variable : public gadget<Fr<ppT> > {
+class r1cs_ppzksnark_verification_key_variable : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<G2_variable<ppT> > alphaA_g2;
     std::shared_ptr<G1_variable<ppT> > alphaB_g1;
@@ -96,16 +96,16 @@ public:
                                                                        const std::string &annotation_prefix);
     void generate_r1cs_constraints(const bool enforce_bitness);
     void generate_r1cs_witness(const r1cs_ppzksnark_verification_key<other_curve<ppT> > &vk);
-    void generate_r1cs_witness(const bit_vector &vk_bits);
-    bit_vector get_bits() const;
+    void generate_r1cs_witness(const libff::bit_vector &vk_bits);
+    libff::bit_vector get_bits() const;
     static size_t __attribute__((noinline)) size_in_bits(const size_t input_size);
-    static bit_vector get_verification_key_bits(const r1cs_ppzksnark_verification_key<other_curve<ppT> > &r1cs_vk);
+    static libff::bit_vector get_verification_key_bits(const r1cs_ppzksnark_verification_key<other_curve<ppT> > &r1cs_vk);
 };
 
 template<typename ppT>
 class r1cs_ppzksnark_preprocessed_r1cs_ppzksnark_verification_key_variable {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<G1_variable<ppT> > encoded_IC_base;
     std::vector<std::shared_ptr<G1_variable<ppT> > > encoded_IC_query;
@@ -127,9 +127,9 @@ public:
 };
 
 template<typename ppT>
-class r1cs_ppzksnark_verifier_process_vk_gadget : public gadget<Fr<ppT> > {
+class r1cs_ppzksnark_verifier_process_vk_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<precompute_G1_gadget<ppT> > compute_vk_alphaB_g1_precomp;
     std::shared_ptr<precompute_G1_gadget<ppT> > compute_vk_gamma_beta_g1_precomp;
@@ -152,9 +152,9 @@ public:
 };
 
 template<typename ppT>
-class r1cs_ppzksnark_online_verifier_gadget : public gadget<Fr<ppT> > {
+class r1cs_ppzksnark_online_verifier_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     r1cs_ppzksnark_preprocessed_r1cs_ppzksnark_verification_key_variable<ppT> pvk;
 
@@ -223,9 +223,9 @@ public:
 };
 
 template<typename ppT>
-class r1cs_ppzksnark_verifier_gadget : public gadget<Fr<ppT> > {
+class r1cs_ppzksnark_verifier_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::shared_ptr<r1cs_ppzksnark_preprocessed_r1cs_ppzksnark_verification_key_variable<ppT> > pvk;
     std::shared_ptr<r1cs_ppzksnark_verifier_process_vk_gadget<ppT> > compute_pvk;

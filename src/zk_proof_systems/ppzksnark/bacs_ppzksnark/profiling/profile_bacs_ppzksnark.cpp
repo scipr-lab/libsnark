@@ -29,7 +29,7 @@ using namespace libsnark;
 int main(int argc, const char * argv[])
 {
     default_bacs_ppzksnark_pp::init_public_params();
-    start_profiling();
+    libff::start_profiling();
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
@@ -48,12 +48,12 @@ int main(int argc, const char * argv[])
     const size_t auxiliary_input_size = 0;
     const size_t num_outputs = num_gates / 2;
 
-    enter_block("Generate BACS example");
-    bacs_example<Fr<default_bacs_ppzksnark_pp> > example = generate_bacs_example<Fr<default_bacs_ppzksnark_pp> >(primary_input_size, auxiliary_input_size, num_gates, num_outputs);
-    leave_block("Generate BACS example");
+    libff::enter_block("Generate BACS example");
+    bacs_example<libff::Fr<default_bacs_ppzksnark_pp> > example = generate_bacs_example<libff::Fr<default_bacs_ppzksnark_pp> >(primary_input_size, auxiliary_input_size, num_gates, num_outputs);
+    libff::leave_block("Generate BACS example");
 
-    print_header("(enter) Profile BACS ppzkSNARK");
+    libff::print_header("(enter) Profile BACS ppzkSNARK");
     const bool test_serialization = true;
     run_bacs_ppzksnark<default_bacs_ppzksnark_pp>(example, test_serialization);
-    print_header("(leave) Profile BACS ppzkSNARK");
+    libff::print_header("(leave) Profile BACS ppzkSNARK");
 }

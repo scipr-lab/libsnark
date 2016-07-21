@@ -89,7 +89,7 @@ int main(int argc, const char * argv[])
         return 1;
     }
 #endif
-    start_profiling();
+    libff::start_profiling();
 
     printf("================================================================================\n");
     printf("TinyRAM example loader\n");
@@ -116,13 +116,13 @@ int main(int argc, const char * argv[])
     std::ifstream f_primary_input(primary_input_fn);
     std::ifstream f_auxiliary_input(auxiliary_input_fn);
 
-    enter_block("Loading primary input");
+    libff::enter_block("Loading primary input");
     tinyram_input_tape primary_input = load_tape(f_primary_input);
-    leave_block("Loading primary input");
+    libff::leave_block("Loading primary input");
 
-    enter_block("Loading auxiliary input");
+    libff::enter_block("Loading auxiliary input");
     tinyram_input_tape auxiliary_input = load_tape(f_auxiliary_input);
-    leave_block("Loading auxiliary input");
+    libff::leave_block("Loading auxiliary input");
 
     printf("\nPress enter to continue.\n");
     std::cin.get();
@@ -174,6 +174,6 @@ int main(int argc, const char * argv[])
     printf("================================================================================\n");
     printf("The verification result is: %s\n", (bit ? "PASS" : "FAIL"));
     printf("================================================================================\n");
-    print_mem();
+    libff::print_mem();
     printf("================================================================================\n");
 }

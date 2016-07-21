@@ -38,7 +38,7 @@ public:
     memory_contents initial_memory_contents(const fooram_program &program,
                                             const fooram_input_tape &primary_input) const;
 
-    bit_vector initial_cpu_state() const;
+    libff::bit_vector initial_cpu_state() const;
     void print() const;
     bool operator==(const fooram_architecture_params &other) const;
 

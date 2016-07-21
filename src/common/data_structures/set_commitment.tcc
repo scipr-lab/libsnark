@@ -18,17 +18,17 @@ template<typename HashT>
 set_commitment_accumulator<HashT>::set_commitment_accumulator(const size_t max_entries, const size_t value_size) :
     value_size(value_size)
 {
-    depth = log2(max_entries);
+    depth = libff::log2(max_entries);
     digest_size = HashT::get_digest_len();
 
     tree.reset(new merkle_tree<HashT>(depth, digest_size));
 }
 
 template<typename HashT>
-void set_commitment_accumulator<HashT>::add(const bit_vector &value)
+void set_commitment_accumulator<HashT>::add(const libff::bit_vector &value)
 {
     assert(value_size == 0 || value.size() == value_size);
-    const bit_vector hash = HashT::get_hash(value);
+    const libff::bit_vector hash = HashT::get_hash(value);
     if (hash_to_pos.find(hash) == hash_to_pos.end())
     {
         const size_t pos = hash_to_pos.size();
@@ -38,10 +38,10 @@ void set_commitment_accumulator<HashT>::add(const bit_vector &value)
 }
 
 template<typename HashT>
-bool set_commitment_accumulator<HashT>::is_in_set(const bit_vector &value) const
+bool set_commitment_accumulator<HashT>::is_in_set(const libff::bit_vector &value) const
 {
     assert(value_size == 0 || value.size() == value_size);
-    const bit_vector hash = HashT::get_hash(value);
+    const libff::bit_vector hash = HashT::get_hash(value);
     return (hash_to_pos.find(hash) != hash_to_pos.end());
 }
 
@@ -52,9 +52,9 @@ set_commitment set_commitment_accumulator<HashT>::get_commitment() const
 }
 
 template<typename HashT>
-set_membership_proof set_commitment_accumulator<HashT>::get_membership_proof(const bit_vector &value) const
+set_membership_proof set_commitment_accumulator<HashT>::get_membership_proof(const libff::bit_vector &value) const
 {
-    const bit_vector hash = HashT::get_hash(value);
+    const libff::bit_vector hash = HashT::get_hash(value);
     auto it = hash_to_pos.find(hash);
     assert(it != hash_to_pos.end());
 

@@ -16,13 +16,13 @@ See qap.hpp .
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "algebra/evaluation_domain/evaluation_domain.hpp"
+#include "evaluation_domain/evaluation_domain.hpp"
 #include "algebra/scalar_multiplication/multiexp.hpp"
 
 namespace libsnark {
 
 template<typename FieldT>
-qap_instance<FieldT>::qap_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+qap_instance<FieldT>::qap_instance(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                                    const size_t num_variables,
                                    const size_t degree,
                                    const size_t num_inputs,
@@ -40,7 +40,7 @@ qap_instance<FieldT>::qap_instance(const std::shared_ptr<evaluation_domain<Field
 }
 
 template<typename FieldT>
-qap_instance<FieldT>::qap_instance(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+qap_instance<FieldT>::qap_instance(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                                    const size_t num_variables,
                                    const size_t degree,
                                    const size_t num_inputs,
@@ -85,9 +85,9 @@ bool qap_instance<FieldT>::is_satisfied(const qap_witness<FieldT> &witness) cons
     std::vector<FieldT> Ct(this->num_variables()+1, FieldT::zero());
     std::vector<FieldT> Ht(this->degree()+1);
 
-    const FieldT Zt = this->domain->compute_Z(t);
+    const FieldT Zt = this->domain->compute_vanishing_polynomial(t);
 
-    const std::vector<FieldT> u = this->domain->lagrange_coeffs(t);
+    const std::vector<FieldT> u = this->domain->evaluate_all_lagrange_polynomials(t);
 
     for (size_t i = 0; i < this->num_variables()+1; ++i)
     {
@@ -128,7 +128,7 @@ bool qap_instance<FieldT>::is_satisfied(const qap_witness<FieldT> &witness) cons
 }
 
 template<typename FieldT>
-qap_instance_evaluation<FieldT>::qap_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+qap_instance_evaluation<FieldT>::qap_instance_evaluation(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                                                          const size_t num_variables,
                                                          const size_t degree,
                                                          const size_t num_inputs,
@@ -152,7 +152,7 @@ qap_instance_evaluation<FieldT>::qap_instance_evaluation(const std::shared_ptr<e
 }
 
 template<typename FieldT>
-qap_instance_evaluation<FieldT>::qap_instance_evaluation(const std::shared_ptr<evaluation_domain<FieldT> > &domain,
+qap_instance_evaluation<FieldT>::qap_instance_evaluation(const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > &domain,
                                                          const size_t num_variables,
                                                          const size_t degree,
                                                          const size_t num_inputs,
@@ -232,7 +232,7 @@ bool qap_instance_evaluation<FieldT>::is_satisfied(const qap_witness<FieldT> &wi
         return false;
     }
 
-    if (this->Zt != this->domain->compute_Z(this->t))
+    if (this->Zt != this->domain->compute_vanishing_polynomial(this->t))
     {
         return false;
     }
@@ -242,13 +242,13 @@ bool qap_instance_evaluation<FieldT>::is_satisfied(const qap_witness<FieldT> &wi
     FieldT ans_C = this->Ct[0] + witness.d3*this->Zt;
     FieldT ans_H = FieldT::zero();
 
-    ans_A = ans_A + naive_plain_exp<FieldT, FieldT>(this->At.begin()+1, this->At.begin()+1+this->num_variables(),
+    ans_A = ans_A + libff::naive_plain_exp<FieldT, FieldT>(this->At.begin()+1, this->At.begin()+1+this->num_variables(),
                                                     witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_B = ans_B + naive_plain_exp<FieldT, FieldT>(this->Bt.begin()+1, this->Bt.begin()+1+this->num_variables(),
+    ans_B = ans_B + libff::naive_plain_exp<FieldT, FieldT>(this->Bt.begin()+1, this->Bt.begin()+1+this->num_variables(),
                                                     witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_C = ans_C + naive_plain_exp<FieldT, FieldT>(this->Ct.begin()+1, this->Ct.begin()+1+this->num_variables(),
+    ans_C = ans_C + libff::naive_plain_exp<FieldT, FieldT>(this->Ct.begin()+1, this->Ct.begin()+1+this->num_variables(),
                                                     witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_H = ans_H + naive_plain_exp<FieldT, FieldT>(this->Ht.begin(), this->Ht.begin()+this->degree()+1,
+    ans_H = ans_H + libff::naive_plain_exp<FieldT, FieldT>(this->Ht.begin(), this->Ht.begin()+this->degree()+1,
                                                     witness.coefficients_for_H.begin(), witness.coefficients_for_H.begin()+this->degree()+1);
 
     if (ans_A * ans_B - ans_C != ans_H * this->Zt)

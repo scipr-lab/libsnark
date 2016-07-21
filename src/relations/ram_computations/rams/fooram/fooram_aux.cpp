@@ -51,13 +51,13 @@ memory_contents fooram_architecture_params::initial_memory_contents(const fooram
 {
     memory_contents m;
     /* fooram memory contents do not depend on program/input. */
-    UNUSED(program, primary_input);
+    libff::UNUSED(program, primary_input);
     return m;
 }
 
-bit_vector fooram_architecture_params::initial_cpu_state() const
+libff::bit_vector fooram_architecture_params::initial_cpu_state() const
 {
-    bit_vector state;
+    libff::bit_vector state;
     state.resize(w, false);
     return state;
 }
@@ -81,7 +81,7 @@ std::ostream& operator<<(std::ostream &out, const fooram_architecture_params &ap
 std::istream& operator>>(std::istream &in, fooram_architecture_params &ap)
 {
     in >> ap.w;
-    consume_newline(in);
+    libff::consume_newline(in);
     return in;
 }
 

@@ -39,14 +39,14 @@ tinyram_instruction_packing_gadget<FieldT>::tinyram_instruction_packing_gadget(t
     all_bits.insert(all_bits.begin(), arg2_is_imm);
     all_bits.insert(all_bits.begin(), desidx.begin(), desidx.end());
     all_bits.insert(all_bits.begin(), arg1idx.begin(), arg1idx.end());
-    dummy.allocate(pb, pb.ap.w-all_bits.size(), FMT(this->annotation_prefix, " dummy"));
+    dummy.allocate(pb, pb.ap.w-all_bits.size(), libff::FMT(this->annotation_prefix, " dummy"));
     all_bits.insert(all_bits.begin(), dummy.begin(), dummy.end());
     all_bits.insert(all_bits.begin(), arg2idx.begin(), arg2idx.end());
 
     assert(all_bits.size() == 2*pb.ap.w);
 
     pack_instruction.reset(
-        new packing_gadget<FieldT>(pb, all_bits, packed_instruction, FMT(this->annotation_prefix, " pack_instruction")));
+        new packing_gadget<FieldT>(pb, all_bits, packed_instruction, libff::FMT(this->annotation_prefix, " pack_instruction")));
 }
 
 
@@ -106,7 +106,7 @@ FieldT pack_instruction(const tinyram_architecture_params &ap,
 template<typename FieldT>
 void test_instruction_packing()
 {
-    print_time("starting instruction packing test");
+    libff::print_time("starting instruction packing test");
 
     tinyram_architecture_params ap(16, 16);
     tinyram_program P; P.instructions = generate_tinyram_prelude(ap);
@@ -120,11 +120,11 @@ void test_instruction_packing()
 
     for (size_t i = 0; i < 2; ++i)
     {
-        opcode[i].allocate(pb, ap.s, FMT("", "opcode_%zu", i));
-        arg2_is_imm[i].allocate(pb, FMT("", "arg2_is_imm_%zu", i));
-        desidx[i].allocate(pb, ap.reg_arg_width(), FMT("", "desidx_%zu", i));
-        arg1idx[i].allocate(pb, ap.reg_arg_width(), FMT("", "arg1idx_%zu", i));
-        arg2idx[i].allocate(pb, ap.reg_arg_or_imm_width(), FMT("", "arg2idx_%zu", i));
+        opcode[i].allocate(pb, ap.s, libff::FMT("", "opcode_%zu", i));
+        arg2_is_imm[i].allocate(pb, libff::FMT("", "arg2_is_imm_%zu", i));
+        desidx[i].allocate(pb, ap.reg_arg_width(), libff::FMT("", "desidx_%zu", i));
+        arg1idx[i].allocate(pb, ap.reg_arg_width(), libff::FMT("", "arg1idx_%zu", i));
+        arg2idx[i].allocate(pb, ap.reg_arg_or_imm_width(), libff::FMT("", "arg2idx_%zu", i));
     }
 
     pb_variable<FieldT> packed_instr;
@@ -187,7 +187,7 @@ void test_instruction_packing()
         assert(pb.is_satisfied());
     }
 
-    print_time("instruction packing tests successful");
+    libff::print_time("instruction packing tests successful");
 }
 
 } // libsnark

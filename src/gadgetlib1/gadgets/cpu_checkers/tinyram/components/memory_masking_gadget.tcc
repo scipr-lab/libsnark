@@ -40,10 +40,10 @@ memory_masking_gadget<FieldT>::memory_masking_gadget(tinyram_protoboard<FieldT> 
       We use little-endian indexing here (least significant
       bit/byte/word has the smallest address).
     */
-    is_word0.allocate(pb, FMT(this->annotation_prefix, " is_word0"));
-    is_word1.allocate(pb, FMT(this->annotation_prefix, " is_word1"));
-    is_subaddress.allocate(pb, 2 * pb.ap.bytes_in_word(), FMT(this->annotation_prefix, " is_sub_address"));
-    is_byte.allocate(pb, 2 * pb.ap.bytes_in_word(), FMT(this->annotation_prefix, " is_byte"));
+    is_word0.allocate(pb, libff::FMT(this->annotation_prefix, " is_word0"));
+    is_word1.allocate(pb, libff::FMT(this->annotation_prefix, " is_word1"));
+    is_subaddress.allocate(pb, 2 * pb.ap.bytes_in_word(), libff::FMT(this->annotation_prefix, " is_sub_address"));
+    is_byte.allocate(pb, 2 * pb.ap.bytes_in_word(), libff::FMT(this->annotation_prefix, " is_byte"));
 
     /*
       Get value of the dw_contents_prev for which the specified entity
@@ -83,9 +83,9 @@ memory_masking_gadget<FieldT>::memory_masking_gadget(tinyram_protoboard<FieldT> 
     masked_out_results.emplace_back(masked_out_word1);
     masked_out_results.insert(masked_out_results.end(), masked_out_bytes.begin(), masked_out_bytes.end());
 
-    masked_out_dw_contents_prev.allocate(pb, FMT(this->annotation_prefix, " masked_out_dw_contents_prev"));
+    masked_out_dw_contents_prev.allocate(pb, libff::FMT(this->annotation_prefix, " masked_out_dw_contents_prev"));
     get_masked_out_dw_contents_prev.reset(new inner_product_gadget<FieldT>(pb, masked_out_indicators, masked_out_results, masked_out_dw_contents_prev,
-                                                                           FMT(this->annotation_prefix, " get_masked_out_dw_contents_prev")));
+                                                                           libff::FMT(this->annotation_prefix, " get_masked_out_dw_contents_prev")));
 
     /*
       Define shift so that masked_out_dw_contents_prev + shift * subcontents = dw_contents_next
@@ -106,22 +106,22 @@ void memory_masking_gadget<FieldT>::generate_r1cs_constraints()
     for (size_t i = 0; i < 2 * this->pb.ap.bytes_in_word(); ++i)
     {
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(is_subaddress[i], subaddress.packed - i, 0),
-                                     FMT(this->annotation_prefix, " is_subaddress_%zu", i));
+                                     libff::FMT(this->annotation_prefix, " is_subaddress_%zu", i));
     }
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_sum<FieldT>(is_subaddress), 1), FMT(this->annotation_prefix, " is_subaddress"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_sum<FieldT>(is_subaddress), 1), libff::FMT(this->annotation_prefix, " is_subaddress"));
 
     /* get indicator variables is_byte_X */
     for (size_t i = 0; i < 2 * this->pb.ap.bytes_in_word(); ++i)
     {
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(access_is_byte, is_subaddress[i], is_byte[i]),
-                                     FMT(this->annotation_prefix, " is_byte_%zu", i));
+                                     libff::FMT(this->annotation_prefix, " is_byte_%zu", i));
     }
 
     /* get indicator variables is_word_0/is_word_1 */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(access_is_word, 1 - subaddress.bits[this->pb.ap.subaddr_len()-1], is_word0),
-                                 FMT(this->annotation_prefix, " is_word_0"));
+                                 libff::FMT(this->annotation_prefix, " is_word_0"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(access_is_word, subaddress.bits[this->pb.ap.subaddr_len()-1], is_word1),
-                                 FMT(this->annotation_prefix, " is_word_1"));
+                                 libff::FMT(this->annotation_prefix, " is_word_1"));
 
     /* compute masked_out_dw_contents_prev */
     get_masked_out_dw_contents_prev->generate_r1cs_constraints();
@@ -130,7 +130,7 @@ void memory_masking_gadget<FieldT>::generate_r1cs_constraints()
        masked_out_dw_contents_prev + shift * subcontents = dw_contents_next
      */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(shift, subcontents, dw_contents_next.packed - masked_out_dw_contents_prev),
-                                 FMT(this->annotation_prefix, " mask_difference"));
+                                 libff::FMT(this->annotation_prefix, " mask_difference"));
 }
 
 template<typename FieldT>

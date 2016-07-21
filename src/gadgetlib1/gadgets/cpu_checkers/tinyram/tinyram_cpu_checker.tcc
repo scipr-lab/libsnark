@@ -52,8 +52,8 @@ tinyram_standard_gadget<FieldT>(pb, annotation_prefix), prev_pc_addr(prev_pc_add
     pb_variable_array<FieldT> packed_prev_registers, packed_next_registers;
     for (size_t i = 0; i < pb.ap.k; ++i)
     {
-        prev_registers.emplace_back(word_variable_gadget<FieldT>(pb, pb_variable_array<FieldT>(prev_state.begin() + i * pb.ap.w, prev_state.begin() + (i + 1) * pb.ap.w), FMT(annotation_prefix, " prev_registers_%zu", i)));
-        next_registers.emplace_back(word_variable_gadget<FieldT>(pb, pb_variable_array<FieldT>(next_state.begin() + i * pb.ap.w, next_state.begin() + (i + 1) * pb.ap.w), FMT(annotation_prefix, " next_registers_%zu", i)));
+        prev_registers.emplace_back(word_variable_gadget<FieldT>(pb, pb_variable_array<FieldT>(prev_state.begin() + i * pb.ap.w, prev_state.begin() + (i + 1) * pb.ap.w), libff::FMT(annotation_prefix, " prev_registers_%zu", i)));
+        next_registers.emplace_back(word_variable_gadget<FieldT>(pb, pb_variable_array<FieldT>(next_state.begin() + i * pb.ap.w, next_state.begin() + (i + 1) * pb.ap.w), libff::FMT(annotation_prefix, " next_registers_%zu", i)));
 
         packed_prev_registers.emplace_back(prev_registers[i].packed);
         packed_next_registers.emplace_back(next_registers[i].packed);
@@ -64,33 +64,33 @@ tinyram_standard_gadget<FieldT>(pb, annotation_prefix), prev_pc_addr(prev_pc_add
     next_tape1_exhausted = *(next_state.rbegin());
 
     /* decode arguments */
-    prev_pc_addr_as_word_variable.reset(new word_variable_gadget<FieldT>(pb, prev_pc_addr, FMT(annotation_prefix, " prev_pc_addr_as_word_variable")));
-    desval.reset(new word_variable_gadget<FieldT>(pb, FMT(annotation_prefix, " desval")));
-    arg1val.reset(new word_variable_gadget<FieldT>(pb, FMT(annotation_prefix, " arg1val")));
-    arg2val.reset(new word_variable_gadget<FieldT>(pb, FMT(annotation_prefix, " arg2val")));
+    prev_pc_addr_as_word_variable.reset(new word_variable_gadget<FieldT>(pb, prev_pc_addr, libff::FMT(annotation_prefix, " prev_pc_addr_as_word_variable")));
+    desval.reset(new word_variable_gadget<FieldT>(pb, libff::FMT(annotation_prefix, " desval")));
+    arg1val.reset(new word_variable_gadget<FieldT>(pb, libff::FMT(annotation_prefix, " arg1val")));
+    arg2val.reset(new word_variable_gadget<FieldT>(pb, libff::FMT(annotation_prefix, " arg2val")));
 
     decode_arguments.reset(new argument_decoder_gadget<FieldT>(pb, arg2_is_imm, desidx, arg1idx, arg2idx, packed_prev_registers,
                                                                desval->packed, arg1val->packed, arg2val->packed,
-                                                               FMT(annotation_prefix, " decode_arguments")));
+                                                               libff::FMT(annotation_prefix, " decode_arguments")));
 
     /* create indicator variables for opcodes */
-    opcode_indicators.allocate(pb, 1ul<<pb.ap.opcode_width(), FMT(annotation_prefix, " opcode_indicators"));
+    opcode_indicators.allocate(pb, 1ul<<pb.ap.opcode_width(), libff::FMT(annotation_prefix, " opcode_indicators"));
 
     /* perform the ALU operations */
-    instruction_results.allocate(pb, 1ul<<pb.ap.opcode_width(), FMT(annotation_prefix, " instruction_results"));
-    instruction_flags.allocate(pb, 1ul<<pb.ap.opcode_width(), FMT(annotation_prefix, " instruction_flags"));
+    instruction_results.allocate(pb, 1ul<<pb.ap.opcode_width(), libff::FMT(annotation_prefix, " instruction_results"));
+    instruction_flags.allocate(pb, 1ul<<pb.ap.opcode_width(), libff::FMT(annotation_prefix, " instruction_flags"));
 
     ALU.reset(new ALU_gadget<FieldT>(pb, opcode_indicators, *prev_pc_addr_as_word_variable, *desval, *arg1val, *arg2val, prev_flag, instruction_results, instruction_flags,
-                                     FMT(annotation_prefix, " ALU")));
+                                     libff::FMT(annotation_prefix, " ALU")));
 
     /* check correctness of memory operations */
-    ls_prev_val_as_doubleword_variable.reset(new doubleword_variable_gadget<FieldT>(pb, ls_prev_val, FMT(annotation_prefix, " ls_prev_val_as_doubleword_variable")))
+    ls_prev_val_as_doubleword_variable.reset(new doubleword_variable_gadget<FieldT>(pb, ls_prev_val, libff::FMT(annotation_prefix, " ls_prev_val_as_doubleword_variable")))
 ;
-    ls_next_val_as_doubleword_variable.reset(new doubleword_variable_gadget<FieldT>(pb, ls_next_val, FMT(annotation_prefix, " ls_next_val_as_doubleword_variable")));
+    ls_next_val_as_doubleword_variable.reset(new doubleword_variable_gadget<FieldT>(pb, ls_next_val, libff::FMT(annotation_prefix, " ls_next_val_as_doubleword_variable")));
     memory_subaddress.reset(new dual_variable_gadget<FieldT>(pb, pb_variable_array<FieldT>(arg2val->bits.begin(), arg2val->bits.begin() + pb.ap.subaddr_len()),
-                                                             FMT(annotation_prefix, " memory_subaddress")));
+                                                             libff::FMT(annotation_prefix, " memory_subaddress")));
 
-    memory_subcontents.allocate(pb, FMT(annotation_prefix, " memory_subcontents"));
+    memory_subcontents.allocate(pb, libff::FMT(annotation_prefix, " memory_subcontents"));
     memory_access_is_word.assign(pb, 1 - (opcode_indicators[tinyram_opcode_LOADB] + opcode_indicators[tinyram_opcode_STOREB]));
     memory_access_is_byte.assign(pb, opcode_indicators[tinyram_opcode_LOADB] + opcode_indicators[tinyram_opcode_STOREB]);
 
@@ -101,13 +101,13 @@ tinyram_standard_gadget<FieldT>(pb, annotation_prefix), prev_pc_addr(prev_pc_add
                                                          memory_access_is_word,
                                                          memory_access_is_byte,
                                                          *ls_next_val_as_doubleword_variable,
-                                                         FMT(annotation_prefix, " check_memory")));
+                                                         libff::FMT(annotation_prefix, " check_memory")));
 
     /* handle reads */
-    read_not1.allocate(pb, FMT(annotation_prefix, " read_not1"));
+    read_not1.allocate(pb, libff::FMT(annotation_prefix, " read_not1"));
 
     /* check consistency of the states according to the ALU results */
-    next_pc_addr_as_word_variable.reset(new word_variable_gadget<FieldT>(pb, next_pc_addr, FMT(annotation_prefix, " next_pc_addr_as_word_variable")));
+    next_pc_addr_as_word_variable.reset(new word_variable_gadget<FieldT>(pb, next_pc_addr, libff::FMT(annotation_prefix, " next_pc_addr_as_word_variable")));
 
     consistency_enforcer.reset(new consistency_enforcer_gadget<FieldT>(pb, opcode_indicators, instruction_results, instruction_flags,
                                                                        desidx, prev_pc_addr_as_word_variable->packed,
@@ -117,7 +117,7 @@ tinyram_standard_gadget<FieldT>(pb, annotation_prefix), prev_pc_addr(prev_pc_add
                                                                        next_pc_addr_as_word_variable->packed,
                                                                        packed_next_registers,
                                                                        next_flag,
-                                                                       FMT(annotation_prefix, " consistency_enforcer")));
+                                                                       libff::FMT(annotation_prefix, " consistency_enforcer")));
 }
 
 template<typename FieldT>
@@ -129,10 +129,10 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_constraints()
     for (size_t i = 0; i < 1ul<<this->pb.ap.opcode_width(); ++i)
     {
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[i], pb_packing_sum<FieldT>(opcode) - i, 0),
-                                     FMT(this->annotation_prefix, " opcode_indicators_%zu", i));
+                                     libff::FMT(this->annotation_prefix, " opcode_indicators_%zu", i));
     }
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_sum<FieldT>(opcode_indicators), 1),
-                                 FMT(this->annotation_prefix, " opcode_indicators_sum_to_1"));
+                                 libff::FMT(this->annotation_prefix, " opcode_indicators_sum_to_1"));
 
     /* consistency checks for repacked variables */
     for (size_t i = 0; i < this->pb.ap.k; ++i)
@@ -161,7 +161,7 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_constraints()
                                                              pb_variable_array<FieldT>(arg2val->bits.begin() + this->pb.ap.subaddr_len(),
                                                                                        arg2val->bits.end())),
                                                          pb_packing_sum<FieldT>(ls_addr)),
-                                 FMT(this->annotation_prefix, " ls_addr_is_arg2val_minus_subaddress"));
+                                 libff::FMT(this->annotation_prefix, " ls_addr_is_arg2val_minus_subaddress"));
 
     /* We require that if opcode is one of load.{b,w}, then
        subcontents is appropriately stored in instruction_results. If
@@ -174,35 +174,35 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[tinyram_opcode_LOADB],
                                                          memory_subcontents - instruction_results[tinyram_opcode_LOADB],
                                                          0),
-                                 FMT(this->annotation_prefix, " handle_loadb"));
+                                 libff::FMT(this->annotation_prefix, " handle_loadb"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[tinyram_opcode_LOADW],
                                                          memory_subcontents - instruction_results[tinyram_opcode_LOADW],
                                                          0),
-                                 FMT(this->annotation_prefix, " handle_loadw"));
+                                 libff::FMT(this->annotation_prefix, " handle_loadw"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[tinyram_opcode_STOREB],
                                                          memory_subcontents - pb_packing_sum<FieldT>(
                                                              pb_variable_array<FieldT>(desval->bits.begin(),
                                                                                        desval->bits.begin() + 8)),
                                                          0),
-                                 FMT(this->annotation_prefix, " handle_storeb"));
+                                 libff::FMT(this->annotation_prefix, " handle_storeb"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[tinyram_opcode_STOREW],
                                                          memory_subcontents - desval->packed,
                                                          0),
-                                 FMT(this->annotation_prefix, " handle_storew"));
+                                 libff::FMT(this->annotation_prefix, " handle_storew"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1 - (opcode_indicators[tinyram_opcode_STOREB] + opcode_indicators[tinyram_opcode_STOREW]),
                                                          ls_prev_val_as_doubleword_variable->packed - ls_next_val_as_doubleword_variable->packed,
                                                          0),
-                                 FMT(this->annotation_prefix, " non_store_instructions_dont_change_memory"));
+                                 libff::FMT(this->annotation_prefix, " non_store_instructions_dont_change_memory"));
 
     /* specify that accepting state implies opcode = answer && arg2val == 0 */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(next_has_accepted,
                                                          1 - opcode_indicators[tinyram_opcode_ANSWER],
                                                          0),
-                                 FMT(this->annotation_prefix, " accepting_requires_answer"));
+                                 libff::FMT(this->annotation_prefix, " accepting_requires_answer"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(next_has_accepted,
                                                          arg2val->packed,
                                                          0),
-                                 FMT(this->annotation_prefix, " accepting_requires_arg2val_equal_zero"));
+                                 libff::FMT(this->annotation_prefix, " accepting_requires_arg2val_equal_zero"));
 
     /*
        handle tapes:
@@ -216,23 +216,23 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(prev_tape1_exhausted,
                                                          1 - next_tape1_exhausted,
                                                          0),
-                                 FMT(this->annotation_prefix, " prev_tape1_exhausted_implies_next_tape1_exhausted"));
+                                 libff::FMT(this->annotation_prefix, " prev_tape1_exhausted_implies_next_tape1_exhausted"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(prev_tape1_exhausted,
                                                          1 - instruction_flags[tinyram_opcode_READ],
                                                          0),
-                                 FMT(this->annotation_prefix, " prev_tape1_exhausted_implies_flag"));
+                                 libff::FMT(this->annotation_prefix, " prev_tape1_exhausted_implies_flag"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(opcode_indicators[tinyram_opcode_READ],
                                                          1 - arg2val->packed,
                                                          read_not1),
-                                 FMT(this->annotation_prefix, " read_not1")); /* will be nonzero for read X for X != 1 */
+                                 libff::FMT(this->annotation_prefix, " read_not1")); /* will be nonzero for read X for X != 1 */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(read_not1,
                                                          1 - instruction_flags[tinyram_opcode_READ],
                                                          0),
-                                 FMT(this->annotation_prefix, " other_reads_imply_flag"));
+                                 libff::FMT(this->annotation_prefix, " other_reads_imply_flag"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(instruction_flags[tinyram_opcode_READ],
                                                          instruction_results[tinyram_opcode_READ],
                                                          0),
-                                 FMT(this->annotation_prefix, " read_flag_implies_result_0"));
+                                 libff::FMT(this->annotation_prefix, " read_flag_implies_result_0"));
 }
 
 template<typename FieldT>

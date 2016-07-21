@@ -46,7 +46,7 @@ namespace libsnark {
 template<typename ppT>
 class sp_compliance_step_pcd_circuit_maker {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     r1cs_pcd_compliance_predicate<FieldT> compliance_predicate;
 
@@ -122,7 +122,7 @@ public:
 template<typename ppT>
 class sp_translation_step_pcd_circuit_maker {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     protoboard<FieldT> pb;
 
@@ -139,7 +139,7 @@ public:
     void generate_r1cs_constraints();
     r1cs_constraint_system<FieldT> get_circuit() const;
 
-    void generate_r1cs_witness(const r1cs_primary_input<Fr<ppT> > translation_step_input,
+    void generate_r1cs_witness(const r1cs_primary_input<libff::Fr<ppT> > translation_step_input,
                                const r1cs_ppzksnark_proof<other_curve<ppT> > &compliance_step_proof);
     r1cs_primary_input<FieldT> get_primary_input() const;
     r1cs_auxiliary_input<FieldT> get_auxiliary_input() const;
@@ -157,15 +157,15 @@ public:
  * Obtain the primary input for a compliance-step PCD circuit.
  */
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_sp_compliance_step_pcd_circuit_input(const bit_vector &sp_translation_step_vk_bits,
-                                                                      const r1cs_pcd_compliance_predicate_primary_input<Fr<ppT> > &primary_input);
+r1cs_primary_input<libff::Fr<ppT> > get_sp_compliance_step_pcd_circuit_input(const libff::bit_vector &sp_translation_step_vk_bits,
+                                                                      const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<ppT> > &primary_input);
 
 /**
  * Obtain the primary input for a translation-step PCD circuit.
  */
 template<typename ppT>
-r1cs_primary_input<Fr<ppT> > get_sp_translation_step_pcd_circuit_input(const bit_vector &sp_translation_step_vk_bits,
-                                                                       const r1cs_pcd_compliance_predicate_primary_input<Fr<other_curve<ppT> > > &primary_input);
+r1cs_primary_input<libff::Fr<ppT> > get_sp_translation_step_pcd_circuit_input(const libff::bit_vector &sp_translation_step_vk_bits,
+                                                                       const r1cs_pcd_compliance_predicate_primary_input<libff::Fr<other_curve<ppT> > > &primary_input);
 
 } // libsnark
 

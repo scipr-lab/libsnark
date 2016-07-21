@@ -1,8 +1,6 @@
 /** @file
  *****************************************************************************
-
  This file provides the initialization methods for the default TinyRAM zk-SNARK.
-
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
  *             and contributors (see AUTHORS).

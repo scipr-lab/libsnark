@@ -23,20 +23,20 @@ template<typename ppT>
 void test_uscs_ppzksnark(size_t num_constraints,
                          size_t input_size)
 {
-    print_header("(enter) Test USCS ppzkSNARK");
+    libff::print_header("(enter) Test USCS ppzkSNARK");
 
     const bool test_serialization = true;
-    uscs_example<Fr<ppT> > example = generate_uscs_example_with_binary_input<Fr<ppT> >(num_constraints, input_size);
+    uscs_example<libff::Fr<ppT> > example = generate_uscs_example_with_binary_input<libff::Fr<ppT> >(num_constraints, input_size);
     const bool bit = run_uscs_ppzksnark<ppT>(example, test_serialization);
     assert(bit);
 
-    print_header("(leave) Test USCS ppzkSNARK");
+    libff::print_header("(leave) Test USCS ppzkSNARK");
 }
 
 int main()
 {
     default_uscs_ppzksnark_pp::init_public_params();
-    start_profiling();
+    libff::start_profiling();
 
     test_uscs_ppzksnark<default_uscs_ppzksnark_pp>(1000, 100);
 }

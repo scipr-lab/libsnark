@@ -39,43 +39,43 @@ template<typename ram_ppzksnark_ppT>
 bool run_ram_ppzksnark(const ram_example<ram_ppzksnark_machine_pp<ram_ppzksnark_ppT> > &example,
                        const bool test_serialization)
 {
-    enter_block("Call to run_ram_ppzksnark");
+    libff::enter_block("Call to run_ram_ppzksnark");
 
     printf("This run uses an example with the following parameters:\n");
     example.ap.print();
     printf("* Primary input size bound (L): %zu\n", example.boot_trace_size_bound);
     printf("* Time bound (T): %zu\n", example.time_bound);
-    printf("Hence, log2(L+2*T) equals %zu\n", log2(example.boot_trace_size_bound+2*example.time_bound));
+    printf("Hence, libff::log2(L+2*T) equals %zu\n", libff::log2(example.boot_trace_size_bound+2*example.time_bound));
 
-    print_header("RAM ppzkSNARK Generator");
+    libff::print_header("RAM ppzkSNARK Generator");
     ram_ppzksnark_keypair<ram_ppzksnark_ppT> keypair = ram_ppzksnark_generator<ram_ppzksnark_ppT>(example.ap, example.boot_trace_size_bound, example.time_bound);
-    printf("\n"); print_indent(); print_mem("after generator");
+    printf("\n"); libff::print_indent(); libff::print_mem("after generator");
 
     if (test_serialization)
     {
-        enter_block("Test serialization of keys");
-        keypair.pk = reserialize<ram_ppzksnark_proving_key<ram_ppzksnark_ppT> >(keypair.pk);
-        keypair.vk = reserialize<ram_ppzksnark_verification_key<ram_ppzksnark_ppT> >(keypair.vk);
-        leave_block("Test serialization of keys");
+        libff::enter_block("Test serialization of keys");
+        keypair.pk = libff::reserialize<ram_ppzksnark_proving_key<ram_ppzksnark_ppT> >(keypair.pk);
+        keypair.vk = libff::reserialize<ram_ppzksnark_verification_key<ram_ppzksnark_ppT> >(keypair.vk);
+        libff::leave_block("Test serialization of keys");
     }
 
-    print_header("RAM ppzkSNARK Prover");
+    libff::print_header("RAM ppzkSNARK Prover");
     ram_ppzksnark_proof<ram_ppzksnark_ppT> proof = ram_ppzksnark_prover<ram_ppzksnark_ppT>(keypair.pk, example.boot_trace, example.auxiliary_input);
-    printf("\n"); print_indent(); print_mem("after prover");
+    printf("\n"); libff::print_indent(); libff::print_mem("after prover");
 
     if (test_serialization)
     {
-        enter_block("Test serialization of proof");
-        proof = reserialize<ram_ppzksnark_proof<ram_ppzksnark_ppT> >(proof);
-        leave_block("Test serialization of proof");
+        libff::enter_block("Test serialization of proof");
+        proof = libff::reserialize<ram_ppzksnark_proof<ram_ppzksnark_ppT> >(proof);
+        libff::leave_block("Test serialization of proof");
     }
 
-    print_header("RAM ppzkSNARK Verifier");
+    libff::print_header("RAM ppzkSNARK Verifier");
     bool ans = ram_ppzksnark_verifier<ram_ppzksnark_ppT>(keypair.vk, example.boot_trace, proof);
-    printf("\n"); print_indent(); print_mem("after verifier");
+    printf("\n"); libff::print_indent(); libff::print_mem("after verifier");
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
 
-    leave_block("Call to run_ram_ppzksnark");
+    libff::leave_block("Call to run_ram_ppzksnark");
 
     return ans;
 }

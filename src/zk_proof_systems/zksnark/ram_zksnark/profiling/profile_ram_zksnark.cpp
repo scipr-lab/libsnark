@@ -22,9 +22,9 @@ void simulate_random_memory_contents(const tinyram_architecture_params &ap, cons
     const size_t value_size = 2 * ap.w;
     memory_contents init_random = random_memory_contents(num_addresses, value_size, program_size + (input_size + 1)/2);
 
-    enter_block("Initialize random delegated memory");
+    libff::enter_block("Initialize random delegated memory");
     delegated_ra_memory<FieldT> dm_random(num_addresses, value_size, init_random);
-    leave_block("Initialize random delegated memory");
+    libff::leave_block("Initialize random delegated memory");
 }
 
 template<typename ppT>
@@ -39,15 +39,15 @@ void profile_ram_zksnark_verifier(const tinyram_architecture_params &ap, const s
     ram_zksnark_proof<ppT> pi;
     ram_zksnark_verification_key<ppT> vk = ram_zksnark_verification_key<ppT>::dummy_verification_key(ap);
 
-    enter_block("Verify fake proof");
+    libff::enter_block("Verify fake proof");
     ram_zksnark_verifier<ppT>(vk, example.boot_trace, time_bound, pi);
-    leave_block("Verify fake proof");
+    libff::leave_block("Verify fake proof");
 }
 
 template<typename ppT>
 void print_ram_zksnark_verifier_profiling()
 {
-    inhibit_profiling_info = true;
+    libff::inhibit_profiling_info = true;
     for (size_t w : { 16, 32 })
     {
         const size_t k = 16;
@@ -68,7 +68,7 @@ void print_ram_zksnark_verifier_profiling()
                 const double rest = total - (input_map + preprocessing + accumulate + pairings);
 
                 const double delegated_ra_memory_init = last_times["Construct delegated_ra_memory from memory map"];
-                simulate_random_memory_contents<Fr<typename ppT::curve_A_pp> >(ap, input_size, program_size);
+                simulate_random_memory_contents<libff::Fr<typename ppT::curve_A_pp> >(ap, input_size, program_size);
                 const double delegated_ra_memory_init_random = last_times["Initialize random delegated memory"];
                 const double input_map_random = input_map - delegated_ra_memory_init + delegated_ra_memory_init_random;
                 const double total_random = total - delegated_ra_memory_init + delegated_ra_memory_init_random;
@@ -150,7 +150,7 @@ bool process_command_line(const int argc, const char** argv,
 
 int main(int argc, const char* argv[])
 {
-    start_profiling();
+    libff::start_profiling();
     ram_zksnark_PCD_pp<default_ram_zksnark_pp>::init_public_params();
 
     bool profile_gp;

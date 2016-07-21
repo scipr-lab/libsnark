@@ -19,19 +19,19 @@
 namespace libsnark {
 
 template<typename PCD_ppT>
-using r1cs_sp_ppzkpcd_compliance_predicate = r1cs_pcd_compliance_predicate<Fr<typename PCD_ppT::curve_A_pp> >;
+using r1cs_sp_ppzkpcd_compliance_predicate = r1cs_pcd_compliance_predicate<libff::Fr<typename PCD_ppT::curve_A_pp> >;
 
 template<typename PCD_ppT>
-using r1cs_sp_ppzkpcd_message = r1cs_pcd_message<Fr<typename PCD_ppT::curve_A_pp> >;
+using r1cs_sp_ppzkpcd_message = r1cs_pcd_message<libff::Fr<typename PCD_ppT::curve_A_pp> >;
 
 template<typename PCD_ppT>
-using r1cs_sp_ppzkpcd_local_data = r1cs_pcd_local_data<Fr<typename PCD_ppT::curve_A_pp> >;
+using r1cs_sp_ppzkpcd_local_data = r1cs_pcd_local_data<libff::Fr<typename PCD_ppT::curve_A_pp> >;
 
 template<typename PCD_ppT>
-using r1cs_sp_ppzkpcd_primary_input = r1cs_pcd_compliance_predicate_primary_input<Fr<typename PCD_ppT::curve_A_pp> >;
+using r1cs_sp_ppzkpcd_primary_input = r1cs_pcd_compliance_predicate_primary_input<libff::Fr<typename PCD_ppT::curve_A_pp> >;
 
 template<typename PCD_ppT>
-using r1cs_sp_ppzkpcd_auxiliary_input = r1cs_pcd_compliance_predicate_auxiliary_input<Fr<typename PCD_ppT::curve_A_pp> >;
+using r1cs_sp_ppzkpcd_auxiliary_input = r1cs_pcd_compliance_predicate_auxiliary_input<libff::Fr<typename PCD_ppT::curve_A_pp> >;
 
 } // libsnark
 

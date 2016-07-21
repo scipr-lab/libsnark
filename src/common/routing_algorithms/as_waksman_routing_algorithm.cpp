@@ -57,7 +57,7 @@ size_t as_waksman_switch_input(const size_t num_packets, const size_t row_offset
 
 size_t as_waksman_num_columns(const size_t num_packets)
 {
-    return (num_packets > 1 ? 2*log2(num_packets)-1 : 0);
+    return (num_packets > 1 ? 2*libff::log2(num_packets)-1 : 0);
 }
 
 /**

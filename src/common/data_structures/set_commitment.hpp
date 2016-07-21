@@ -18,7 +18,7 @@
 
 namespace libsnark {
 
-typedef bit_vector set_commitment;
+typedef libff::bit_vector set_commitment;
 
 struct set_membership_proof {
     size_t address;
@@ -34,7 +34,7 @@ template<typename HashT>
 class set_commitment_accumulator {
 private:
     std::shared_ptr<merkle_tree<HashT> > tree;
-    std::map<bit_vector, size_t> hash_to_pos;
+    std::map<libff::bit_vector, size_t> hash_to_pos;
 public:
 
     size_t depth;
@@ -43,11 +43,11 @@ public:
 
     set_commitment_accumulator(const size_t max_entries, const size_t value_size=0);
 
-    void add(const bit_vector &value);
-    bool is_in_set(const bit_vector &value) const;
+    void add(const libff::bit_vector &value);
+    bool is_in_set(const libff::bit_vector &value) const;
     set_commitment get_commitment() const;
 
-    set_membership_proof get_membership_proof(const bit_vector &value) const;
+    set_membership_proof get_membership_proof(const libff::bit_vector &value) const;
 };
 
 } // libsnark

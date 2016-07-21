@@ -53,7 +53,7 @@ namespace libsnark {
 template<typename ramT>
 class ram_pcd_message : public r1cs_pcd_message<ram_base_field<ramT> > {
 private:
-    void print_bits(const bit_vector &bv) const;
+    void print_bits(const libff::bit_vector &bv) const;
 
 public:
     typedef ram_base_field<ramT> FieldT;
@@ -61,26 +61,26 @@ public:
     ram_architecture_params<ramT> ap;
 
     size_t timestamp;
-    bit_vector root_initial;
-    bit_vector root;
+    libff::bit_vector root_initial;
+    libff::bit_vector root;
     size_t pc_addr;
-    bit_vector cpu_state;
+    libff::bit_vector cpu_state;
     size_t pc_addr_initial;
-    bit_vector cpu_state_initial;
+    libff::bit_vector cpu_state_initial;
     bool has_accepted;
 
     ram_pcd_message(const size_t type,
                     const ram_architecture_params<ramT> &ap,
                     const size_t timestamp,
-                    const bit_vector root_initial,
-                    const bit_vector root,
+                    const libff::bit_vector root_initial,
+                    const libff::bit_vector root,
                     const size_t pc_addr,
-                    const bit_vector cpu_state,
+                    const libff::bit_vector cpu_state,
                     const size_t pc_addr_initial,
-                    const bit_vector cpu_state_initial,
+                    const libff::bit_vector cpu_state_initial,
                     const bool has_accepted);
 
-    bit_vector unpacked_payload_as_bits() const;
+    libff::bit_vector unpacked_payload_as_bits() const;
     r1cs_variable_assignment<FieldT> payload_as_r1cs_variable_assignment() const;
     void print() const;
 

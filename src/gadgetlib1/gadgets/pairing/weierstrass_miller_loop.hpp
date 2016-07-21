@@ -33,11 +33,11 @@ namespace libsnark {
  * Note the slight interface change: this gadget allocates g_RR_at_P inside itself (!)
  */
 template<typename ppT>
-class mnt_miller_loop_dbl_line_eval : public gadget<Fr<ppT> > {
+class mnt_miller_loop_dbl_line_eval : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     G1_precomputation<ppT> prec_P;
     precompute_G2_gadget_coeffs<ppT> c;
@@ -69,11 +69,11 @@ public:
  * Note the slight interface change: this gadget will allocate g_RQ_at_P inside itself (!)
  */
 template<typename ppT>
-class mnt_miller_loop_add_line_eval : public gadget<Fr<ppT> > {
+class mnt_miller_loop_add_line_eval : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     bool invert_Q;
     G1_precomputation<ppT> prec_P;
@@ -100,11 +100,11 @@ public:
  * Gadget for verifying a single Miller loop.
  */
 template<typename ppT>
-class mnt_miller_loop_gadget : public gadget<Fr<ppT> > {
+class mnt_miller_loop_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RR_at_Ps;
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RQ_at_Ps;
@@ -141,11 +141,11 @@ void test_mnt_miller_loop(const std::string &annotation);
  * Gadget for verifying a double Miller loop (where the second is inverted).
  */
 template<typename ppT>
-class mnt_e_over_e_miller_loop_gadget : public gadget<Fr<ppT> > {
+class mnt_e_over_e_miller_loop_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RR_at_P1s;
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RQ_at_P1s;
@@ -192,11 +192,11 @@ void test_mnt_e_over_e_miller_loop(const std::string &annotation);
  * Gadget for verifying a triple Miller loop (where the third is inverted).
  */
 template<typename ppT>
-class mnt_e_times_e_over_e_miller_loop_gadget : public gadget<Fr<ppT> > {
+class mnt_e_times_e_over_e_miller_loop_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
-    typedef Fqe<other_curve<ppT> > FqeT;
-    typedef Fqk<other_curve<ppT> > FqkT;
+    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fqe<other_curve<ppT> > FqeT;
+    typedef libff::Fqk<other_curve<ppT> > FqkT;
 
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RR_at_P1s;
     std::vector<std::shared_ptr<Fqk_variable<ppT> > > g_RQ_at_P1s;

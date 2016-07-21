@@ -10,9 +10,9 @@
 
 namespace libsnark {
 
-linear_combination<Fr<default_ec_pp> > convert_gadgetlib2_linear_combination(const gadgetlib2::GadgetLibAdapter::linear_combination_t &lc)
+linear_combination<libff::Fr<libff::default_ec_pp> > convert_gadgetlib2_linear_combination(const gadgetlib2::GadgetLibAdapter::linear_combination_t &lc)
 {
-    typedef Fr<default_ec_pp> FieldT;
+    typedef libff::Fr<libff::default_ec_pp> FieldT;
     typedef gadgetlib2::GadgetLibAdapter GLA;
 
     linear_combination<FieldT> result = lc.second * variable<FieldT>(0);
@@ -24,9 +24,9 @@ linear_combination<Fr<default_ec_pp> > convert_gadgetlib2_linear_combination(con
     return result;
 }
 
-r1cs_constraint_system<Fr<default_ec_pp> > get_constraint_system_from_gadgetlib2(const gadgetlib2::Protoboard &pb)
+r1cs_constraint_system<libff::Fr<libff::default_ec_pp> > get_constraint_system_from_gadgetlib2(const gadgetlib2::Protoboard &pb)
 {
-    typedef Fr<default_ec_pp> FieldT;
+    typedef libff::Fr<libff::default_ec_pp> FieldT;
     typedef gadgetlib2::GadgetLibAdapter GLA;
 
     r1cs_constraint_system<FieldT> result;
@@ -47,9 +47,9 @@ r1cs_constraint_system<Fr<default_ec_pp> > get_constraint_system_from_gadgetlib2
     return result;
 }
 
-r1cs_variable_assignment<Fr<default_ec_pp> > get_variable_assignment_from_gadgetlib2(const gadgetlib2::Protoboard &pb)
+r1cs_variable_assignment<libff::Fr<libff::default_ec_pp> > get_variable_assignment_from_gadgetlib2(const gadgetlib2::Protoboard &pb)
 {
-    typedef Fr<default_ec_pp> FieldT;
+    typedef libff::Fr<libff::default_ec_pp> FieldT;
     typedef gadgetlib2::GadgetLibAdapter GLA;
 
     //The numbers of variables is the highest index created. This is also the required size for the assignment vector.

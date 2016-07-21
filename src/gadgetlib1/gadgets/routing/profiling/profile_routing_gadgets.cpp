@@ -26,8 +26,8 @@ void get_as_waksman_size(const size_t n, const size_t l, size_t &num_constraints
     std::vector<pb_variable_array<FieldT> > randbits(n), outbits(n);
     for (size_t y = 0; y < n; ++y)
     {
-        randbits[y].allocate(pb, l, FMT("", "randbits_%zu", y));
-        outbits[y].allocate(pb, l, FMT("", "outbits_%zu", y));
+        randbits[y].allocate(pb, l, libff::FMT("", "randbits_%zu", y));
+        outbits[y].allocate(pb, l, libff::FMT("", "outbits_%zu", y));
     }
 
     as_waksman_routing_gadget<FieldT> r(pb, n, randbits, outbits, "main_routing_gadget");
@@ -40,7 +40,7 @@ void get_as_waksman_size(const size_t n, const size_t l, size_t &num_constraints
 template<typename FieldT>
 void get_benes_size(const size_t n, const size_t l, size_t &num_constraints, size_t &num_variables)
 {
-    const size_t t = log2(n);
+    const size_t t = libff::log2(n);
     assert(n == 1ul<<t);
 
     protoboard<FieldT> pb;
@@ -48,8 +48,8 @@ void get_benes_size(const size_t n, const size_t l, size_t &num_constraints, siz
     std::vector<pb_variable_array<FieldT> > randbits(1ul<<t), outbits(1ul<<t);
     for (size_t y = 0; y < 1ul<<t; ++y)
     {
-        randbits[y].allocate(pb, l, FMT("", "randbits_%zu", y));
-        outbits[y].allocate(pb, l, FMT("", "outbits_%zu", y));
+        randbits[y].allocate(pb, l, libff::FMT("", "randbits_%zu", y));
+        outbits[y].allocate(pb, l, libff::FMT("", "outbits_%zu", y));
     }
 
     benes_routing_gadget<FieldT> r(pb, n, randbits, outbits, n, "main_routing_gadget");
@@ -68,7 +68,7 @@ void profile_routing_gadgets(const size_t l)
         size_t as_waksman_constr, as_waksman_vars;
         get_as_waksman_size<FieldT>(n, l, as_waksman_constr, as_waksman_vars);
 
-        const size_t rounded_n = 1ul<<log2(n);
+        const size_t rounded_n = 1ul<<libff::log2(n);
         size_t benes_constr, benes_vars;
         get_benes_size<FieldT>(rounded_n, l, benes_constr, benes_vars);
 
@@ -86,13 +86,13 @@ void profile_num_switches(const size_t l)
         size_t as_waksman_constr, as_waksman_vars;
         get_as_waksman_size<FieldT>(n, l, as_waksman_constr, as_waksman_vars);
 
-        const size_t rounded_n = 1ul<<log2(n);
+        const size_t rounded_n = 1ul<<libff::log2(n);
         size_t benes_constr, benes_vars;
         get_benes_size<FieldT>(rounded_n, l, benes_constr, benes_vars);
 
         const size_t as_waksman_switches = (as_waksman_constr - n*(2+l))/2;
         const size_t benes_switches = (benes_constr - rounded_n*(2+l))/2;
-        // const size_t benes_expected = log2(rounded_n)*rounded_n; // switch-Benes has (-rounded_n/2) term
+        // const size_t benes_expected = libff::log2(rounded_n)*rounded_n; // switch-Benes has (-rounded_n/2) term
         printf("n = %zu (rounded_n = %zu), l = %zu, benes_switches = %zu, as_waksman_switches = %zu, ratio = %0.3f\n",
                n, rounded_n, l, benes_switches, as_waksman_switches, 1.*benes_switches/as_waksman_switches);
     }
@@ -100,8 +100,8 @@ void profile_num_switches(const size_t l)
 
 int main()
 {
-    start_profiling();
-    default_ec_pp::init_public_params();
-    profile_routing_gadgets<Fr<default_ec_pp> >(32+16+3+2);
-    profile_num_switches<Fr<default_ec_pp> >(1);
+    libff::start_profiling();
+    libff::default_ec_pp::init_public_params();
+    profile_routing_gadgets<libff::Fr<libff::default_ec_pp> >(32+16+3+2);
+    profile_num_switches<libff::Fr<libff::default_ec_pp> >(1);
 }

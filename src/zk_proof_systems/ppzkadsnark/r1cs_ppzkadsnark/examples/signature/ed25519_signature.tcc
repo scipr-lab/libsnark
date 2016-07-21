@@ -29,13 +29,13 @@ kpT<default_r1cs_ppzkadsnark_pp> sigGen<default_r1cs_ppzkadsnark_pp>(void) {
 
 template<>
 ed25519_sigT sigSign<default_r1cs_ppzkadsnark_pp>(const ed25519_skT &sk, const labelT &label,
-                                                  const G2<snark_pp<default_r1cs_ppzkadsnark_pp>> &Lambda) {
+                                                  const libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>> &Lambda) {
     ed25519_sigT sigma;
     unsigned long long sigmalen;
     unsigned char signature[64+16+320];
     unsigned char message[16+320];
 
-    G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambda);
+    libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambda);
     Lambda_copy.to_affine_coordinates();
 
     for(size_t i = 0; i<16;i++)
@@ -61,13 +61,13 @@ ed25519_sigT sigSign<default_r1cs_ppzkadsnark_pp>(const ed25519_skT &sk, const l
 
 template<>
 bool sigVerif<default_r1cs_ppzkadsnark_pp>(const ed25519_vkT &vk, const labelT &label,
-                                           const G2<snark_pp<default_r1cs_ppzkadsnark_pp>> &Lambda,
+                                           const libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>> &Lambda,
                                            const ed25519_sigT &sig) {
     unsigned long long msglen;
     unsigned char message[64+16+320];
     unsigned char signature[64+16+320];
 
-    G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambda);
+    libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambda);
     Lambda_copy.to_affine_coordinates();
 
     for(size_t i = 0; i<64;i++)
@@ -90,7 +90,7 @@ bool sigVerif<default_r1cs_ppzkadsnark_pp>(const ed25519_vkT &vk, const labelT &
 
 template<>
 bool sigBatchVerif<default_r1cs_ppzkadsnark_pp>(const ed25519_vkT &vk, const std::vector<labelT> &labels,
-                                                const std::vector<G2<snark_pp<default_r1cs_ppzkadsnark_pp>>> &Lambdas,
+                                                const std::vector<libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>>> &Lambdas,
                                                 const std::vector<ed25519_sigT> &sigs) {
     std::stringstream stream;
 
@@ -126,7 +126,7 @@ bool sigBatchVerif<default_r1cs_ppzkadsnark_pp>(const ed25519_vkT &vk, const std
             signaturemem[i*(64+16+320)+64+j] = labels[i].label_bytes[j];
 
         // More efficient way to get canonical point rep?
-       	G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambdas[i]);
+       	libff::G2<snark_pp<default_r1cs_ppzkadsnark_pp>> Lambda_copy(Lambdas[i]);
         Lambda_copy.to_affine_coordinates();
         stream.clear();
         stream.rdbuf()->pubsetbuf((char*)(signaturemem+i*(64+16+320)+64+16), 320);

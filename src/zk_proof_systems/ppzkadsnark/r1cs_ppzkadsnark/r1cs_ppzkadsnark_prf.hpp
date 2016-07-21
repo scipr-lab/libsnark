@@ -20,7 +20,7 @@ template <typename ppT>
 r1cs_ppzkadsnark_prfKeyT<ppT> prfGen();
 
 template<typename ppT>
-Fr<snark_pp<ppT>> prfCompute(const r1cs_ppzkadsnark_prfKeyT<ppT> &key, const labelT &label);
+libff::Fr<snark_pp<ppT>> prfCompute(const r1cs_ppzkadsnark_prfKeyT<ppT> &key, const labelT &label);
 
 } // libsnark
 

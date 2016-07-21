@@ -37,7 +37,7 @@ public:
     std::vector<std::shared_ptr<Fpk_sqr_gadgetT<FpkT> > > doubling_steps;
 
     Fpk_variableT<FpkT> elt;
-    bigint<m> power;
+    libff::bigint<m> power;
     Fpk_variableT<FpkT> result;
 
     size_t intermed_count;
@@ -47,7 +47,7 @@ public:
 
     exponentiation_gadget(protoboard<FieldT> &pb,
                           const Fpk_variableT<FpkT> &elt,
-                          const bigint<m> &power,
+                          const libff::bigint<m> &power,
                           const Fpk_variableT<FpkT> &result,
                           const std::string &annotation_prefix);
     void generate_r1cs_constraints();
@@ -55,7 +55,7 @@ public:
 };
 
 template<typename FpkT, template<class> class Fpk_variableT, template<class> class Fpk_mul_gadgetT, template<class> class Fpk_sqr_gadgetT, mp_size_t m>
-void test_exponentiation_gadget(const bigint<m> &power, const std::string &annotation);
+void test_exponentiation_gadget(const libff::bigint<m> &power, const std::string &annotation);
 
 } // libsnark
 

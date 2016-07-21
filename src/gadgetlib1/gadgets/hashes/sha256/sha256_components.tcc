@@ -66,7 +66,7 @@ sha256_message_schedule_gadget<FieldT>::sha256_message_schedule_gadget(protoboar
     for (size_t i = 0; i < 16; ++i)
     {
         W_bits[i] = pb_variable_array<FieldT>(M.rbegin() + (15-i) * 32, M.rbegin() + (16-i) * 32);
-        pack_W[i].reset(new packing_gadget<FieldT>(pb, W_bits[i], packed_W[i], FMT(this->annotation_prefix, " pack_W_%zu", i)));
+        pack_W[i].reset(new packing_gadget<FieldT>(pb, W_bits[i], packed_W[i], libff::FMT(this->annotation_prefix, " pack_W_%zu", i)));
     }
 
     /* NB: some of those will be un-allocated */
@@ -80,21 +80,21 @@ sha256_message_schedule_gadget<FieldT>::sha256_message_schedule_gadget(protoboar
     for (size_t i = 16; i < 64; ++i)
     {
         /* allocate result variables for sigma0/sigma1 invocations */
-        sigma0[i].allocate(pb, FMT(this->annotation_prefix, " sigma0_%zu", i));
-        sigma1[i].allocate(pb, FMT(this->annotation_prefix, " sigma1_%zu", i));
+        sigma0[i].allocate(pb, libff::FMT(this->annotation_prefix, " sigma0_%zu", i));
+        sigma1[i].allocate(pb, libff::FMT(this->annotation_prefix, " sigma1_%zu", i));
 
         /* compute sigma0/sigma1 */
-        compute_sigma0[i].reset(new small_sigma_gadget<FieldT>(pb, W_bits[i-15], sigma0[i], 7, 18, 3, FMT(this->annotation_prefix, " compute_sigma0_%zu", i)));
-        compute_sigma1[i].reset(new small_sigma_gadget<FieldT>(pb, W_bits[i-2], sigma1[i], 17, 19, 10, FMT(this->annotation_prefix, " compute_sigma1_%zu", i)));
+        compute_sigma0[i].reset(new small_sigma_gadget<FieldT>(pb, W_bits[i-15], sigma0[i], 7, 18, 3, libff::FMT(this->annotation_prefix, " compute_sigma0_%zu", i)));
+        compute_sigma1[i].reset(new small_sigma_gadget<FieldT>(pb, W_bits[i-2], sigma1[i], 17, 19, 10, libff::FMT(this->annotation_prefix, " compute_sigma1_%zu", i)));
 
         /* unreduced_W = sigma0(W_{i-15}) + sigma1(W_{i-2}) + W_{i-7} + W_{i-16} before modulo 2^32 */
-        unreduced_W[i].allocate(pb, FMT(this->annotation_prefix, "unreduced_W_%zu", i));
+        unreduced_W[i].allocate(pb, libff::FMT(this->annotation_prefix, "unreduced_W_%zu", i));
 
         /* allocate the bit representation of packed_W[i] */
-        W_bits[i].allocate(pb, 32, FMT(this->annotation_prefix, " W_bits_%zu", i));
+        W_bits[i].allocate(pb, 32, libff::FMT(this->annotation_prefix, " W_bits_%zu", i));
 
         /* and finally reduce this into packed and bit representations */
-        mod_reduce_W[i].reset(new lastbits_gadget<FieldT>(pb, unreduced_W[i], 32+2, packed_W[i], W_bits[i], FMT(this->annotation_prefix, " mod_reduce_W_%zu", i)));
+        mod_reduce_W[i].reset(new lastbits_gadget<FieldT>(pb, unreduced_W[i], 32+2, packed_W[i], W_bits[i], libff::FMT(this->annotation_prefix, " mod_reduce_W_%zu", i)));
     }
 }
 
@@ -114,7 +114,7 @@ void sha256_message_schedule_gadget<FieldT>::generate_r1cs_constraints()
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1,
                                                              sigma0[i] + sigma1[i] + packed_W[i-16] + packed_W[i-7],
                                                              unreduced_W[i]),
-            FMT(this->annotation_prefix, " unreduced_W_%zu", i));
+            libff::FMT(this->annotation_prefix, " unreduced_W_%zu", i));
 
         mod_reduce_W[i]->generate_r1cs_constraints();
     }
@@ -168,36 +168,36 @@ sha256_round_function_gadget<FieldT>::sha256_round_function_gadget(protoboard<Fi
     new_e(new_e)
 {
     /* compute sigma0 and sigma1 */
-    sigma0.allocate(pb, FMT(this->annotation_prefix, " sigma0"));
-    sigma1.allocate(pb, FMT(this->annotation_prefix, " sigma1"));
-    compute_sigma0.reset(new big_sigma_gadget<FieldT>(pb, a, sigma0, 2, 13, 22, FMT(this->annotation_prefix, " compute_sigma0")));
-    compute_sigma1.reset(new big_sigma_gadget<FieldT>(pb, e, sigma1, 6, 11, 25, FMT(this->annotation_prefix, " compute_sigma1")));
+    sigma0.allocate(pb, libff::FMT(this->annotation_prefix, " sigma0"));
+    sigma1.allocate(pb, libff::FMT(this->annotation_prefix, " sigma1"));
+    compute_sigma0.reset(new big_sigma_gadget<FieldT>(pb, a, sigma0, 2, 13, 22, libff::FMT(this->annotation_prefix, " compute_sigma0")));
+    compute_sigma1.reset(new big_sigma_gadget<FieldT>(pb, e, sigma1, 6, 11, 25, libff::FMT(this->annotation_prefix, " compute_sigma1")));
 
     /* compute choice */
-    choice.allocate(pb, FMT(this->annotation_prefix, " choice"));
-    compute_choice.reset(new choice_gadget<FieldT>(pb, e, f, g, choice, FMT(this->annotation_prefix, " compute_choice")));
+    choice.allocate(pb, libff::FMT(this->annotation_prefix, " choice"));
+    compute_choice.reset(new choice_gadget<FieldT>(pb, e, f, g, choice, libff::FMT(this->annotation_prefix, " compute_choice")));
 
     /* compute majority */
-    majority.allocate(pb, FMT(this->annotation_prefix, " majority"));
-    compute_majority.reset(new majority_gadget<FieldT>(pb, a, b, c, majority, FMT(this->annotation_prefix, " compute_majority")));
+    majority.allocate(pb, libff::FMT(this->annotation_prefix, " majority"));
+    compute_majority.reset(new majority_gadget<FieldT>(pb, a, b, c, majority, libff::FMT(this->annotation_prefix, " compute_majority")));
 
     /* pack d */
-    packed_d.allocate(pb, FMT(this->annotation_prefix, " packed_d"));
-    pack_d.reset(new packing_gadget<FieldT>(pb, d, packed_d, FMT(this->annotation_prefix, " pack_d")));
+    packed_d.allocate(pb, libff::FMT(this->annotation_prefix, " packed_d"));
+    pack_d.reset(new packing_gadget<FieldT>(pb, d, packed_d, libff::FMT(this->annotation_prefix, " pack_d")));
 
     /* pack h */
-    packed_h.allocate(pb, FMT(this->annotation_prefix, " packed_h"));
-    pack_h.reset(new packing_gadget<FieldT>(pb, h, packed_h, FMT(this->annotation_prefix, " pack_h")));
+    packed_h.allocate(pb, libff::FMT(this->annotation_prefix, " packed_h"));
+    pack_h.reset(new packing_gadget<FieldT>(pb, h, packed_h, libff::FMT(this->annotation_prefix, " pack_h")));
 
     /* compute the actual results for the round */
-    unreduced_new_a.allocate(pb, FMT(this->annotation_prefix, " unreduced_new_a"));
-    unreduced_new_e.allocate(pb, FMT(this->annotation_prefix, " unreduced_new_e"));
+    unreduced_new_a.allocate(pb, libff::FMT(this->annotation_prefix, " unreduced_new_a"));
+    unreduced_new_e.allocate(pb, libff::FMT(this->annotation_prefix, " unreduced_new_e"));
 
-    packed_new_a.allocate(pb, FMT(this->annotation_prefix, " packed_new_a"));
-    packed_new_e.allocate(pb, FMT(this->annotation_prefix, " packed_new_e"));
+    packed_new_a.allocate(pb, libff::FMT(this->annotation_prefix, " packed_new_a"));
+    packed_new_e.allocate(pb, libff::FMT(this->annotation_prefix, " packed_new_e"));
 
-    mod_reduce_new_a.reset(new lastbits_gadget<FieldT>(pb, unreduced_new_a, 32+3, packed_new_a, new_a, FMT(this->annotation_prefix, " mod_reduce_new_a")));
-    mod_reduce_new_e.reset(new lastbits_gadget<FieldT>(pb, unreduced_new_e, 32+3, packed_new_e, new_e, FMT(this->annotation_prefix, " mod_reduce_new_e")));
+    mod_reduce_new_a.reset(new lastbits_gadget<FieldT>(pb, unreduced_new_a, 32+3, packed_new_a, new_a, libff::FMT(this->annotation_prefix, " mod_reduce_new_a")));
+    mod_reduce_new_e.reset(new lastbits_gadget<FieldT>(pb, unreduced_new_e, 32+3, packed_new_e, new_e, libff::FMT(this->annotation_prefix, " mod_reduce_new_e")));
 }
 
 template<typename FieldT>
@@ -215,12 +215,12 @@ void sha256_round_function_gadget<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1,
                                                          packed_h + sigma1 + choice + K + W + sigma0 + majority,
                                                          unreduced_new_a),
-        FMT(this->annotation_prefix, " unreduced_new_a"));
+        libff::FMT(this->annotation_prefix, " unreduced_new_a"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1,
                                                          packed_d + packed_h + sigma1 + choice + K + W,
                                                          unreduced_new_e),
-        FMT(this->annotation_prefix, " unreduced_new_e"));
+        libff::FMT(this->annotation_prefix, " unreduced_new_e"));
 
     mod_reduce_new_a->generate_r1cs_constraints();
     mod_reduce_new_e->generate_r1cs_constraints();

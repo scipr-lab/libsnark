@@ -21,7 +21,7 @@ namespace libsnark {
 class default_tinyram_ppzksnark_pp {
 public:
     typedef default_r1cs_ppzksnark_pp snark_pp;
-    typedef Fr<default_r1cs_ppzksnark_pp> FieldT;
+    typedef libff::Fr<default_r1cs_ppzksnark_pp> FieldT;
     typedef ram_tinyram<FieldT> machine_pp;
 
     static void init_public_params();

@@ -43,7 +43,7 @@ const static size_t MAX_FMT = 256;
     return ::std::string(buf);
 }
 #else // not DEBUG
-::std::string GADGETLIB2_FMT(const char* format, ...) {UNUSED(format); return "";}
+::std::string GADGETLIB2_FMT(const char* format, ...) {libff::UNUSED(format); return "";}
 #endif
 
 /** Safely converts 64-bit types to 32-bit. */
@@ -68,7 +68,7 @@ void ErrorHandling::fatalError(const ::std::string& msg) {
         printStacktrace();
         throw ::std::runtime_error(msg);
 #   else // not DEBUG
-        UNUSED(msg);
+        libff::UNUSED(msg);
         const ::std::string releaseMsg("Fatal error encoutered. Run debug build for more"
                                                                   " information and stack trace.");
         ::std::cerr << "ERROR:  " << releaseMsg << ::std::endl << ::std::endl;
@@ -103,7 +103,7 @@ double Log2( double n )  {
     return log(n) / log((double)2);
 }
 
-/// Returns an upper bound on log2(i). Namely, returns the number of binary digits needed to store
+/// Returns an upper bound on libff::log2(i). Namely, returns the number of binary digits needed to store
 /// the value 'i'. When i == 0 returns 0.
 unsigned int Log2ceil(uint64_t i) {
     int retval = i ? 1 : 0 ;

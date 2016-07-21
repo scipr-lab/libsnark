@@ -180,14 +180,14 @@ public:
 
     r1cs_ppzksnark_processed_verification_key<A_pp> compliance_step_r1cs_pvk;
     r1cs_ppzksnark_processed_verification_key<B_pp> translation_step_r1cs_pvk;
-    bit_vector translation_step_r1cs_vk_bits;
+    libff::bit_vector translation_step_r1cs_vk_bits;
 
     r1cs_sp_ppzkpcd_processed_verification_key() {};
     r1cs_sp_ppzkpcd_processed_verification_key(const r1cs_sp_ppzkpcd_processed_verification_key<PCD_ppT> &other) = default;
     r1cs_sp_ppzkpcd_processed_verification_key(r1cs_sp_ppzkpcd_processed_verification_key<PCD_ppT> &&other) = default;
     r1cs_sp_ppzkpcd_processed_verification_key(r1cs_ppzksnark_processed_verification_key<A_pp> &&compliance_step_r1cs_pvk,
                                                r1cs_ppzksnark_processed_verification_key<B_pp> &&translation_step_r1cs_pvk,
-                                               const bit_vector &translation_step_r1cs_vk_bits) :
+                                               const libff::bit_vector &translation_step_r1cs_vk_bits) :
         compliance_step_r1cs_pvk(std::move(compliance_step_r1cs_pvk)),
         translation_step_r1cs_pvk(std::move(translation_step_r1cs_pvk)),
         translation_step_r1cs_vk_bits(std::move(translation_step_r1cs_vk_bits))

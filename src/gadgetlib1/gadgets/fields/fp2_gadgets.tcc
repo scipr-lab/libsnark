@@ -22,8 +22,8 @@ Fp2_variable<Fp2T>::Fp2_variable(protoboard<FieldT> &pb,
     gadget<FieldT>(pb, annotation_prefix)
 {
     pb_variable<FieldT> c0_var, c1_var;
-    c0_var.allocate(pb, FMT(annotation_prefix, " c0"));
-    c1_var.allocate(pb, FMT(annotation_prefix, " c1"));
+    c0_var.allocate(pb, libff::FMT(annotation_prefix, " c0"));
+    c1_var.allocate(pb, libff::FMT(annotation_prefix, " c1"));
 
     c0 = pb_linear_combination<FieldT>(c0_var);
     c1 = pb_linear_combination<FieldT>(c1_var);
@@ -77,9 +77,9 @@ template<typename Fp2T>
 void Fp2_variable<Fp2T>::generate_r1cs_equals_const_constraints(const Fp2T &el)
 {
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, el.c0, c0),
-                                 FMT(this->annotation_prefix, " c0"));
+                                 libff::FMT(this->annotation_prefix, " c0"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, el.c1, c1),
-                                 FMT(this->annotation_prefix, " c1"));
+                                 libff::FMT(this->annotation_prefix, " c1"));
 }
 
 template<typename Fp2T>
@@ -104,7 +104,7 @@ Fp2_variable<Fp2T> Fp2_variable<Fp2T>::operator*(const FieldT &coeff) const
     pb_linear_combination<FieldT> new_c0, new_c1;
     new_c0.assign(this->pb, this->c0 * coeff);
     new_c1.assign(this->pb, this->c1 * coeff);
-    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, FMT(this->annotation_prefix, " operator*"));
+    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, libff::FMT(this->annotation_prefix, " operator*"));
 }
 
 template<typename Fp2T>
@@ -113,7 +113,7 @@ Fp2_variable<Fp2T> Fp2_variable<Fp2T>::operator+(const Fp2_variable<Fp2T> &other
     pb_linear_combination<FieldT> new_c0, new_c1;
     new_c0.assign(this->pb, this->c0 + other.c0);
     new_c1.assign(this->pb, this->c1 + other.c1);
-    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, FMT(this->annotation_prefix, " operator+"));
+    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, libff::FMT(this->annotation_prefix, " operator+"));
 }
 
 template<typename Fp2T>
@@ -122,7 +122,7 @@ Fp2_variable<Fp2T> Fp2_variable<Fp2T>::operator+(const Fp2T &other) const
     pb_linear_combination<FieldT> new_c0, new_c1;
     new_c0.assign(this->pb, this->c0 + other.c0);
     new_c1.assign(this->pb, this->c1 + other.c1);
-    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, FMT(this->annotation_prefix, " operator+"));
+    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, libff::FMT(this->annotation_prefix, " operator+"));
 }
 
 template<typename Fp2T>
@@ -131,7 +131,7 @@ Fp2_variable<Fp2T> Fp2_variable<Fp2T>::mul_by_X() const
     pb_linear_combination<FieldT> new_c0, new_c1;
     new_c0.assign(this->pb, this->c1 * Fp2T::non_residue);
     new_c1.assign(this->pb, this->c0);
-    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, FMT(this->annotation_prefix, " mul_by_X"));
+    return Fp2_variable<Fp2T>(this->pb, new_c0, new_c1, libff::FMT(this->annotation_prefix, " mul_by_X"));
 }
 
 template<typename Fp2T>
@@ -167,7 +167,7 @@ Fp2_mul_gadget<Fp2T>::Fp2_mul_gadget(protoboard<FieldT> &pb,
                                      const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), A(A), B(B), result(result)
 {
-    v1.allocate(pb, FMT(annotation_prefix, " v1"));
+    v1.allocate(pb, libff::FMT(annotation_prefix, " v1"));
 }
 
 template<typename Fp2T>
@@ -190,12 +190,12 @@ void Fp2_mul_gadget<Fp2T>::generate_r1cs_constraints()
         Devegili, OhEigeartaigh, Scott, Dahab
 */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c1, B.c1, v1),
-                                 FMT(this->annotation_prefix, " v1"));
+                                 libff::FMT(this->annotation_prefix, " v1"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0, B.c0, result.c0 + v1 * (-Fp2T::non_residue)),
-                                 FMT(this->annotation_prefix, " result.c0"));
+                                 libff::FMT(this->annotation_prefix, " result.c0"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0 + A.c1, B.c0 + B.c1,
                                                          result.c1 + result.c0 + v1 * (FieldT::one() - Fp2T::non_residue)),
-                                 FMT(this->annotation_prefix, " result.c1"));
+                                 libff::FMT(this->annotation_prefix, " result.c1"));
 }
 
 template<typename Fp2T>
@@ -221,9 +221,9 @@ template<typename Fp2T>
 void Fp2_mul_by_lc_gadget<Fp2T>::generate_r1cs_constraints()
 {
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0, lc, result.c0),
-                                 FMT(this->annotation_prefix, " result.c0"));
+                                 libff::FMT(this->annotation_prefix, " result.c0"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c1, lc, result.c1),
-                                 FMT(this->annotation_prefix, " result.c1"));
+                                 libff::FMT(this->annotation_prefix, " result.c1"));
 }
 
 template<typename Fp2T>
@@ -260,11 +260,11 @@ void Fp2_sqr_gadget<Fp2T>::generate_r1cs_constraints()
         Devegili, OhEigeartaigh, Scott, Dahab
 */
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(2 * A.c0, A.c1, result.c1),
-                                 FMT(this->annotation_prefix, " result.c1"));
+                                 libff::FMT(this->annotation_prefix, " result.c1"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0 + A.c1,
                                                          A.c0 + Fp2T::non_residue * A.c1,
                                                          result.c0 + result.c1 * (FieldT::one() + Fp2T::non_residue) * FieldT(2).inverse()),
-                                 FMT(this->annotation_prefix, " result.c0"));
+                                 libff::FMT(this->annotation_prefix, " result.c0"));
 }
 
 template<typename Fp2T>

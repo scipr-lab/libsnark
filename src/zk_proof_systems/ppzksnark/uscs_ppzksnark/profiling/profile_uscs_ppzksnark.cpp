@@ -37,7 +37,7 @@ using namespace libsnark;
 int main(int argc, const char * argv[])
 {
     default_uscs_ppzksnark_pp::init_public_params();
-    start_profiling();
+    libff::start_profiling();
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
@@ -54,12 +54,12 @@ int main(int argc, const char * argv[])
     const int num_constraints = atoi(argv[1]);
     const int input_size = atoi(argv[2]);
 
-    enter_block("Generate USCS example");
-    uscs_example<Fr<default_uscs_ppzksnark_pp> > example = generate_uscs_example_with_field_input<Fr<default_uscs_ppzksnark_pp> >(num_constraints, input_size);
-    leave_block("Generate USCS example");
+    libff::enter_block("Generate USCS example");
+    uscs_example<libff::Fr<default_uscs_ppzksnark_pp> > example = generate_uscs_example_with_field_input<libff::Fr<default_uscs_ppzksnark_pp> >(num_constraints, input_size);
+    libff::leave_block("Generate USCS example");
 
-    print_header("(enter) Profile USCS ppzkSNARK");
+    libff::print_header("(enter) Profile USCS ppzkSNARK");
     const bool test_serialization = true;
     run_uscs_ppzksnark<default_uscs_ppzksnark_pp>(example, test_serialization);
-    print_header("(leave) Profile USCS ppzkSNARK");
+    libff::print_header("(leave) Profile USCS ppzkSNARK");
 }

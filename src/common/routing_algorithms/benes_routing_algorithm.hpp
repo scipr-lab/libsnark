@@ -56,7 +56,7 @@ typedef std::vector<std::vector<std::pair<size_t, size_t> > > benes_topology;
  * That is, we have one switch per packet, but switch settings are not
  * independent.
  */
-typedef std::vector<bit_vector> benes_routing;
+typedef std::vector<libff::bit_vector> benes_routing;
 
 /**
  * Return the number of (switch) columns in a Benes network for a given number of packets.

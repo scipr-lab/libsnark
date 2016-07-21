@@ -25,7 +25,7 @@ template<typename FieldT>
 r1cs_example<FieldT> generate_r1cs_example_with_field_input(const size_t num_constraints,
                                                             const size_t num_inputs)
 {
-    enter_block("Call to generate_r1cs_example_with_field_input");
+    libff::enter_block("Call to generate_r1cs_example_with_field_input");
 
     assert(num_inputs <= num_constraints + 2);
 
@@ -91,7 +91,7 @@ r1cs_example<FieldT> generate_r1cs_example_with_field_input(const size_t num_con
     assert(cs.num_constraints() == num_constraints);
     assert(cs.is_satisfied(primary_input, auxiliary_input));
 
-    leave_block("Call to generate_r1cs_example_with_field_input");
+    libff::leave_block("Call to generate_r1cs_example_with_field_input");
 
     return r1cs_example<FieldT>(std::move(cs), std::move(primary_input), std::move(auxiliary_input));
 }
@@ -100,7 +100,7 @@ template<typename FieldT>
 r1cs_example<FieldT> generate_r1cs_example_with_binary_input(const size_t num_constraints,
                                                              const size_t num_inputs)
 {
-    enter_block("Call to generate_r1cs_example_with_binary_input");
+    libff::enter_block("Call to generate_r1cs_example_with_binary_input");
 
     assert(num_inputs >= 1);
 
@@ -154,7 +154,7 @@ r1cs_example<FieldT> generate_r1cs_example_with_binary_input(const size_t num_co
     assert(cs.num_constraints() == num_constraints);
     assert(cs.is_satisfied(primary_input, auxiliary_input));
 
-    leave_block("Call to generate_r1cs_example_with_binary_input");
+    libff::leave_block("Call to generate_r1cs_example_with_binary_input");
 
     return r1cs_example<FieldT>(std::move(cs), std::move(primary_input), std::move(auxiliary_input));
 }

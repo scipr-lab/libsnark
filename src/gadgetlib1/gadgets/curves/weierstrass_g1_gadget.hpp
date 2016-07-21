@@ -24,9 +24,9 @@ namespace libsnark {
  * Gadget that represents a G1 variable.
  */
 template<typename ppT>
-class G1_variable : public gadget<Fr<ppT> > {
+class G1_variable : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     pb_linear_combination<FieldT> X;
     pb_linear_combination<FieldT> Y;
@@ -36,10 +36,10 @@ public:
     G1_variable(protoboard<FieldT> &pb,
                 const std::string &annotation_prefix);
     G1_variable(protoboard<FieldT> &pb,
-                const G1<other_curve<ppT> > &P,
+                const libff::G1<other_curve<ppT> > &P,
                 const std::string &annotation_prefix);
 
-    void generate_r1cs_witness(const G1<other_curve<ppT> > &elt);
+    void generate_r1cs_witness(const libff::G1<other_curve<ppT> > &elt);
 
     // (See a comment in r1cs_ppzksnark_verifier_gadget.hpp about why
     // we mark this function noinline.) TODO: remove later
@@ -51,9 +51,9 @@ public:
  * Gadget that creates constraints for the validity of a G1 variable.
  */
 template<typename ppT>
-class G1_checker_gadget : public gadget<Fr<ppT> > {
+class G1_checker_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     G1_variable<ppT> P;
     pb_variable<FieldT> P_X_squared;
@@ -70,9 +70,9 @@ public:
  * Gadget that creates constraints for G1 addition.
  */
 template<typename ppT>
-class G1_add_gadget : public gadget<Fr<ppT> > {
+class G1_add_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     pb_variable<FieldT> lambda;
     pb_variable<FieldT> inv;
@@ -94,9 +94,9 @@ public:
  * Gadget that creates constraints for G1 doubling.
  */
 template<typename ppT>
-class G1_dbl_gadget : public gadget<Fr<ppT> > {
+class G1_dbl_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     pb_variable<FieldT> Xsquared;
     pb_variable<FieldT> lambda;
@@ -116,9 +116,9 @@ public:
  * Gadget that creates constraints for G1 multi-scalar multiplication.
  */
 template<typename ppT>
-class G1_multiscalar_mul_gadget : public gadget<Fr<ppT> > {
+class G1_multiscalar_mul_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     std::vector<G1_variable<ppT> > computed_results;
     std::vector<G1_variable<ppT> > chosen_results;

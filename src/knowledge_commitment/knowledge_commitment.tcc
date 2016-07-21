@@ -63,14 +63,14 @@ bool knowledge_commitment<T1,T2>::operator!=(const knowledge_commitment<T1,T2> &
 }
 
 template<typename T1, typename T2, mp_size_t m>
-knowledge_commitment<T1,T2> operator*(const bigint<m> &lhs, const knowledge_commitment<T1,T2> &rhs)
+knowledge_commitment<T1,T2> operator*(const libff::bigint<m> &lhs, const knowledge_commitment<T1,T2> &rhs)
 {
     return knowledge_commitment<T1,T2>(lhs * rhs.g,
                                        lhs * rhs.h);
 }
 
-template<typename T1, typename T2, mp_size_t m, const bigint<m> &modulus_p>
-knowledge_commitment<T1,T2> operator*(const Fp_model<m, modulus_p> &lhs, const knowledge_commitment<T1,T2> &rhs)
+template<typename T1, typename T2, mp_size_t m, const libff::bigint<m> &modulus_p>
+knowledge_commitment<T1,T2> operator*(const libff::Fp_model<m, modulus_p> &lhs, const knowledge_commitment<T1,T2> &rhs)
 {
     return (lhs.as_bigint()) * rhs;
 }
@@ -101,7 +101,7 @@ template<typename T1,typename T2>
 std::istream& operator>>(std::istream& in, knowledge_commitment<T1,T2> &kc)
 {
     in >> kc.g;
-    consume_OUTPUT_SEPARATOR(in);
+    libff::consume_OUTPUT_SEPARATOR(in);
     in >> kc.h;
     return in;
 }

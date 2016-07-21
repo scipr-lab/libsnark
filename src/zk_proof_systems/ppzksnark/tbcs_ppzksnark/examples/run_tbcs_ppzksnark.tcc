@@ -39,45 +39,45 @@ template<typename ppT>
 bool run_tbcs_ppzksnark(const tbcs_example &example,
                         const bool test_serialization)
 {
-    enter_block("Call to run_tbcs_ppzksnark");
+    libff::enter_block("Call to run_tbcs_ppzksnark");
 
-    print_header("TBCS ppzkSNARK Generator");
+    libff::print_header("TBCS ppzkSNARK Generator");
     tbcs_ppzksnark_keypair<ppT> keypair = tbcs_ppzksnark_generator<ppT>(example.circuit);
-    printf("\n"); print_indent(); print_mem("after generator");
+    printf("\n"); libff::print_indent(); libff::print_mem("after generator");
 
-    print_header("Preprocess verification key");
+    libff::print_header("Preprocess verification key");
     tbcs_ppzksnark_processed_verification_key<ppT> pvk = tbcs_ppzksnark_verifier_process_vk<ppT>(keypair.vk);
 
     if (test_serialization)
     {
-        enter_block("Test serialization of keys");
-        keypair.pk = reserialize<tbcs_ppzksnark_proving_key<ppT> >(keypair.pk);
-        keypair.vk = reserialize<tbcs_ppzksnark_verification_key<ppT> >(keypair.vk);
-        pvk = reserialize<tbcs_ppzksnark_processed_verification_key<ppT> >(pvk);
-        leave_block("Test serialization of keys");
+        libff::enter_block("Test serialization of keys");
+        keypair.pk = libff::reserialize<tbcs_ppzksnark_proving_key<ppT> >(keypair.pk);
+        keypair.vk = libff::reserialize<tbcs_ppzksnark_verification_key<ppT> >(keypair.vk);
+        pvk = libff::reserialize<tbcs_ppzksnark_processed_verification_key<ppT> >(pvk);
+        libff::leave_block("Test serialization of keys");
     }
 
-    print_header("TBCS ppzkSNARK Prover");
+    libff::print_header("TBCS ppzkSNARK Prover");
     tbcs_ppzksnark_proof<ppT> proof = tbcs_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
-    printf("\n"); print_indent(); print_mem("after prover");
+    printf("\n"); libff::print_indent(); libff::print_mem("after prover");
 
     if (test_serialization)
     {
-        enter_block("Test serialization of proof");
-        proof = reserialize<tbcs_ppzksnark_proof<ppT> >(proof);
-        leave_block("Test serialization of proof");
+        libff::enter_block("Test serialization of proof");
+        proof = libff::reserialize<tbcs_ppzksnark_proof<ppT> >(proof);
+        libff::leave_block("Test serialization of proof");
     }
 
-    print_header("TBCS ppzkSNARK Verifier");
+    libff::print_header("TBCS ppzkSNARK Verifier");
     bool ans = tbcs_ppzksnark_verifier_strong_IC<ppT>(keypair.vk, example.primary_input, proof);
-    printf("\n"); print_indent(); print_mem("after verifier");
+    printf("\n"); libff::print_indent(); libff::print_mem("after verifier");
     printf("* The verification result is: %s\n", (ans ? "PASS" : "FAIL"));
 
-    print_header("TBCS ppzkSNARK Online Verifier");
+    libff::print_header("TBCS ppzkSNARK Online Verifier");
     bool ans2 = tbcs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, example.primary_input, proof);
     assert(ans == ans2);
 
-    leave_block("Call to run_tbcs_ppzksnark");
+    libff::leave_block("Call to run_tbcs_ppzksnark");
 
     return ans;
 }

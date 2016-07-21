@@ -13,7 +13,7 @@
 
 namespace libsnark {
 
-r1cs_example<Fr<default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size);
+r1cs_example<libff::Fr<libff::default_ec_pp> > gen_r1cs_example_from_gadgetlib2_protoboard(const size_t size);
 
 } // libsnark
 

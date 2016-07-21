@@ -58,10 +58,10 @@ struct knowledge_commitment {
 };
 
 template<typename T1, typename T2, mp_size_t m>
-knowledge_commitment<T1,T2> operator*(const bigint<m> &lhs, const knowledge_commitment<T1,T2> &rhs);
+knowledge_commitment<T1,T2> operator*(const libff::bigint<m> &lhs, const knowledge_commitment<T1,T2> &rhs);
 
-template<typename T1, typename T2, mp_size_t m, const bigint<m> &modulus_p>
-knowledge_commitment<T1,T2> operator*(const Fp_model<m, modulus_p> &lhs, const knowledge_commitment<T1,T2> &rhs);
+template<typename T1, typename T2, mp_size_t m, const libff::bigint<m> &modulus_p>
+knowledge_commitment<T1,T2> operator*(const libff::Fp_model<m, modulus_p> &lhs, const knowledge_commitment<T1,T2> &rhs);
 
 template<typename T1,typename T2>
 std::ostream& operator<<(std::ostream& out, const knowledge_commitment<T1,T2> &kc);
@@ -79,6 +79,6 @@ using knowledge_commitment_vector = sparse_vector<knowledge_commitment<T1, T2> >
 
 } // libsnark
 
-#include "algebra/knowledge_commitment/knowledge_commitment.tcc"
+#include "knowledge_commitment/knowledge_commitment.tcc"
 
 #endif // KNOWLEDGE_COMMITMENT_HPP_

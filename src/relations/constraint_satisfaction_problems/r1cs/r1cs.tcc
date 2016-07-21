@@ -180,10 +180,10 @@ void r1cs_constraint_system<FieldT>::add_constraint(const r1cs_constraint<FieldT
 template<typename FieldT>
 void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
 {
-    enter_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
+    libff::enter_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
 
-    enter_block("Estimate densities");
-    bit_vector touched_by_A(this->num_variables() + 1, false), touched_by_B(this->num_variables() + 1, false);
+    libff::enter_block("Estimate densities");
+    libff::bit_vector touched_by_A(this->num_variables() + 1, false), touched_by_B(this->num_variables() + 1, false);
 
     for (size_t i = 0; i < this->constraints.size(); ++i)
     {
@@ -205,28 +205,28 @@ void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
         non_zero_B_count += touched_by_B[i] ? 1 : 0;
     }
 
-    if (!inhibit_profiling_info)
+    if (!libff::inhibit_profiling_info)
     {
-        print_indent(); printf("* Non-zero A-count (estimate): %zu\n", non_zero_A_count);
-        print_indent(); printf("* Non-zero B-count (estimate): %zu\n", non_zero_B_count);
+        libff::print_indent(); printf("* Non-zero A-count (estimate): %zu\n", non_zero_A_count);
+        libff::print_indent(); printf("* Non-zero B-count (estimate): %zu\n", non_zero_B_count);
     }
-    leave_block("Estimate densities");
+    libff::leave_block("Estimate densities");
 
     if (non_zero_B_count > non_zero_A_count)
     {
-        enter_block("Perform the swap");
+        libff::enter_block("Perform the swap");
         for (size_t i = 0; i < this->constraints.size(); ++i)
         {
             std::swap(this->constraints[i].a, this->constraints[i].b);
         }
-        leave_block("Perform the swap");
+        libff::leave_block("Perform the swap");
     }
     else
     {
-        print_indent(); printf("Swap is not beneficial, not performing\n");
+        libff::print_indent(); printf("Swap is not beneficial, not performing\n");
     }
 
-    leave_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
+    libff::leave_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
 }
 
 template<typename FieldT>
@@ -300,7 +300,7 @@ void r1cs_constraint_system<FieldT>::report_linear_constraint_statistics() const
         if (a_is_const || b_is_const)
         {
             auto it = constraint_annotations.find(i);
-            printf("%s\n", (it == constraint_annotations.end() ? FORMAT("", "constraint_%zu", i) : it->second).c_str());
+            printf("%s\n", (it == constraint_annotations.end() ? libff::FMT("", "constraint_%zu", i) : it->second).c_str());
         }
     }
 #endif

@@ -31,7 +31,7 @@ namespace libsnark {
  * obtain the authentication paths for (the value at) a given address.
  */
 
-typedef bit_vector merkle_authentication_node;
+typedef libff::bit_vector merkle_authentication_node;
 typedef std::vector<merkle_authentication_node> merkle_authentication_path;
 
 template<typename HashT>
@@ -44,7 +44,7 @@ private:
 public:
 
     std::vector<hash_value_type> hash_defaults;
-    std::map<size_t, bit_vector> values;
+    std::map<size_t, libff::bit_vector> values;
     std::map<size_t, hash_value_type> hashes;
 
     size_t depth;
@@ -52,11 +52,11 @@ public:
     size_t digest_size;
 
     merkle_tree(const size_t depth, const size_t value_size);
-    merkle_tree(const size_t depth, const size_t value_size, const std::vector<bit_vector> &contents_as_vector);
-    merkle_tree(const size_t depth, const size_t value_size, const std::map<size_t, bit_vector> &contents);
+    merkle_tree(const size_t depth, const size_t value_size, const std::vector<libff::bit_vector> &contents_as_vector);
+    merkle_tree(const size_t depth, const size_t value_size, const std::map<size_t, libff::bit_vector> &contents);
 
-    bit_vector get_value(const size_t address) const;
-    void set_value(const size_t address, const bit_vector &value);
+    libff::bit_vector get_value(const size_t address) const;
+    void set_value(const size_t address, const libff::bit_vector &value);
 
     hash_value_type get_root() const;
     merkle_authentication_path_type get_path(const size_t address) const;

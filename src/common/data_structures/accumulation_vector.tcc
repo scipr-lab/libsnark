@@ -72,9 +72,9 @@ template<typename T>
 std::istream& operator>>(std::istream& in, accumulation_vector<T> &v)
 {
     in >> v.first;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> v.rest;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
 
     return in;
 }

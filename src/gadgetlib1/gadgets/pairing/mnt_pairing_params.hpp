@@ -2,8 +2,8 @@
  *****************************************************************************
 
  Declaration of specializations of pairing_selector<ppT> to
- - pairing_selector<mnt4_pp>, and
- - pairing_selector<mnt6_pp>.
+ - pairing_selector<libff::mnt4_pp>, and
+ - pairing_selector<libff::mnt6_pp>.
 
  See pairing_params.hpp .
 
@@ -42,11 +42,11 @@ class mnt6_final_exp_gadget;
  * Specialization for MNT4.
  */
 template<>
-class pairing_selector<mnt4_pp> {
+class pairing_selector<libff::mnt4_pp> {
 public:
-    typedef Fr<mnt4_pp> FieldT;
-    typedef Fqe<mnt6_pp> FqeT;
-    typedef Fqk<mnt6_pp> FqkT;
+    typedef libff::Fr<libff::mnt4_pp> FieldT;
+    typedef libff::Fqe<libff::mnt6_pp> FqeT;
+    typedef libff::Fqk<libff::mnt6_pp> FqkT;
 
     typedef Fp3_variable<FqeT> Fqe_variable_type;
     typedef Fp3_mul_gadget<FqeT> Fqe_mul_gadget_type;
@@ -58,25 +58,25 @@ public:
     typedef Fp6_mul_by_2345_gadget<FqkT> Fqk_special_mul_gadget_type;
     typedef Fp6_sqr_gadget<FqkT> Fqk_sqr_gadget_type;
 
-    typedef mnt6_pp other_curve_type;
+    typedef libff::mnt6_pp other_curve_type;
 
-    typedef mnt_e_over_e_miller_loop_gadget<mnt4_pp> e_over_e_miller_loop_gadget_type;
-    typedef mnt_e_times_e_over_e_miller_loop_gadget<mnt4_pp> e_times_e_over_e_miller_loop_gadget_type;
-    typedef mnt4_final_exp_gadget<mnt4_pp> final_exp_gadget_type;
+    typedef mnt_e_over_e_miller_loop_gadget<libff::mnt4_pp> e_over_e_miller_loop_gadget_type;
+    typedef mnt_e_times_e_over_e_miller_loop_gadget<libff::mnt4_pp> e_times_e_over_e_miller_loop_gadget_type;
+    typedef mnt4_final_exp_gadget<libff::mnt4_pp> final_exp_gadget_type;
 
-    static const constexpr bigint<mnt6_Fr::num_limbs> &pairing_loop_count = mnt6_ate_loop_count;
+    static const constexpr libff::bigint<libff::mnt6_Fr::num_limbs> &pairing_loop_count = libff::mnt6_ate_loop_count;
 };
 
 /**
  * Specialization for MNT6.
  */
 template<>
-class pairing_selector<mnt6_pp> {
+class pairing_selector<libff::mnt6_pp> {
 public:
-    typedef Fr<mnt6_pp> FieldT;
+    typedef libff::Fr<libff::mnt6_pp> FieldT;
 
-    typedef Fqe<mnt4_pp> FqeT;
-    typedef Fqk<mnt4_pp> FqkT;
+    typedef libff::Fqe<libff::mnt4_pp> FqeT;
+    typedef libff::Fqk<libff::mnt4_pp> FqkT;
 
     typedef Fp2_variable<FqeT> Fqe_variable_type;
     typedef Fp2_mul_gadget<FqeT> Fqe_mul_gadget_type;
@@ -88,13 +88,13 @@ public:
     typedef Fp4_mul_gadget<FqkT> Fqk_special_mul_gadget_type;
     typedef Fp4_sqr_gadget<FqkT> Fqk_sqr_gadget_type;
 
-    typedef mnt4_pp other_curve_type;
+    typedef libff::mnt4_pp other_curve_type;
 
-    typedef mnt_e_over_e_miller_loop_gadget<mnt6_pp> e_over_e_miller_loop_gadget_type;
-    typedef mnt_e_times_e_over_e_miller_loop_gadget<mnt6_pp> e_times_e_over_e_miller_loop_gadget_type;
-    typedef mnt6_final_exp_gadget<mnt6_pp> final_exp_gadget_type;
+    typedef mnt_e_over_e_miller_loop_gadget<libff::mnt6_pp> e_over_e_miller_loop_gadget_type;
+    typedef mnt_e_times_e_over_e_miller_loop_gadget<libff::mnt6_pp> e_times_e_over_e_miller_loop_gadget_type;
+    typedef mnt6_final_exp_gadget<libff::mnt6_pp> final_exp_gadget_type;
 
-    static const constexpr bigint<mnt4_Fr::num_limbs> &pairing_loop_count = mnt4_ate_loop_count;
+    static const constexpr libff::bigint<libff::mnt4_Fr::num_limbs> &pairing_loop_count = libff::mnt4_ate_loop_count;
 };
 
 } // libsnark

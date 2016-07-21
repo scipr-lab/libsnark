@@ -121,12 +121,12 @@ public:
                          const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix)
     {
-        packed.allocate(pb, FMT(this->annotation_prefix, " packed"));
-        bits.allocate(pb, width, FMT(this->annotation_prefix, " bits"));
+        packed.allocate(pb, libff::FMT(this->annotation_prefix, " packed"));
+        bits.allocate(pb, width, libff::FMT(this->annotation_prefix, " bits"));
         consistency_check.reset(new packing_gadget<FieldT>(pb,
                                                            bits,
                                                            packed,
-                                                           FMT(this->annotation_prefix, " consistency_check")));
+                                                           libff::FMT(this->annotation_prefix, " consistency_check")));
     }
 
     dual_variable_gadget(protoboard<FieldT> &pb,
@@ -134,11 +134,11 @@ public:
                          const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), bits(bits)
     {
-        packed.allocate(pb, FMT(this->annotation_prefix, " packed"));
+        packed.allocate(pb, libff::FMT(this->annotation_prefix, " packed"));
         consistency_check.reset(new packing_gadget<FieldT>(pb,
                                                            bits,
                                                            packed,
-                                                           FMT(this->annotation_prefix, " consistency_check")));
+                                                           libff::FMT(this->annotation_prefix, " consistency_check")));
     }
 
     dual_variable_gadget(protoboard<FieldT> &pb,
@@ -147,11 +147,11 @@ public:
                          const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), packed(packed)
     {
-        bits.allocate(pb, width, FMT(this->annotation_prefix, " bits"));
+        bits.allocate(pb, width, libff::FMT(this->annotation_prefix, " bits"));
         consistency_check.reset(new packing_gadget<FieldT>(pb,
                                                            bits,
                                                            packed,
-                                                           FMT(this->annotation_prefix, " consistency_check")));
+                                                           libff::FMT(this->annotation_prefix, " consistency_check")));
     }
 
     void generate_r1cs_constraints(const bool enforce_bitness);
@@ -183,7 +183,7 @@ public:
         gadget<FieldT>(pb, annotation_prefix), inputs(inputs), output(output)
     {
         assert(inputs.size() >= 1);
-        inv.allocate(pb, FMT(this->annotation_prefix, " inv"));
+        inv.allocate(pb, libff::FMT(this->annotation_prefix, " inv"));
     }
 
     void generate_r1cs_constraints();
@@ -208,7 +208,7 @@ public:
         gadget<FieldT>(pb, annotation_prefix), inputs(inputs), output(output)
     {
         assert(inputs.size() >= 1);
-        inv.allocate(pb, FMT(this->annotation_prefix, " inv"));
+        inv.allocate(pb, libff::FMT(this->annotation_prefix, " inv"));
     }
 
     void generate_r1cs_constraints();
@@ -243,19 +243,19 @@ public:
                       const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), n(n), A(A), B(B), less(less), less_or_eq(less_or_eq)
     {
-        alpha.allocate(pb, n, FMT(this->annotation_prefix, " alpha"));
+        alpha.allocate(pb, n, libff::FMT(this->annotation_prefix, " alpha"));
         alpha.emplace_back(less_or_eq); // alpha[n] is less_or_eq
 
-        alpha_packed.allocate(pb, FMT(this->annotation_prefix, " alpha_packed"));
-        not_all_zeros.allocate(pb, FMT(this->annotation_prefix, " not_all_zeros"));
+        alpha_packed.allocate(pb, libff::FMT(this->annotation_prefix, " alpha_packed"));
+        not_all_zeros.allocate(pb, libff::FMT(this->annotation_prefix, " not_all_zeros"));
 
         pack_alpha.reset(new packing_gadget<FieldT>(pb, alpha, alpha_packed,
-                                                    FMT(this->annotation_prefix, " pack_alpha")));
+                                                    libff::FMT(this->annotation_prefix, " pack_alpha")));
 
         all_zeros_test.reset(new disjunction_gadget<FieldT>(pb,
                                                             pb_variable_array<FieldT>(alpha.begin(), alpha.begin() + n),
                                                             not_all_zeros,
-                                                            FMT(this->annotation_prefix, " all_zeros_test")));
+                                                            libff::FMT(this->annotation_prefix, " all_zeros_test")));
     };
 
     void generate_r1cs_constraints();
@@ -285,7 +285,7 @@ public:
         assert(A.size() >= 1);
         assert(A.size() == B.size());
 
-        S.allocate(pb, A.size()-1, FMT(this->annotation_prefix, " S"));
+        S.allocate(pb, A.size()-1, libff::FMT(this->annotation_prefix, " S"));
     }
 
     void generate_r1cs_constraints();
@@ -321,8 +321,8 @@ public:
                               const std::string &annotation_prefix="") :
         gadget<FieldT>(pb, annotation_prefix), arr(arr), index(index), result(result), success_flag(success_flag)
     {
-        alpha.allocate(pb, arr.size(), FMT(this->annotation_prefix, " alpha"));
-        compute_result.reset(new inner_product_gadget<FieldT>(pb, alpha, arr, result, FMT(this->annotation_prefix, " compute_result")));
+        alpha.allocate(pb, arr.size(), libff::FMT(this->annotation_prefix, " alpha"));
+        compute_result.reset(new inner_product_gadget<FieldT>(pb, alpha, arr, result, libff::FMT(this->annotation_prefix, " compute_result")));
     };
 
     void generate_r1cs_constraints();

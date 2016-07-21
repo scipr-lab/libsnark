@@ -82,7 +82,7 @@ public:
 
     static size_t get_digest_len();
     static size_t get_block_len(); /* return 0 as block length, as the hash function is variable-input */
-    static std::vector<FieldT> get_hash(const bit_vector &input);
+    static std::vector<FieldT> get_hash(const libff::bit_vector &input);
     static void sample_randomness(const size_t input_len);
 
     /* for debugging */
@@ -94,7 +94,7 @@ public:
 template<typename FieldT>
 class knapsack_CRH_with_bit_out_gadget : public gadget<FieldT> {
 public:
-    typedef bit_vector hash_value_type;
+    typedef libff::bit_vector hash_value_type;
     typedef merkle_authentication_path merkle_authentication_path_type;
 
     size_t input_len;
@@ -117,7 +117,7 @@ public:
 
     static size_t get_digest_len();
     static size_t get_block_len(); /* return 0 as block length, as the hash function is variable-input */
-    static hash_value_type get_hash(const bit_vector &input);
+    static hash_value_type get_hash(const libff::bit_vector &input);
     static void sample_randomness(const size_t input_len);
 
     /* for debugging */

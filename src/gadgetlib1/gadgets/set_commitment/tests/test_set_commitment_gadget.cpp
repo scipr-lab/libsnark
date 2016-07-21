@@ -19,26 +19,26 @@ using namespace libsnark;
 template<typename ppT>
 void test_all_set_commitment_gadgets()
 {
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
     test_set_commitment_gadget<FieldT, CRH_with_bit_out_gadget<FieldT> >();
     test_set_commitment_gadget<FieldT, sha256_two_to_one_hash_gadget<FieldT> >();
 }
 
 int main(void)
 {
-    start_profiling();
+    libff::start_profiling();
 
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
-    bn128_pp::init_public_params();
-    test_all_set_commitment_gadgets<bn128_pp>();
+    libff::bn128_pp::init_public_params();
+    test_all_set_commitment_gadgets<libff::bn128_pp>();
 #endif
 
-    edwards_pp::init_public_params();
-    test_all_set_commitment_gadgets<edwards_pp>();
+    libff::edwards_pp::init_public_params();
+    test_all_set_commitment_gadgets<libff::edwards_pp>();
 
-    mnt4_pp::init_public_params();
-    test_all_set_commitment_gadgets<mnt4_pp>();
+    libff::mnt4_pp::init_public_params();
+    test_all_set_commitment_gadgets<libff::mnt4_pp>();
 
-    mnt6_pp::init_public_params();
-    test_all_set_commitment_gadgets<mnt6_pp>();
+    libff::mnt6_pp::init_public_params();
+    test_all_set_commitment_gadgets<libff::mnt6_pp>();
 }

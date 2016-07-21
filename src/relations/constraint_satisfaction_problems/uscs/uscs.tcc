@@ -111,7 +111,7 @@ void uscs_constraint_system<FieldT>::add_constraint(const uscs_constraint<FieldT
 #ifdef DEBUG
     constraint_annotations[constraints.size()] = annotation;
 #else
-    UNUSED(annotation);
+    libff::UNUSED(annotation);
 #endif
     constraints.emplace_back(c);
 }
@@ -181,7 +181,7 @@ void uscs_constraint_system<FieldT>::report_linear_constraint_statistics() const
         if (a_is_const)
         {
             auto it = constraint_annotations.find(i);
-            printf("%s\n", (it == constraint_annotations.end() ? FORMAT("", "constraint_%zu", i) : it->second).c_str());
+            printf("%s\n", (it == constraint_annotations.end() ? libff::FMT("", "constraint_%zu", i) : it->second).c_str());
         }
     }
 #endif

@@ -194,7 +194,7 @@ public:
     /// @return a unique_ptr to a new copy of the element's multiplicative inverse
     virtual FElemInterfacePtr inverse() const;
     long asLong() const {return contents_;}
-    int getBit(unsigned int i) const { UNUSED(i); GADGETLIB_FATAL("Cannot get bit from FConst."); }
+    int getBit(unsigned int i) const { libff::UNUSED(i); GADGETLIB_FATAL("Cannot get bit from FConst."); }
     virtual FElemInterface& power(long exponent);
 
     friend class FElem; // allow constructor call

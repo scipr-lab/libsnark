@@ -39,7 +39,7 @@ template<typename ramT>
 using ram_base_field = typename ramT::base_field_type;
 
 template<typename ramT>
-using ram_cpu_state = bit_vector;
+using ram_cpu_state = libff::bit_vector;
 
 template<typename ramT>
 using ram_boot_trace = memory_store_trace;
@@ -71,7 +71,7 @@ using ram_input_tape = std::vector<size_t>;
   size_t value_size();
   size_t cpu_state_size();
   size_t initial_pc_addr();
-  bit_vector initial_cpu_state();
+  libff::bit_vector initial_cpu_state();
 */
 
 } // libsnark

@@ -45,7 +45,7 @@ References:
 
 #include "algebra/curves/public_params.hpp"
 #include "common/data_structures/accumulation_vector.hpp"
-#include "algebra/knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_params.hpp"
 
@@ -68,13 +68,13 @@ std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_proving_key<ppT> &p
 template<typename ppT>
 class r1cs_gg_ppzksnark_proving_key {
 public:
-    G1<ppT> delta_g1;
-    G2<ppT> delta_g2;
+    libff::G1<ppT> delta_g1;
+    libff::G2<ppT> delta_g2;
 
-    G1_vector<ppT> A_query; // this could be a sparse vector if we had multiexp for those
-    knowledge_commitment_vector<G2<ppT>, G1<ppT> > B_query;
-    G1_vector<ppT> H_query;
-    G1_vector<ppT> L_query;
+    libff::G1_vector<ppT> A_query; // this could be a sparse vector if we had multiexp for those
+    knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query;
+    libff::G1_vector<ppT> H_query;
+    libff::G1_vector<ppT> L_query;
 
     r1cs_gg_ppzksnark_constraint_system<ppT> constraint_system;
 
@@ -82,12 +82,12 @@ public:
     r1cs_gg_ppzksnark_proving_key<ppT>& operator=(const r1cs_gg_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_gg_ppzksnark_proving_key(const r1cs_gg_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_gg_ppzksnark_proving_key(r1cs_gg_ppzksnark_proving_key<ppT> &&other) = default;
-    r1cs_gg_ppzksnark_proving_key(G1<ppT> &&delta_g1,
-                                  G2<ppT> &&delta_g2,
-                                  G1_vector<ppT> &&A_query,
-                                  knowledge_commitment_vector<G2<ppT>, G1<ppT> > &&B_query,
-                                  G1_vector<ppT> &&H_query,
-                                  G1_vector<ppT> &&L_query,
+    r1cs_gg_ppzksnark_proving_key(libff::G1<ppT> &&delta_g1,
+                                  libff::G2<ppT> &&delta_g2,
+                                  libff::G1_vector<ppT> &&A_query,
+                                  knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
+                                  libff::G1_vector<ppT> &&H_query,
+                                  libff::G1_vector<ppT> &&L_query,
                                   r1cs_gg_ppzksnark_constraint_system<ppT> &&constraint_system) :
         delta_g1(std::move(delta_g1)),
         delta_g2(std::move(delta_g2)),
@@ -120,18 +120,18 @@ public:
 
     size_t size_in_bits() const
     {
-        return (libsnark::size_in_bits(A_query) + B_query.size_in_bits() +
-                libsnark::size_in_bits(H_query) + libsnark::size_in_bits(L_query) +
-                1 * G1<ppT>::size_in_bits() + 1 * G2<ppT>::size_in_bits());
+        return (libff::size_in_bits(A_query) + B_query.size_in_bits() +
+                libff::size_in_bits(H_query) + libff::size_in_bits(L_query) +
+                1 * libff::G1<ppT>::size_in_bits() + 1 * libff::G2<ppT>::size_in_bits());
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in PK: %zu\n", this->G1_size());
-        print_indent(); printf("* Non-zero G1 elements in PK: %zu\n", this->G1_sparse_size());
-        print_indent(); printf("* G2 elements in PK: %zu\n", this->G2_size());
-        print_indent(); printf("* Non-zero G2 elements in PK: %zu\n", this->G2_sparse_size());
-        print_indent(); printf("* PK size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in PK: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* Non-zero G1 elements in PK: %zu\n", this->G1_sparse_size());
+        libff::print_indent(); printf("* G2 elements in PK: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* Non-zero G2 elements in PK: %zu\n", this->G2_sparse_size());
+        libff::print_indent(); printf("* PK size in bits: %zu\n", this->size_in_bits());
     }
 
     bool operator==(const r1cs_gg_ppzksnark_proving_key<ppT> &other) const;
@@ -157,17 +157,17 @@ std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_verification_key<pp
 template<typename ppT>
 class r1cs_gg_ppzksnark_verification_key {
 public:
-    GT<ppT> alpha_g1_beta_g2;
-    G2<ppT> gamma_g2;
-    G2<ppT> delta_g2;
+    libff::GT<ppT> alpha_g1_beta_g2;
+    libff::G2<ppT> gamma_g2;
+    libff::G2<ppT> delta_g2;
 
-    accumulation_vector<G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     r1cs_gg_ppzksnark_verification_key() = default;
-    r1cs_gg_ppzksnark_verification_key(const GT<ppT> &alpha_g1_beta_g2,
-                                       const G2<ppT> &gamma_g2,
-                                       const G2<ppT> &delta_g2,
-                                       const accumulation_vector<G1<ppT> > &eIC) :
+    r1cs_gg_ppzksnark_verification_key(const libff::GT<ppT> &alpha_g1_beta_g2,
+                                       const libff::G2<ppT> &gamma_g2,
+                                       const libff::G2<ppT> &delta_g2,
+                                       const accumulation_vector<libff::G1<ppT> > &eIC) :
         alpha_g1_beta_g2(alpha_g1_beta_g2),
         gamma_g2(gamma_g2),
         delta_g2(delta_g2),
@@ -192,15 +192,15 @@ public:
     size_t size_in_bits() const
     {
         // TODO: include GT size
-        return (encoded_IC_query.size_in_bits() + 2 * G2<ppT>::size_in_bits());
+        return (encoded_IC_query.size_in_bits() + 2 * libff::G2<ppT>::size_in_bits());
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in VK: %zu\n", this->G1_size());
-        print_indent(); printf("* G2 elements in VK: %zu\n", this->G2_size());
-        print_indent(); printf("* GT elements in VK: %zu\n", this->GT_size());
-        print_indent(); printf("* VK size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in VK: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* G2 elements in VK: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* GT elements in VK: %zu\n", this->GT_size());
+        libff::print_indent(); printf("* VK size in bits: %zu\n", this->size_in_bits());
     }
 
     bool operator==(const r1cs_gg_ppzksnark_verification_key<ppT> &other) const;
@@ -232,11 +232,11 @@ std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_processed_verificat
 template<typename ppT>
 class r1cs_gg_ppzksnark_processed_verification_key {
 public:
-    GT<ppT> vk_alpha_g1_beta_g2;
-    G2_precomp<ppT> vk_gamma_g2_precomp;
-    G2_precomp<ppT> vk_delta_g2_precomp;
+    libff::GT<ppT> vk_alpha_g1_beta_g2;
+    libff::G2_precomp<ppT> vk_gamma_g2_precomp;
+    libff::G2_precomp<ppT> vk_delta_g2_precomp;
 
-    accumulation_vector<G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
 
     bool operator==(const r1cs_gg_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_gg_ppzksnark_processed_verification_key<ppT> &pvk);
@@ -288,20 +288,20 @@ std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_proof<ppT> &proof);
 template<typename ppT>
 class r1cs_gg_ppzksnark_proof {
 public:
-    G1<ppT> g_A;
-    G2<ppT> g_B;
-    G1<ppT> g_C;
+    libff::G1<ppT> g_A;
+    libff::G2<ppT> g_B;
+    libff::G1<ppT> g_C;
 
     r1cs_gg_ppzksnark_proof()
     {
         // invalid proof with valid curve points
-        this->g_A = G1<ppT>::one();
-        this->g_B = G2<ppT>::one();
-        this->g_C = G1<ppT>::one();
+        this->g_A = libff::G1<ppT>::one();
+        this->g_B = libff::G2<ppT>::one();
+        this->g_C = libff::G1<ppT>::one();
     }
-    r1cs_gg_ppzksnark_proof(G1<ppT> &&g_A,
-                            G2<ppT> &&g_B,
-                            G1<ppT> &&g_C) :
+    r1cs_gg_ppzksnark_proof(libff::G1<ppT> &&g_A,
+                            libff::G2<ppT> &&g_B,
+                            libff::G1<ppT> &&g_C) :
         g_A(std::move(g_A)),
         g_B(std::move(g_B)),
         g_C(std::move(g_C))
@@ -319,14 +319,14 @@ public:
 
     size_t size_in_bits() const
     {
-        return G1_size() * G1<ppT>::size_in_bits() + G2_size() * G2<ppT>::size_in_bits();
+        return G1_size() * libff::G1<ppT>::size_in_bits() + G2_size() * libff::G2<ppT>::size_in_bits();
     }
 
     void print_size() const
     {
-        print_indent(); printf("* G1 elements in proof: %zu\n", this->G1_size());
-        print_indent(); printf("* G2 elements in proof: %zu\n", this->G2_size());
-        print_indent(); printf("* Proof size in bits: %zu\n", this->size_in_bits());
+        libff::print_indent(); printf("* G1 elements in proof: %zu\n", this->G1_size());
+        libff::print_indent(); printf("* G2 elements in proof: %zu\n", this->G2_size());
+        libff::print_indent(); printf("* Proof size in bits: %zu\n", this->size_in_bits());
     }
 
     bool is_well_formed() const

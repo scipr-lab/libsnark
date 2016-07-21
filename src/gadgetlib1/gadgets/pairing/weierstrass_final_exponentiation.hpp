@@ -25,9 +25,9 @@ namespace libsnark {
  * Gadget for final exponentiation with embedding degree 4.
  */
 template<typename ppT>
-class mnt4_final_exp_gadget : public gadget<Fr<ppT> > {
+class mnt4_final_exp_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     Fqk_variable<ppT> el;
     std::shared_ptr<Fqk_variable<ppT> > one;
@@ -51,8 +51,8 @@ public:
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_el_inv_q_3_minus_1;
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_inv_beta;
 
-    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, mnt6_q_limbs> > compute_w1;
-    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, mnt6_q_limbs> > compute_w0;
+    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, libff::mnt6_q_limbs> > compute_w1;
+    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, libff::mnt6_q_limbs> > compute_w0;
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_result;
 
     pb_variable<FieldT> result_is_one;
@@ -69,9 +69,9 @@ public:
  * Gadget for final exponentiation with embedding degree 6.
  */
 template<typename ppT>
-class mnt6_final_exp_gadget : public gadget<Fr<ppT> > {
+class mnt6_final_exp_gadget : public gadget<libff::Fr<ppT> > {
 public:
-    typedef Fr<ppT> FieldT;
+    typedef libff::Fr<ppT> FieldT;
 
     Fqk_variable<ppT> el;
     std::shared_ptr<Fqk_variable<ppT> > one;
@@ -89,8 +89,8 @@ public:
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_el_q_2_minus_1;
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_el_inv_q_2_minus_1;
 
-    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, mnt4_q_limbs> > compute_w1;
-    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, mnt4_q_limbs> > compute_w0;
+    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, libff::mnt4_q_limbs> > compute_w1;
+    std::shared_ptr<exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, libff::mnt4_q_limbs> > compute_w0;
     std::shared_ptr<Fqk_mul_gadget<ppT> > compute_result;
 
     pb_variable<FieldT> result_is_one;

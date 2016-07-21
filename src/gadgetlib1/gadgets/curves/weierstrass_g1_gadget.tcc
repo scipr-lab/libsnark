@@ -23,8 +23,8 @@ G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
 {
     pb_variable<FieldT> X_var, Y_var;
 
-    X_var.allocate(pb, FMT(annotation_prefix, " X"));
-    Y_var.allocate(pb, FMT(annotation_prefix, " Y"));
+    X_var.allocate(pb, libff::FMT(annotation_prefix, " X"));
+    Y_var.allocate(pb, libff::FMT(annotation_prefix, " Y"));
 
     X = pb_linear_combination<FieldT>(X_var);
     Y = pb_linear_combination<FieldT>(Y_var);
@@ -35,11 +35,11 @@ G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
 
 template<typename ppT>
 G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
-                              const G1<other_curve<ppT> > &P,
+                              const libff::G1<other_curve<ppT> > &P,
                               const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix)
 {
-    G1<other_curve<ppT> > Pcopy = P;
+    libff::G1<other_curve<ppT> > Pcopy = P;
     Pcopy.to_affine_coordinates();
 
     X.assign(pb, Pcopy.X());
@@ -51,9 +51,9 @@ G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
 }
 
 template<typename ppT>
-void G1_variable<ppT>::generate_r1cs_witness(const G1<other_curve<ppT> > &el)
+void G1_variable<ppT>::generate_r1cs_witness(const libff::G1<other_curve<ppT> > &el)
 {
-    G1<other_curve<ppT> > el_normalized = el;
+    libff::G1<other_curve<ppT> > el_normalized = el;
     el_normalized.to_affine_coordinates();
 
     this->pb.lc_val(X) = el_normalized.X();
@@ -76,8 +76,8 @@ template<typename ppT>
 G1_checker_gadget<ppT>::G1_checker_gadget(protoboard<FieldT> &pb, const G1_variable<ppT> &P, const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), P(P)
 {
-    P_X_squared.allocate(pb, FMT(annotation_prefix, " P_X_squared"));
-    P_Y_squared.allocate(pb, FMT(annotation_prefix, " P_Y_squared"));
+    P_X_squared.allocate(pb, libff::FMT(annotation_prefix, " P_X_squared"));
+    P_Y_squared.allocate(pb, libff::FMT(annotation_prefix, " P_Y_squared"));
 }
 
 template<typename ppT>
@@ -87,17 +87,17 @@ void G1_checker_gadget<ppT>::generate_r1cs_constraints()
         { P.X },
         { P.X },
         { P_X_squared }),
-        FMT(this->annotation_prefix, " P_X_squared"));
+        libff::FMT(this->annotation_prefix, " P_X_squared"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { P.Y },
         { P.Y },
         { P_Y_squared }),
-        FMT(this->annotation_prefix, " P_Y_squared"));
+        libff::FMT(this->annotation_prefix, " P_Y_squared"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { P.X },
-        { P_X_squared, ONE * G1<other_curve<ppT> >::coeff_a },
-        { P_Y_squared, ONE * (-G1<other_curve<ppT> >::coeff_b) }),
-        FMT(this->annotation_prefix, " curve_equation"));
+        { P_X_squared, ONE * libff::G1<other_curve<ppT> >::coeff_a },
+        { P_Y_squared, ONE * (-libff::G1<other_curve<ppT> >::coeff_b) }),
+        libff::FMT(this->annotation_prefix, " curve_equation"));
 }
 
 template<typename ppT>
@@ -135,8 +135,8 @@ G1_add_gadget<ppT>::G1_add_gadget(protoboard<FieldT> &pb,
       So we need to check that A.x - B.x != 0, which can be done by
       enforcing I * (B.x - A.x) = 1
     */
-    lambda.allocate(pb, FMT(annotation_prefix, " lambda"));
-    inv.allocate(pb, FMT(annotation_prefix, " inv"));
+    lambda.allocate(pb, libff::FMT(annotation_prefix, " lambda"));
+    inv.allocate(pb, libff::FMT(annotation_prefix, " inv"));
 }
 
 template<typename ppT>
@@ -146,25 +146,25 @@ void G1_add_gadget<ppT>::generate_r1cs_constraints()
         { lambda },
         { B.X, A.X * (-1) },
         { B.Y, A.Y * (-1) }),
-        FMT(this->annotation_prefix, " calc_lambda"));
+        libff::FMT(this->annotation_prefix, " calc_lambda"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { lambda },
         { lambda },
         { C.X, A.X, B.X }),
-        FMT(this->annotation_prefix, " calc_X"));
+        libff::FMT(this->annotation_prefix, " calc_X"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { lambda },
         { A.X, C.X * (-1) },
         { C.Y, A.Y }),
-        FMT(this->annotation_prefix, " calc_Y"));
+        libff::FMT(this->annotation_prefix, " calc_Y"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { inv },
         { B.X, A.X * (-1) },
         { ONE }),
-        FMT(this->annotation_prefix, " no_special_cases"));
+        libff::FMT(this->annotation_prefix, " no_special_cases"));
 }
 
 template<typename ppT>
@@ -185,8 +185,8 @@ G1_dbl_gadget<ppT>::G1_dbl_gadget(protoboard<FieldT> &pb,
     A(A),
     B(B)
 {
-    Xsquared.allocate(pb, FMT(annotation_prefix, " X_squared"));
-    lambda.allocate(pb, FMT(annotation_prefix, " lambda"));
+    Xsquared.allocate(pb, libff::FMT(annotation_prefix, " X_squared"));
+    lambda.allocate(pb, libff::FMT(annotation_prefix, " lambda"));
 }
 
 template<typename ppT>
@@ -196,32 +196,32 @@ void G1_dbl_gadget<ppT>::generate_r1cs_constraints()
         { A.X },
         { A.X },
         { Xsquared }),
-        FMT(this->annotation_prefix, " calc_Xsquared"));
+        libff::FMT(this->annotation_prefix, " calc_Xsquared"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { lambda * 2 },
         { A.Y },
-        { Xsquared * 3, ONE * G1<other_curve<ppT> >::coeff_a }),
-        FMT(this->annotation_prefix, " calc_lambda"));
+        { Xsquared * 3, ONE * libff::G1<other_curve<ppT> >::coeff_a }),
+        libff::FMT(this->annotation_prefix, " calc_lambda"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { lambda },
         { lambda },
         { B.X, A.X * 2 }),
-        FMT(this->annotation_prefix, " calc_X"));
+        libff::FMT(this->annotation_prefix, " calc_X"));
 
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(
         { lambda },
         { A.X, B.X * (-1) },
         { B.Y, A.Y }),
-        FMT(this->annotation_prefix, " calc_Y"));
+        libff::FMT(this->annotation_prefix, " calc_Y"));
 }
 
 template<typename ppT>
 void G1_dbl_gadget<ppT>::generate_r1cs_witness()
 {
     this->pb.val(Xsquared) = this->pb.lc_val(A.X).squared();
-    this->pb.val(lambda) = (FieldT(3) * this->pb.val(Xsquared) + G1<other_curve<ppT> >::coeff_a) * (FieldT(2) * this->pb.lc_val(A.Y)).inverse();
+    this->pb.val(lambda) = (FieldT(3) * this->pb.val(Xsquared) + libff::G1<other_curve<ppT> >::coeff_a) * (FieldT(2) * this->pb.lc_val(A.Y)).inverse();
     this->pb.lc_val(B.X) = this->pb.val(lambda).squared() - FieldT(2) * this->pb.lc_val(A.X);
     this->pb.lc_val(B.Y) = this->pb.val(lambda) * (this->pb.lc_val(A.X) - this->pb.lc_val(B.X)) - this->pb.lc_val(A.Y);
 }
@@ -251,25 +251,25 @@ G1_multiscalar_mul_gadget<ppT>::G1_multiscalar_mul_gadget(protoboard<FieldT> &pb
         points_and_powers.emplace_back(points[i]);
         for (size_t j = 0; j < elt_size - 1; ++j)
         {
-            points_and_powers.emplace_back(G1_variable<ppT>(pb, FMT(annotation_prefix, " points_%zu_times_2_to_%zu", i, j+1)));
-            doublers.emplace_back(G1_dbl_gadget<ppT>(pb, points_and_powers[i*elt_size + j], points_and_powers[i*elt_size + j + 1], FMT(annotation_prefix, " double_%zu_to_2_to_%zu", i, j+1)));
+            points_and_powers.emplace_back(G1_variable<ppT>(pb, libff::FMT(annotation_prefix, " points_%zu_times_2_to_%zu", i, j+1)));
+            doublers.emplace_back(G1_dbl_gadget<ppT>(pb, points_and_powers[i*elt_size + j], points_and_powers[i*elt_size + j + 1], libff::FMT(annotation_prefix, " double_%zu_to_2_to_%zu", i, j+1)));
         }
     }
 
     chosen_results.emplace_back(base);
     for (size_t i = 0; i < scalar_size; ++i)
     {
-        computed_results.emplace_back(G1_variable<ppT>(pb, FMT(annotation_prefix, " computed_results_%zu")));
+        computed_results.emplace_back(G1_variable<ppT>(pb, libff::FMT(annotation_prefix, " computed_results_%zu")));
         if (i < scalar_size-1)
         {
-            chosen_results.emplace_back(G1_variable<ppT>(pb, FMT(annotation_prefix, " chosen_results_%zu")));
+            chosen_results.emplace_back(G1_variable<ppT>(pb, libff::FMT(annotation_prefix, " chosen_results_%zu")));
         }
         else
         {
             chosen_results.emplace_back(result);
         }
 
-        adders.emplace_back(G1_add_gadget<ppT>(pb, chosen_results[i], points_and_powers[i], computed_results[i], FMT(annotation_prefix, " adders_%zu")));
+        adders.emplace_back(G1_add_gadget<ppT>(pb, chosen_results[i], points_and_powers[i], computed_results[i], libff::FMT(annotation_prefix, " adders_%zu")));
     }
 }
 
@@ -294,11 +294,11 @@ void G1_multiscalar_mul_gadget<ppT>::generate_r1cs_constraints()
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(scalars[i],
                                                              computed_results[i].X - chosen_results[i].X,
                                                              chosen_results[i+1].X - chosen_results[i].X),
-                                     FMT(this->annotation_prefix, " chosen_results_%zu_X", i+1));
+                                     libff::FMT(this->annotation_prefix, " chosen_results_%zu_X", i+1));
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(scalars[i],
                                                              computed_results[i].Y - chosen_results[i].Y,
                                                              chosen_results[i+1].Y - chosen_results[i].Y),
-                                     FMT(this->annotation_prefix, " chosen_results_%zu_Y", i+1));
+                                     libff::FMT(this->annotation_prefix, " chosen_results_%zu_Y", i+1));
     }
 
     const size_t num_constraints_after = this->pb.num_constraints();
@@ -316,8 +316,8 @@ void G1_multiscalar_mul_gadget<ppT>::generate_r1cs_witness()
     for (size_t i = 0; i < scalar_size; ++i)
     {
         adders[i].generate_r1cs_witness();
-        this->pb.lc_val(chosen_results[i+1].X) = (this->pb.val(scalars[i]) == Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].X) : this->pb.lc_val(computed_results[i].X));
-        this->pb.lc_val(chosen_results[i+1].Y) = (this->pb.val(scalars[i]) == Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].Y) : this->pb.lc_val(computed_results[i].Y));
+        this->pb.lc_val(chosen_results[i+1].X) = (this->pb.val(scalars[i]) == libff::Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].X) : this->pb.lc_val(computed_results[i].X));
+        this->pb.lc_val(chosen_results[i+1].Y) = (this->pb.val(scalars[i]) == libff::Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].Y) : this->pb.lc_val(computed_results[i].Y));
     }
 }
 

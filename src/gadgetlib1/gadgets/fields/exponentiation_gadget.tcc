@@ -19,7 +19,7 @@ namespace libsnark {
 template<typename FpkT, template<class> class Fpk_variableT, template<class> class Fpk_mul_gadgetT, template<class> class Fpk_sqr_gadgetT, mp_size_t m>
 exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT, m>::exponentiation_gadget(protoboard<FieldT> &pb,
                                                                                                        const Fpk_variableT<FpkT> &elt,
-                                                                                                       const bigint<m> &power,
+                                                                                                       const libff::bigint<m> &power,
                                                                                                        const Fpk_variableT<FpkT> &result,
                                                                                                        const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), elt(elt), power(power), result(result)
@@ -58,10 +58,10 @@ exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT, m>:
     }
 
     intermediate.resize(intermed_count);
-    intermediate[0].reset(new Fpk_variableT<FpkT>(pb, FpkT::one(), FMT(annotation_prefix, " intermediate_0")));
+    intermediate[0].reset(new Fpk_variableT<FpkT>(pb, FpkT::one(), libff::FMT(annotation_prefix, " intermediate_0")));
     for (size_t i = 1; i < intermed_count; ++i)
     {
-        intermediate[i].reset(new Fpk_variableT<FpkT>(pb, FMT(annotation_prefix, " intermediate_%zu", i)));
+        intermediate[i].reset(new Fpk_variableT<FpkT>(pb, libff::FMT(annotation_prefix, " intermediate_%zu", i)));
     }
     addition_steps.resize(add_count);
     subtraction_steps.resize(sub_count);
@@ -78,7 +78,7 @@ exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT, m>:
             doubling_steps[dbl_id].reset(new Fpk_sqr_gadgetT<FpkT>(pb,
                                                                    *intermediate[intermed_id],
                                                                    (intermed_id + 1 == intermed_count ? result : *intermediate[intermed_id+1]),
-                                                                   FMT(annotation_prefix, " doubling_steps_%zu", dbl_count)));
+                                                                   libff::FMT(annotation_prefix, " doubling_steps_%zu", dbl_count)));
             ++intermed_id;
             ++dbl_id;
         }
@@ -94,7 +94,7 @@ exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT, m>:
                                                                        *intermediate[intermed_id],
                                                                        elt,
                                                                        (intermed_id + 1 == intermed_count ? result : *intermediate[intermed_id+1]),
-                                                                       FMT(annotation_prefix, " addition_steps_%zu", dbl_count)));
+                                                                       libff::FMT(annotation_prefix, " addition_steps_%zu", dbl_count)));
                 ++add_id;
                 ++intermed_id;
             }
@@ -105,7 +105,7 @@ exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT, m>:
                                                                           (intermed_id + 1 == intermed_count ? result : *intermediate[intermed_id+1]),
                                                                           elt,
                                                                           *intermediate[intermed_id],
-                                                                          FMT(annotation_prefix, " subtraction_steps_%zu", dbl_count)));
+                                                                          libff::FMT(annotation_prefix, " subtraction_steps_%zu", dbl_count)));
                 ++sub_id;
                 ++intermed_id;
             }
@@ -177,7 +177,7 @@ void exponentiation_gadget<FpkT, Fpk_variableT, Fpk_mul_gadgetT, Fpk_sqr_gadgetT
 }
 
 template<typename FpkT, template<class> class Fpk_variableT, template<class> class Fpk_mul_gadgetT, template<class> class Fpk_sqr_gadgetT, mp_size_t m>
-void test_exponentiation_gadget(const bigint<m> &power, const std::string &annotation)
+void test_exponentiation_gadget(const libff::bigint<m> &power, const std::string &annotation)
 {
     typedef typename FpkT::my_Fp FieldT;
 

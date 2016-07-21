@@ -18,7 +18,7 @@ namespace libsnark {
 
 template<typename Fp6T>
 Fp6_variable<Fp6T>::Fp6_variable(protoboard<FieldT> &pb, const std::string &annotation_prefix) :
-    gadget<FieldT>(pb, annotation_prefix), c0(pb, FMT(annotation_prefix, " c0")), c1(pb, FMT(annotation_prefix, " c1"))
+    gadget<FieldT>(pb, annotation_prefix), c0(pb, libff::FMT(annotation_prefix, " c0")), c1(pb, libff::FMT(annotation_prefix, " c1"))
 {
 }
 
@@ -26,7 +26,7 @@ template<typename Fp6T>
 Fp6_variable<Fp6T>::Fp6_variable(protoboard<FieldT> &pb,
                                  const Fp6T &el,
                                  const std::string &annotation_prefix) :
-    gadget<FieldT>(pb, annotation_prefix), c0(pb, el.c0, FMT(annotation_prefix, " c0")), c1(pb, el.c1, FMT(annotation_prefix, " c1"))
+    gadget<FieldT>(pb, annotation_prefix), c0(pb, el.c0, libff::FMT(annotation_prefix, " c0")), c1(pb, el.c1, libff::FMT(annotation_prefix, " c1"))
 {
 }
 
@@ -71,9 +71,9 @@ Fp6_variable<Fp6T> Fp6_variable<Fp6T>::Frobenius_map(const size_t power) const
     new_c1c2.assign(this->pb, c1.c2 * (Fp6T::Frobenius_coeffs_c1[power % 6] * Fp3T::Frobenius_coeffs_c2[power % 3]));
 
     return Fp6_variable<Fp6T>(this->pb,
-                              Fp3_variable<Fp3T>(this->pb, new_c0c0, new_c0c1, new_c0c2, FMT(this->annotation_prefix, " Frobenius_map_c0")),
-                              Fp3_variable<Fp3T>(this->pb, new_c1c0, new_c1c1, new_c1c2, FMT(this->annotation_prefix, " Frobenius_map_c1")),
-                              FMT(this->annotation_prefix, " Frobenius_map"));
+                              Fp3_variable<Fp3T>(this->pb, new_c0c0, new_c0c1, new_c0c2, libff::FMT(this->annotation_prefix, " Frobenius_map_c0")),
+                              Fp3_variable<Fp3T>(this->pb, new_c1c0, new_c1c1, new_c1c2, libff::FMT(this->annotation_prefix, " Frobenius_map_c1")),
+                              libff::FMT(this->annotation_prefix, " Frobenius_map"));
 }
 
 template<typename Fp6T>
@@ -108,26 +108,26 @@ Fp6_mul_gadget<Fp6T>::Fp6_mul_gadget(protoboard<FieldT> &pb,
         "Multiplication and Squaring on Pairing-Friendly Fields"
         Devegili, OhEigeartaigh, Scott, Dahab
 */
-    v1.reset(new Fp3_variable<Fp3T>(pb, FMT(annotation_prefix, " v1")));
+    v1.reset(new Fp3_variable<Fp3T>(pb, libff::FMT(annotation_prefix, " v1")));
 
-    compute_v1.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c1, B.c1, *v1, FMT(annotation_prefix, " compute_v1")));
+    compute_v1.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c1, B.c1, *v1, libff::FMT(annotation_prefix, " compute_v1")));
 
     v0_c0.assign(pb, result.c0.c0 - Fp6T::non_residue * v1->c2);
     v0_c1.assign(pb, result.c0.c1 - v1->c0);
     v0_c2.assign(pb, result.c0.c2 - v1->c1);
-    v0.reset(new Fp3_variable<Fp3T>(pb, v0_c0, v0_c1, v0_c2, FMT(annotation_prefix, " v0")));
+    v0.reset(new Fp3_variable<Fp3T>(pb, v0_c0, v0_c1, v0_c2, libff::FMT(annotation_prefix, " v0")));
 
-    compute_v0.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c0, B.c0, *v0, FMT(annotation_prefix, " compute_v0")));
+    compute_v0.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c0, B.c0, *v0, libff::FMT(annotation_prefix, " compute_v0")));
 
     Ac0_plus_Ac1_c0.assign(pb, A.c0.c0 + A.c1.c0);
     Ac0_plus_Ac1_c1.assign(pb, A.c0.c1 + A.c1.c1);
     Ac0_plus_Ac1_c2.assign(pb, A.c0.c2 + A.c1.c2);
-    Ac0_plus_Ac1.reset(new Fp3_variable<Fp3T>(pb, Ac0_plus_Ac1_c0, Ac0_plus_Ac1_c1, Ac0_plus_Ac1_c2, FMT(annotation_prefix, " Ac0_plus_Ac1")));
+    Ac0_plus_Ac1.reset(new Fp3_variable<Fp3T>(pb, Ac0_plus_Ac1_c0, Ac0_plus_Ac1_c1, Ac0_plus_Ac1_c2, libff::FMT(annotation_prefix, " Ac0_plus_Ac1")));
 
     Bc0_plus_Bc1_c0.assign(pb, B.c0.c0 + B.c1.c0);
     Bc0_plus_Bc1_c1.assign(pb, B.c0.c1 + B.c1.c1);
     Bc0_plus_Bc1_c2.assign(pb, B.c0.c2 + B.c1.c2);
-    Bc0_plus_Bc1.reset(new Fp3_variable<Fp3T>(pb, Bc0_plus_Bc1_c0, Bc0_plus_Bc1_c1, Bc0_plus_Bc1_c2, FMT(annotation_prefix, " Bc0_plus_Bc1")));
+    Bc0_plus_Bc1.reset(new Fp3_variable<Fp3T>(pb, Bc0_plus_Bc1_c0, Bc0_plus_Bc1_c1, Bc0_plus_Bc1_c2, libff::FMT(annotation_prefix, " Bc0_plus_Bc1")));
 
     result_c1_plus_v0_plus_v1_c0.assign(pb, result.c1.c0 + v0->c0 + v1->c0);
     result_c1_plus_v0_plus_v1_c1.assign(pb, result.c1.c1 + v0->c1 + v1->c1);
@@ -136,9 +136,9 @@ Fp6_mul_gadget<Fp6T>::Fp6_mul_gadget(protoboard<FieldT> &pb,
                                                            result_c1_plus_v0_plus_v1_c0,
                                                            result_c1_plus_v0_plus_v1_c1,
                                                            result_c1_plus_v0_plus_v1_c2,
-                                                           FMT(annotation_prefix, " result_c1_plus_v0_plus_v1")));
+                                                           libff::FMT(annotation_prefix, " result_c1_plus_v0_plus_v1")));
 
-    compute_result_c1.reset(new Fp3_mul_gadget<Fp3T>(pb, *Ac0_plus_Ac1, *Bc0_plus_Bc1, *result_c1_plus_v0_plus_v1, FMT(annotation_prefix, " compute_result_c1")));
+    compute_result_c1.reset(new Fp3_mul_gadget<Fp3T>(pb, *Ac0_plus_Ac1, *Bc0_plus_Bc1, *result_c1_plus_v0_plus_v1, libff::FMT(annotation_prefix, " compute_result_c1")));
 }
 
 template<typename Fp6T>
@@ -210,21 +210,21 @@ Fp6_mul_by_2345_gadget<Fp6T>::Fp6_mul_by_2345_gadget(protoboard<FieldT> &pb,
         "Multiplication and Squaring on Pairing-Friendly Fields"
         Devegili, OhEigeartaigh, Scott, Dahab
 */
-    v1.reset(new Fp3_variable<Fp3T>(pb, FMT(annotation_prefix, " v1")));
-    compute_v1.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c1, B.c1, *v1, FMT(annotation_prefix, " compute_v1")));
+    v1.reset(new Fp3_variable<Fp3T>(pb, libff::FMT(annotation_prefix, " v1")));
+    compute_v1.reset(new Fp3_mul_gadget<Fp3T>(pb, A.c1, B.c1, *v1, libff::FMT(annotation_prefix, " compute_v1")));
 
     /* we inline result.c0 in v0 as follows: v0 = (result.c0.c0 - Fp6T::non_residue * v1->c2, result.c0.c1 - v1->c0, result.c0.c2 - v1->c1) */
-    v0.reset(new Fp3_variable<Fp3T>(pb, FMT(annotation_prefix, " v0")));
+    v0.reset(new Fp3_variable<Fp3T>(pb, libff::FMT(annotation_prefix, " v0")));
 
     Ac0_plus_Ac1_c0.assign(pb, A.c0.c0 + A.c1.c0);
     Ac0_plus_Ac1_c1.assign(pb, A.c0.c1 + A.c1.c1);
     Ac0_plus_Ac1_c2.assign(pb, A.c0.c2 + A.c1.c2);
-    Ac0_plus_Ac1.reset(new Fp3_variable<Fp3T>(pb, Ac0_plus_Ac1_c0, Ac0_plus_Ac1_c1, Ac0_plus_Ac1_c2, FMT(annotation_prefix, " Ac0_plus_Ac1")));
+    Ac0_plus_Ac1.reset(new Fp3_variable<Fp3T>(pb, Ac0_plus_Ac1_c0, Ac0_plus_Ac1_c1, Ac0_plus_Ac1_c2, libff::FMT(annotation_prefix, " Ac0_plus_Ac1")));
 
     Bc0_plus_Bc1_c0.assign(pb, B.c0.c0 + B.c1.c0);
     Bc0_plus_Bc1_c1.assign(pb, B.c0.c1 + B.c1.c1);
     Bc0_plus_Bc1_c2.assign(pb, B.c0.c2 + B.c1.c2);
-    Bc0_plus_Bc1.reset(new Fp3_variable<Fp3T>(pb, Bc0_plus_Bc1_c0, Bc0_plus_Bc1_c1, Bc0_plus_Bc1_c2, FMT(annotation_prefix, " Bc0_plus_Bc1")));
+    Bc0_plus_Bc1.reset(new Fp3_variable<Fp3T>(pb, Bc0_plus_Bc1_c0, Bc0_plus_Bc1_c1, Bc0_plus_Bc1_c2, libff::FMT(annotation_prefix, " Bc0_plus_Bc1")));
 
     result_c1_plus_v0_plus_v1_c0.assign(pb, result.c1.c0 + v0->c0 + v1->c0);
     result_c1_plus_v0_plus_v1_c1.assign(pb, result.c1.c1 + v0->c1 + v1->c1);
@@ -233,9 +233,9 @@ Fp6_mul_by_2345_gadget<Fp6T>::Fp6_mul_by_2345_gadget(protoboard<FieldT> &pb,
                                                            result_c1_plus_v0_plus_v1_c0,
                                                            result_c1_plus_v0_plus_v1_c1,
                                                            result_c1_plus_v0_plus_v1_c2,
-                                                           FMT(annotation_prefix, " result_c1_plus_v0_plus_v1")));
+                                                           libff::FMT(annotation_prefix, " result_c1_plus_v0_plus_v1")));
 
-    compute_result_c1.reset(new Fp3_mul_gadget<Fp3T>(pb, *Ac0_plus_Ac1, *Bc0_plus_Bc1, *result_c1_plus_v0_plus_v1, FMT(annotation_prefix, " compute_result_c1")));
+    compute_result_c1.reset(new Fp3_mul_gadget<Fp3T>(pb, *Ac0_plus_Ac1, *Bc0_plus_Bc1, *result_c1_plus_v0_plus_v1, libff::FMT(annotation_prefix, " compute_result_c1")));
 }
 
 template<typename Fp6T>
@@ -245,15 +245,15 @@ void Fp6_mul_by_2345_gadget<Fp6T>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0.c1,
                                                          Fp3T::non_residue * B.c0.c2,
                                                          result.c0.c0 - Fp6T::non_residue * v1->c2),
-                                 FMT(this->annotation_prefix, " v0.c0"));
+                                 libff::FMT(this->annotation_prefix, " v0.c0"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0.c2,
                                                          Fp3T::non_residue * B.c0.c2,
                                                          result.c0.c1 - v1->c0),
-                                 FMT(this->annotation_prefix, " v0.c1"));
+                                 libff::FMT(this->annotation_prefix, " v0.c1"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(A.c0.c0,
                                                          B.c0.c2,
                                                          result.c0.c2 - v1->c1),
-                                 FMT(this->annotation_prefix, " v0.c2"));
+                                 libff::FMT(this->annotation_prefix, " v0.c2"));
     compute_result_c1->generate_r1cs_constraints();
 }
 
@@ -301,7 +301,7 @@ Fp6_sqr_gadget<Fp6T>::Fp6_sqr_gadget(protoboard<FieldT> &pb,
     gadget<FieldT>(pb, annotation_prefix), A(A), result(result)
 {
     // We can't do better than 3 Fp3_mul_gadget's for squaring, so we just use multiplication.
-    mul.reset(new Fp6_mul_gadget<Fp6T>(pb, A, A, result, FMT(annotation_prefix, " mul")));
+    mul.reset(new Fp6_mul_gadget<Fp6T>(pb, A, A, result, libff::FMT(annotation_prefix, " mul")));
 }
 
 template<typename Fp6T>
@@ -344,9 +344,9 @@ Fp6_cyclotomic_sqr_gadget<Fp6T>::Fp6_cyclotomic_sqr_gadget(protoboard<FieldT> &p
     return Fp6_2over3_model<n, mbodulus>(my_Fp3(A_a, C_a, B_b),
                                          my_Fp3(B_a, A_b, C_b))
 */
-    a.reset(new Fp2_variable<Fp2T>(pb, A.c0.c0, A.c1.c1, FMT(annotation_prefix, " a")));
-    b.reset(new Fp2_variable<Fp2T>(pb, A.c1.c0, A.c0.c2, FMT(annotation_prefix, " b")));
-    c.reset(new Fp2_variable<Fp2T>(pb, A.c0.c1, A.c1.c2, FMT(annotation_prefix, " c")));
+    a.reset(new Fp2_variable<Fp2T>(pb, A.c0.c0, A.c1.c1, libff::FMT(annotation_prefix, " a")));
+    b.reset(new Fp2_variable<Fp2T>(pb, A.c1.c0, A.c0.c2, libff::FMT(annotation_prefix, " b")));
+    c.reset(new Fp2_variable<Fp2T>(pb, A.c0.c1, A.c1.c2, libff::FMT(annotation_prefix, " c")));
 
     asq_c0.assign(pb, (result.c0.c0 + 2 * a->c0) * FieldT(3).inverse());
     asq_c1.assign(pb, (result.c1.c1 - 2 * a->c1) * FieldT(3).inverse());
@@ -357,13 +357,13 @@ Fp6_cyclotomic_sqr_gadget<Fp6T>::Fp6_cyclotomic_sqr_gadget(protoboard<FieldT> &p
     csq_c0.assign(pb, (result.c0.c2 + 2 * b->c1) * FieldT(3).inverse());
     csq_c1.assign(pb, (result.c1.c0 - 2 * b->c0) * (FieldT(3) * Fp2T::non_residue).inverse());
 
-    asq.reset(new Fp2_variable<Fp2T>(pb, asq_c0, asq_c1, FMT(annotation_prefix, " asq")));
-    bsq.reset(new Fp2_variable<Fp2T>(pb, bsq_c0, bsq_c1, FMT(annotation_prefix, " bsq")));
-    csq.reset(new Fp2_variable<Fp2T>(pb, csq_c0, csq_c1, FMT(annotation_prefix, " csq")));
+    asq.reset(new Fp2_variable<Fp2T>(pb, asq_c0, asq_c1, libff::FMT(annotation_prefix, " asq")));
+    bsq.reset(new Fp2_variable<Fp2T>(pb, bsq_c0, bsq_c1, libff::FMT(annotation_prefix, " bsq")));
+    csq.reset(new Fp2_variable<Fp2T>(pb, csq_c0, csq_c1, libff::FMT(annotation_prefix, " csq")));
 
-    compute_asq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *a, *asq, FMT(annotation_prefix, " compute_asq")));
-    compute_bsq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *b, *bsq, FMT(annotation_prefix, " compute_bsq")));
-    compute_csq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *c, *csq, FMT(annotation_prefix, " compute_csq")));
+    compute_asq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *a, *asq, libff::FMT(annotation_prefix, " compute_asq")));
+    compute_bsq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *b, *bsq, libff::FMT(annotation_prefix, " compute_bsq")));
+    compute_csq.reset(new Fp2_sqr_gadget<Fp2T>(pb, *c, *csq, libff::FMT(annotation_prefix, " compute_csq")));
 }
 
 template<typename Fp6T>

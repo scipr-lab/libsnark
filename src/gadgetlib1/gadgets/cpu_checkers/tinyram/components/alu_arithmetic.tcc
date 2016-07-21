@@ -100,10 +100,10 @@ void brute_force_arithmetic_gadget(const size_t w,
                            ", arg2val = %zu (%d)"
                            ". expected result: %zu (%d), expected flag: %d\n",
                            f,
-                           des, from_twos_complement(des, w),
-                           arg1, from_twos_complement(arg1, w),
-                           arg2, from_twos_complement(arg2, w),
-                           res, from_twos_complement(res, w), res_f);
+                           des, libff::from_twos_complement(des, w),
+                           arg1, libff::from_twos_complement(arg1, w),
+                           arg2, libff::from_twos_complement(arg2, w),
+                           res, libff::from_twos_complement(res, w), res_f);
 #endif
                     g->generate_r1cs_witness();
 #ifdef DEBUG
@@ -132,7 +132,7 @@ void ALU_and_gadget<FieldT>::generate_r1cs_constraints()
                 { this->arg1val.bits[i] },
                 { this->arg2val.bits[i] },
                 { this->res_word[i] }),
-            FMT(this->annotation_prefix, " res_word_%zu", i));
+            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -145,7 +145,7 @@ void ALU_and_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " result_flag"));
+        libff::FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -167,7 +167,7 @@ void ALU_and_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_and_gadget(const size_t w)
 {
-    print_time("starting and test");
+    libff::print_time("starting and test");
     brute_force_arithmetic_gadget<ALU_and_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_AND,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -183,7 +183,7 @@ void test_ALU_and_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return x & y; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return (x & y) == 0; });
-    print_time("and tests successful");
+    libff::print_time("and tests successful");
 }
 
 /* or */
@@ -197,7 +197,7 @@ void ALU_or_gadget<FieldT>::generate_r1cs_constraints()
                 { ONE, this->arg1val.bits[i] * (-1) },
                 { ONE, this->arg2val.bits[i] * (-1) },
                 { ONE, this->res_word[i] * (-1) }),
-            FMT(this->annotation_prefix, " res_word_%zu", i));
+            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -210,7 +210,7 @@ void ALU_or_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " result_flag"));
+        libff::FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -232,7 +232,7 @@ void ALU_or_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_or_gadget(const size_t w)
 {
-    print_time("starting or test");
+    libff::print_time("starting or test");
     brute_force_arithmetic_gadget<ALU_or_gadget<FieldT>, FieldT>(w,
                                                                  tinyram_opcode_OR,
                                                                  [] (tinyram_protoboard<FieldT> &pb,
@@ -248,7 +248,7 @@ void test_ALU_or_gadget(const size_t w)
                                                                  },
                                                                  [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return x | y; },
                                                                  [w] (size_t des, bool f, size_t x, size_t y) -> bool { return (x | y) == 0; });
-    print_time("or tests successful");
+    libff::print_time("or tests successful");
 }
 
 /* xor */
@@ -263,7 +263,7 @@ void ALU_xor_gadget<FieldT>::generate_r1cs_constraints()
                 { this->arg1val.bits[i] * 2},
                 { this->arg2val.bits[i] },
                 { this->arg1val.bits[i], this->arg2val.bits[i], this->res_word[i] * (-1) }),
-            FMT(this->annotation_prefix, " res_word_%zu", i));
+            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -276,7 +276,7 @@ void ALU_xor_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " result_flag"));
+        libff::FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -298,7 +298,7 @@ void ALU_xor_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_xor_gadget(const size_t w)
 {
-    print_time("starting xor test");
+    libff::print_time("starting xor test");
     brute_force_arithmetic_gadget<ALU_xor_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_XOR,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -314,7 +314,7 @@ void test_ALU_xor_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return x ^ y; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return (x ^ y) == 0; });
-    print_time("xor tests successful");
+    libff::print_time("xor tests successful");
 }
 
 /* not */
@@ -328,7 +328,7 @@ void ALU_not_gadget<FieldT>::generate_r1cs_constraints()
                 { ONE },
                 { ONE, this->arg2val.bits[i] * (-1) },
                 { this->res_word[i] }),
-            FMT(this->annotation_prefix, " res_word_%zu", i));
+            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -341,7 +341,7 @@ void ALU_not_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " result_flag"));
+        libff::FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -362,7 +362,7 @@ void ALU_not_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_not_gadget(const size_t w)
 {
-    print_time("starting not test");
+    libff::print_time("starting not test");
     brute_force_arithmetic_gadget<ALU_not_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_NOT,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -378,7 +378,7 @@ void test_ALU_not_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return (1ul<<w)-1-y; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return ((1ul<<w)-1-y) == 0; });
-    print_time("not tests successful");
+    libff::print_time("not tests successful");
 }
 
 /* add */
@@ -391,7 +391,7 @@ void ALU_add_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->arg1val.packed, this->arg2val.packed },
             { this->addition_result }),
-        FMT(this->annotation_prefix, " addition_result"));
+        libff::FMT(this->annotation_prefix, " addition_result"));
 
     /* unpack into bits */
     unpack_addition->generate_r1cs_constraints(true);
@@ -411,7 +411,7 @@ void ALU_add_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_add_gadget(const size_t w)
 {
-    print_time("starting add test");
+    libff::print_time("starting add test");
     brute_force_arithmetic_gadget<ALU_add_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_ADD,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -427,7 +427,7 @@ void test_ALU_add_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return (x+y) % (1ul<<w); },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return (x+y) >= (1ul<<w); });
-    print_time("add tests successful");
+    libff::print_time("add tests successful");
 }
 
 /* sub */
@@ -449,7 +449,7 @@ void ALU_sub_gadget<FieldT>::generate_r1cs_constraints()
     b.add_term(this->arg2val.packed, -1);
     c.add_term(intermediate_result, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " main_constraint"));
 
     /* unpack into bits */
     unpack_intermediate->generate_r1cs_constraints(true);
@@ -461,7 +461,7 @@ void ALU_sub_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->negated_flag * (-1) },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " result_flag"));
+        libff::FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -482,7 +482,7 @@ void ALU_sub_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_sub_gadget(const size_t w)
 {
-    print_time("starting sub test");
+    libff::print_time("starting sub test");
     brute_force_arithmetic_gadget<ALU_sub_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_SUB,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -504,7 +504,7 @@ void test_ALU_sub_gadget(const size_t w)
                                                                       const size_t msb = ((1ul<<w) + x - y) >> w;
                                                                       return (msb == 0);
                                                                   });
-    print_time("sub tests successful");
+    libff::print_time("sub tests successful");
 }
 
 /* mov */
@@ -516,14 +516,14 @@ void ALU_mov_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->arg2val.packed },
             { this->result }),
-        FMT(this->annotation_prefix, " mov_result"));
+        libff::FMT(this->annotation_prefix, " mov_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->flag },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " mov_result_flag"));
+        libff::FMT(this->annotation_prefix, " mov_result_flag"));
 }
 
 template<typename FieldT>
@@ -536,7 +536,7 @@ void ALU_mov_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_mov_gadget(const size_t w)
 {
-    print_time("starting mov test");
+    libff::print_time("starting mov test");
     brute_force_arithmetic_gadget<ALU_mov_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_MOV,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -552,7 +552,7 @@ void test_ALU_mov_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return y; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return f; });
-    print_time("mov tests successful");
+    libff::print_time("mov tests successful");
 }
 
 /* cmov */
@@ -568,14 +568,14 @@ void ALU_cmov_gadget<FieldT>::generate_r1cs_constraints()
             { this->flag },
             { this->arg2val.packed, this->desval.packed * (-1) },
             { this->result, this->desval.packed * (-1) }),
-        FMT(this->annotation_prefix, " cmov_result"));
+        libff::FMT(this->annotation_prefix, " cmov_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->flag },
             { this->result_flag }),
-        FMT(this->annotation_prefix, " cmov_result_flag"));
+        libff::FMT(this->annotation_prefix, " cmov_result_flag"));
 }
 
 template<typename FieldT>
@@ -590,7 +590,7 @@ void ALU_cmov_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_cmov_gadget(const size_t w)
 {
-    print_time("starting cmov test");
+    libff::print_time("starting cmov test");
     brute_force_arithmetic_gadget<ALU_cmov_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_CMOV,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -606,7 +606,7 @@ void test_ALU_cmov_gadget(const size_t w)
                                                                    },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return f ? y : des; },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool { return f; });
-    print_time("cmov tests successful");
+    libff::print_time("cmov tests successful");
 }
 
 /* unsigned comparison */
@@ -622,7 +622,7 @@ void ALU_cmp_gadget<FieldT>::generate_r1cs_constraints()
             { cmpae_result_flag },
             { ONE, cmpa_result_flag * (-1) },
             { cmpe_result_flag }),
-        FMT(this->annotation_prefix, " cmpa_result_flag"));
+        libff::FMT(this->annotation_prefix, " cmpa_result_flag"));
 
     /* copy over results */
     this->pb.add_r1cs_constraint(
@@ -630,21 +630,21 @@ void ALU_cmp_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->desval.packed },
             { cmpe_result }),
-        FMT(this->annotation_prefix, " cmpe_result"));
+        libff::FMT(this->annotation_prefix, " cmpe_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpa_result }),
-        FMT(this->annotation_prefix, " cmpa_result"));
+        libff::FMT(this->annotation_prefix, " cmpa_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpae_result }),
-        FMT(this->annotation_prefix, " cmpae_result"));
+        libff::FMT(this->annotation_prefix, " cmpae_result"));
 }
 
 template<typename FieldT>
@@ -665,7 +665,7 @@ void ALU_cmp_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_cmpe_gadget(const size_t w)
 {
-    print_time("starting cmpe test");
+    libff::print_time("starting cmpe test");
     brute_force_arithmetic_gadget<ALU_cmp_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_CMPE,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -688,13 +688,13 @@ void test_ALU_cmpe_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return des; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return x == y; });
-    print_time("cmpe tests successful");
+    libff::print_time("cmpe tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_cmpa_gadget(const size_t w)
 {
-    print_time("starting cmpa test");
+    libff::print_time("starting cmpa test");
     brute_force_arithmetic_gadget<ALU_cmp_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_CMPA,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -717,13 +717,13 @@ void test_ALU_cmpa_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return des; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return x > y; });
-    print_time("cmpa tests successful");
+    libff::print_time("cmpa tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_cmpae_gadget(const size_t w)
 {
-    print_time("starting cmpae test");
+    libff::print_time("starting cmpae test");
     brute_force_arithmetic_gadget<ALU_cmp_gadget<FieldT>, FieldT>(w,
                                                                   tinyram_opcode_CMPAE,
                                                                   [] (tinyram_protoboard<FieldT> &pb,
@@ -746,7 +746,7 @@ void test_ALU_cmpae_gadget(const size_t w)
                                                                   },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return des; },
                                                                   [w] (size_t des, bool f, size_t x, size_t y) -> bool { return x >= y; });
-    print_time("cmpae tests successful");
+    libff::print_time("cmpae tests successful");
 }
 
 /* signed comparison */
@@ -759,13 +759,13 @@ void ALU_cmps_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->arg1val.bits[this->pb.ap.w-1] * (-1) },
             { negated_arg1val_sign }),
-        FMT(this->annotation_prefix, " negated_arg1val_sign"));
+        libff::FMT(this->annotation_prefix, " negated_arg1val_sign"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { ONE, this->arg2val.bits[this->pb.ap.w-1] * (-1) },
             { negated_arg2val_sign }),
-        FMT(this->annotation_prefix, " negated_arg2val_sign"));
+        libff::FMT(this->annotation_prefix, " negated_arg2val_sign"));
 
     /* pack */
     pack_modified_arg1->generate_r1cs_constraints(false);
@@ -780,14 +780,14 @@ void ALU_cmps_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->desval.packed },
             { cmpg_result }),
-        FMT(this->annotation_prefix, " cmpg_result"));
+        libff::FMT(this->annotation_prefix, " cmpg_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpge_result }),
-        FMT(this->annotation_prefix, " cmpge_result"));
+        libff::FMT(this->annotation_prefix, " cmpge_result"));
 }
 
 template<typename FieldT>
@@ -811,7 +811,7 @@ void ALU_cmps_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_cmpg_gadget(const size_t w)
 {
-    print_time("starting cmpg test");
+    libff::print_time("starting cmpg test");
     brute_force_arithmetic_gadget<ALU_cmps_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_CMPG,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -831,16 +831,16 @@ void test_ALU_cmpg_gadget(const size_t w)
                                                                    },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return des; },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool {
-                                                                       return (from_twos_complement(x, w) >
-                                                                               from_twos_complement(y, w));
+                                                                       return (libff::from_twos_complement(x, w) >
+                                                                               libff::from_twos_complement(y, w));
                                                                    });
-    print_time("cmpg tests successful");
+    libff::print_time("cmpg tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_cmpge_gadget(const size_t w)
 {
-    print_time("starting cmpge test");
+    libff::print_time("starting cmpge test");
     brute_force_arithmetic_gadget<ALU_cmps_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_CMPGE,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -860,10 +860,10 @@ void test_ALU_cmpge_gadget(const size_t w)
                                                                    },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> size_t { return des; },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool {
-                                                                       return (from_twos_complement(x, w) >=
-                                                                               from_twos_complement(y, w));
+                                                                       return (libff::from_twos_complement(x, w) >=
+                                                                               libff::from_twos_complement(y, w));
                                                                    });
-    print_time("cmpge tests successful");
+    libff::print_time("cmpge tests successful");
 }
 
 template<typename FieldT>
@@ -875,7 +875,7 @@ void ALU_umul_gadget<FieldT>::generate_r1cs_constraints()
             { this->arg1val.packed },
             { this->arg2val.packed },
             { mul_result.packed }),
-        FMT(this->annotation_prefix, " main_constraint"));
+        libff::FMT(this->annotation_prefix, " main_constraint"));
     mul_result.generate_r1cs_constraints(true);
 
     /* pack result */
@@ -890,14 +890,14 @@ void ALU_umul_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->result_flag },
             { mull_flag }),
-        FMT(this->annotation_prefix, " mull_flag"));
+        libff::FMT(this->annotation_prefix, " mull_flag"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->result_flag },
             { umulh_flag }),
-        FMT(this->annotation_prefix, " umulh_flag"));
+        libff::FMT(this->annotation_prefix, " umulh_flag"));
 }
 
 template<typename FieldT>
@@ -921,7 +921,7 @@ void ALU_umul_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_mull_gadget(const size_t w)
 {
-    print_time("starting mull test");
+    libff::print_time("starting mull test");
     brute_force_arithmetic_gadget<ALU_umul_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_MULL,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -944,13 +944,13 @@ void test_ALU_mull_gadget(const size_t w)
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                        return ((x*y) >> w) != 0;
                                                                    });
-    print_time("mull tests successful");
+    libff::print_time("mull tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_umulh_gadget(const size_t w)
 {
-    print_time("starting umulh test");
+    libff::print_time("starting umulh test");
     brute_force_arithmetic_gadget<ALU_umul_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_UMULH,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -973,7 +973,7 @@ void test_ALU_umulh_gadget(const size_t w)
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                        return ((x*y) >> w) != 0;
                                                                    });
-    print_time("umulh tests successful");
+    libff::print_time("umulh tests successful");
 }
 
 template<typename FieldT>
@@ -992,7 +992,7 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
     b.add_term(this->arg2val.bits[this->pb.ap.w-1], -(FieldT(2)^this->pb.ap.w));
     c.add_term(mul_result.packed, 1);
     c.add_term(ONE, -(FieldT(2)^(2*this->pb.ap.w)));
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " main_constraint"));
 
     mul_result.generate_r1cs_constraints(true);
 
@@ -1015,26 +1015,26 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
             { is_top_empty_aux },
             { top },
             { ONE, is_top_empty * (-1) }),
-        FMT(this->annotation_prefix, " I*X=1-R (is_top_empty)"));
+        libff::FMT(this->annotation_prefix, " I*X=1-R (is_top_empty)"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_empty },
             { top },
             { ONE * 0 }),
-        FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
+        libff::FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_full_aux },
             { top, ONE * (1l-(1ul<<(this->pb.ap.w+1))) },
             { ONE, is_top_full * (-1) }),
-        FMT(this->annotation_prefix, " I*X=1-R (is_top_full)"));
+        libff::FMT(this->annotation_prefix, " I*X=1-R (is_top_full)"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_full },
             { top, ONE * (1l-(1ul<<(this->pb.ap.w+1))) },
             { ONE * 0 }),
-        FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
+        libff::FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
 
     /* smulh_flag = 1 - (is_top_full + is_top_empty) */
     this->pb.add_r1cs_constraint(
@@ -1042,7 +1042,7 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, is_top_full * (-1), is_top_empty * (-1) },
             { smulh_flag }),
-        FMT(this->annotation_prefix, " smulh_flag"));
+        libff::FMT(this->annotation_prefix, " smulh_flag"));
 }
 
 template<typename FieldT>
@@ -1096,7 +1096,7 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_smulh_gadget(const size_t w)
 {
-    print_time("starting smulh test");
+    libff::print_time("starting smulh test");
     brute_force_arithmetic_gadget<ALU_smul_gadget<FieldT>, FieldT>(w,
                                                                    tinyram_opcode_SMULH,
                                                                    [] (tinyram_protoboard<FieldT> &pb,
@@ -1113,15 +1113,15 @@ void test_ALU_smulh_gadget(const size_t w)
                                                                                                           "ALU_smul_gadget");
                                                                    },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> size_t {
-                                                                       const size_t res = to_twos_complement((from_twos_complement(x, w) * from_twos_complement(y, w)), 2*w);
+                                                                       const size_t res = libff::to_twos_complement((libff::from_twos_complement(x, w) * libff::from_twos_complement(y, w)), 2*w);
                                                                        return res >> w;
                                                                    },
                                                                    [w] (size_t des, bool f, size_t x, size_t y) -> bool {
-                                                                       const int res = from_twos_complement(x, w) * from_twos_complement(y, w);
-                                                                       const int truncated_res = from_twos_complement(to_twos_complement(res, 2*w) & ((1ul<<w)-1), w);
+                                                                       const int res = libff::from_twos_complement(x, w) * libff::from_twos_complement(y, w);
+                                                                       const int truncated_res = libff::from_twos_complement(libff::to_twos_complement(res, 2*w) & ((1ul<<w)-1), w);
                                                                        return (res != truncated_res);
                                                                    });
-    print_time("smulh tests successful");
+    libff::print_time("smulh tests successful");
 }
 
 template<typename FieldT>
@@ -1133,7 +1133,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b1.add_term(this->arg2val.packed, 1);
     c1.add_term(B_nonzero, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), FMT(this->annotation_prefix, " B_inv*B=B_nonzero"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), libff::FMT(this->annotation_prefix, " B_inv*B=B_nonzero"));
 
     /* (1-B_nonzero) * B = 0 */
     linear_combination<FieldT> a2, b2, c2;
@@ -1142,7 +1142,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b2.add_term(this->arg2val.packed, 1);
     c2.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), FMT(this->annotation_prefix, " (1-B_nonzero)*B=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), libff::FMT(this->annotation_prefix, " (1-B_nonzero)*B=0"));
 
     /* B * q + r = A_aux = A * B_nonzero */
     linear_combination<FieldT> a3, b3, c3;
@@ -1151,14 +1151,14 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     c3.add_term(A_aux, 1);
     c3.add_term(umod_result, -1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a3, b3, c3), FMT(this->annotation_prefix, " B*q+r=A_aux"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a3, b3, c3), libff::FMT(this->annotation_prefix, " B*q+r=A_aux"));
 
     linear_combination<FieldT> a4, b4, c4;
     a4.add_term(this->arg1val.packed, 1);
     b4.add_term(B_nonzero, 1);
     c4.add_term(A_aux, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a4, b4, c4), FMT(this->annotation_prefix, " A_aux=A*B_nonzero"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a4, b4, c4), libff::FMT(this->annotation_prefix, " A_aux=A*B_nonzero"));
 
     /* q * (1-B_nonzero) = 0 */
     linear_combination<FieldT> a5, b5, c5;
@@ -1167,7 +1167,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b5.add_term(B_nonzero, -1);
     c5.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a5, b5, c5), FMT(this->annotation_prefix, " q*B_nonzero=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a5, b5, c5), libff::FMT(this->annotation_prefix, " q*B_nonzero=0"));
 
     /* A<B_gadget<FieldT>(B, r, less=B_nonzero, leq=ONE) */
     r_less_B->generate_r1cs_constraints();
@@ -1212,7 +1212,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_udiv_gadget(const size_t w)
 {
-    print_time("starting udiv test");
+    libff::print_time("starting udiv test");
     brute_force_arithmetic_gadget<ALU_divmod_gadget<FieldT>, FieldT>(w,
                                                                      tinyram_opcode_UDIV,
                                                                      [] (tinyram_protoboard<FieldT> &pb,
@@ -1237,13 +1237,13 @@ void test_ALU_udiv_gadget(const size_t w)
                                                                      [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                          return (y == 0);
                                                                      });
-    print_time("udiv tests successful");
+    libff::print_time("udiv tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_umod_gadget(const size_t w)
 {
-    print_time("starting umod test");
+    libff::print_time("starting umod test");
     brute_force_arithmetic_gadget<ALU_divmod_gadget<FieldT>, FieldT>(w,
                                                                      tinyram_opcode_UMOD,
                                                                      [] (tinyram_protoboard<FieldT> &pb,
@@ -1268,7 +1268,7 @@ void test_ALU_umod_gadget(const size_t w)
                                                                      [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                          return (y == 0);
                                                                      });
-    print_time("umod tests successful");
+    libff::print_time("umod tests successful");
 }
 
 template<typename FieldT>
@@ -1287,7 +1287,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { this->arg1val.packed, reversed_input * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { barrel_right_internal[0], reversed_input * (-1) }),
-        FMT(this->annotation_prefix, " select_arg1val_or_reversed"));
+        libff::FMT(this->annotation_prefix, " select_arg1val_or_reversed"));
 
     /*
       do logw iterations of barrel shifts
@@ -1297,7 +1297,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
         /* assert that shifted out part is bits */
         for (size_t j = 0; j < 1ul<<i; ++j)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, shifted_out_bits[i][j], FMT(this->annotation_prefix, " shifted_out_bits_%zu_%zu", i, j));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, shifted_out_bits[i][j], libff::FMT(this->annotation_prefix, " shifted_out_bits_%zu_%zu", i, j));
         }
 
         /*
@@ -1323,7 +1323,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
         c.add_term(barrel_right_internal[i], 1);
         c.add_term(barrel_right_internal[i+1], -1);
 
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " barrel_shift_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " barrel_shift_%zu", i));
     }
 
     /*
@@ -1337,7 +1337,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { ONE, is_oversize_shift * (-1) },
             { barrel_right_internal[logw] },
             { this->result }),
-        FMT(this->annotation_prefix, " result"));
+        libff::FMT(this->annotation_prefix, " result"));
 
     /*
       get reversed result for SHL
@@ -1355,28 +1355,28 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { this->result, reversed_result * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { shr_result, reversed_result * (-1) }),
-        FMT(this->annotation_prefix, " shr_result"));
+        libff::FMT(this->annotation_prefix, " shr_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { this->result, reversed_result * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { shr_result, reversed_result * (-1) }),
-        FMT(this->annotation_prefix, " shl_result"));
+        libff::FMT(this->annotation_prefix, " shl_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->arg1val.bits[0] },
             { shr_flag }),
-        FMT(this->annotation_prefix, " shr_flag"));
+        libff::FMT(this->annotation_prefix, " shr_flag"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->arg1val.bits[this->pb.ap.w-1] },
             { shl_flag }),
-        FMT(this->annotation_prefix, " shl_flag"));
+        libff::FMT(this->annotation_prefix, " shl_flag"));
 }
 
 template<typename FieldT>
@@ -1436,7 +1436,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_witness()
 template<typename FieldT>
 void test_ALU_shr_gadget(const size_t w)
 {
-    print_time("starting shr test");
+    libff::print_time("starting shr test");
     brute_force_arithmetic_gadget<ALU_shr_shl_gadget<FieldT>, FieldT>(w,
                                                                       tinyram_opcode_SHR,
                                                                       [] (tinyram_protoboard<FieldT> &pb,
@@ -1461,13 +1461,13 @@ void test_ALU_shr_gadget(const size_t w)
                                                                       [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                           return (x & 1);
                                                                       });
-    print_time("shr tests successful");
+    libff::print_time("shr tests successful");
 }
 
 template<typename FieldT>
 void test_ALU_shl_gadget(const size_t w)
 {
-    print_time("starting shl test");
+    libff::print_time("starting shl test");
     brute_force_arithmetic_gadget<ALU_shr_shl_gadget<FieldT>, FieldT>(w,
                                                                       tinyram_opcode_SHL,
                                                                       [] (tinyram_protoboard<FieldT> &pb,
@@ -1492,7 +1492,7 @@ void test_ALU_shl_gadget(const size_t w)
                                                                       [w] (size_t des, bool f, size_t x, size_t y) -> bool {
                                                                           return (x >> (w-1));
                                                                       });
-    print_time("shl tests successful");
+    libff::print_time("shl tests successful");
 }
 
 } // libsnark

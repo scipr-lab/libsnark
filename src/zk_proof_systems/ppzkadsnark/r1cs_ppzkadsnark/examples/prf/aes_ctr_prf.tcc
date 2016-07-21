@@ -24,7 +24,7 @@ aesPrfKeyT prfGen<default_r1cs_ppzkadsnark_pp>() {
 }
 
 template<>
-Fr<snark_pp<default_r1cs_ppzkadsnark_pp>> prfCompute<default_r1cs_ppzkadsnark_pp>(
+libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>> prfCompute<default_r1cs_ppzkadsnark_pp>(
     const aesPrfKeyT &key,  const labelT &label) {
     unsigned char seed_bytes[16];
     mpz_t aux,Fr_mod;
@@ -58,11 +58,11 @@ Fr<snark_pp<default_r1cs_ppzkadsnark_pp>> prfCompute<default_r1cs_ppzkadsnark_pp
 
     // see output as integer and reduce modulo r
     mpz_import(aux, 16*3, 0, 1, 0, 0, random_bytes);
-    Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::mod.to_mpz(Fr_mod);
+    libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::mod.to_mpz(Fr_mod);
     mpz_mod(aux,aux,Fr_mod);
 
-    return Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>(
-        bigint<Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::num_limbs>(aux));
+    return libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>(
+        libff::bigint<libff::Fr<snark_pp<default_r1cs_ppzkadsnark_pp>>::num_limbs>(aux));
 }
 
 } // libsnark

@@ -16,7 +16,7 @@
 #include "common/default_types/ec_pp.hpp"
 
 namespace libsnark {
-typedef default_ec_pp default_r1cs_ppzksnark_pp;
+typedef libff::default_ec_pp default_r1cs_ppzksnark_pp;
 } // libsnark
 
 #endif // R1CS_PPZKSNARK_PP_HPP_

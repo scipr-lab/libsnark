@@ -26,7 +26,7 @@ public:
 class default_fooram_ppzksnark_pp {
 public:
     typedef default_r1cs_ppzksnark_pp snark_pp;
-    typedef Fr<default_r1cs_ppzksnark_pp> FieldT;
+    typedef libff::Fr<default_r1cs_ppzksnark_pp> FieldT;
     typedef ram_fooram<FieldT> machine_pp;
 
     static void init_public_params() { snark_pp::init_public_params(); }
@@ -66,8 +66,8 @@ void profile_ram_ppzksnark(const size_t w)
 
 int main(int argc, const char* argv[])
 {
-    UNUSED(argv);
-    start_profiling();
+    libff::UNUSED(argv);
+    libff::start_profiling();
     default_fooram_ppzksnark_pp::init_public_params();
     default_fooram_zksnark_pp::init_public_params();
 

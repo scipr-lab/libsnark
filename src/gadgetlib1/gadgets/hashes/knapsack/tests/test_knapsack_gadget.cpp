@@ -21,12 +21,12 @@ namespace libsnark {
 
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
 template<>
-void test_knapsack_CRH_with_bit_out_gadget<Fr<bn128_pp> >()
+void test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::bn128_pp> >()
 {
-    typedef Fr<bn128_pp> FieldT;
+    typedef libff::Fr<libff::bn128_pp> FieldT;
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    const bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
-    bit_vector digest_bits;
+    const libff::bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
+    libff::bit_vector digest_bits;
 
     if (dimension == 1)
     {
@@ -51,12 +51,12 @@ void test_knapsack_CRH_with_bit_out_gadget<Fr<bn128_pp> >()
 #endif
 
 template<>
-void test_knapsack_CRH_with_bit_out_gadget<Fr<edwards_pp> >()
+void test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::edwards_pp> >()
 {
-    typedef Fr<edwards_pp> FieldT;
+    typedef libff::Fr<libff::edwards_pp> FieldT;
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    const bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
-    bit_vector digest_bits;
+    const libff::bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
+    libff::bit_vector digest_bits;
 
     if (dimension == 1)
     {
@@ -80,12 +80,12 @@ void test_knapsack_CRH_with_bit_out_gadget<Fr<edwards_pp> >()
 }
 
 template<>
-void test_knapsack_CRH_with_bit_out_gadget<Fr<mnt4_pp> >()
+void test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::mnt4_pp> >()
 {
-    typedef Fr<mnt4_pp> FieldT;
+    typedef libff::Fr<libff::mnt4_pp> FieldT;
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    const bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
-    bit_vector digest_bits;
+    const libff::bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
+    libff::bit_vector digest_bits;
 
     if (dimension == 1)
     {
@@ -109,12 +109,12 @@ digest_bits = {1,1,1,1,0,0,1,0,1,0,0,0,1,1,0,0,1,1,0,0,1,0,0,0,0,1,0,1,0,0,1,1,0
 }
 
 template<>
-void test_knapsack_CRH_with_bit_out_gadget<Fr<mnt6_pp> >()
+void test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::mnt6_pp> >()
 {
-    typedef Fr<mnt6_pp> FieldT;
+    typedef libff::Fr<libff::mnt6_pp> FieldT;
     const size_t dimension = knapsack_dimension<FieldT>::dimension;
-    const bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
-    bit_vector digest_bits;
+    const libff::bit_vector input_bits = {1,1,0,0,1,0,1,0,0,1};
+    libff::bit_vector digest_bits;
 
     if (dimension == 1)
     {
@@ -144,13 +144,13 @@ using namespace libsnark;
 int main(void)
 {
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
-    bn128_pp::init_public_params();
-    test_knapsack_CRH_with_bit_out_gadget<Fr<bn128_pp> >();
+    libff::bn128_pp::init_public_params();
+    test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::bn128_pp> >();
 #endif
-    edwards_pp::init_public_params();
-    test_knapsack_CRH_with_bit_out_gadget<Fr<edwards_pp> >();
-    mnt4_pp::init_public_params();
-    test_knapsack_CRH_with_bit_out_gadget<Fr<mnt4_pp> >();
-    mnt6_pp::init_public_params();
-    test_knapsack_CRH_with_bit_out_gadget<Fr<mnt6_pp> >();
+    libff::edwards_pp::init_public_params();
+    test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::edwards_pp> >();
+    libff::mnt4_pp::init_public_params();
+    test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::mnt4_pp> >();
+    libff::mnt6_pp::init_public_params();
+    test_knapsack_CRH_with_bit_out_gadget<libff::Fr<libff::mnt6_pp> >();
 }

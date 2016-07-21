@@ -19,20 +19,20 @@ set_commitment_gadget<FieldT, HashT>::set_commitment_gadget(protoboard<FieldT> &
                                                             const set_membership_proof_variable<FieldT, HashT> &proof,
                                                             const pb_linear_combination<FieldT> &check_successful,
                                                             const std::string &annotation_prefix) :
-    gadget<FieldT>(pb, annotation_prefix), tree_depth(log2(max_entries)), element_bits(element_bits),
+    gadget<FieldT>(pb, annotation_prefix), tree_depth(libff::log2(max_entries)), element_bits(element_bits),
     root_digest(root_digest), proof(proof), check_successful(check_successful)
 {
-    element_block.reset(new block_variable<FieldT>(pb, { element_bits }, FMT(annotation_prefix, " element_block")));
+    element_block.reset(new block_variable<FieldT>(pb, { element_bits }, libff::FMT(annotation_prefix, " element_block")));
 
     if (tree_depth == 0)
     {
-        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, root_digest, FMT(annotation_prefix, " hash_element")));
+        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, root_digest, libff::FMT(annotation_prefix, " hash_element")));
     }
     else
     {
         element_digest.reset(new digest_variable<FieldT>(pb, HashT::get_digest_len(),
-                                                         FMT(annotation_prefix, " element_digest")));
-        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, *element_digest, FMT(annotation_prefix, " hash_element")));
+                                                         libff::FMT(annotation_prefix, " element_digest")));
+        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, *element_digest, libff::FMT(annotation_prefix, " hash_element")));
         check_membership.reset(new merkle_tree_check_read_gadget<FieldT, HashT>(pb,
                                                                                 tree_depth,
                                                                                 proof.address_bits,
@@ -40,7 +40,7 @@ set_commitment_gadget<FieldT, HashT>::set_commitment_gadget(protoboard<FieldT> &
                                                                                 root_digest,
                                                                                 *proof.merkle_path,
                                                                                 check_successful,
-                                                                                FMT(annotation_prefix, " check_membership")));
+                                                                                libff::FMT(annotation_prefix, " check_membership")));
     }
 }
 
@@ -81,10 +81,10 @@ void test_set_commitment_gadget()
 
     set_commitment_accumulator<HashT> accumulator(max_set_size, value_size);
 
-    std::vector<bit_vector> set_elems;
+    std::vector<libff::bit_vector> set_elems;
     for (size_t i = 0; i < max_set_size; ++i)
     {
-        bit_vector elem(value_size);
+        libff::bit_vector elem(value_size);
         std::generate(elem.begin(), elem.end(), [&]() { return std::rand() % 2; });
         set_elems.emplace_back(elem);
         accumulator.add(elem);
