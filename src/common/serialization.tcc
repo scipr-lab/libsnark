@@ -53,36 +53,12 @@ inline void output_bool(std::ostream &out, const bool b)
     out << (b ? 1 : 0) << "\n";
 }
 
-inline void input_bool(std::istream &in, bool &b)
-{
-    size_t tmp;
-    in >> tmp;
-    consume_newline(in);
-    assert(tmp == 0 || tmp == 1);
-
-    b = (tmp == 1 ? true : false);
-}
-
 inline void output_bool_vector(std::ostream &out, const std::vector<bool> &v)
 {
     out << v.size() << "\n";
     for (const bool b : v)
     {
         output_bool(out, b);
-    }
-}
-
-inline void input_bool_vector(std::istream &in, std::vector<bool> &v)
-{
-    size_t size;
-    in >> size;
-    consume_newline(in);
-    v.resize(size);
-    for (size_t i = 0; i < size; ++i)
-    {
-        bool b;
-        input_bool(in, b);
-        v[i] = b;
     }
 }
 

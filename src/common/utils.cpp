@@ -30,19 +30,6 @@ size_t log2(size_t n)
     return r;
 }
 
-size_t to_twos_complement(int i, size_t w)
-{
-    assert(i >= -(1l<<(w-1)));
-    assert(i < (1l<<(w-1)));
-    return (i >= 0) ? i : i + (1l<<w);
-}
-
-int from_twos_complement(size_t i, size_t w)
-{
-    assert(i < (1ul<<w));
-    return (i < (1ul<<(w-1))) ? i : i - (1ul<<w);
-}
-
 size_t bitreverse(size_t n, const size_t l)
 {
     size_t r = 0;
