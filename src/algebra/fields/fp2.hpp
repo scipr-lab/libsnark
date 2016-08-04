@@ -24,7 +24,7 @@ template<mp_size_t n, const bigint<n>& modulus>
 std::istream& operator>>(std::istream &, Fp2_model<n, modulus> &);
 
 /**
- * Arithmetic in the field F[p^3].
+ * Arithmetic in the field F[p^2].
  *
  * Let p := modulus. This interface provides arithmetic for the extension field
  * Fp2 = Fp[U]/(U^2-non_residue), where non_residue is in Fp.
