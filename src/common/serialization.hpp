@@ -73,10 +73,8 @@ inline void consume_OUTPUT_NEWLINE(std::istream &in);
 inline void consume_OUTPUT_SEPARATOR(std::istream &in);
 
 inline void output_bool(std::ostream &out, const bool b);
-inline void input_bool(std::istream &in, bool &b);
 
 inline void output_bool_vector(std::ostream &out, const std::vector<bool> &v);
-inline void input_bool_vector(std::istream &in, std::vector<bool> &v);
 
 template<typename T>
 T reserialize(const T &obj);

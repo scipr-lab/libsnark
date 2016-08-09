@@ -15,6 +15,7 @@
 
 #include "algebra/fields/fp_aux.tcc"
 #include "algebra/fields/field_utils.hpp"
+#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -172,13 +173,13 @@ void Fp_model<n,modulus>::mul_reduce(const bigint<n> &other)
             /* calculate res = res + k * mod * b^i */
             mp_limb_t carryout = mpn_addmul_1(res+i, modulus.data, n, k);
             carryout = mpn_add_1(res+n+i, res+n+i, n-i, carryout);
-            assert(carryout == 0);
+            assert_except(carryout == 0);
         }
 
         if (mpn_cmp(res+n, modulus.data, n) >= 0)
         {
             const mp_limb_t borrow = mpn_sub(res+n, res+n, n, modulus.data, n);
-            assert(borrow == 0);
+            assert_except(borrow == 0);
         }
 
         mpn_copyi(this->mont_repr.data, res+n, n);
@@ -202,7 +203,7 @@ Fp_model<n,modulus>::Fp_model(const long x, const bool is_unsigned)
     else
     {
         const mp_limb_t borrow = mpn_sub_1(this->mont_repr.data, modulus.data, n, -x);
-        assert(borrow == 0);
+        assert_except(borrow == 0);
     }
 
     mul_reduce(Rsquared);
@@ -390,7 +391,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::operator+=(const Fp_model<n,modulus>& 
         if (carry || mpn_cmp(scratch, modulus.data, n) >= 0)
         {
             const mp_limb_t borrow = mpn_sub(scratch, scratch, n+1, modulus.data, n);
-            assert(borrow == 0);
+            assert_except(borrow == 0);
         }
 
         mpn_copyi(this->mont_repr.data, scratch, n);
@@ -482,7 +483,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::operator-=(const Fp_model<n,modulus>& 
         }
 
         const mp_limb_t borrow = mpn_sub(scratch, scratch, n+1, other.mont_repr.data, n);
-        assert(borrow == 0);
+        assert_except(borrow == 0);
 
         mpn_copyi(this->mont_repr.data, scratch, n);
     }
@@ -625,7 +626,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::invert()
     this->inv_cnt++;
 #endif
 
-    assert(!this->is_zero());
+    assert_except(!this->is_zero());
 
     bigint<n> g; /* gp should have room for vn = n limbs */
 
@@ -636,7 +637,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::invert()
 
     /* computes gcd(u, v) = g = u*s + v*t, so s*u will be 1 (mod v) */
     const mp_size_t gn = mpn_gcdext(g.data, s, &sn, this->mont_repr.data, n, v.data, n);
-    assert(gn == 1 && g.data[0] == 1); /* inverse exists */
+    assert_except(gn == 1 && g.data[0] == 1); /* inverse exists */
 
     mp_limb_t q; /* division result fits into q, as sn <= n+1 */
     /* sn < 0 indicates negative sn; will fix up later */
@@ -657,7 +658,7 @@ Fp_model<n,modulus>& Fp_model<n,modulus>::invert()
     if (sn < 0)
     {
         const mp_limb_t borrow = mpn_sub_n(this->mont_repr.data, modulus.data, this->mont_repr.data, n);
-        assert(borrow == 0);
+        assert_except(borrow == 0);
     }
 
     mul_reduce(Rcubed);
@@ -720,7 +721,7 @@ Fp_model<n,modulus> Fp_model<n,modulus>::sqrt() const
     }
     if (check != one)
     {
-        assert(0);
+        assert_except(0);
     }
 #endif
 

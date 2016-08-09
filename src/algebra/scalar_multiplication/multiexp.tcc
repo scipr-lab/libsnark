@@ -22,6 +22,7 @@
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
+#include "common/assert_except.hpp"
 #include "algebra/scalar_multiplication/wnaf.hpp"
 
 namespace libsnark {
@@ -119,7 +120,7 @@ T naive_exp(typename std::vector<T>::const_iterator vec_start,
         bigint<FieldT::num_limbs> scalar_bigint = scalar_it->as_bigint();
         result = result + opt_window_wnaf_exp(*vec_it, scalar_bigint, scalar_bigint.num_bits());
     }
-    assert(scalar_it == scalar_end);
+    assert_except(scalar_it == scalar_end);
 
     return result;
 }
@@ -139,7 +140,7 @@ T naive_plain_exp(typename std::vector<T>::const_iterator vec_start,
     {
         result = result + (*scalar_it) * (*vec_it);
     }
-    assert(scalar_it == scalar_end);
+    assert_except(scalar_it == scalar_end);
 
     return result;
 }
@@ -185,15 +186,15 @@ T multi_exp_inner(typename std::vector<T>::const_iterator vec_start,
         opt_q.emplace_back(ordered_exponent<n>(i, scalar_it->as_bigint()));
     }
     std::make_heap(opt_q.begin(),opt_q.end());
-    assert(scalar_it == scalar_end);
+    assert_except(scalar_it == scalar_end);
 
     if (vec_len != odd_vec_len)
     {
         g.emplace_back(T::zero());
         opt_q.emplace_back(ordered_exponent<n>(odd_vec_len - 1, bigint<n>(0ul)));
     }
-    assert(g.size() % 2 == 1);
-    assert(opt_q.size() == g.size());
+    assert_except(g.size() % 2 == 1);
+    assert_except(opt_q.size() == g.size());
 
     T opt_result = T::zero();
 
@@ -329,7 +330,7 @@ T multi_exp_with_mixed_addition(typename std::vector<T>::const_iterator vec_star
                                 const size_t chunks,
                                 const bool use_multiexp)
 {
-    assert(std::distance(vec_start, vec_end) == std::distance(scalar_start, scalar_end));
+    assert_except(std::distance(vec_start, vec_end) == std::distance(scalar_start, scalar_end));
     enter_block("Process scalar vector");
     auto value_it = vec_start;
     auto scalar_it = scalar_start;

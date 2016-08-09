@@ -14,17 +14,18 @@
 #ifndef EXTENDED_RADIX2_DOMAIN_TCC_
 
 #include "algebra/evaluation_domain/domains/basic_radix2_domain_aux.hpp"
+#include "common/assert_except.hpp"
 
 namespace libsnark {
 
 template<typename FieldT>
 extended_radix2_domain<FieldT>::extended_radix2_domain(const size_t m) : evaluation_domain<FieldT>(m)
 {
-    assert(m > 1);
+    assert_except(m > 1);
 
     const size_t logm = log2(m);
 
-    assert(logm == FieldT::s + 1);
+    assert_except(logm == FieldT::s + 1);
 
     small_m = m/2;
     omega = get_root_of_unity<FieldT>(small_m);
@@ -34,7 +35,7 @@ extended_radix2_domain<FieldT>::extended_radix2_domain(const size_t m) : evaluat
 template<typename FieldT>
 void extended_radix2_domain<FieldT>::FFT(std::vector<FieldT> &a)
 {
-    assert(a.size() == this->m);
+    assert_except(a.size() == this->m);
 
     std::vector<FieldT> a0(small_m, FieldT::zero());
     std::vector<FieldT> a1(small_m, FieldT::zero());
@@ -63,7 +64,7 @@ void extended_radix2_domain<FieldT>::FFT(std::vector<FieldT> &a)
 template<typename FieldT>
 void extended_radix2_domain<FieldT>::iFFT(std::vector<FieldT> &a)
 {
-    assert(a.size() == this->m);
+    assert_except(a.size() == this->m);
 
     // note: this is not in-place
     std::vector<FieldT> a0(a.begin(), a.begin() + small_m);
@@ -146,7 +147,7 @@ FieldT extended_radix2_domain<FieldT>::compute_Z(const FieldT &t)
 template<typename FieldT>
 void extended_radix2_domain<FieldT>::add_poly_Z(const FieldT &coeff, std::vector<FieldT> &H)
 {
-    assert(H.size() == this->m+1);
+    assert_except(H.size() == this->m+1);
     const FieldT shift_to_small_m = shift^small_m;
 
     H[this->m] += coeff;

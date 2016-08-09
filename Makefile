@@ -51,8 +51,6 @@ LIB_SRCS = \
 	src/algebra/curves/alt_bn128/alt_bn128_init.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pairing.cpp \
 	src/algebra/curves/alt_bn128/alt_bn128_pp.cpp \
-	src/common/data_structures/integer_permutation.cpp \
-	src/common/data_structures/set_commitment.cpp \
 	src/common/profiling.cpp \
 	src/common/utils.cpp \
 	src/gadgetlib1/constraint_profiling.cpp \

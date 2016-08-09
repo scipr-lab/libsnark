@@ -12,13 +12,14 @@
 #include <cassert>
 #include <cstring>
 #include "sodium.h"
+#include "common/assert_except.hpp"
 
 namespace libsnark {
 
 template<mp_size_t n>
 bigint<n>::bigint(const unsigned long x) /// Initalize from a small integer
 {
-    assert(8*sizeof(x) <= GMP_NUMB_BITS);
+    assert_except(8*sizeof(x) <= GMP_NUMB_BITS);
     this->data[0] = x;
 }
 
@@ -30,12 +31,12 @@ bigint<n>::bigint(const char* s) /// Initialize from a string containing an inte
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert(s[i] >= '0' && s[i] <= '9');
+        assert_except(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(this->data, s_copy, l, 10);
-    assert(limbs_written <= n);
+    assert_except(limbs_written <= n);
 
     delete[] s_copy;
 }
@@ -52,7 +53,7 @@ bigint<n>::bigint(const mpz_t r) /// Initialize from MPZ element
         mpz_fdiv_q_2exp(k, k, GMP_NUMB_BITS);
     }
 
-    assert(mpz_sgn(k) == 0);
+    assert_except(mpz_sgn(k) == 0);
     mpz_clear(k);
 }
 
@@ -166,7 +167,7 @@ bool bigint<n>::test_bit(const std::size_t bitno) const
 template<mp_size_t n>
 bigint<n>& bigint<n>::randomize()
 {
-    assert(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
+    assert_except(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
 
     randombytes_buf(this->data, sizeof(mp_limb_t) * n);
 
@@ -205,12 +206,12 @@ std::istream& operator>>(std::istream &in, bigint<n> &b)
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert(s[i] >= '0' && s[i] <= '9');
+        assert_except(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(b.data, s_copy, l, 10);
-    assert(limbs_written <= n);
+    assert_except(limbs_written <= n);
 
     delete[] s_copy;
 #endif

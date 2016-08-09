@@ -540,29 +540,16 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof)
 {
-    enter_block("Call to r1cs_ppzksnark_online_verifier_weak_IC");
     assert(pvk.encoded_IC_query.domain_size() >= primary_input.size());
 
-    enter_block("Compute input-dependent part of A");
     const accumulation_vector<G1<ppT> > accumulated_IC = pvk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const G1<ppT> &acc = accumulated_IC.first;
-    leave_block("Compute input-dependent part of A");
 
-    bool result = true;
-
-    enter_block("Check if the proof is well-formed");
     if (!proof.is_well_formed())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("At least one of the proof elements does not lie on the curve.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check if the proof is well-formed");
 
-    enter_block("Online pairing computations");
-    enter_block("Check knowledge commitment for A is valid");
     G1_precomp<ppT> proof_g_A_g_precomp      = ppT::precompute_G1(proof.g_A.g);
     G1_precomp<ppT> proof_g_A_h_precomp = ppT::precompute_G1(proof.g_A.h);
     Fqk<ppT> kc_A_1 = ppT::miller_loop(proof_g_A_g_precomp,      pvk.vk_alphaA_g2_precomp);
@@ -570,15 +557,9 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     GT<ppT> kc_A = ppT::final_exponentiation(kc_A_1 * kc_A_2.unitary_inverse());
     if (kc_A != GT<ppT>::one())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("Knowledge commitment for A query incorrect.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check knowledge commitment for A is valid");
 
-    enter_block("Check knowledge commitment for B is valid");
     G2_precomp<ppT> proof_g_B_g_precomp      = ppT::precompute_G2(proof.g_B.g);
     G1_precomp<ppT> proof_g_B_h_precomp = ppT::precompute_G1(proof.g_B.h);
     Fqk<ppT> kc_B_1 = ppT::miller_loop(pvk.vk_alphaB_g1_precomp, proof_g_B_g_precomp);
@@ -586,15 +567,9 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     GT<ppT> kc_B = ppT::final_exponentiation(kc_B_1 * kc_B_2.unitary_inverse());
     if (kc_B != GT<ppT>::one())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("Knowledge commitment for B query incorrect.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check knowledge commitment for B is valid");
 
-    enter_block("Check knowledge commitment for C is valid");
     G1_precomp<ppT> proof_g_C_g_precomp      = ppT::precompute_G1(proof.g_C.g);
     G1_precomp<ppT> proof_g_C_h_precomp = ppT::precompute_G1(proof.g_C.h);
     Fqk<ppT> kc_C_1 = ppT::miller_loop(proof_g_C_g_precomp,      pvk.vk_alphaC_g2_precomp);
@@ -602,15 +577,9 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     GT<ppT> kc_C = ppT::final_exponentiation(kc_C_1 * kc_C_2.unitary_inverse());
     if (kc_C != GT<ppT>::one())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("Knowledge commitment for C query incorrect.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check knowledge commitment for C is valid");
 
-    enter_block("Check QAP divisibility");
     // check that g^((A+acc)*B)=g^(H*\Prod(t-\sigma)+C)
     // equivalently, via pairings, that e(g^(A+acc), g^B) = e(g^H, g^Z) + e(g^C, g^1)
     G1_precomp<ppT> proof_g_A_g_acc_precomp = ppT::precompute_G1(proof.g_A.g + acc);
@@ -620,15 +589,9 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     GT<ppT> QAP = ppT::final_exponentiation(QAP_1 * QAP_23.unitary_inverse());
     if (QAP != GT<ppT>::one())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("QAP divisibility check failed.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check QAP divisibility");
 
-    enter_block("Check same coefficients were used");
     G1_precomp<ppT> proof_g_K_precomp = ppT::precompute_G1(proof.g_K);
     G1_precomp<ppT> proof_g_A_g_acc_C_precomp = ppT::precompute_G1((proof.g_A.g + acc) + proof.g_C.g);
     Fqk<ppT> K_1 = ppT::miller_loop(proof_g_K_precomp, pvk.vk_gamma_g2_precomp);
@@ -636,17 +599,10 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     GT<ppT> K = ppT::final_exponentiation(K_1 * K_23.unitary_inverse());
     if (K != GT<ppT>::one())
     {
-        if (!inhibit_profiling_info)
-        {
-            print_indent(); printf("Same-coefficient check failed.\n");
-        }
-        result = false;
+        return false;
     }
-    leave_block("Check same coefficients were used");
-    leave_block("Online pairing computations");
-    leave_block("Call to r1cs_ppzksnark_online_verifier_weak_IC");
 
-    return result;
+    return true;
 }
 
 template<typename ppT>
