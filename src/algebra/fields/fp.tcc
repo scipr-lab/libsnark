@@ -197,11 +197,11 @@ Fp_model<n,modulus>::Fp_model(const long x, const bool is_unsigned)
 {
     if (is_unsigned || x >= 0)
     {
-        this->mont_repr.data[0] = x;
+        this->mont_repr.data[0] = (mp_limb_t)x;
     }
     else
     {
-        const mp_limb_t borrow = mpn_sub_1(this->mont_repr.data, modulus.data, n, -x);
+        const mp_limb_t borrow = mpn_sub_1(this->mont_repr.data, modulus.data, n, (mp_limb_t)-x);
         assert(borrow == 0);
     }
 
