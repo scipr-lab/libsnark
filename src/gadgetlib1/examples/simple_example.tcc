@@ -8,7 +8,6 @@
 #ifndef SIMPLE_EXAMPLE_TCC_
 #define SIMPLE_EXAMPLE_TCC_
 
-#include <cassert>
 #include "gadgetlib1/gadgets/basic_gadgets.hpp"
 
 namespace libsnark {
@@ -16,8 +15,7 @@ namespace libsnark {
 /* NOTE: all examples here actually generate one constraint less to account for soundness constraint in QAP */
 
 template<typename FieldT>
-r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constraints,
-                                                      const size_t num_inputs)
+r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constraints)
 {
     const size_t new_num_constraints = num_constraints - 1;
 
@@ -43,11 +41,7 @@ r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constrain
     }
 
     compute_inner_product.generate_r1cs_witness();
-
-    pb.constraint_system.num_inputs = num_inputs;
-    const r1cs_variable_assignment<FieldT> va = pb.values;
-    const r1cs_variable_assignment<FieldT> input(va.begin(), va.begin() + num_inputs);
-    return r1cs_example<FieldT>(pb.constraint_system, input, va, num_inputs);
+    return r1cs_example<FieldT>(pb.get_constraint_system(), pb.primary_input(), pb.auxiliary_input());
 }
 
 } // libsnark
