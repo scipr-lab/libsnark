@@ -370,6 +370,19 @@ public:
 template<typename ppT>
 r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constraint_system<ppT> &cs);
 
+template<typename ppT>
+r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(
+    const r1cs_ppzksnark_constraint_system<ppT> &cs,
+    const Fr<ppT>& t,
+    const Fr<ppT>& alphaA,
+    const Fr<ppT>& alphaB,
+    const Fr<ppT>& alphaC,
+    const Fr<ppT>& rA,
+    const Fr<ppT>& rB,
+    const Fr<ppT>& beta,
+    const Fr<ppT>& gamma
+);
+
 /**
  * A prover algorithm for the R1CS ppzkSNARK.
  *

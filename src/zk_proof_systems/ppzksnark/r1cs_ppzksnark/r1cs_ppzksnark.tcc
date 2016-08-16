@@ -234,14 +234,38 @@ r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy
 template <typename ppT>
 r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constraint_system<ppT> &cs)
 {
+    /* draw random element at which the QAP is evaluated */
+    const  Fr<ppT> t = Fr<ppT>::random_element();
+
+    const  Fr<ppT> alphaA = Fr<ppT>::random_element(),
+        alphaB = Fr<ppT>::random_element(),
+        alphaC = Fr<ppT>::random_element(),
+        rA = Fr<ppT>::random_element(),
+        rB = Fr<ppT>::random_element(),
+        beta = Fr<ppT>::random_element(),
+        gamma = Fr<ppT>::random_element();
+
+    return r1cs_ppzksnark_generator<ppT>(cs, t, alphaA, alphaB, alphaC, rA, rB, beta, gamma);
+}
+
+template <typename ppT>
+r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(
+    const r1cs_ppzksnark_constraint_system<ppT> &cs,
+    const Fr<ppT>& t,
+    const Fr<ppT>& alphaA,
+    const Fr<ppT>& alphaB,
+    const Fr<ppT>& alphaC,
+    const Fr<ppT>& rA,
+    const Fr<ppT>& rB,
+    const Fr<ppT>& beta,
+    const Fr<ppT>& gamma
+)
+{
     enter_block("Call to r1cs_ppzksnark_generator");
 
     /* make the B_query "lighter" if possible */
     r1cs_ppzksnark_constraint_system<ppT> cs_copy(cs);
     cs_copy.swap_AB_if_beneficial();
-
-    /* draw random element at which the QAP is evaluated */
-    const  Fr<ppT> t = Fr<ppT>::random_element();
 
     qap_instance_evaluation<Fr<ppT> > qap_inst = r1cs_to_qap_instance_map_with_evaluation(cs_copy, t);
 
@@ -286,13 +310,6 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
     Bt.emplace_back(qap_inst.Zt);
     Ct.emplace_back(qap_inst.Zt);
 
-    const  Fr<ppT> alphaA = Fr<ppT>::random_element(),
-        alphaB = Fr<ppT>::random_element(),
-        alphaC = Fr<ppT>::random_element(),
-        rA = Fr<ppT>::random_element(),
-        rB = Fr<ppT>::random_element(),
-        beta = Fr<ppT>::random_element(),
-        gamma = Fr<ppT>::random_element();
     const Fr<ppT>      rC = rA * rB;
 
     // consrtuct the same-coefficient-check query (must happen before zeroing out the prefix of At)
