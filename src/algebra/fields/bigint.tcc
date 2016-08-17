@@ -11,13 +11,15 @@
 #define BIGINT_TCC_
 #include <cassert>
 #include <cstring>
+#include "sodium.h"
+#include "common/assert_except.hpp"
 
 namespace libsnark {
 
 template<mp_size_t n>
 bigint<n>::bigint(const unsigned long x) /// Initalize from a small integer
 {
-    assert(8*sizeof(x) <= GMP_NUMB_BITS);
+    assert_except(size_t{8} * sizeof(x) <= GMP_NUMB_BITS);
     this->data[0] = x;
 }
 
@@ -27,16 +29,16 @@ bigint<n>::bigint(const char* s) /// Initialize from a string containing an inte
     size_t l = strlen(s);
     unsigned char* s_copy = new unsigned char[l];
 
-    for (size_t i = 0; i < l; ++i)
+    for (size_t i = size_t{0}; i < l; ++i)
     {
-        assert(s[i] >= '0' && s[i] <= '9');
-        s_copy[i] = s[i] - '0';
+        assert_except(s[i] >= '0' && s[i] <= '9');
+        s_copy[i] = static_cast<unsigned char>(s[i] - '0');
     }
 
     mp_size_t limbs_written = mpn_set_str(this->data, s_copy, l, 10);
-    assert(limbs_written <= n);
+    assert_except(limbs_written <= n);
 
-    delete[] s_copy;
+    delete [] s_copy;
 }
 
 template<mp_size_t n>
@@ -45,13 +47,13 @@ bigint<n>::bigint(const mpz_t r) /// Initialize from MPZ element
     mpz_t k;
     mpz_init_set(k, r);
 
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = size_t{0}; i < n; ++i)
     {
         data[i] = mpz_get_ui(k);
         mpz_fdiv_q_2exp(k, k, GMP_NUMB_BITS);
     }
 
-    assert(mpz_sgn(k) == 0);
+    assert_except(mpz_sgn(k) == 0);
     mpz_clear(k);
 }
 
@@ -88,7 +90,7 @@ void bigint<n>::clear()
 template<mp_size_t n>
 bool bigint<n>::is_zero() const
 {
-    for (size_t i = 0; i < n; ++i)
+    for (size_t i = size_t{0}; i < n; ++i)
     {
         if (this->data[i])
         {
@@ -165,11 +167,9 @@ bool bigint<n>::test_bit(const std::size_t bitno) const
 template<mp_size_t n>
 bigint<n>& bigint<n>::randomize()
 {
-    assert(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
-    FILE *fp = fopen("/dev/urandom", "r");  //TODO Remove hard-coded use of /dev/urandom.
-    size_t bytes_read = fread(this->data, 1, sizeof(mp_limb_t) * n, fp);
-    assert(bytes_read == sizeof(mp_limb_t) * n);
-    fclose(fp);
+    assert_except(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
+
+    randombytes_buf(this->data, sizeof(mp_limb_t) * n);
 
     return (*this);
 }
@@ -202,18 +202,18 @@ std::istream& operator>>(std::istream &in, bigint<n> &b)
     in >> s;
 
     size_t l = s.size();
-    unsigned char* s_copy = new unsigned char[l];
+    unsigned char * s_copy = new unsigned char[l];
 
-    for (size_t i = 0; i < l; ++i)
+    for (size_t i = size_t{0}; i < l; ++i)
     {
-        assert(s[i] >= '0' && s[i] <= '9');
-        s_copy[i] = s[i] - '0';
+        assert_except(s[i] >= '0' && s[i] <= '9');
+        s_copy[i] = static_cast<unsigned char>(s[i] - '0');
     }
 
     mp_size_t limbs_written = mpn_set_str(b.data, s_copy, l, 10);
-    assert(limbs_written <= n);
+    assert_except(limbs_written <= n);
 
-    delete[] s_copy;
+    delete [] s_copy;
 #endif
     return in;
 }
