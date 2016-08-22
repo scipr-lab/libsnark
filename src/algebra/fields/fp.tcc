@@ -712,7 +712,7 @@ Fp_model<n,modulus> Fp_model<n,modulus>::sqrt() const
     Fp_model<n,modulus> x = (*this) * w;
     Fp_model<n,modulus> b = x * w; // b = (*this)^t
 
-#if DEBUG
+
     // check if square with euler's criterion
     Fp_model<n,modulus> check = b;
     for (size_t i = 0; i < v-1; ++i)
@@ -723,7 +723,7 @@ Fp_model<n,modulus> Fp_model<n,modulus>::sqrt() const
     {
         assert_except(0);
     }
-#endif
+
 
     // compute square root with Tonelli--Shanks
     // (does not terminate if not a square!)
