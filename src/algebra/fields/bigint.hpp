@@ -50,6 +50,17 @@ public:
     void to_mpz(mpz_t r) const;
     bool test_bit(const std::size_t bitno) const;
 
+    template<mp_size_t m> inline bigint<n> operator+(const bigint<m>& other) const;
+    template<mp_size_t m> inline void operator+=(const bigint<m>& other);
+    template<mp_size_t m> inline bigint<n+m> operator*(const bigint<m>& other) const;
+    template<mp_size_t d> static inline void div_qr(bigint<n-d+1>& quotient, bigint<d>& remainder,
+                                                    const bigint<n>& dividend, const bigint<d>& divisor);
+    template<mp_size_t m> inline bigint<m> shorten(const bigint<m>& q, const char *msg) const;
+
+    inline void limit(const bigint<n>& q, const char *msg) const;
+    static inline int cmp(const bigint<n> &a, const bigint<n> &b);
+    bool operator>(const bigint<n>& other) const;
+
     bigint& randomize();
 
     friend std::ostream& operator<< <n>(std::ostream &out, const bigint<n> &b);
