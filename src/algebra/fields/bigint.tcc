@@ -10,6 +10,7 @@
 #ifndef BIGINT_TCC_
 #define BIGINT_TCC_
 #include <cassert>
+#include <climits>
 #include <cstring>
 #include "sodium.h"
 #include "common/assert_except.hpp"
@@ -19,7 +20,7 @@ namespace libsnark {
 template<mp_size_t n>
 bigint<n>::bigint(const unsigned long x) /// Initalize from a small integer
 {
-    assert_except(8*sizeof(x) <= GMP_NUMB_BITS);
+    static_assert(ULONG_MAX <= GMP_NUMB_MAX, "unsigned long does not fit in a GMP limb");
     this->data[0] = x;
 }
 
@@ -90,7 +91,7 @@ void bigint<n>::clear()
 template<mp_size_t n>
 bool bigint<n>::is_zero() const
 {
-    for (size_t i = 0; i < n; ++i)
+    for (mp_size_t i = 0; i < n; ++i)
     {
         if (this->data[i])
         {
