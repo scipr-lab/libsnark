@@ -165,14 +165,6 @@ bool bigint<n>::test_bit(const std::size_t bitno) const
     }
 }
 
-template<mp_size_t n> template<mp_size_t m>
-inline bigint<n> bigint<n>::operator+(const bigint<m>& other) const
-{
-    static_assert(n >= m, "first arg must not be smaller than second arg for bigint add");
-    bigint<n> res;
-    mpn_add(res.data, data, n, other.data, m);
-    return res;
-}
 
 template<mp_size_t n> template<mp_size_t m>
 inline void bigint<n>::operator+=(const bigint<m>& other)
@@ -221,14 +213,6 @@ inline void bigint<n>::limit(const bigint<n>& q, const char *msg) const
     if (!(q > *this)) {
         throw std::domain_error(msg);
     }
-}
-
-
-// Compares two bigints, returning 0 if equal, positive int if a > b, and negative int if a < b.
-template<mp_size_t n>
-inline int bigint<n>::cmp(const bigint<n> &a, const bigint<n> &b)
-{
-    return mpn_cmp(a.data, b.data, n);
 }
 
 template<mp_size_t n>
