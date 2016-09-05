@@ -704,6 +704,10 @@ Fp_model<n, modulus> Fp_model<n,modulus>::random_element() /// returns random el
 template<mp_size_t n, const bigint<n>& modulus>
 Fp_model<n,modulus> Fp_model<n,modulus>::sqrt() const
 {
+    if (is_zero()) {
+        return *this;
+    }
+
     Fp_model<n,modulus> one = Fp_model<n,modulus>::one();
 
     size_t v = Fp_model<n,modulus>::s;
