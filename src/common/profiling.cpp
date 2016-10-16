@@ -347,7 +347,7 @@ void print_compilation_info()
 {
 #ifdef __GNUC__
     printf("g++ version: %s\n", __VERSION__);
-    printf("Compiled on %s %s\n", __DATE__, __TIME__);
+    //printf("Compiled on %s %s\n", __DATE__, __TIME__);
 #endif
 #ifdef STATIC
     printf("STATIC: yes\n");
