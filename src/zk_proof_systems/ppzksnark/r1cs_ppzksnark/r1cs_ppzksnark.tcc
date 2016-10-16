@@ -525,7 +525,7 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     leave_block("Call to r1cs_ppzksnark_prover");
 
     r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_proof<ppT>(std::move(g_A), std::move(g_B), std::move(g_C), std::move(g_H), std::move(g_K));
-    proof.print_size();
+    //proof.print_size();
 
     return proof;
 }

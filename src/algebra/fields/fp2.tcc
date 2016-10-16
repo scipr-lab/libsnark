@@ -145,6 +145,10 @@ Fp2_model<n,modulus> Fp2_model<n,modulus>::Frobenius_map(unsigned long power) co
 template<mp_size_t n, const bigint<n>& modulus>
 Fp2_model<n,modulus> Fp2_model<n,modulus>::sqrt() const
 {
+    if (is_zero()) {
+        return *this;
+    }
+
     Fp2_model<n,modulus> one = Fp2_model<n,modulus>::one();
 
     size_t v = Fp2_model<n,modulus>::s;
