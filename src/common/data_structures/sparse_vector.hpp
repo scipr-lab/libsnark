@@ -34,7 +34,7 @@ struct sparse_vector {
 
     std::vector<size_t> indices;
     std::vector<T> values;
-    size_t domain_size_;
+    size_t domain_size_ = 0;
 
     sparse_vector() = default;
     sparse_vector(const sparse_vector<T> &other) = default;
