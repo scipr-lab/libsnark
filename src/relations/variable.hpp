@@ -92,7 +92,7 @@ template<typename FieldT>
 class linear_term {
 public:
 
-    var_index_t index;
+    var_index_t index = 0;
     FieldT coeff;
 
     linear_term() {};
