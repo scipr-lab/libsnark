@@ -310,6 +310,8 @@ VariableArray::VariableArray(const size_t size, const ::std::string& name) : Var
 }
 
 VariableArray::VariableArray(const string& name) : VariableArrayContents() { UNUSED(name); }
+VariableArray::VariableArray(const size_t size, const ::std::string& name)
+    : VariableArrayContents(size) { UNUSED(name); }
 VariableArray::VariableArray(const int size, const ::std::string& name)
     : VariableArrayContents(size) { UNUSED(name); }
 #endif
