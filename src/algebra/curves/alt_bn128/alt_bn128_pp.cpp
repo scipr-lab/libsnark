@@ -43,6 +43,15 @@ alt_bn128_Fq12 alt_bn128_pp::double_miller_loop(const alt_bn128_G1_precomp &prec
     return alt_bn128_double_miller_loop(prec_P1, prec_Q1, prec_P2, prec_Q2);
 }
 
+alt_bn128_Fq12 alt_bn128_pp::multiple_miller_loop(
+    const std::initializer_list<std::pair<
+        const alt_bn128_ate_G1_precomp&,
+        const alt_bn128_ate_G2_precomp&
+    > >& v
+)
+{
+   return alt_bn128_ate_multiple_miller_loop(v); 
+}
 alt_bn128_Fq12 alt_bn128_pp::pairing(const alt_bn128_G1 &P,
                                      const alt_bn128_G2 &Q)
 {

@@ -74,6 +74,35 @@ void double_miller_loop_test()
 }
 
 template<typename ppT>
+void multiple_miller_loop_test()
+{
+    const G1<ppT> P1 = (Fr<ppT>::random_element()) * G1<ppT>::one();
+    const G1<ppT> P2 = (Fr<ppT>::random_element()) * G1<ppT>::one();
+    const G1<ppT> P3 = (Fr<ppT>::random_element()) * G1<ppT>::one();
+    
+    const G2<ppT> Q1 = (Fr<ppT>::random_element()) * G2<ppT>::one();
+    const G2<ppT> Q2 = (Fr<ppT>::random_element()) * G2<ppT>::one();
+    const G2<ppT> Q3 = (Fr<ppT>::random_element()) * G2<ppT>::one();
+
+
+    const G1_precomp<ppT> prec_P1 = ppT::precompute_G1(P1);
+    const G1_precomp<ppT> prec_P2 = ppT::precompute_G1(P2);
+    const G1_precomp<ppT> prec_P3 = ppT::precompute_G1(P3);
+    const G2_precomp<ppT> prec_Q1 = ppT::precompute_G2(Q1);
+    const G2_precomp<ppT> prec_Q2 = ppT::precompute_G2(Q2);
+    const G2_precomp<ppT> prec_Q3 = ppT::precompute_G2(Q3);
+    const Fqk<ppT> ans_1 = ppT::miller_loop(prec_P1, prec_Q1);
+    const Fqk<ppT> ans_2 = ppT::miller_loop(prec_P2, prec_Q2);
+    const Fqk<ppT> ans_3 = ppT::miller_loop(prec_P3, prec_Q3);
+    const Fqk<ppT> ans_123 = ppT::multiple_miller_loop({
+        std::make_pair(prec_P1, prec_Q1),
+        std::make_pair(prec_P2, prec_Q2),
+        std::make_pair(prec_P3, prec_Q3)
+    });
+    assert(ans_1 * ans_2 * ans_3 == ans_123);
+}
+
+template<typename ppT>
 void affine_pairing_test()
 {
     GT<ppT> GT_one = GT<ppT>::one();
@@ -127,7 +156,7 @@ int main(void)
     alt_bn128_pp::init_public_params();
     pairing_test<alt_bn128_pp>();
     double_miller_loop_test<alt_bn128_pp>();
-
+    multiple_miller_loop_test<alt_bn128_pp>();
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
     bn128_pp::init_public_params();
     pairing_test<bn128_pp>();
