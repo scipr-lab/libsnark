@@ -462,6 +462,10 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
 
+template<typename ppT>
+bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof);
 
 } // libsnark
 

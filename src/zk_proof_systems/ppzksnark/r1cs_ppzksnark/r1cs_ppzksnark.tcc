@@ -25,7 +25,7 @@ See r1cs_ppzksnark.hpp .
 #include "algebra/scalar_multiplication/multiexp.hpp"
 #include "algebra/scalar_multiplication/kc_multiexp.hpp"
 #include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
-
+#include "algebra/curves/alt_bn128/alt_bn128_pp.hpp"
 namespace libsnark {
 
 template<typename ppT>
@@ -694,6 +694,7 @@ bool r1cs_ppzksnark_verifier_strong_IC(const r1cs_ppzksnark_verification_key<ppT
     enter_block("Call to r1cs_ppzksnark_verifier_strong_IC");
     r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
     bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof);
+    //bool result = r1cs_ppzksnark_probabilistic_verifier<ppT>(vk,primary_input,proof);
     leave_block("Call to r1cs_ppzksnark_verifier_strong_IC");
     return result;
 }
@@ -802,6 +803,7 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof)
 {
+    enter_block("Call to r1cs_ppzksnark_probabilistic_verifier");
     const accumulation_vector<G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
     const G1<ppT> &acc = accumulated_IC.first;
     //computing the random coefficients that will be used
@@ -811,11 +813,15 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
     auto r_4 = Fr<ppT>::random_element();
     auto r_5 = Fr<ppT>::random_element();
 
+    enter_block("Preparing first ML factor");
+
     //computing the inputs for the first ML factor
     // r1Pi_a and vk_A
     auto left_1 = ppT::precompute_G1(r_1*proof.g_A.g);
     auto right_1 = ppT::precompute_G2(vk.alphaA_g2);
     auto pair_1 = std::make_pair(left_1,right_1);
+    leave_block("Preparing first ML factor");
+
     //computing the inputs for the second ML factor
     // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
     auto left_2 = ppT::precompute_G1(r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g);
@@ -824,7 +830,7 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
     //computing the inputs for the third ML factor
     // r3Pi_c and vk_C
     auto left_3 = ppT::precompute_G1(r_3*proof.g_C.g);
-    auto right_3 = ppT::precompute_G2(ppT::precompute_G2(vk.alphaC_g2));
+    auto right_3 = ppT::precompute_G2(vk.alphaC_g2) ;
     auto pair_3 = std::make_pair(left_3,right_3);
 
     //computing the inputs for the fourth ML factor
@@ -851,12 +857,16 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
     auto right_7 = ppT::precompute_G2(proof.g_B.g);
     auto pair_7 = std::make_pair(left_7,right_7);
     
-    auto ML  = ppT::multiple_miller_loop({
-        pair_1,pair_2,pair_3,pair_4,pair_5,pair_6,pair_7
-    });
-    auto FE= ppT::final_exponentiation(ML);
-
-    return (FE==1);
+    auto ML1 = ppT::double_miller_loop(left_1,right_1,left_2,right_2);
+    auto ML2 = ppT::double_miller_loop(left_3,right_3,left_4,right_4);
+    auto ML3 = ppT::double_miller_loop(left_5,right_5,left_6,right_6);
+    auto ML4 = ppT::miller_loop(left_7,right_7);
+    //auto ML  = alt_bn128_pp::multiple_miller_loop({
+    //    pair_1,pair_2,pair_3,pair_4,pair_5,pair_6,pair_7
+    //});
+    auto FE= ppT::final_exponentiation(ML1*ML2*ML3*ML4);
+    leave_block("Call to r1cs_ppzksnark_probabilistic_verifier");
+    return (FE==GT<ppT>::one());
 }
 
 } // libsnark
