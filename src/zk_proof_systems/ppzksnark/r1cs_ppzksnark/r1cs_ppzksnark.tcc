@@ -34,7 +34,7 @@ bool r1cs_ppzksnark_proving_key<ppT>::operator==(const r1cs_ppzksnark_proving_ke
     return (this->A_query == other.A_query &&
             this->B_query == other.B_query &&
             this->C_query == other.C_query &&
-            this->H_query == other.H_query &&
+            this->H_query == other.H_query && 
             this->K_query == other.K_query &&
             this->constraint_system == other.constraint_system);
 }
@@ -786,6 +786,77 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     leave_block("Call to r1cs_ppzksnark_affine_verifier_weak_IC");
 
     return result;
+}
+
+
+/*A verifier with that batches all pairing checks into one using random coefficients
+  requires only one FE (final exponentiation).
+  Also requires only one call to multiple_miller_loop, as only needs to compute one product of 
+  Miller loops (MLs).
+  Also uses rule e(a,c)*e(b,c)=e(a+b,c) to reduce number of factors in the ML product
+  If proof is wrong has at most 1/|F| probability of accepting it
+  Always accepts correct proofs
+*/
+template<typename ppT>
+bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
+{
+    const accumulation_vector<G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const G1<ppT> &acc = accumulated_IC.first;
+    //computing the random coefficients that will be used
+    auto r_1 = Fr<ppT>::random_element();
+    auto r_2 = Fr<ppT>::random_element();
+    auto r_3 = Fr<ppT>::random_element();
+    auto r_4 = Fr<ppT>::random_element();
+    auto r_5 = Fr<ppT>::random_element();
+
+    //computing the inputs for the first ML factor
+    // r1Pi_a and vk_A
+    auto left_1 = ppT::precompute_G1(r_1*proof.g_A.g);
+    auto right_1 = ppT::precompute_G2(vk.alphaA_g2);
+    auto pair_1 = std::make_pair(left_1,right_1);
+    //computing the inputs for the second ML factor
+    // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
+    auto left_2 = ppT::precompute_G1(r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g);
+    auto right_2 = ppT::precompute_G2(-G2<ppT>::one());
+    auto pair_2 = std::make_pair(left_2,right_2);
+    //computing the inputs for the third ML factor
+    // r3Pi_c and vk_C
+    auto left_3 = ppT::precompute_G1(r_3*proof.g_C.g);
+    auto right_3 = ppT::precompute_G2(ppT::precompute_G2(vk.alphaC_g2));
+    auto pair_3 = std::make_pair(left_3,right_3);
+
+    //computing the inputs for the fourth ML factor
+    // r4Pi_K and vk_gamma
+    auto left_4 = ppT::precompute_G1(r_4*proof.g_K);
+    auto right_4 = ppT::precompute_G2(vk.gamma_g2);
+    auto pair_4 = std::make_pair(left_4,right_4);
+
+    //computing the inputs for the fifth ML factor
+    //−r 4(vk x + πA + πC) and vk^2_betagamma
+    auto left_5 = ppT::precompute_G1(-r_4*(acc + proof.g_A.g + proof.g_C.g));
+    auto right_5 = ppT::precompute_G2(vk.gamma_beta_g2);
+    auto pair_5 = std::make_pair(left_5,right_5);
+
+    //computing the inputs for the six ML factor
+    //r5Pi_H and -vk_Z
+    auto left_6 = ppT::precompute_G1(r_5*proof.g_H);
+    auto right_6 = ppT::precompute_G2(vk.rC_Z_g2);
+    auto pair_6 = std::make_pair(left_6,right_6);
+
+    //computing the inputs for the seventh ML factor
+    //r_2 vk_B-r_4 vk^1_{\beta\gamma}+r_5(vk_x + \pi_A) and pi_B
+    auto left_7 = ppT::precompute_G1(r_2*vk.alphaB_g1-r_4*vk.gamma_beta_g1+r_5*(acc+proof.g_A.g));
+    auto right_7 = ppT::precompute_G2(proof.g_B.g);
+    auto pair_7 = std::make_pair(left_7,right_7);
+    
+    auto ML  = ppT::multiple_miller_loop({
+        pair_1,pair_2,pair_3,pair_4,pair_5,pair_6,pair_7
+    });
+    auto FE= ppT::final_exponentiation(ML);
+
+    return (FE==1);
 }
 
 } // libsnark
