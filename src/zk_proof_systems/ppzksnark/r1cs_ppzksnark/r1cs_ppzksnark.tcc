@@ -214,19 +214,19 @@ template<typename ppT>
 r1cs_ppzksnark_verification_key<ppT> r1cs_ppzksnark_verification_key<ppT>::dummy_verification_key(const size_t input_size)
 {
     r1cs_ppzksnark_verification_key<ppT> result;
-    result.alphaA_g2 = Fr<ppT>::random_element() * G2<ppT>::zero();
-    result.alphaB_g1 = Fr<ppT>::random_element() * G1<ppT>::zero();
-    result.alphaC_g2 = Fr<ppT>::random_element() * G2<ppT>::zero();
-    result.gamma_g2 = Fr<ppT>::random_element() * G2<ppT>::zero();
-    result.gamma_beta_g1 = Fr<ppT>::random_element() * G1<ppT>::zero();
-    result.gamma_beta_g2 = Fr<ppT>::random_element() * G2<ppT>::zero();
-    result.rC_Z_g2 = Fr<ppT>::random_element() * G2<ppT>::zero();
+    result.alphaA_g2 = Fr<ppT>::random_element() * G2<ppT>::one();
+    result.alphaB_g1 = Fr<ppT>::random_element() * G1<ppT>::one();
+    result.alphaC_g2 = Fr<ppT>::random_element() * G2<ppT>::one();
+    result.gamma_g2 = Fr<ppT>::random_element() * G2<ppT>::one();
+    result.gamma_beta_g1 = Fr<ppT>::random_element() * G1<ppT>::one();
+    result.gamma_beta_g2 = Fr<ppT>::random_element() * G2<ppT>::one();
+    result.rC_Z_g2 = Fr<ppT>::random_element() * G2<ppT>::one();
 
-    G1<ppT> base = Fr<ppT>::random_element() * G1<ppT>::zero();
+    G1<ppT> base = Fr<ppT>::random_element() * G1<ppT>::one();
     G1_vector<ppT> v;
     for (size_t i = 0; i < input_size; ++i)
     {
-        v.emplace_back(Fr<ppT>::random_element() * G1<ppT>::zero());
+        v.emplace_back(Fr<ppT>::random_element() * G1<ppT>::one());
     }
 
     result.encoded_IC_query = accumulation_vector<G1<ppT> >(std::move(base), std::move(v));
@@ -334,11 +334,11 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
 #endif
 
     enter_block("Generating G1 multiexp table");
-    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::size_in_bits(), g1_window, G1<ppT>::zero());
+    window_table<G1<ppT> > g1_table = get_window_table(Fr<ppT>::size_in_bits(), g1_window, G1<ppT>::one());
     leave_block("Generating G1 multiexp table");
 
     enter_block("Generating G2 multiexp table");
-    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::size_in_bits(), g2_window, G2<ppT>::zero());
+    window_table<G2<ppT> > g2_table = get_window_table(Fr<ppT>::size_in_bits(), g2_window, G2<ppT>::one());
     leave_block("Generating G2 multiexp table");
 
     enter_block("Generate R1CS proving key");
@@ -372,16 +372,16 @@ r1cs_ppzksnark_keypair<ppT> r1cs_ppzksnark_generator(const r1cs_ppzksnark_constr
     leave_block("Generate R1CS proving key");
 
     enter_block("Generate R1CS verification key");
-    G2<ppT> alphaA_g2 = alphaA * G2<ppT>::zero();
-    G1<ppT> alphaB_g1 = alphaB * G1<ppT>::zero();
-    G2<ppT> alphaC_g2 = alphaC * G2<ppT>::zero();
-    G2<ppT> gamma_g2 = gamma * G2<ppT>::zero();
-    G1<ppT> gamma_beta_g1 = (gamma * beta) * G1<ppT>::zero();
-    G2<ppT> gamma_beta_g2 = (gamma * beta) * G2<ppT>::zero();
-    G2<ppT> rC_Z_g2 = (rC * qap_inst.Zt) * G2<ppT>::zero();
+    G2<ppT> alphaA_g2 = alphaA * G2<ppT>::one();
+    G1<ppT> alphaB_g1 = alphaB * G1<ppT>::one();
+    G2<ppT> alphaC_g2 = alphaC * G2<ppT>::one();
+    G2<ppT> gamma_g2 = gamma * G2<ppT>::one();
+    G1<ppT> gamma_beta_g1 = (gamma * beta) * G1<ppT>::one();
+    G2<ppT> gamma_beta_g2 = (gamma * beta) * G2<ppT>::one();
+    G2<ppT> rC_Z_g2 = (rC * qap_inst.Zt) * G2<ppT>::one();
 
     enter_block("Encode IC query for R1CS verification key");
-    G1<ppT> encoded_IC_base = (rA * IC_coefficients[0]) * G1<ppT>::zero();
+    G1<ppT> encoded_IC_base = (rA * IC_coefficients[0]) * G1<ppT>::one();
     Fr_vector<ppT> multiplied_IC_coefficients;
     multiplied_IC_coefficients.reserve(qap_inst.num_inputs());
     for (size_t i = 1; i < qap_inst.num_inputs() + 1; ++i)
@@ -558,7 +558,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     {
         if (!inhibit_profiling_info)
         {
-            print_indent(); printf("At least zero of the proof elements does not lie on the curve.\n");
+            print_indent(); printf("At least one of the proof elements does not lie on the curve.\n");
         }
         result = false;
     }
@@ -571,7 +571,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     Fqk<ppT> kc_A_1 = ppT::miller_loop(proof_g_A_g_precomp,      pvk.vk_alphaA_g2_precomp);
     Fqk<ppT> kc_A_2 = ppT::miller_loop(proof_g_A_h_precomp, pvk.pp_G2_one_precomp);
     GT<ppT> kc_A = ppT::final_exponentiation(kc_A_1 * kc_A_2.unitary_inverse());
-    if (kc_A != GT<ppT>::zero())
+    if (kc_A != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
         {
@@ -587,7 +587,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     Fqk<ppT> kc_B_1 = ppT::miller_loop(pvk.vk_alphaB_g1_precomp, proof_g_B_g_precomp);
     Fqk<ppT> kc_B_2 = ppT::miller_loop(proof_g_B_h_precomp,    pvk.pp_G2_one_precomp);
     GT<ppT> kc_B = ppT::final_exponentiation(kc_B_1 * kc_B_2.unitary_inverse());
-    if (kc_B != GT<ppT>::zero())
+    if (kc_B != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
         {
@@ -603,7 +603,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     Fqk<ppT> kc_C_1 = ppT::miller_loop(proof_g_C_g_precomp,      pvk.vk_alphaC_g2_precomp);
     Fqk<ppT> kc_C_2 = ppT::miller_loop(proof_g_C_h_precomp, pvk.pp_G2_one_precomp);
     GT<ppT> kc_C = ppT::final_exponentiation(kc_C_1 * kc_C_2.unitary_inverse());
-    if (kc_C != GT<ppT>::zero())
+    if (kc_C != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
         {
@@ -621,7 +621,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     Fqk<ppT> QAP_1  = ppT::miller_loop(proof_g_A_g_acc_precomp,  proof_g_B_g_precomp);
     Fqk<ppT> QAP_23  = ppT::double_miller_loop(proof_g_H_precomp, pvk.vk_rC_Z_g2_precomp, proof_g_C_g_precomp, pvk.pp_G2_one_precomp);
     GT<ppT> QAP = ppT::final_exponentiation(QAP_1 * QAP_23.unitary_inverse());
-    if (QAP != GT<ppT>::zero())
+    if (QAP != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
         {
@@ -637,7 +637,7 @@ bool r1cs_ppzksnark_online_verifier_weak_IC(const r1cs_ppzksnark_processed_verif
     Fqk<ppT> K_1 = ppT::miller_loop(proof_g_K_precomp, pvk.vk_gamma_g2_precomp);
     Fqk<ppT> K_23 = ppT::double_miller_loop(proof_g_A_g_acc_C_precomp, pvk.vk_gamma_beta_g2_precomp, pvk.vk_gamma_beta_g1_precomp, proof_g_B_g_precomp);
     GT<ppT> K = ppT::final_exponentiation(K_1 * K_23.unitary_inverse());
-    if (K != GT<ppT>::zero())
+    if (K != GT<ppT>::one())
     {
         if (!inhibit_profiling_info)
         {
@@ -707,7 +707,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     enter_block("Call to r1cs_ppzksnark_affine_verifier_weak_IC");
     assert(vk.encoded_IC_query.domain_size() >= primary_input.size());
 
-    affine_ate_G2_precomp<ppT> pvk_pp_G2_one_precomp        = ppT::affine_ate_precompute_G2(G2<ppT>::zero());
+    affine_ate_G2_precomp<ppT> pvk_pp_G2_one_precomp        = ppT::affine_ate_precompute_G2(G2<ppT>::one());
     affine_ate_G2_precomp<ppT> pvk_vk_alphaA_g2_precomp     = ppT::affine_ate_precompute_G2(vk.alphaA_g2);
     affine_ate_G1_precomp<ppT> pvk_vk_alphaB_g1_precomp     = ppT::affine_ate_precompute_G1(vk.alphaB_g1);
     affine_ate_G2_precomp<ppT> pvk_vk_alphaC_g2_precomp     = ppT::affine_ate_precompute_G2(vk.alphaC_g2);
@@ -729,7 +729,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     Fqk<ppT> kc_A_miller = ppT::affine_ate_e_over_e_miller_loop(proof_g_A_g_precomp, pvk_vk_alphaA_g2_precomp, proof_g_A_h_precomp, pvk_pp_G2_one_precomp);
     GT<ppT> kc_A = ppT::final_exponentiation(kc_A_miller);
 
-    if (kc_A != GT<ppT>::zero())
+    if (kc_A != GT<ppT>::one())
     {
         print_indent(); printf("Knowledge commitment for A query incorrect.\n");
         result = false;
@@ -741,7 +741,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     affine_ate_G1_precomp<ppT> proof_g_B_h_precomp = ppT::affine_ate_precompute_G1(proof.g_B.h);
     Fqk<ppT> kc_B_miller = ppT::affine_ate_e_over_e_miller_loop(pvk_vk_alphaB_g1_precomp, proof_g_B_g_precomp, proof_g_B_h_precomp,    pvk_pp_G2_one_precomp);
     GT<ppT> kc_B = ppT::final_exponentiation(kc_B_miller);
-    if (kc_B != GT<ppT>::zero())
+    if (kc_B != GT<ppT>::one())
     {
         print_indent(); printf("Knowledge commitment for B query incorrect.\n");
         result = false;
@@ -753,7 +753,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     affine_ate_G1_precomp<ppT> proof_g_C_h_precomp = ppT::affine_ate_precompute_G1(proof.g_C.h);
     Fqk<ppT> kc_C_miller = ppT::affine_ate_e_over_e_miller_loop(proof_g_C_g_precomp, pvk_vk_alphaC_g2_precomp, proof_g_C_h_precomp, pvk_pp_G2_one_precomp);
     GT<ppT> kc_C = ppT::final_exponentiation(kc_C_miller);
-    if (kc_C != GT<ppT>::zero())
+    if (kc_C != GT<ppT>::one())
     {
         print_indent(); printf("Knowledge commitment for C query incorrect.\n");
         result = false;
@@ -765,7 +765,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     affine_ate_G1_precomp<ppT> proof_g_H_precomp       = ppT::affine_ate_precompute_G1(proof.g_H);
     Fqk<ppT> QAP_miller  = ppT::affine_ate_e_times_e_over_e_miller_loop(proof_g_H_precomp, pvk_vk_rC_Z_g2_precomp, proof_g_C_g_precomp, pvk_pp_G2_one_precomp, proof_g_A_g_acc_precomp,  proof_g_B_g_precomp);
     GT<ppT> QAP = ppT::final_exponentiation(QAP_miller);
-    if (QAP != GT<ppT>::zero())
+    if (QAP != GT<ppT>::one())
     {
         print_indent(); printf("QAP divisibility check failed.\n");
         result = false;
@@ -777,7 +777,7 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     affine_ate_G1_precomp<ppT> proof_g_A_g_acc_C_precomp = ppT::affine_ate_precompute_G1((proof.g_A.g + acc) + proof.g_C.g);
     Fqk<ppT> K_miller = ppT::affine_ate_e_times_e_over_e_miller_loop(proof_g_A_g_acc_C_precomp, pvk_vk_gamma_beta_g2_precomp, pvk_vk_gamma_beta_g1_precomp, proof_g_B_g_precomp, proof_g_K_precomp, pvk_vk_gamma_g2_precomp);
     GT<ppT> K = ppT::final_exponentiation(K_miller);
-    if (K != GT<ppT>::zero())
+    if (K != GT<ppT>::one())
     {
         print_indent(); printf("Same-coefficient check failed.\n");
         result = false;
@@ -796,17 +796,15 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
 /*****Ariel stuff from here ****/
 
 template<typename ppT>
-r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifier_process_vk(const r1cs_ppzksnark_verification_key<alt_bn128_pp> &vk,
-                                            const r1cs_ppzksnark_primary_input<alt_bn128_pp> &primary_input,
-                                            const r1cs_ppzksnark_proof<alt_bn128_pp> &proof)
+r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifier_process_vk(const r1cs_ppzksnark_verification_key<alt_bn128_pp> &vk)
 {
     enter_block("Call to r1cs_ppzksnark_batch_verifier_process_vk");
-    r1cs_ppzksnark_processed_verification_key<ppT> pvk;
+    r1cs_ppzksnark_processed_batch_verification_key<ppT> pvk;
     pvk.pair1 = ppT::precompute_G2(vk.alphaA_g2);
     
     //computing the second input for the second ML factor
     // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
-    pvk.pair2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::zero());
+    pvk.pair2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::one());
     //computing the second input for the third ML factor
     // r3Pi_c and vk_C
     pvk.pair3 = alt_bn128_pp::precompute_G2(vk.alphaC_g2) ;
@@ -834,10 +832,10 @@ r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifi
  * accumulate another proof inside acc for the final batch check
  */
 template<typename ppT>
-void r1cs_ppzksnark_batcher(const r1cs_ppzksnark_verification_key<alt_bn128_pp> &vk,
-                                            batch_verification_accumulator<alt_bn128_pp> &acc,
-                                            const r1cs_ppzksnark_primary_input<alt_bn128_pp> &primary_input,
-                                            const r1cs_ppzksnark_proof<alt_bn128_pp> &proof)
+void r1cs_ppzksnark_batcher(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            batch_verification_accumulator<ppT> &acc,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_batcher");
     const accumulation_vector<G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
@@ -852,31 +850,31 @@ void r1cs_ppzksnark_batcher(const r1cs_ppzksnark_verification_key<alt_bn128_pp> 
 
     //computing left input for the first ML factor
     // r1Pi_a and vk_A
-    acc.pair1 += r_1*proof.g_A.g;
+    acc.pair1 = acc.pair1 + r_1*proof.g_A.g;
     
     //computing left input for the second ML factor
     // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
-    acc.pair2 += r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g;
+    acc.pair2 = acc.pair2 + r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g;
     //computing left input for the third ML factor
     // r3Pi_c and vk_C
-    acc.pair3 = r_3*proof.g_C.g;
+    acc.pair3 = acc.pair3 + r_3*proof.g_C.g;
 
     //computing left input for the fourth ML factor
     // r4Pi_K and vk_gamma
-    acc.pair4 = r_4*proof.g_K;
+    acc.pair4 = acc.pair4 + r_4*proof.g_K;
         //computing left input for the fifth ML factor
     //−r 4(vk x + πA + πC) and vk^2_betagamma
-    acc.pair5 = vk.gamma_beta_g2;
+    acc.pair5 = acc.pair5 + -r_4*(accu + proof.g_A.g + proof.g_C.g);
     
     //computing left input for the six ML factor
     //r5Pi_H and -vk_Z
-    acc.pair6 = r_5*proof.g_H;
+    acc.pair6 = acc.pair6 + r_5*proof.g_H;
     
     //computing left input for the seventh ML factor
     //r_2 vk_B-r_4 vk^1_{\beta\gamma}+r_5(vk_x + \pi_A) and pi_B
     auto left_7 = ppT::precompute_G1(r_2*vk.alphaB_g1-r_4*vk.gamma_beta_g1+r_5*(accu+proof.g_A.g));
     auto right_7 = ppT::precompute_G2(proof.g_B.g);
-    acc.pair7 *= ppT::miller_loop(left_7,right_7);
+    acc.pair7 = acc.pair7*ppT::miller_loop(left_7,right_7);
 
     leave_block("Call to r1cs_ppzksnark_batcher");
 }
@@ -918,7 +916,7 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
     //computing left input for the second ML factor
     // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
     auto left_2 = alt_bn128_pp::precompute_G1(r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g);
-    auto right_2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::zero());
+    auto right_2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::one());
     auto pair_2 = std::make_pair(left_2,right_2);
     //computing left input for the third ML factor
     // r3Pi_c and vk_C
@@ -960,7 +958,7 @@ bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key
     });
     auto FE= alt_bn128_pp::final_exponentiation(ML);
     leave_block("Call to r1cs_ppzksnark_probabilistic_verifier");
-    return (FE==GT<alt_bn128_pp>::zero());
+    return (FE==GT<alt_bn128_pp>::one());
 }
 
 template<typename ppT>
@@ -1014,8 +1012,8 @@ bool r1cs_ppzksnark_batch_verifier(const r1cs_ppzksnark_processed_batch_verifica
        pair_1,pair_2,pair_3,pair_4,pair_5,pair_6
     })*acc.pair7;
     auto FE= alt_bn128_pp::final_exponentiation(ML);
-    leave_block("Call to r1cs_ppzksnark_probabilistic_verifier");
-    return (FE==GT<alt_bn128_pp>::zero());
+    leave_block("Call to r1cs_ppzksnark_batch_verifier");
+    return (FE==GT<alt_bn128_pp>::one());
 }
 
 template<typename ppT>

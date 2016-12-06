@@ -275,6 +275,7 @@ public:
     // friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
 };
 
+//a data structure to store intermediate results from various proofs before the final batch verification
 template<typename ppT>
 class batch_verification_accumulator{
 public:
@@ -286,13 +287,13 @@ public:
     G1<ppT> pair6;
     Fqk<ppT> pair7;
 
-batch_verification_accumulator() = default;
+//batch_verification_accumulator() = default;
 
-// batch_verification_accumulator():pair1(G1<ppT>::zero()),pair2(G1<ppT>::zero()),pair3(G1<ppT>::zero()),pair4(G1<ppT>::zero()),
-// pair5(G1<ppT>::zero()),pair6(G1<ppT>::zero()),pair7(Fqk<ppT>::one())
-// {
+batch_verification_accumulator():pair1(G1<ppT>::zero()),pair2(G1<ppT>::zero()),pair3(G1<ppT>::zero()),pair4(G1<ppT>::zero()),
+pair5(G1<ppT>::zero()),pair6(G1<ppT>::zero()),pair7(Fqk<ppT>::one())
+{
 
-// };
+};
 };
 
 /********************************** Key pair *********************************/
@@ -524,7 +525,11 @@ bool r1cs_ppzksnark_batch_verifier(const r1cs_ppzksnark_processed_batch_verifica
                                             const batch_verification_accumulator <ppT> &acc,
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
-
+template<typename ppT>
+r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifier_process_vk(
+    const r1cs_ppzksnark_verification_key<ppT> &vk,
+    const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+    const r1cs_ppzksnark_proof<ppT> &proof);
 
 
 } // libsnark
