@@ -772,4 +772,62 @@ edwards_GT edwards_reduced_pairing(const edwards_G1 &P,
 {
     return edwards_ate_reduced_pairing(P, Q);
 }
+
+
+/***Ariel Code ** implementing multiple miller loop***/
+//computes the product of miller loops of all pairs in the list v
+edwards_Fq6 edwards_ate_multiple_miller_loop(    const std::initializer_list<std::pair<
+        const edwards_G1_precomp&,
+        const edwards_G2_precomp&
+    > >& v
+)
+{
+    enter_block("Call to edwards_ate_multiple_miller_loop");
+    const bigint<edwards_Fr::num_limbs> &loop_count = edwards_ate_loop_count;
+
+    edwards_Fq6 f = edwards_Fq6::one();
+    bool found_one = false;
+    size_t idx = 0;
+    for (long i = loop_count.max_bits()-1; i >= 0; --i)
+    {
+        const bool bit = loop_count.test_bit(i);
+        if (!found_one)
+        {
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
+
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           edwards_param_p (skipping leading zeros) in MSB to LSB
+           order */
+        f=f.squared();
+        for(auto& p:v){
+                auto cc = p.second[idx];
+                auto g_RR_at_P = edwards_Fq6(p.first.P_XY * cc.c_XY + p.first.P_XZ * cc.c_XZ,
+                                        p.first.P_ZZplusYZ * cc.c_ZZ);
+                f=f*g_RR_at_P;
+
+        }
+        ++idx;
+
+        if (bit)
+        {
+            for(auto& p:v){
+                auto cc = p.second[idx];
+                auto g_RQ_at_P = edwards_Fq6(p.first.P_ZZplusYZ * cc.c_ZZ,
+                                                 p.first.P_XY * cc.c_XY + p.first.P_XZ * cc.c_XZ);
+                f=f*g_RQ_at_P;
+
+            }
+            ++idx;
+        }
+    }
+    leave_block("Call to edwards_ate_multiple_miller_loop");
+
+    return f;
+}
+
+
+
 } // libsnark
