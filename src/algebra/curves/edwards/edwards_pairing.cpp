@@ -782,7 +782,7 @@ edwards_Fq6 edwards_ate_multiple_miller_loop(    const std::initializer_list<std
     > >& v
 )
 {
-    enter_block("Call to edwards_ate_multiple_miller_loop");
+    enter_block("Call to edwards_multiple_miller_loop");
     const bigint<edwards_Fr::num_limbs> &loop_count = edwards_ate_loop_count;
 
     edwards_Fq6 f = edwards_Fq6::one();
@@ -823,9 +823,18 @@ edwards_Fq6 edwards_ate_multiple_miller_loop(    const std::initializer_list<std
             ++idx;
         }
     }
-    leave_block("Call to edwards_ate_multiple_miller_loop");
+    leave_block("Call to edwards_multiple_miller_loop");
 
     return f;
+}
+
+edwards_Fq6 edwards_multiple_miller_loop(    const std::initializer_list<std::pair<
+        const edwards_G1_precomp&,
+        const edwards_G2_precomp&
+    > >& v
+)
+{
+    return edwards_ate_multiple_miller_loop(v);
 }
 
 

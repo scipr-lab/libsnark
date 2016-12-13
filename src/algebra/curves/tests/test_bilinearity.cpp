@@ -73,6 +73,7 @@ void double_miller_loop_test()
     assert(ans_1 * ans_2 == ans_12);
 }
 
+//checking multiple_miller_loop really computes the product of corresponding miller loops
 template<typename ppT>
 void multiple_miller_loop_test()
 {
@@ -155,7 +156,7 @@ int main(void)
     edwards_pp::init_public_params();
     pairing_test<edwards_pp>();
     double_miller_loop_test<edwards_pp>();
-
+    multiple_miller_loop_test<edwards_pp>();
     mnt6_pp::init_public_params();
     pairing_test<mnt6_pp>();
     double_miller_loop_test<mnt6_pp>();
