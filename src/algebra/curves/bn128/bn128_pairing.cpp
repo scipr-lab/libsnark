@@ -200,21 +200,24 @@ bn128_Fq12 bn128_double_ate_miller_loop(const bn128_ate_G1_precomp &prec_P1,
     bn::components::millerLoop2(f.elem, prec_Q1.coeffs, prec_P1.P, prec_Q2.coeffs, prec_P2.P);
     return f;
 }
-bn128_Fq12 alt_bn128_ate_multiple_miller_loop(
+
+
+bn128_Fq12 bn128_ate_multiple_miller_loop(
     const std::initializer_list<std::pair<
-        const alt_bn128_ate_G1_precomp&,
-        const alt_bn128_ate_G2_precomp&
+        const bn128_ate_G1_precomp&,
+        const bn128_ate_G2_precomp&
     > >& v
 )
 {
-    enter_block("Call to alt_bn128_ate_multiple_miller_loop");
+    enter_block("Call to bn128_ate_multiple_miller_loop");
     bn128_Fq12 f = bn128_Fq12::one();
     for(auto& p:v)
     {
-        bn128_Fq12 g
-        bn:components::millerLoop(g.elem,p.first,p.second);
+        bn128_Fq12 g;
+        bn::components::millerLoop(g.elem,p.second.coeffs,p.first.P);
         f = f * g;
     }
+    leave_block("Call to bn128_ate_multiple_miller_loop");
     return f;
 
 }

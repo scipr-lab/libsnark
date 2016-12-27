@@ -40,12 +40,12 @@ public:
                                          const bn128_ate_G1_precomp &prec_P2,
                                          const bn128_ate_G2_precomp &prec_Q2);
     //returns the product of Miller loops of all pairs in the list
-    static bn128_Fq12 alt_bn128_ate_multiple_miller_loop(
+    static bn128_Fq12 multiple_miller_loop(
     const std::initializer_list<std::pair<
-        const alt_bn128_ate_G1_precomp&,
-        const alt_bn128_ate_G2_precomp&
+        const bn128_ate_G1_precomp&,
+        const bn128_ate_G2_precomp&
     > >& v
-)
+);
 
     /* the following are used in test files */
     static bn128_GT pairing(const bn128_G1 &P,

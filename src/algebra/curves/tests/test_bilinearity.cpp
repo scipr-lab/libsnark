@@ -181,7 +181,7 @@ int main(void)
     pairing_test<alt_bn128_pp>();
     double_miller_loop_test<alt_bn128_pp>();
     multiple_miller_loop_test<alt_bn128_pp>();
-    
+#define CURVE_BN128
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
     bn128_pp::init_public_params();
     pairing_test<bn128_pp>();
