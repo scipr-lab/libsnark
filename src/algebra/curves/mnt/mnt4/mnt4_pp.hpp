@@ -65,6 +65,11 @@ public:
                                        const mnt4_G2_precomp &prec_Q1,
                                        const mnt4_G1_precomp &prec_P2,
                                        const mnt4_G2_precomp &prec_Q2);
+    static mnt4_Fq4 multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+);    
 
     /* the following are used in test files */
     static mnt4_Fq4 pairing(const mnt4_G1 &P,

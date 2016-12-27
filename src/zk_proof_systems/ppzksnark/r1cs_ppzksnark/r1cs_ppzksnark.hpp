@@ -258,6 +258,8 @@ public:
  * and are used in each invocation of r1cs_ppzksnark_probabilistic_verifier
  * and also r1cs_ppzksnark_batcher
  */
+
+//Better explanation of names, have this inherit from processed_verification_key
 template<typename ppT>
 class r1cs_ppzksnark_processed_batch_verification_key {
 public:

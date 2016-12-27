@@ -105,7 +105,12 @@ void multiple_miller_loop_test()
     const Fqk<ppT> ans_3 = ppT::miller_loop(prec_P3, prec_Q3);
     const Fqk<ppT> ans_4 = ppT::miller_loop(prec_P4, prec_Q4);
     const Fqk<ppT> ans_5 = ppT::miller_loop(prec_P5, prec_Q5);
-    
+    const Fqk<ppT> ans_1234 = ppT::multiple_miller_loop({
+        std::make_pair(prec_P1, prec_Q1),
+        std::make_pair(prec_P2, prec_Q2),
+        std::make_pair(prec_P3, prec_Q3),
+        std::make_pair(prec_P4, prec_Q4),
+       });
     const Fqk<ppT> ans_12345 = ppT::multiple_miller_loop({
         std::make_pair(prec_P1, prec_Q1),
         std::make_pair(prec_P2, prec_Q2),
@@ -114,6 +119,9 @@ void multiple_miller_loop_test()
         std::make_pair(prec_P5, prec_Q5)
     });
     assert(ans_1 * ans_2 * ans_3 * ans_4 * ans_5 == ans_12345);
+    assert(ans_1 * ans_2 * ans_3 * ans_4  == ans_1234);
+
+    assert(!(ans_1*ans_3*ans_4==ans_12345));
 }
 
 template<typename ppT>
@@ -171,6 +179,8 @@ int main(void)
     pairing_test<alt_bn128_pp>();
     double_miller_loop_test<alt_bn128_pp>();
     multiple_miller_loop_test<alt_bn128_pp>();
+    multiple_miller_loop_test<mnt4_pp>();
+    
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
     bn128_pp::init_public_params();
     pairing_test<bn128_pp>();

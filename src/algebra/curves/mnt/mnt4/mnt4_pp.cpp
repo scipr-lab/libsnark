@@ -83,7 +83,14 @@ mnt4_Fq4 mnt4_pp::double_miller_loop(const mnt4_G1_precomp &prec_P1,
 {
     return mnt4_double_miller_loop(prec_P1, prec_Q1, prec_P2, prec_Q2);
 }
-
+mnt4_Fq4 mnt4_pp::multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+)
+{
+  return mnt4_multiple_miller_loop(v);
+}  
 mnt4_Fq4 mnt4_pp::pairing(const mnt4_G1 &P,
                           const mnt4_G2 &Q)
 {
