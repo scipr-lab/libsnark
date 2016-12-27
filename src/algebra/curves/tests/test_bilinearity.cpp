@@ -169,17 +169,18 @@ int main(void)
     pairing_test<mnt6_pp>();
     double_miller_loop_test<mnt6_pp>();
     affine_pairing_test<mnt6_pp>();
-
+    multiple_miller_loop_test<mnt6_pp>();
+   
     mnt4_pp::init_public_params();
     pairing_test<mnt4_pp>();
     double_miller_loop_test<mnt4_pp>();
     affine_pairing_test<mnt4_pp>();
-
+    multiple_miller_loop_test<mnt4_pp>();
+   
     alt_bn128_pp::init_public_params();
     pairing_test<alt_bn128_pp>();
     double_miller_loop_test<alt_bn128_pp>();
     multiple_miller_loop_test<alt_bn128_pp>();
-    multiple_miller_loop_test<mnt4_pp>();
     
 #ifdef CURVE_BN128       // BN128 has fancy dependencies so it may be disabled
     bn128_pp::init_public_params();

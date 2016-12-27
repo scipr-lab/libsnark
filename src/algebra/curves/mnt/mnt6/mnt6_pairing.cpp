@@ -749,5 +749,92 @@ mnt6_GT mnt6_affine_reduced_pairing(const mnt6_G1 &P,
     const mnt6_GT result = mnt6_final_exponentiation(f);
     return result;
 }
+//Ariel additions
+mnt6_Fq6 mnt6_ate_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+)
+{
+    enter_block("Call to mnt6_ate_multiple_miller_loop");
+
+    
+    mnt6_Fq6 f = mnt6_Fq6::one();
+
+    bool found_one = false;
+    size_t dbl_idx = 0;
+    size_t add_idx = 0;
+
+    const bigint<mnt6_Fr::num_limbs> &loop_count = mnt6_ate_loop_count;
+    for (long i = loop_count.max_bits() - 1; i >= 0; --i)
+    {
+        const bool bit = loop_count.test_bit(i);
+
+        if (!found_one)
+        {
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
+
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           mnt6_param_p (skipping leading zeros) in MSB to LSB
+           order */
+        
+        f=f.squared();
+        for(auto& p:v)
+        {
+            mnt6_ate_dbl_coeffs dc = p.second.dbl_coeffs[dbl_idx];
+            mnt6_Fq6 g_RR_at_P = mnt6_Fq6(- dc.c_4C - dc.c_J * p.first.PX_twist + dc.c_L,
+                                       dc.c_H * p.first.PY_twist);
+            f=f*g_RR_at_P;
+                
+        }
+        ++dbl_idx;
+
+        if (bit)
+        {
+            for(auto& p:v)
+            {
+                //mnt6_Fq3 L1_coeff1 = mnt6_Fq3(prec_P1.PX, mnt6_Fq::zero(), mnt6_Fq::zero()) - prec_Q1.QX_over_twist;
+    
+                mnt6_Fq3 L1_coeff = mnt6_Fq3(p.first.PX, mnt6_Fq::zero(),mnt6_Fq::zero()) - p.second.QX_over_twist;
+                auto ac = p.second.add_coeffs[add_idx];
+                mnt6_Fq6 g_RQ_at_P = mnt6_Fq6(ac.c_RZ * p.first.PY_twist,
+                                           -(p.second.QY_over_twist * ac.c_RZ + L1_coeff * ac.c_L1));
+                f =f* g_RQ_at_P;
+    
+            }
+            ++add_idx;
+        }
+        
+    }
+
+    if (mnt6_ate_is_loop_count_neg)
+    {
+        for(auto& p:v)
+            {
+                auto L1_coeff = mnt6_Fq3(p.first.PX, mnt6_Fq::zero(),mnt6_Fq::zero()) - p.second.QX_over_twist;
+                auto ac = p.second.add_coeffs[add_idx];
+                mnt6_Fq6 g_RnegR_at_P = mnt6_Fq6(ac.c_RZ * p.first.PY_twist,
+                                          -(p.second.QY_over_twist * ac.c_RZ + L1_coeff * ac.c_L1));
+                f =f* g_RnegR_at_P;
+    
+            }
+        f=f.inverse();
+        ++add_idx;
+    }
+    leave_block("Call to mnt6_ate_multiple_miller_loop");
+    return f;
+
+}
+mnt6_Fq6 mnt6_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+)
+{
+    return mnt6_ate_multiple_miller_loop(v);
+}
 
 } // libsnark

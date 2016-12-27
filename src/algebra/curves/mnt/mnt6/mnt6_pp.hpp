@@ -61,6 +61,12 @@ public:
                                        const mnt6_G1_precomp &prec_P2,
                                        const mnt6_G2_precomp &prec_Q2);
 
+    static mnt6_Fq6 multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+);    
+
     /* the following are used in test files */
     static mnt6_Fq6 pairing(const mnt6_G1 &P,
                             const mnt6_G2 &Q);
