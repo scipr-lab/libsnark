@@ -50,6 +50,19 @@ bn128_Fq12 bn128_pp::double_miller_loop(const bn128_ate_G1_precomp &prec_P1,
     return result;
 }
 
+//returns the product of Miller loops of all pairs in the list
+bn128_Fq12 bn128_pp::multiple_miller_loop(
+    const std::initializer_list<std::pair<
+        const alt_bn128_ate_G1_precomp&,
+        const alt_bn128_ate_G2_precomp&
+    > >& v
+)
+{   
+    enter_block("Call to multiple_miller_loop<bn128_pp>");
+    bn128_Fq12 result = bn128_multiple_ate_miller_loop(v);
+    enter_block("Call to multiple_miller_loop<bn128_pp>");
+    return result;
+}
 bn128_Fq12 bn128_pp::pairing(const bn128_G1 &P,
                              const bn128_G2 &Q)
 {

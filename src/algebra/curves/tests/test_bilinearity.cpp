@@ -186,5 +186,6 @@ int main(void)
     bn128_pp::init_public_params();
     pairing_test<bn128_pp>();
     double_miller_loop_test<bn128_pp>();
+    multiple_miller_loop_test<bn128_pp>();
 #endif
 }
