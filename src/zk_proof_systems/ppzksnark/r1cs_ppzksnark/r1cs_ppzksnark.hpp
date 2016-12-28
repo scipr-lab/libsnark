@@ -263,12 +263,12 @@ public:
 template<typename ppT>
 class r1cs_ppzksnark_processed_batch_verification_key {
 public:
-    G2_precomp<ppT> pair1;
-    G2_precomp<ppT> pair2;
-    G2_precomp<ppT> pair3;
-    G2_precomp<ppT> pair4;
-    G2_precomp<ppT> pair5;
-    G2_precomp<ppT> pair6;
+    G2_precomp<ppT> pair1_G2arg;
+    G2_precomp<ppT> pair2_G2arg;
+    G2_precomp<ppT> pair3_G2arg;
+    G2_precomp<ppT> pair4_G2arg;
+    G2_precomp<ppT> pair5_G2arg;
+    G2_precomp<ppT> pair6_G2arg;
    
     // accumulation_vector<G1<ppT> > encoded_IC_query;
 
@@ -288,8 +288,6 @@ public:
     G1<ppT> pair5;
     G1<ppT> pair6;
     Fqk<ppT> pair7;
-
-//batch_verification_accumulator() = default;
 
 batch_verification_accumulator():pair1(G1<ppT>::zero()),pair2(G1<ppT>::zero()),pair3(G1<ppT>::zero()),pair4(G1<ppT>::zero()),
 pair5(G1<ppT>::zero()),pair6(G1<ppT>::zero()),pair7(Fqk<ppT>::one())
