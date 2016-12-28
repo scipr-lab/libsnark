@@ -252,49 +252,6 @@ public:
     friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
 };
 
-/**
- * The purpose of this class is to enable one time precomputation of elements that are 
- * functions of the verification key
- * and are used in each invocation of r1cs_ppzksnark_probabilistic_verifier
- * and also r1cs_ppzksnark_batcher
- */
-
-//Better explanation of names, have this inherit from processed_verification_key
-template<typename ppT>
-class r1cs_ppzksnark_processed_batch_verification_key {
-public:
-    G2_precomp<ppT> pair1_G2arg;
-    G2_precomp<ppT> pair2_G2arg;
-    G2_precomp<ppT> pair3_G2arg;
-    G2_precomp<ppT> pair4_G2arg;
-    G2_precomp<ppT> pair5_G2arg;
-    G2_precomp<ppT> pair6_G2arg;
-   
-    // accumulation_vector<G1<ppT> > encoded_IC_query;
-
-    // bool operator==(const r1cs_ppzksnark_processed_verification_key &other) const;
-    // friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
-    // friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
-};
-
-//a data structure to store intermediate results from various proofs before the final batch verification
-template<typename ppT>
-class batch_verification_accumulator{
-public:
-    G1<ppT> pair1;
-    G1<ppT> pair2;
-    G1<ppT> pair3;
-    G1<ppT> pair4;
-    G1<ppT> pair5;
-    G1<ppT> pair6;
-    Fqk<ppT> pair7;
-
-batch_verification_accumulator():pair1(G1<ppT>::zero()),pair2(G1<ppT>::zero()),pair3(G1<ppT>::zero()),pair4(G1<ppT>::zero()),
-pair5(G1<ppT>::zero()),pair6(G1<ppT>::zero()),pair7(Fqk<ppT>::one())
-{
-
-};
-};
 
 /********************************** Key pair *********************************/
 
@@ -505,7 +462,70 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
                                             const r1cs_ppzksnark_primary_input<ppT> &primary_input,
                                             const r1cs_ppzksnark_proof<ppT> &proof);
 
-/****Ariel stuff ***/
+/****Batch and probabilistic verification 
+ * using randomness and the bilinearity of the pairing operation, the Pinocchio verifier can be made more efficient
+ * with the price of making the verification procedure probabilisitc, introducing a negligible chance of accepting a bad proofs
+ * in a similar way verifying a batch of proofs can be bundled into verifying a single pairing equation using randomness
+ * such that the verifier always accepts if all proofs in the batch are valid, and the verifier accepts with a negligible 
+ * probability when one of the proofs in the batch is invalid.
+ * The methods below implemement these verifiers,
+ * and the logic behind them are described in  https://github.com/arielgabizon/libsnark/blob/multimiller/src/zk_proof_systems/batchverification.pdf
+ *
+ */
+/**
+ * The purpose of this class is to enable one time precomputation of elements that are 
+ * functions of the verification key
+ * and are used in each invocation of r1cs_ppzksnark_probabilistic_verifier
+ * and also r1cs_ppzksnark_batcher
+ * these elements are the G2 arguments of the pairings in
+ * https://github.com/arielgabizon/libsnark/blob/multimiller/src/zk_proof_systems/batchverification.pdf
+ */
+
+//Better explanation of names, have this inherit from processed_verification_key
+template<typename ppT>
+class r1cs_ppzksnark_processed_batch_verification_key : public r1cs_ppzksnark_processed_verification_key<ppT> {
+public:
+    //here pair_i is actually the G2 argument in the i'th pairing of the batch verifier equation
+    G2_precomp<ppT> pair1;
+    G2_precomp<ppT> pair2;
+    G2_precomp<ppT> pair3;
+    G2_precomp<ppT> pair4;
+    G2_precomp<ppT> pair5;
+    G2_precomp<ppT> pair6;
+   
+    // accumulation_vector<G1<ppT> > encoded_IC_query;
+
+    // bool operator==(const r1cs_ppzksnark_processed_verification_key &other) const;
+    // friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
+    // friend std::istream& operator>> <ppT>(std::istream &in, r1cs_ppzksnark_processed_verification_key<ppT> &pvk);
+};
+
+//a data structure to store intermediate G1 argument results from various proofs before the final batch verification
+// (except for the seventh member where we store the result of a product of Miller Loops. See Section 2 of  https://github.com/arielgabizon/libsnark/blob/multimiller/src/zk_proof_systems/batchverification.pdf.
+template<typename ppT>
+class batch_verification_accumulator{
+public:
+    //here pair_i is actually the G1 argument in the i'th pairing of the batch verifier equation
+    G1<ppT> pair1;
+    G1<ppT> pair2;
+    G1<ppT> pair3;
+    G1<ppT> pair4;
+    G1<ppT> pair5;
+    G1<ppT> pair6;
+    //as explained in the document, the 7th pairing contains elements of the proof in both arguments, so we need to store
+    //a product of Miller Loops rather than just the first argument
+    Fqk<ppT> pair7;
+
+batch_verification_accumulator():pair1(G1<ppT>::zero()),pair2(G1<ppT>::zero()),pair3(G1<ppT>::zero()),pair4(G1<ppT>::zero()),
+pair5(G1<ppT>::zero()),pair6(G1<ppT>::zero()),pair7(Fqk<ppT>::one())
+{
+
+};
+};
+
+
+
+
 
 /*
  * accumulate another proof inside acc for the final batch check
