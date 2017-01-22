@@ -29,6 +29,13 @@ typedef bn128_pp default_ec_pp;
 } // libsnark
 #endif
 
+#ifdef CURVE_MCL_BN128
+#include "algebra/curves/mcl_bn128/mcl_bn128_pp.hpp"
+namespace libsnark {
+typedef mcl_bn128_pp default_ec_pp;
+} // libsnark
+#endif
+
 #ifdef CURVE_EDWARDS
 #include "algebra/curves/edwards/edwards_pp.hpp"
 namespace libsnark {

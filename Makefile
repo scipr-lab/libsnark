@@ -108,6 +108,18 @@ ifeq ($(CURVE),BN128)
 	AR_LIBS += $(DEPINST)/lib/libzm.a
 endif
 
+ifeq ($(CURVE),MCL_BN128)
+	LIB_SRCS += \
+	        src/algebra/curves/mcl_bn128/mcl_bn128_g1.cpp \
+		src/algebra/curves/mcl_bn128/mcl_bn128_g2.cpp \
+		src/algebra/curves/mcl_bn128/mcl_bn128_gt.cpp \
+		src/algebra/curves/mcl_bn128/mcl_bn128_init.cpp \
+		src/algebra/curves/mcl_bn128/mcl_bn128_pairing.cpp \
+		src/algebra/curves/mcl_bn128/mcl_bn128_pp.cpp
+
+	AR_LIBS += $(DEPINST)/lib/libmcl.a
+endif
+
 EXECUTABLES = \
 	src/algebra/curves/tests/test_bilinearity \
 	src/algebra/curves/tests/test_groups \
