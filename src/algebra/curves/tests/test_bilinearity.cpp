@@ -9,10 +9,12 @@
 #ifdef CURVE_BN128
 #include "algebra/curves/bn128/bn128_pp.hpp"
 #endif
+#ifdef CURVE_MCL_BN128
+#include "algebra/curves/mcl_bn128/mcl_bn128_pp.hpp"
+#endif
 #include "algebra/curves/alt_bn128/alt_bn128_pp.hpp"
 #include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "algebra/curves/mcl_bn128/mcl_bn128_pp.hpp"
 
 using namespace libsnark;
 
@@ -135,7 +137,9 @@ int main(void)
     double_miller_loop_test<bn128_pp>();
 #endif
 
+#ifdef CURVE_MCL_BN128
     mcl_bn128_pp::init_public_params();
     pairing_test<mcl_bn128_pp>();
     double_miller_loop_test<mcl_bn128_pp>();
+#endif
 }
