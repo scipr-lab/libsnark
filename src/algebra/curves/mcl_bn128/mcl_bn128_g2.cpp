@@ -24,60 +24,11 @@ mcl_bn128_G2 mcl_bn128_G2::G2_one;
 
 Fp2 mcl_bn128_G2::sqrt(const Fp2 &el)
 {
-#if 1
     Fp2 x;
     bool ok = Fp2::squareRoot(x, el);
     assert(ok);
     (void)ok;
     return x;
-#else
-    size_t v = mcl_bn128_Fq2_s;
-    Fp2 z = mcl_bn128_Fq2_nqr_to_t;
-    Fp2 w; Fp2::pow(w, el, mcl_bn128_Fq2_t_minus_1_over_2);
-    Fp2 x = el * w;
-    Fp2 b = x * w;
-
-#if DEBUG
-    // check if square with Euler's criterion
-    Fp2 check = b;
-    for (size_t i = 0; i < v-1; ++i)
-    {
-        Fp2::sqr(check, check);
-    }
-
-    assert(check == Fp2(Fp(1), Fp(0)));
-#endif
-
-    // compute square root with Tonelli--Shanks
-    // (does not terminate if not a square!)
-
-    while (b != Fp2(1))
-    {
-        size_t m = 0;
-        Fp2 b2m = b;
-        while (b2m != Fp2(Fp(1), Fp(0)))
-        {
-            // invariant: b2m = b^(2^m) after entering this loop
-            Fp2::sqr(b2m, b2m);
-            m += 1;
-        }
-
-        int j = v-m-1;
-        w = z;
-        while (j > 0)
-        {
-            Fp2::sqr(w, w);
-            --j;
-        } // w = z^2^(v-m-1)
-
-        z = w * w;
-        b = b * z;
-        x = x * w;
-        v = m;
-    }
-
-    return x;
-#endif
 }
 
 mcl_bn128_G2::mcl_bn128_G2()
@@ -142,29 +93,7 @@ bool mcl_bn128_G2::operator!=(const mcl_bn128_G2& other) const
 
 mcl_bn128_G2 mcl_bn128_G2::operator+(const mcl_bn128_G2 &other) const
 {
-    // handle special cases having to do with O
-    if (this->is_zero())
-    {
-        return other;
-    }
-
-    if (other.is_zero())
-    {
-        return *this;
-    }
-
-    // no need to handle points of order 2,4
-    // (they cannot exist in a prime-order subgroup)
-
-    // handle double case, and then all the rest
-    if (this->operator==(other))
-    {
-        return this->dbl();
-    }
-    else
-    {
-        return this->add(other);
-    }
+    return this->add(other);
 }
 
 mcl_bn128_G2 mcl_bn128_G2::operator-() const
@@ -176,7 +105,12 @@ mcl_bn128_G2 mcl_bn128_G2::operator-() const
 
 mcl_bn128_G2 mcl_bn128_G2::operator-(const mcl_bn128_G2 &other) const
 {
-    return (*this) + (-other);
+#ifdef PROFILE_OP_COUNTS
+    this->add_cnt++;
+#endif
+    mcl_bn128_G2 result;
+    G2::sub(result.pt, pt, other.pt);
+    return result;
 }
 
 mcl_bn128_G2 mcl_bn128_G2::add(const mcl_bn128_G2 &other) const
@@ -184,7 +118,6 @@ mcl_bn128_G2 mcl_bn128_G2::add(const mcl_bn128_G2 &other) const
 #ifdef PROFILE_OP_COUNTS
     this->add_cnt++;
 #endif
-
     mcl_bn128_G2 result;
     mcl::bn256::G2::add(result.pt, pt, other.pt);
     return result;
@@ -242,10 +175,7 @@ std::ostream& operator<<(std::ostream &out, const mcl_bn128_G2 &g)
     out << g.pt.x.a << OUTPUT_SEPARATOR << g.pt.x.b << OUTPUT_SEPARATOR;
     out << g.pt.y.a << OUTPUT_SEPARATOR << g.pt.y.b;
 #else
-    out.write((char*) &g.pt.x.a, sizeof(g.pt.x.a));
-    out.write((char*) &g.pt.x.b, sizeof(g.pt.x.b));
-    out.write((char*) &g.pt.y.a, sizeof(g.pt.y.a));
-    out.write((char*) &g.pt.y.b, sizeof(g.pt.y.b));
+    out.write((char*) &g.pt, sizeof(g.pt));
 #endif
 
 #else
@@ -253,8 +183,7 @@ std::ostream& operator<<(std::ostream &out, const mcl_bn128_G2 &g)
 #ifndef BINARY_OUTPUT
     out << g.pt.x.a << OUTPUT_SEPARATOR << g.pt.x.b;
 #else
-    out.write((char*) &g.pt.x.a, sizeof(g.pt.x.a));
-    out.write((char*) &g.pt.x.b, sizeof(g.pt.x.b));
+    out.write((char*) &g.pt.x, sizeof(g.pt.x));
 #endif
     out << OUTPUT_SEPARATOR << (g.pt.y.a.getUnit()[0] & 1 ? '1' : '0');
 #endif
@@ -280,10 +209,7 @@ std::istream& operator>>(std::istream &in, mcl_bn128_G2 &g)
     consume_OUTPUT_SEPARATOR(in);
     in >> g.pt.y.b;
 #else
-    in.read((char*) &g.pt.x.a, sizeof(g.pt.x.a));
-    in.read((char*) &g.pt.x.b, sizeof(g.pt.x.b));
-    in.read((char*) &g.pt.y.a, sizeof(g.pt.y.a));
-    in.read((char*) &g.pt.y.b, sizeof(g.pt.y.b));
+    in.read((char*) &g.pt, sizeof(g.pt));
 #endif
 
 #else
@@ -293,8 +219,7 @@ std::istream& operator>>(std::istream &in, mcl_bn128_G2 &g)
     consume_OUTPUT_SEPARATOR(in);
     in >> g.pt.x.b;
 #else
-    in.read((char*)&g.pt.x.a, sizeof(g.pt.x.a));
-    in.read((char*)&g.pt.x.b, sizeof(g.pt.x.b));
+    in.read((char*)&g.pt.x, sizeof(g.pt.x));
 #endif
     consume_OUTPUT_SEPARATOR(in);
     unsigned char Y_lsb;

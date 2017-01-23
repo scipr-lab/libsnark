@@ -16,6 +16,7 @@ static struct LibInit {
     LibInit()
     {
         mcl::bn256::bn256init(mcl::bn::CurveSNARK1); // init mcl library
+        mcl::bn256::Fp::setIoMode(mcl::IoDec);
     }
 } s_libInit;
 
@@ -31,51 +32,10 @@ mcl_bn128_G1 mcl_bn128_G1::G1_one;
 
 Fp mcl_bn128_G1::sqrt(const Fp &el)
 {
-    size_t v = mcl_bn128_Fq_s;
-    Fp z = mcl_bn128_Fq_nqr_to_t;
-    Fp w; Fp::pow(w, el, mcl_bn128_Fq_t_minus_1_over_2);
-    Fp x = el * w;
-    Fp b = x * w;
-
-#if DEBUG
-    // check if square with Euler's criterion
-    Fp check = b;
-    for (size_t i = 0; i < v-1; ++i)
-    {
-        Fp::sqr(check, check);
-    }
-
-    assert(check == Fp(1));
-#endif
-
-    // compute square root with Tonelli--Shanks
-    // (does not terminate if not a square!)
-
-    while (b != Fp(1))
-    {
-        size_t m = 0;
-        Fp b2m = b;
-        while (b2m != Fp(1))
-        {
-            // invariant: b2m = b^(2^m) after entering this loop
-            Fp::sqr(b2m, b2m);
-            m += 1;
-        }
-
-        int j = v-m-1;
-        w = z;
-        while (j > 0)
-        {
-            Fp::sqr(w, w);
-            --j;
-        } // w = z^2^(v-m-1)
-
-        z = w * w;
-        b = b * z;
-        x = x * w;
-        v = m;
-    }
-
+    Fp x;
+    bool ok = Fp::squareRoot(x, el);
+    assert(ok);
+    (void)ok;
     return x;
 }
 
@@ -92,9 +52,8 @@ void mcl_bn128_G1::print() const
     }
     else
     {
-        mcl_bn128_G1 copy(*this);
-        copy.to_affine_coordinates();
-        std::cout << "(" << copy.pt.x.getStr(10) << " : " << copy.pt.y.getStr(10) << " : " << copy.pt.z.getStr(10) << ")\n";
+        pt.normalize();
+        std::cout << "(" << pt.x << " : " << pt.y << " : " << pt.z << ")\n";
     }
 }
 
@@ -106,7 +65,7 @@ void mcl_bn128_G1::print_coordinates() const
     }
     else
     {
-        std::cout << "(" << pt.x.getStr(10) << " : " << pt.y.getStr(10) << " : " << pt.z.getStr(10) << ")\n";
+        std::cout << "(" << pt.x << " : " << pt.y << " : " << pt.z << ")\n";
     }
 }
 
@@ -142,29 +101,7 @@ bool mcl_bn128_G1::operator!=(const mcl_bn128_G1& other) const
 
 mcl_bn128_G1 mcl_bn128_G1::operator+(const mcl_bn128_G1 &other) const
 {
-    // handle special cases having to do with O
-    if (this->is_zero())
-    {
-        return other;
-    }
-
-    if (other.is_zero())
-    {
-        return *this;
-    }
-
-    // no need to handle points of order 2,4
-    // (they cannot exist in a prime-order subgroup)
-
-    // handle double case, and then all the rest
-    if (this->operator==(other))
-    {
-        return this->dbl();
-    }
-    else
-    {
-        return this->add(other);
-    }
+    return this->add(other);
 }
 
 mcl_bn128_G1 mcl_bn128_G1::operator-() const
@@ -176,7 +113,12 @@ mcl_bn128_G1 mcl_bn128_G1::operator-() const
 
 mcl_bn128_G1 mcl_bn128_G1::operator-(const mcl_bn128_G1 &other) const
 {
-    return (*this) + (-other);
+#ifdef PROFILE_OP_COUNTS
+    this->add_cnt++;
+#endif
+    mcl_bn128_G1 result;
+    G1::sub(result.pt, pt, other.pt);
+    return result;
 }
 
 mcl_bn128_G1 mcl_bn128_G1::add(const mcl_bn128_G1 &other) const
@@ -204,7 +146,6 @@ mcl_bn128_G1 mcl_bn128_G1::dbl() const
 #ifdef PROFILE_OP_COUNTS
     this->dbl_cnt++;
 #endif
-
     mcl_bn128_G1 result;
     G1::dbl(result.pt, pt);
     return result;
@@ -236,8 +177,7 @@ std::ostream& operator<<(std::ostream &out, const mcl_bn128_G1 &g)
 #ifndef BINARY_OUTPUT
     out << g.pt.x << OUTPUT_SEPARATOR << g.pt.y;
 #else
-    out.write((char*) &g.pt.x, sizeof(g.pt.x));
-    out.write((char*) &g.pt.y, sizeof(g.pt.y));
+    out.write((char*) &g.pt, sizeof(g.pt));
 #endif
 
 #else
@@ -272,8 +212,7 @@ std::istream& operator>>(std::istream &in, mcl_bn128_G1 &g)
     consume_OUTPUT_SEPARATOR(in);
     in >> g.pt.y;
 #else
-    in.read((char*) &g.pt.x, sizeof(g.pt.x));
-    in.read((char*) &g.pt.y, sizeof(g.pt.y));
+    in.read((char*) &g.pt, sizeof(g.pt));
 #endif
 
 #else
