@@ -47,7 +47,7 @@ template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_witness_from_packed()
 {
     packed.evaluate(this->pb);
-    assert(this->pb.lc_val(packed).as_bigint().num_bits() <= bits.size());
+    assert(this->pb.lc_val(packed).as_bigint().num_bits() <= bits.size()); // `bits` is large enough to represent this packed value
     bits.fill_with_bits_of_field_element(this->pb, this->pb.lc_val(packed));
 }
 
