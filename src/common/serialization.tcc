@@ -17,7 +17,6 @@
 #include <cassert>
 #include <sstream>
 #include "common/utils.hpp"
-#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -70,7 +69,7 @@ T reserialize(const T &obj)
     ss << obj;
     T tmp;
     ss >> tmp;
-    assert_except(obj == tmp);
+    assert(obj == tmp);
     return tmp;
 }
 

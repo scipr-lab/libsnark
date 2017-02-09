@@ -11,7 +11,6 @@
 #define FIELD_UTILS_TCC_
 
 #include "common/utils.hpp"
-#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -25,8 +24,8 @@ template<typename FieldT>
 FieldT get_root_of_unity(const size_t n)
 {
     const size_t logn = log2(n);
-    assert_except(n == (1u << logn));
-    assert_except(logn <= FieldT::s);
+    assert(n == (1u << logn));
+    assert(logn <= FieldT::s);
 
     FieldT omega = FieldT::root_of_unity;
     for (size_t i = FieldT::s; i > logn; --i)
@@ -65,7 +64,7 @@ std::vector<FieldT> pack_int_vector_into_field_element_vector(const std::vector<
 template<typename FieldT>
 std::vector<FieldT> pack_bit_vector_into_field_element_vector(const bit_vector &v, const size_t chunk_bits)
 {
-    assert_except(chunk_bits <= FieldT::capacity());
+    assert(chunk_bits <= FieldT::capacity());
 
     const size_t repacked_size = div_ceil(v.size(), chunk_bits);
     std::vector<FieldT> result(repacked_size);
@@ -143,7 +142,7 @@ bit_vector convert_field_element_to_bit_vector(const FieldT &el, const size_t bi
 template<typename FieldT>
 FieldT convert_bit_vector_to_field_element(const bit_vector &v)
 {
-    assert_except(v.size() <= FieldT::size_in_bits());
+    assert(v.size() <= FieldT::size_in_bits());
 
     FieldT res = FieldT::zero();
     FieldT c = FieldT::one();
@@ -165,7 +164,7 @@ void batch_invert(std::vector<FieldT> &vec)
 
     for (auto el : vec)
     {
-        assert_except(!el.is_zero());
+        assert(!el.is_zero());
         prod.emplace_back(acc);
         acc = acc * el;
     }

@@ -13,7 +13,6 @@
 #include <climits>
 #include <cstring>
 #include "sodium.h"
-#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -32,12 +31,12 @@ bigint<n>::bigint(const char* s) /// Initialize from a string containing an inte
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert_except(s[i] >= '0' && s[i] <= '9');
+        assert(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(this->data, s_copy, l, 10);
-    assert_except(limbs_written <= n);
+    assert(limbs_written <= n);
 
     delete[] s_copy;
 }
@@ -54,7 +53,7 @@ bigint<n>::bigint(const mpz_t r) /// Initialize from MPZ element
         mpz_fdiv_q_2exp(k, k, GMP_NUMB_BITS);
     }
 
-    assert_except(mpz_sgn(k) == 0);
+    assert(mpz_sgn(k) == 0);
     mpz_clear(k);
 }
 
@@ -187,7 +186,7 @@ inline void bigint<n>::div_qr(bigint<n-d+1>& quotient, bigint<d>& remainder,
                               const bigint<n>& dividend, const bigint<d>& divisor)
 {
     static_assert(n >= d, "dividend must not be smaller than divisor for bigint::div_qr");
-    assert_except(divisor.data[d-1] != 0);
+    assert(divisor.data[d-1] != 0);
     mpn_tdiv_qr(quotient.data, remainder.data, 0, dividend.data, n, divisor.data, d);
 }
 
@@ -224,7 +223,7 @@ inline bool bigint<n>::operator>(const bigint<n>& other) const
 template<mp_size_t n>
 bigint<n>& bigint<n>::randomize()
 {
-    assert_except(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
+    assert(GMP_NUMB_BITS == sizeof(mp_limb_t) * 8);
 
     randombytes_buf(this->data, sizeof(mp_limb_t) * n);
 
@@ -263,12 +262,12 @@ std::istream& operator>>(std::istream &in, bigint<n> &b)
 
     for (size_t i = 0; i < l; ++i)
     {
-        assert_except(s[i] >= '0' && s[i] <= '9');
+        assert(s[i] >= '0' && s[i] <= '9');
         s_copy[i] = s[i] - '0';
     }
 
     mp_size_t limbs_written = mpn_set_str(b.data, s_copy, l, 10);
-    assert_except(limbs_written <= n);
+    assert(limbs_written <= n);
 
     delete[] s_copy;
 #endif

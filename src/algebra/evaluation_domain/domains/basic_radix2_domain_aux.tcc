@@ -21,7 +21,6 @@
 #include "algebra/fields/field_utils.hpp"
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -39,7 +38,7 @@ template<typename FieldT>
 void _basic_serial_radix2_FFT(std::vector<FieldT> &a, const FieldT &omega)
 {
     const size_t n = a.size(), logn = log2(n);
-    assert_except(n == (1u << logn));
+    assert(n == (1u << logn));
 
     /* swapping in place (from Storer's book) */
     for (size_t k = 0; k < n; ++k)
@@ -79,7 +78,7 @@ void _basic_parallel_radix2_FFT_inner(std::vector<FieldT> &a, const FieldT &omeg
 
     const size_t m = a.size();
     const size_t log_m = log2(m);
-    assert_except(m == 1ul<<log_m);
+    assert(m == 1ul<<log_m);
 
     if (log_m < log_cpus)
     {
@@ -190,7 +189,7 @@ std::vector<FieldT> _basic_radix2_lagrange_coeffs(const size_t m, const FieldT &
         return std::vector<FieldT>(1, FieldT::one());
     }
 
-    assert_except(m == (1u << log2(m)));
+    assert(m == (1u << log2(m)));
 
     const FieldT omega = get_root_of_unity<FieldT>(m);
 
