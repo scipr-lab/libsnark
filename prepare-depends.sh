@@ -28,7 +28,7 @@ cd $DEPSRC
 cd mcl
 make -j
 cd ../..
-cp -rv $DEPSRC/mcl/include/mcl $DEPINST/include/mcl
+cp -rv $DEPSRC/mcl/include/mcl $DEPINST/include/
 cp -rv $DEPSRC/cybozulib/include/cybozu $DEPINST/include/
 cp -rv $DEPSRC/mcl/lib $DEPINST/
 
