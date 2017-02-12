@@ -140,7 +140,7 @@ mcl_bn128_Fq12 mcl_bn128_ate_miller_loop(const mcl_bn128_ate_G1_precomp &precP,
                                  const mcl_bn128_ate_G2_precomp &precQ)
 {
     mcl_bn128_Fq12 f;
-    mcl::bn256::BN::precomputedMillerLoop(f.elem, precQ.coeffs, precP.P);
+    mcl::bn256::BN::precomputedMillerLoop(f.elem, precP.P, precQ.coeffs);
     return f;
 }
 
@@ -150,7 +150,7 @@ mcl_bn128_Fq12 mcl_bn128_double_ate_miller_loop(const mcl_bn128_ate_G1_precomp &
                                         const mcl_bn128_ate_G2_precomp &precQ2)
 {
     mcl_bn128_Fq12 f;
-    mcl::bn256::BN::precomputedMillerLoop2(f.elem, precQ1.coeffs, precP1.P, precQ2.coeffs, precP2.P);
+    mcl::bn256::BN::precomputedMillerLoop2(f.elem, precP1.P, precQ1.coeffs, precP2.P, precQ2.coeffs);
     return f;
 }
 
