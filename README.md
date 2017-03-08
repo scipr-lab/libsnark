@@ -8,7 +8,7 @@ Authors
 The libsnark library is developed by the [SCIPR Lab] project and contributors
 and is released under the MIT License (see the [LICENSE] file).
 
-Copyright (c) 2012-2014 SCIPR Lab and contributors (see [AUTHORS] file).
+Copyright (c) 2012-2017 SCIPR Lab and contributors (see [AUTHORS] file).
 
 --------------------------------------------------------------------------------
 [TOC]
@@ -225,7 +225,7 @@ The libsnark library relies on the following:
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
 - [libff](https://github.com/scipr-lab/libff) for finite fields and elliptic curves
-- [libfqfft](https://github.com/scipr-lab/libfqfft) for fast interpolation/evaluation on varying domains
+- [libfqfft](https://github.com/scipr-lab/libfqfft) for fast polynomial evaluation and interpolation in various finite domains
 - third-party libraries via git submodules (included)
 
 So far we have tested these only on Linux, though we have been able to make the
@@ -289,12 +289,12 @@ In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be in
 When you use compile you application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/src/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
 
 ### Building on Windows using Cygwin
+
 Install Cygwin using the graphical installer, including the `g++`, `libgmp`, `cmake`,
 and `git` packages. Then disable the dependencies not easily supported under CygWin,
 using:
 
     $ cmake -DWITH_PROCPS=OFF ..
-
 
 ### Building on Mac OS X
 
@@ -399,7 +399,7 @@ to control these (you can see the default at the top of CMakeLists.txt).
     equivalence classes, which is slower but produces human-readable
     output.
 
-*    `cmake -DBINARY_PUTPUT=ON` (enabled by default)
+*    `cmake -DBINARY_OUTPUT=ON` (enabled by default)
 
      In serialization, output raw binary data (instead of decimal), which is smaller and faster.
 
