@@ -324,6 +324,7 @@ private:
 public:
     explicit VariableArray(const ::std::string& name = "");
     explicit VariableArray(const int size, const ::std::string& name = "");
+    explicit VariableArray(const size_t size, const ::std::string& name = "");
     explicit VariableArray(const size_t size, const Variable& contents)
             : VariableArrayContents(size, contents) {}
 

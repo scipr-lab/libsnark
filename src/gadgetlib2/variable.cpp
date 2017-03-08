@@ -291,7 +291,13 @@ FElem Variable::eval(const VariableAssignment& assignment) const {
 #ifdef DEBUG
 VariableArray::VariableArray(const string& name) : VariableArrayContents(), name_(name) {}
 VariableArray::VariableArray(const int size, const ::std::string& name) : VariableArrayContents() {
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
+        push_back(Variable(GADGETLIB2_FMT("%s[%d]", name.c_str(), i)));
+    }
+}
+
+VariableArray::VariableArray(const size_t size, const ::std::string& name) : VariableArrayContents() {
+    for (size_t i = 0; i < size; ++i) {
         push_back(Variable(GADGETLIB2_FMT("%s[%d]", name.c_str(), i)));
     }
 }
@@ -306,7 +312,9 @@ VariableArray::VariableArray(const int size, const ::std::string& name) : Variab
 
 VariableArray::VariableArray(const string& name) : VariableArrayContents() { libff::UNUSED(name); }
 VariableArray::VariableArray(const int size, const ::std::string& name)
-    : VariableArrayContents(size) { libff::UNUSED(name); }
+    : VariableArrayContents(size) { libff:UNUSED(name); }
+VariableArray::VariableArray(const size_t size, const ::std::string& name)
+    : VariableArrayContents(size) { libff:UNUSED(name); }
 #endif
 
 /***********************************/

@@ -234,7 +234,7 @@ TEST(Examples, NAND_Gadget) {
     convention which means we expect some semantic ability to decompose the packed value into its
     bits.
     The use of DualVariables is for efficiency reasons. More on this at the end of this example.
-    In this example we will construct a gadget which recieves as input a packed integer value
+    In this example we will construct a gadget which receives as input a packed integer value
     called 'hash', and a 'difficulty' level in bits, and constructs a circuit validating that the
     first 'difficulty' bits of 'hash' are '0'. For simplicity we will assume 'hash' is always 64
     bits long.
