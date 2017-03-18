@@ -69,8 +69,8 @@ knowledge_commitment<T1,T2> operator*(const libff::bigint<m> &lhs, const knowled
                                        lhs * rhs.h);
 }
 
-template<typename T1, typename T2, mp_size_t m, const libff::bigint<m> &modulus_p>
-knowledge_commitment<T1,T2> operator*(const libff::Fp_model<m, modulus_p> &lhs, const knowledge_commitment<T1,T2> &rhs)
+template<typename T1, typename T2, typename T>
+knowledge_commitment<T1,T2> operator*(const T &lhs, const knowledge_commitment<T1,T2> &rhs)
 {
     return (lhs.as_bigint()) * rhs;
 }
