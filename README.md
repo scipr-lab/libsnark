@@ -57,9 +57,14 @@ For formal definitions and theoretical discussions about these, see
 The libsnark library currently provides a C++ implementation of:
 
 1.  General-purpose proof systems:
-    1.  A preprocessing zkSNARK for the NP-complete language "R1CS"
-        (_Rank-1 Constraint Systems_), which is a language that is similar to arithmetic
-        circuit satisfiability.
+    1. A preprocessing zkSNARK for the NP-complete language "R1CS"
+       (_Rank-1 Constraint Systems_), which is a language that is similar to arithmetic
+       circuit satisfiability.
+
+       This zkSNARK construction follows, extends, and
+       optimizes the approach described in \[BCTV14a], itself an extension of
+       \[BCGTV13], following the approach of \[GGPR13] and \[BCIOP13]. (An alternative
+       implementation of this approach is the _Pinocchio_ system of \[PGHR13].)
     2. A preprocessing SNARK for a language of arithmetic circuits, "BACS"
        (_Bilinear Arithmetic Circuit Satisfiability_). This simplifies the writing
        of NP statements when the additional flexibility of R1CS is not needed.
@@ -86,11 +91,7 @@ The libsnark library currently provides a C++ implementation of:
     3. A scalable for TinyRAM using Proof-Carrying Data, as explained in \[BCTV14b]
     4. Zero-knowldge cluster MapReduce, as explained in \[CTV15].
 
-The zkSNARK construction implemented by libsnark follows, extends, and
-optimizes the approach described in \[BCTV14], itself an extension of
-\[BCGTV13], following the approach of \[BCIOP13] and \[GGPR13]. An alternative
-implementation of the basic approach is the _Pinocchio_ system of \[PGHR13].
-See these references for discussions of efficiency aspects that arise in
+See the above references for discussions of efficiency aspects that arise in
 practical use of such constructions, as well as security and trust
 considerations.
 
@@ -556,13 +557,13 @@ References
   CRYPTO 2013
 
 \[BCIOP13] [
-  _Succinct Non-Interactive Arguments via Linear Interactive Proofs_
+  _Succinct non-interactive arguments via linear interactive Proofs_
 ](http://eprint.iacr.org/2012/718),
   Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth,
   Theory of Cryptography Conference 2013
 
 \[BCTV14a] [
-  _Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture_
+  _Succinct non-interactive zero knowledge for a von Neumann architecture_
 ](http://eprint.iacr.org/2013/879),
   Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
   USENIX Security 2014
