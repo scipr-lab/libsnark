@@ -68,6 +68,9 @@ std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_proving_key<ppT> &p
 template<typename ppT>
 class r1cs_gg_ppzksnark_proving_key {
 public:
+    libff::G1<ppT> alpha_g1;
+    libff::G1<ppT> beta_g1;
+    libff::G2<ppT> beta_g2;
     libff::G1<ppT> delta_g1;
     libff::G2<ppT> delta_g2;
 
@@ -82,13 +85,19 @@ public:
     r1cs_gg_ppzksnark_proving_key<ppT>& operator=(const r1cs_gg_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_gg_ppzksnark_proving_key(const r1cs_gg_ppzksnark_proving_key<ppT> &other) = default;
     r1cs_gg_ppzksnark_proving_key(r1cs_gg_ppzksnark_proving_key<ppT> &&other) = default;
-    r1cs_gg_ppzksnark_proving_key(libff::G1<ppT> &&delta_g1,
+    r1cs_gg_ppzksnark_proving_key(libff::G1<ppT> &&alpha_g1,
+                                  libff::G1<ppT> &&beta_g1,
+                                  libff::G2<ppT> &&beta_g2,
+                                  libff::G1<ppT> &&delta_g1,
                                   libff::G2<ppT> &&delta_g2,
                                   libff::G1_vector<ppT> &&A_query,
                                   knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > &&B_query,
                                   libff::G1_vector<ppT> &&H_query,
                                   libff::G1_vector<ppT> &&L_query,
                                   r1cs_gg_ppzksnark_constraint_system<ppT> &&constraint_system) :
+        alpha_g1(std::move(alpha_g1)),
+        beta_g1(std::move(beta_g1)),
+        beta_g2(std::move(beta_g2)),
         delta_g1(std::move(delta_g1)),
         delta_g2(std::move(delta_g2)),
         A_query(std::move(A_query)),

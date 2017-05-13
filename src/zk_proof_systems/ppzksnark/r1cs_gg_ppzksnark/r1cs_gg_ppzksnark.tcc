@@ -31,7 +31,10 @@ namespace libsnark {
 template<typename ppT>
 bool r1cs_gg_ppzksnark_proving_key<ppT>::operator==(const r1cs_gg_ppzksnark_proving_key<ppT> &other) const
 {
-    return (this->delta_g1 == other.delta_g1 &&
+    return (this->alpha_g1 == other.alpha_g1 &&
+            this->beta_g1 == other.beta_g1 &&
+            this->beta_g2 == other.beta_g2 &&
+            this->delta_g1 == other.delta_g1 &&
             this->delta_g2 == other.delta_g2 &&
             this->A_query == other.A_query &&
             this->B_query == other.B_query &&
@@ -43,6 +46,9 @@ bool r1cs_gg_ppzksnark_proving_key<ppT>::operator==(const r1cs_gg_ppzksnark_prov
 template<typename ppT>
 std::ostream& operator<<(std::ostream &out, const r1cs_gg_ppzksnark_proving_key<ppT> &pk)
 {
+    out << pk.alpha_g1 << OUTPUT_NEWLINE;
+    out << pk.beta_g1 << OUTPUT_NEWLINE;
+    out << pk.beta_g2 << OUTPUT_NEWLINE;
     out << pk.delta_g1 << OUTPUT_NEWLINE;
     out << pk.delta_g2 << OUTPUT_NEWLINE;
     out << pk.A_query;
@@ -57,6 +63,12 @@ std::ostream& operator<<(std::ostream &out, const r1cs_gg_ppzksnark_proving_key<
 template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_proving_key<ppT> &pk)
 {
+    in >> pk.alpha_g1;
+    consume_OUTPUT_NEWLINE(in);
+    in >> pk.beta_g1;
+    consume_OUTPUT_NEWLINE(in);
+    in >> pk.beta_g2;
+    consume_OUTPUT_NEWLINE(in);
     in >> pk.delta_g1;
     libff::consume_OUTPUT_NEWLINE(in);
     in >> pk.delta_g2;
@@ -237,8 +249,8 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
         delta = libff::Fr<ppT>::random_element();
 
     /* append \alpha and \beta to At and Bt */
-    At.emplace_back(alpha); ++non_zero_At;
-    Bt.emplace_back(beta); ++non_zero_Bt;
+    // At.emplace_back(alpha); ++non_zero_At;
+    // Bt.emplace_back(beta); ++non_zero_Bt;
 
     /* construct IC coefficients */
     libff::Fr_vector<ppT> IC_input_coefficients;
@@ -293,6 +305,9 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::leave_block("Generating G2 multiexp table");
 
     libff::enter_block("Generate R1CS proving key");
+    libff::G1<ppT> alpha_g1 = alpha * G1_gen;
+    libff::G1<ppT> beta_g1 = beta * G1_gen;
+    libff::G2<ppT> beta_g2 = beta * G2_gen;
     libff::G1<ppT> delta_g1 = delta * G1_gen;
     libff::G2<ppT> delta_g2 = delta * G2_gen;
 
@@ -323,7 +338,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::leave_block("Generate R1CS proving key");
 
     libff::enter_block("Generate R1CS verification key");
-    libff::GT<ppT> alpha_g1_beta_g2 = ppT::reduced_pairing(alpha * G1_gen, beta * G2_gen);
+    libff::GT<ppT> alpha_g1_beta_g2 = ppT::reduced_pairing(alpha_g1, beta_g2);
     libff::G2<ppT> gamma_g2 = gamma * G2_gen;
 
     libff::enter_block("Encode IC query for R1CS verification key");
@@ -342,7 +357,10 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
                                                                                          delta_g2,
                                                                                          encoded_IC_query);
 
-    r1cs_gg_ppzksnark_proving_key<ppT> pk = r1cs_gg_ppzksnark_proving_key<ppT>(std::move(delta_g1),
+    r1cs_gg_ppzksnark_proving_key<ppT> pk = r1cs_gg_ppzksnark_proving_key<ppT>(std::move(alpha_g1),
+                                                                               std::move(beta_g1),
+                                                                               std::move(beta_g2),
+                                                                               std::move(delta_g1),
                                                                                std::move(delta_g2),
                                                                                std::move(A_query),
                                                                                std::move(B_query),
@@ -385,14 +403,14 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
 
     const libff::Fr<ppT> r = libff::Fr<ppT>::random_element();
     const libff::Fr<ppT> s = libff::Fr<ppT>::random_element();
-    libff::G1<ppT> g_A = r * pk.delta_g1 + pk.A_query[qap_wit.num_variables()+1];
-    libff::G2<ppT> g_B = s * pk.delta_g2 + pk.B_query[qap_wit.num_variables()+1].g; // TODO: swap g and h in knowledge commitment
-    libff::G1<ppT> g_C = (r * s) * pk.delta_g1 + s * pk.A_query[qap_wit.num_variables()+1] + r * pk.B_query[qap_wit.num_variables()+1].h;
+    libff::G1<ppT> g_A = r * pk.delta_g1 + pk.alpha_g1;
+    libff::G2<ppT> g_B = s * pk.delta_g2 + pk.beta_g2;
+    libff::G1<ppT> g_C = (r * s) * pk.delta_g1 + s * pk.alpha_g1 + r * pk.beta_g1;
 
 #ifdef DEBUG
     assert(qap_wit.coefficients_for_ABCs.size() == qap_wit.num_variables());
-    assert(pk.A_query.size() == qap_wit.num_variables()+2);
-    assert(pk.B_query.domain_size() == qap_wit.num_variables()+2);
+    assert(pk.A_query.size() == qap_wit.num_variables()+1);
+    assert(pk.B_query.domain_size() == qap_wit.num_variables()+1);
     assert(pk.H_query.size() == qap_wit.degree() - 1);
     assert(pk.L_query.size() == qap_wit.num_variables() - qap_wit.num_inputs());
 #endif
