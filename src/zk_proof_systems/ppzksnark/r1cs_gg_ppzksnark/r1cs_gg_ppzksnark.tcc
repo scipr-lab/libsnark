@@ -243,14 +243,10 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::Fr_vector<ppT> Ct = std::move(qap_inst.Ct);
     libff::Fr_vector<ppT> Ht = std::move(qap_inst.Ht);
 
-    const  libff::Fr<ppT> alpha = libff::Fr<ppT>::random_element(),
+    const libff::Fr<ppT> alpha = libff::Fr<ppT>::random_element(),
         beta = libff::Fr<ppT>::random_element(),
         gamma = libff::Fr<ppT>::random_element(),
         delta = libff::Fr<ppT>::random_element();
-
-    /* append \alpha and \beta to At and Bt */
-    // At.emplace_back(alpha); ++non_zero_At;
-    // Bt.emplace_back(beta); ++non_zero_Bt;
 
     /* construct IC coefficients */
     libff::Fr_vector<ppT> IC_input_coefficients;
@@ -343,8 +339,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
 
     libff::enter_block("Encode IC query for R1CS verification key");
     libff::G1<ppT> encoded_IC_base = IC_constant_coefficient * G1_gen;
-    libff::G1_vector<ppT> encoded_IC_values = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table,
-                                                 IC_input_coefficients);
+    libff::G1_vector<ppT> encoded_IC_values = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, IC_input_coefficients);
     libff::leave_block("Encode IC query for R1CS verification key");
     libff::leave_block("Generate R1CS verification key");
 
