@@ -170,22 +170,22 @@ public:
     libff::G2<ppT> gamma_g2;
     libff::G2<ppT> delta_g2;
 
-    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+    accumulation_vector<libff::G1<ppT> > gamma_ABC_g1;
 
     r1cs_gg_ppzksnark_verification_key() = default;
     r1cs_gg_ppzksnark_verification_key(const libff::GT<ppT> &alpha_g1_beta_g2,
                                        const libff::G2<ppT> &gamma_g2,
                                        const libff::G2<ppT> &delta_g2,
-                                       const accumulation_vector<libff::G1<ppT> > &eIC) :
+                                       const accumulation_vector<libff::G1<ppT> > &gamma_ABC_g1) :
         alpha_g1_beta_g2(alpha_g1_beta_g2),
         gamma_g2(gamma_g2),
         delta_g2(delta_g2),
-        encoded_IC_query(eIC)
+        gamma_ABC_g1(gamma_ABC_g1)
     {};
 
     size_t G1_size() const
     {
-        return encoded_IC_query.size();
+        return gamma_ABC_g1.size();
     }
 
     size_t G2_size() const
@@ -201,7 +201,7 @@ public:
     size_t size_in_bits() const
     {
         // TODO: include GT size
-        return (encoded_IC_query.size_in_bits() + 2 * libff::G2<ppT>::size_in_bits());
+        return (gamma_ABC_g1.size_in_bits() + 2 * libff::G2<ppT>::size_in_bits());
     }
 
     void print_size() const
@@ -245,7 +245,11 @@ public:
     libff::G2_precomp<ppT> vk_gamma_g2_precomp;
     libff::G2_precomp<ppT> vk_delta_g2_precomp;
 
+<<<<<<< HEAD
     accumulation_vector<libff::G1<ppT> > encoded_IC_query;
+=======
+    accumulation_vector<G1<ppT> > gamma_ABC_g1;
+>>>>>>> 4385c25... Updates Groth protocol naming convention and improves readability
 
     bool operator==(const r1cs_gg_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_gg_ppzksnark_processed_verification_key<ppT> &pvk);
