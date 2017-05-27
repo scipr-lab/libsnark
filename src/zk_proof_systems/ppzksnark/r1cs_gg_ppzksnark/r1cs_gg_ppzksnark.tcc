@@ -64,11 +64,11 @@ template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_gg_ppzksnark_proving_key<ppT> &pk)
 {
     in >> pk.alpha_g1;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> pk.beta_g1;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> pk.beta_g2;
-    consume_OUTPUT_NEWLINE(in);
+    libff::consume_OUTPUT_NEWLINE(in);
     in >> pk.delta_g1;
     libff::consume_OUTPUT_NEWLINE(in);
     in >> pk.delta_g2;
@@ -292,20 +292,20 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     const libff::G1<ppT> g1_generator = libff::G1<ppT>::random_element();
     const size_t g1_scalar_count = non_zero_At + non_zero_Bt + qap.num_variables();
     const size_t g1_scalar_size = libff::Fr<ppT>::size_in_bits();
-    const size_t g1_window_size = get_exp_window_size<G1<ppT> >(g1_scalar_count);
+    const size_t g1_window_size = libff::get_exp_window_size<libff::G1<ppT> >(g1_scalar_count);
 
     libff::print_indent(); printf("* G1 window: %zu\n", g1_window_size);
-    window_table<libff::G1<ppT> > g1_table = get_window_table(g1_scalar_size, g1_window_size, g1_generator);
+    libff::window_table<libff::G1<ppT> > g1_table = libff::get_window_table(g1_scalar_size, g1_window_size, g1_generator);
     libff::leave_block("Generating G1 MSM window table");
 
     libff::enter_block("Generating G2 MSM window table");
     const libff::G2<ppT> G2_gen = libff::G2<ppT>::random_element();
     const size_t g2_scalar_count = non_zero_Bt;
     const size_t g2_scalar_size = libff::Fr<ppT>::size_in_bits();
-    size_t g2_window_size = get_exp_window_size<libff::G2<ppT> >(g2_scalar_count);
+    size_t g2_window_size = libff::get_exp_window_size<libff::G2<ppT> >(g2_scalar_count);
 
     libff::print_indent(); printf("* G2 window: %zu\n", g2_window_size);
-    window_table<libff::G2<ppT> > g2_table = get_window_table(g2_scalar_size, g2_window_size, G2_gen);
+    libff::window_table<libff::G2<ppT> > g2_table = libff::get_window_table(g2_scalar_size, g2_window_size, G2_gen);
     libff::leave_block("Generating G2 MSM window table");
 
     libff::enter_block("Generate R1CS proving key");

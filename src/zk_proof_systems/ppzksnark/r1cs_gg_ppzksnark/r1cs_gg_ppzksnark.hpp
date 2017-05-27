@@ -245,11 +245,7 @@ public:
     libff::G2_precomp<ppT> vk_gamma_g2_precomp;
     libff::G2_precomp<ppT> vk_delta_g2_precomp;
 
-<<<<<<< HEAD
-    accumulation_vector<libff::G1<ppT> > encoded_IC_query;
-=======
-    accumulation_vector<G1<ppT> > gamma_ABC_g1;
->>>>>>> 4385c25... Updates Groth protocol naming convention and improves readability
+    accumulation_vector<libff::G1<ppT> > gamma_ABC_g1;
 
     bool operator==(const r1cs_gg_ppzksnark_processed_verification_key &other) const;
     friend std::ostream& operator<< <ppT>(std::ostream &out, const r1cs_gg_ppzksnark_processed_verification_key<ppT> &pvk);
