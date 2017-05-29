@@ -31,7 +31,7 @@ install:
   - cd libff
   - git submodule init && git submodule update
   - mkdir build && cd build
-  - cmake .. -DDEBUG=ON # TODO (howardwu): Run production mode in addition to debug mode
+  - cmake ..
   - make
   - sudo make install
   - cd ../..
@@ -39,7 +39,7 @@ install:
   - git clone https://github.com/scipr-lab/libfqfft.git
   - cd libfqfft
   - mkdir build && cd build
-  - cmake .. -DDEBUG=ON # TODO (howardwu): Run production mode in addition to debug mode
+  - cmake ..
   - make
   - sudo make install
   - cd ../..
@@ -53,6 +53,8 @@ before_script:
 
 script:
   - make
+  # TODO (howardwu): Resolve runtime on targets:
+  # gadgetlib1_fooram_test, zk_proof_systems_r1cs_sp_ppzkpcd_test, zk_proof_systems_ram_zksnark_test
   - make check
 
 notifications:
