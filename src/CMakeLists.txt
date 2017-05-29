@@ -307,6 +307,19 @@ target_link_libraries(
 )
 
 add_executable(
+  gadgetlib1_simple_test
+  EXCLUDE_FROM_ALL
+
+  gadgetlib1/tests/gadgetlib1_test.cpp
+)
+target_link_libraries(
+  gadgetlib1_simple_test
+
+  snark
+  gtest_main
+)
+
+add_executable(
   gadgetlib1_fooram_test
   EXCLUDE_FROM_ALL
 
@@ -602,6 +615,10 @@ add_test(
   COMMAND common_routing_algorithms_test
 )
 add_test(
+  NAME gadgetlib1_simple_test
+  COMMAND gadgetlib1_simple_test
+)
+add_test(
   NAME gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
   COMMAND gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
 )
@@ -695,6 +712,7 @@ add_test(
 )
 
 add_dependencies(check common_routing_algorithms_test)
+add_dependencies(check gadgetlib1_simple_test)
 add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
 add_dependencies(check gadgetlib1_fooram_test)
 add_dependencies(check gadgetlib2_adapters_test)

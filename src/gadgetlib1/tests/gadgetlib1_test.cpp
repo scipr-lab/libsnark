@@ -14,13 +14,13 @@
 namespace {
 
 TEST(gadgetLib1,Integration) {
-    typedef libsnark::Fr<libsnark::default_ec_pp> FieldT;
+    typedef libff::Fr<libff::default_ec_pp> FieldT;
     // Create an example constraint system and translate to libsnark format
-    libsnark::default_ec_pp::init_public_params();
+    libff::default_ec_pp::init_public_params();
     const auto example = libsnark::gen_r1cs_example_from_protoboard<FieldT>(100);
     const bool test_serialization = false;
     // Run ppzksnark. Jump into function for breakdown
-    const bool bit = libsnark::run_r1cs_ppzksnark<libsnark::default_ec_pp>(example, test_serialization);
+    const bool bit = libsnark::run_r1cs_ppzksnark<libff::default_ec_pp>(example, test_serialization);
     EXPECT_TRUE(bit);
 };
 
