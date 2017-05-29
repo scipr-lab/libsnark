@@ -12,6 +12,8 @@
 #ifndef WNAF_HPP_
 #define WNAF_HPP_
 
+#include <algebra/fields/bigint.hpp>
+
 namespace libsnark {
 
 /**
