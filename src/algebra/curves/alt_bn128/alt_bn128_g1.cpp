@@ -6,6 +6,7 @@
  *****************************************************************************/
 
 #include "algebra/curves/alt_bn128/alt_bn128_g1.hpp"
+#include "common/assert_except.hpp"
 
 namespace libsnark {
 
@@ -256,7 +257,7 @@ alt_bn128_G1 alt_bn128_G1::add(const alt_bn128_G1 &other) const
 alt_bn128_G1 alt_bn128_G1::mixed_add(const alt_bn128_G1 &other) const
 {
 #ifdef DEBUG
-    assert(other.is_special());
+    assert_except(other.is_special());
 #endif
 
     // handle special cases having to do with O
@@ -424,10 +425,10 @@ std::istream& operator>>(std::istream &in, alt_bn128_G1 &g)
 
 #ifdef NO_PT_COMPRESSION
     in >> is_zero >> tX >> tY;
-    is_zero -= '0';
+    is_zero -= static_cast <char>('0');
 #else
     in.read((char*)&is_zero, 1); // this reads is_zero;
-    is_zero -= '0';
+    is_zero -= static_cast <char>('0');
     consume_OUTPUT_SEPARATOR(in);
 
     unsigned char Y_lsb;
