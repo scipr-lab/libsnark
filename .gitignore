@@ -48,5 +48,4 @@ src/zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark
 src/zk_proof_systems/zksnark/ram_zksnark/profiling/profile_ram_zksnark
 src/zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark
 
-.*
 build
