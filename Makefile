@@ -149,6 +149,7 @@ EXECUTABLES = \
 
 
 EXECUTABLES_WITH_GTEST = \
+	src/gadgetlib1/tests/gadgetlib1_test \
 	src/gadgetlib2/examples/tutorial \
 	src/gadgetlib2/tests/gadgetlib2_test
 
