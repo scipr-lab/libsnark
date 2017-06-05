@@ -181,7 +181,7 @@ void uscs_constraint_system<FieldT>::report_linear_constraint_statistics() const
         if (a_is_const)
         {
             auto it = constraint_annotations.find(i);
-            printf("%s\n", (it == constraint_annotations.end() ? libff::FMT("", "constraint_%zu", i) : it->second).c_str());
+            printf("%s\n", (it == constraint_annotations.end() ? FMT("", "constraint_%zu", i) : it->second).c_str());
         }
     }
 #endif

@@ -132,7 +132,7 @@ void ALU_and_gadget<FieldT>::generate_r1cs_constraints()
                 { this->arg1val.bits[i] },
                 { this->arg2val.bits[i] },
                 { this->res_word[i] }),
-            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
+            FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -145,7 +145,7 @@ void ALU_and_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " result_flag"));
+        FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -197,7 +197,7 @@ void ALU_or_gadget<FieldT>::generate_r1cs_constraints()
                 { ONE, this->arg1val.bits[i] * (-1) },
                 { ONE, this->arg2val.bits[i] * (-1) },
                 { ONE, this->res_word[i] * (-1) }),
-            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
+            FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -210,7 +210,7 @@ void ALU_or_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " result_flag"));
+        FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -263,7 +263,7 @@ void ALU_xor_gadget<FieldT>::generate_r1cs_constraints()
                 { this->arg1val.bits[i] * 2},
                 { this->arg2val.bits[i] },
                 { this->arg1val.bits[i], this->arg2val.bits[i], this->res_word[i] * (-1) }),
-            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
+            FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -276,7 +276,7 @@ void ALU_xor_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " result_flag"));
+        FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -328,7 +328,7 @@ void ALU_not_gadget<FieldT>::generate_r1cs_constraints()
                 { ONE },
                 { ONE, this->arg2val.bits[i] * (-1) },
                 { this->res_word[i] }),
-            libff::FMT(this->annotation_prefix, " res_word_%zu", i));
+            FMT(this->annotation_prefix, " res_word_%zu", i));
     }
 
     /* generate result */
@@ -341,7 +341,7 @@ void ALU_not_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->not_all_zeros_result * (-1) },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " result_flag"));
+        FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -391,7 +391,7 @@ void ALU_add_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->arg1val.packed, this->arg2val.packed },
             { this->addition_result }),
-        libff::FMT(this->annotation_prefix, " addition_result"));
+        FMT(this->annotation_prefix, " addition_result"));
 
     /* unpack into bits */
     unpack_addition->generate_r1cs_constraints(true);
@@ -449,7 +449,7 @@ void ALU_sub_gadget<FieldT>::generate_r1cs_constraints()
     b.add_term(this->arg2val.packed, -1);
     c.add_term(intermediate_result, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " main_constraint"));
 
     /* unpack into bits */
     unpack_intermediate->generate_r1cs_constraints(true);
@@ -461,7 +461,7 @@ void ALU_sub_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->negated_flag * (-1) },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " result_flag"));
+        FMT(this->annotation_prefix, " result_flag"));
 }
 
 template<typename FieldT>
@@ -516,14 +516,14 @@ void ALU_mov_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->arg2val.packed },
             { this->result }),
-        libff::FMT(this->annotation_prefix, " mov_result"));
+        FMT(this->annotation_prefix, " mov_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->flag },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " mov_result_flag"));
+        FMT(this->annotation_prefix, " mov_result_flag"));
 }
 
 template<typename FieldT>
@@ -568,14 +568,14 @@ void ALU_cmov_gadget<FieldT>::generate_r1cs_constraints()
             { this->flag },
             { this->arg2val.packed, this->desval.packed * (-1) },
             { this->result, this->desval.packed * (-1) }),
-        libff::FMT(this->annotation_prefix, " cmov_result"));
+        FMT(this->annotation_prefix, " cmov_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->flag },
             { this->result_flag }),
-        libff::FMT(this->annotation_prefix, " cmov_result_flag"));
+        FMT(this->annotation_prefix, " cmov_result_flag"));
 }
 
 template<typename FieldT>
@@ -622,7 +622,7 @@ void ALU_cmp_gadget<FieldT>::generate_r1cs_constraints()
             { cmpae_result_flag },
             { ONE, cmpa_result_flag * (-1) },
             { cmpe_result_flag }),
-        libff::FMT(this->annotation_prefix, " cmpa_result_flag"));
+        FMT(this->annotation_prefix, " cmpa_result_flag"));
 
     /* copy over results */
     this->pb.add_r1cs_constraint(
@@ -630,21 +630,21 @@ void ALU_cmp_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->desval.packed },
             { cmpe_result }),
-        libff::FMT(this->annotation_prefix, " cmpe_result"));
+        FMT(this->annotation_prefix, " cmpe_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpa_result }),
-        libff::FMT(this->annotation_prefix, " cmpa_result"));
+        FMT(this->annotation_prefix, " cmpa_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpae_result }),
-        libff::FMT(this->annotation_prefix, " cmpae_result"));
+        FMT(this->annotation_prefix, " cmpae_result"));
 }
 
 template<typename FieldT>
@@ -759,13 +759,13 @@ void ALU_cmps_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, this->arg1val.bits[this->pb.ap.w-1] * (-1) },
             { negated_arg1val_sign }),
-        libff::FMT(this->annotation_prefix, " negated_arg1val_sign"));
+        FMT(this->annotation_prefix, " negated_arg1val_sign"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { ONE, this->arg2val.bits[this->pb.ap.w-1] * (-1) },
             { negated_arg2val_sign }),
-        libff::FMT(this->annotation_prefix, " negated_arg2val_sign"));
+        FMT(this->annotation_prefix, " negated_arg2val_sign"));
 
     /* pack */
     pack_modified_arg1->generate_r1cs_constraints(false);
@@ -780,14 +780,14 @@ void ALU_cmps_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->desval.packed },
             { cmpg_result }),
-        libff::FMT(this->annotation_prefix, " cmpg_result"));
+        FMT(this->annotation_prefix, " cmpg_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->desval.packed },
             { cmpge_result }),
-        libff::FMT(this->annotation_prefix, " cmpge_result"));
+        FMT(this->annotation_prefix, " cmpge_result"));
 }
 
 template<typename FieldT>
@@ -875,7 +875,7 @@ void ALU_umul_gadget<FieldT>::generate_r1cs_constraints()
             { this->arg1val.packed },
             { this->arg2val.packed },
             { mul_result.packed }),
-        libff::FMT(this->annotation_prefix, " main_constraint"));
+        FMT(this->annotation_prefix, " main_constraint"));
     mul_result.generate_r1cs_constraints(true);
 
     /* pack result */
@@ -890,14 +890,14 @@ void ALU_umul_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->result_flag },
             { mull_flag }),
-        libff::FMT(this->annotation_prefix, " mull_flag"));
+        FMT(this->annotation_prefix, " mull_flag"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->result_flag },
             { umulh_flag }),
-        libff::FMT(this->annotation_prefix, " umulh_flag"));
+        FMT(this->annotation_prefix, " umulh_flag"));
 }
 
 template<typename FieldT>
@@ -992,7 +992,7 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
     b.add_term(this->arg2val.bits[this->pb.ap.w-1], -(FieldT(2)^this->pb.ap.w));
     c.add_term(mul_result.packed, 1);
     c.add_term(ONE, -(FieldT(2)^(2*this->pb.ap.w)));
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " main_constraint"));
 
     mul_result.generate_r1cs_constraints(true);
 
@@ -1015,26 +1015,26 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
             { is_top_empty_aux },
             { top },
             { ONE, is_top_empty * (-1) }),
-        libff::FMT(this->annotation_prefix, " I*X=1-R (is_top_empty)"));
+        FMT(this->annotation_prefix, " I*X=1-R (is_top_empty)"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_empty },
             { top },
             { ONE * 0 }),
-        libff::FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
+        FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_full_aux },
             { top, ONE * (1l-(1ul<<(this->pb.ap.w+1))) },
             { ONE, is_top_full * (-1) }),
-        libff::FMT(this->annotation_prefix, " I*X=1-R (is_top_full)"));
+        FMT(this->annotation_prefix, " I*X=1-R (is_top_full)"));
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { is_top_full },
             { top, ONE * (1l-(1ul<<(this->pb.ap.w+1))) },
             { ONE * 0 }),
-        libff::FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
+        FMT(this->annotation_prefix, " R*X=0 (is_top_full)"));
 
     /* smulh_flag = 1 - (is_top_full + is_top_empty) */
     this->pb.add_r1cs_constraint(
@@ -1042,7 +1042,7 @@ void ALU_smul_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { ONE, is_top_full * (-1), is_top_empty * (-1) },
             { smulh_flag }),
-        libff::FMT(this->annotation_prefix, " smulh_flag"));
+        FMT(this->annotation_prefix, " smulh_flag"));
 }
 
 template<typename FieldT>
@@ -1133,7 +1133,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b1.add_term(this->arg2val.packed, 1);
     c1.add_term(B_nonzero, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), libff::FMT(this->annotation_prefix, " B_inv*B=B_nonzero"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), FMT(this->annotation_prefix, " B_inv*B=B_nonzero"));
 
     /* (1-B_nonzero) * B = 0 */
     linear_combination<FieldT> a2, b2, c2;
@@ -1142,7 +1142,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b2.add_term(this->arg2val.packed, 1);
     c2.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), libff::FMT(this->annotation_prefix, " (1-B_nonzero)*B=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), FMT(this->annotation_prefix, " (1-B_nonzero)*B=0"));
 
     /* B * q + r = A_aux = A * B_nonzero */
     linear_combination<FieldT> a3, b3, c3;
@@ -1151,14 +1151,14 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     c3.add_term(A_aux, 1);
     c3.add_term(umod_result, -1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a3, b3, c3), libff::FMT(this->annotation_prefix, " B*q+r=A_aux"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a3, b3, c3), FMT(this->annotation_prefix, " B*q+r=A_aux"));
 
     linear_combination<FieldT> a4, b4, c4;
     a4.add_term(this->arg1val.packed, 1);
     b4.add_term(B_nonzero, 1);
     c4.add_term(A_aux, 1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a4, b4, c4), libff::FMT(this->annotation_prefix, " A_aux=A*B_nonzero"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a4, b4, c4), FMT(this->annotation_prefix, " A_aux=A*B_nonzero"));
 
     /* q * (1-B_nonzero) = 0 */
     linear_combination<FieldT> a5, b5, c5;
@@ -1167,7 +1167,7 @@ void ALU_divmod_gadget<FieldT>::generate_r1cs_constraints()
     b5.add_term(B_nonzero, -1);
     c5.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a5, b5, c5), libff::FMT(this->annotation_prefix, " q*B_nonzero=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a5, b5, c5), FMT(this->annotation_prefix, " q*B_nonzero=0"));
 
     /* A<B_gadget<FieldT>(B, r, less=B_nonzero, leq=ONE) */
     r_less_B->generate_r1cs_constraints();
@@ -1287,7 +1287,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { this->arg1val.packed, reversed_input * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { barrel_right_internal[0], reversed_input * (-1) }),
-        libff::FMT(this->annotation_prefix, " select_arg1val_or_reversed"));
+        FMT(this->annotation_prefix, " select_arg1val_or_reversed"));
 
     /*
       do logw iterations of barrel shifts
@@ -1297,7 +1297,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
         /* assert that shifted out part is bits */
         for (size_t j = 0; j < 1ul<<i; ++j)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, shifted_out_bits[i][j], libff::FMT(this->annotation_prefix, " shifted_out_bits_%zu_%zu", i, j));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, shifted_out_bits[i][j], FMT(this->annotation_prefix, " shifted_out_bits_%zu_%zu", i, j));
         }
 
         /*
@@ -1323,7 +1323,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
         c.add_term(barrel_right_internal[i], 1);
         c.add_term(barrel_right_internal[i+1], -1);
 
-        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " barrel_shift_%zu", i));
+        this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " barrel_shift_%zu", i));
     }
 
     /*
@@ -1337,7 +1337,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { ONE, is_oversize_shift * (-1) },
             { barrel_right_internal[logw] },
             { this->result }),
-        libff::FMT(this->annotation_prefix, " result"));
+        FMT(this->annotation_prefix, " result"));
 
     /*
       get reversed result for SHL
@@ -1355,28 +1355,28 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
             { this->result, reversed_result * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { shr_result, reversed_result * (-1) }),
-        libff::FMT(this->annotation_prefix, " shr_result"));
+        FMT(this->annotation_prefix, " shr_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { this->result, reversed_result * (-1) },
             { this->opcode_indicators[tinyram_opcode_SHR] },
             { shr_result, reversed_result * (-1) }),
-        libff::FMT(this->annotation_prefix, " shl_result"));
+        FMT(this->annotation_prefix, " shl_result"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->arg1val.bits[0] },
             { shr_flag }),
-        libff::FMT(this->annotation_prefix, " shr_flag"));
+        FMT(this->annotation_prefix, " shr_flag"));
 
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
             { this->arg1val.bits[this->pb.ap.w-1] },
             { shl_flag }),
-        libff::FMT(this->annotation_prefix, " shl_flag"));
+        FMT(this->annotation_prefix, " shl_flag"));
 }
 
 template<typename FieldT>

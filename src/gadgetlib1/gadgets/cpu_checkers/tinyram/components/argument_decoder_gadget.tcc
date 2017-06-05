@@ -42,26 +42,26 @@ argument_decoder_gadget<FieldT>::argument_decoder_gadget(tinyram_protoboard<Fiel
     assert(arg2idx.size() == pb.ap.reg_arg_or_imm_width());
 
     /* decode accordingly */
-    packed_desidx.allocate(pb, libff::FMT(this->annotation_prefix, " packed_desidx"));
-    packed_arg1idx.allocate(pb, libff::FMT(this->annotation_prefix, " packed_arg1idx"));
-    packed_arg2idx.allocate(pb, libff::FMT(this->annotation_prefix, " packed_arg2idx"));
+    packed_desidx.allocate(pb, FMT(this->annotation_prefix, " packed_desidx"));
+    packed_arg1idx.allocate(pb, FMT(this->annotation_prefix, " packed_arg1idx"));
+    packed_arg2idx.allocate(pb, FMT(this->annotation_prefix, " packed_arg2idx"));
 
-    pack_desidx.reset(new packing_gadget<FieldT>(pb, desidx, packed_desidx, libff::FMT(this->annotation_prefix, "pack_desidx")));
-    pack_arg1idx.reset(new packing_gadget<FieldT>(pb, arg1idx, packed_arg1idx, libff::FMT(this->annotation_prefix, "pack_arg1idx")));
-    pack_arg2idx.reset(new packing_gadget<FieldT>(pb, arg2idx, packed_arg2idx, libff::FMT(this->annotation_prefix, "pack_arg2idx")));
+    pack_desidx.reset(new packing_gadget<FieldT>(pb, desidx, packed_desidx, FMT(this->annotation_prefix, "pack_desidx")));
+    pack_arg1idx.reset(new packing_gadget<FieldT>(pb, arg1idx, packed_arg1idx, FMT(this->annotation_prefix, "pack_arg1idx")));
+    pack_arg2idx.reset(new packing_gadget<FieldT>(pb, arg2idx, packed_arg2idx, FMT(this->annotation_prefix, "pack_arg2idx")));
 
-    arg2_demux_result.allocate(pb, libff::FMT(this->annotation_prefix, " arg2_demux_result"));
-    arg2_demux_success.allocate(pb, libff::FMT(this->annotation_prefix, " arg2_demux_success"));
+    arg2_demux_result.allocate(pb, FMT(this->annotation_prefix, " arg2_demux_result"));
+    arg2_demux_success.allocate(pb, FMT(this->annotation_prefix, " arg2_demux_success"));
 
     demux_des.reset(
         new loose_multiplexing_gadget<FieldT>(pb, packed_registers, packed_desidx, packed_desval, ONE,
-                                              libff::FMT(this->annotation_prefix, " demux_des")));
+                                              FMT(this->annotation_prefix, " demux_des")));
     demux_arg1.reset(
         new loose_multiplexing_gadget<FieldT>(pb, packed_registers, packed_arg1idx, packed_arg1val, ONE,
-                                              libff::FMT(this->annotation_prefix, " demux_arg1")));
+                                              FMT(this->annotation_prefix, " demux_arg1")));
     demux_arg2.reset(
         new loose_multiplexing_gadget<FieldT>(pb, packed_registers, packed_arg2idx, arg2_demux_result, arg2_demux_success,
-                                              libff::FMT(this->annotation_prefix, " demux_arg2")));
+                                              FMT(this->annotation_prefix, " demux_arg2")));
 }
 
 template<typename FieldT>
@@ -85,7 +85,7 @@ void argument_decoder_gadget<FieldT>::generate_r1cs_constraints()
         r1cs_constraint<FieldT>({ ONE, arg2_is_imm * (-1) },
             { ONE, arg2_demux_success * (-1) },
             { ONE * 0 }),
-        libff::FMT(this->annotation_prefix, " ensure_correc_demux"));
+        FMT(this->annotation_prefix, " ensure_correc_demux"));
 
     /*
       arg2val = arg2_is_imm * packed_arg2idx +
@@ -97,7 +97,7 @@ void argument_decoder_gadget<FieldT>::generate_r1cs_constraints()
         r1cs_constraint<FieldT>({ arg2_is_imm },
             { packed_arg2idx, arg2_demux_result * (-1) },
             { packed_arg2val, arg2_demux_result * (-1) }),
-        libff::FMT(this->annotation_prefix, " compute_arg2val"));
+        FMT(this->annotation_prefix, " compute_arg2val"));
 }
 
 template<typename FieldT>

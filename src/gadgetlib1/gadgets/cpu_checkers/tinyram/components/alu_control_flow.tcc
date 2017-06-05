@@ -27,7 +27,7 @@ void ALU_jmp_gadget<FieldT>::generate_r1cs_constraints()
             { ONE },
             { this->argval2.packed },
             { this->result }),
-        libff::FMT(this->annotation_prefix, " jmp_result"));
+        FMT(this->annotation_prefix, " jmp_result"));
 }
 
 template<typename FieldT>
@@ -89,7 +89,7 @@ void ALU_cjmp_gadget<FieldT>::generate_r1cs_constraints()
             this->flag,
             pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end())) - this->pc.packed - 1,
             this->result - this->pc.packed - 1),
-        libff::FMT(this->annotation_prefix, " cjmp_result"));
+        FMT(this->annotation_prefix, " cjmp_result"));
 }
 
 template<typename FieldT>
@@ -168,7 +168,7 @@ void ALU_cnjmp_gadget<FieldT>::generate_r1cs_constraints()
             this->flag,
             this->pc.packed + 1 - pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end())),
             this->result - pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end()))),
-        libff::FMT(this->annotation_prefix, " cnjmp_result"));
+        FMT(this->annotation_prefix, " cnjmp_result"));
 }
 
 template<typename FieldT>

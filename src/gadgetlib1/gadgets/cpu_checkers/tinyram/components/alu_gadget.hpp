@@ -60,49 +60,49 @@ public:
             new ALU_and_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_AND],
                                        instruction_flags[tinyram_opcode_AND],
-                                       libff::FMT(this->annotation_prefix, " AND")));
+                                       FMT(this->annotation_prefix, " AND")));
 
         components[tinyram_opcode_OR].reset(
             new ALU_or_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                       instruction_results[tinyram_opcode_OR],
                                       instruction_flags[tinyram_opcode_OR],
-                                      libff::FMT(this->annotation_prefix, " OR")));
+                                      FMT(this->annotation_prefix, " OR")));
 
         components[tinyram_opcode_XOR].reset(
             new ALU_xor_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_XOR],
                                        instruction_flags[tinyram_opcode_XOR],
-                                       libff::FMT(this->annotation_prefix, " XOR")));
+                                       FMT(this->annotation_prefix, " XOR")));
 
         components[tinyram_opcode_NOT].reset(
             new ALU_not_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_NOT],
                                        instruction_flags[tinyram_opcode_NOT],
-                                       libff::FMT(this->annotation_prefix, " NOT")));
+                                       FMT(this->annotation_prefix, " NOT")));
 
         components[tinyram_opcode_ADD].reset(
             new ALU_add_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_ADD],
                                        instruction_flags[tinyram_opcode_ADD],
-                                       libff::FMT(this->annotation_prefix, " ADD")));
+                                       FMT(this->annotation_prefix, " ADD")));
 
         components[tinyram_opcode_SUB].reset(
             new ALU_sub_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_SUB],
                                        instruction_flags[tinyram_opcode_SUB],
-                                       libff::FMT(this->annotation_prefix, " SUB")));
+                                       FMT(this->annotation_prefix, " SUB")));
 
         components[tinyram_opcode_MOV].reset(
             new ALU_mov_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                        instruction_results[tinyram_opcode_MOV],
                                        instruction_flags[tinyram_opcode_MOV],
-                                       libff::FMT(this->annotation_prefix, " MOV")));
+                                       FMT(this->annotation_prefix, " MOV")));
 
         components[tinyram_opcode_CMOV].reset(
             new ALU_cmov_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                         instruction_results[tinyram_opcode_CMOV],
                                         instruction_flags[tinyram_opcode_CMOV],
-                                        libff::FMT(this->annotation_prefix, " CMOV")));
+                                        FMT(this->annotation_prefix, " CMOV")));
 
         components[tinyram_opcode_CMPA].reset(
             new ALU_cmp_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
@@ -112,7 +112,7 @@ public:
                                        instruction_flags[tinyram_opcode_CMPA],
                                        instruction_results[tinyram_opcode_CMPAE],
                                        instruction_flags[tinyram_opcode_CMPAE],
-                                       libff::FMT(this->annotation_prefix, " CMP_unsigned")));
+                                       FMT(this->annotation_prefix, " CMP_unsigned")));
 
         components[tinyram_opcode_CMPG].reset(
             new ALU_cmps_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
@@ -120,7 +120,7 @@ public:
                                         instruction_flags[tinyram_opcode_CMPG],
                                         instruction_results[tinyram_opcode_CMPGE],
                                         instruction_flags[tinyram_opcode_CMPGE],
-                                        libff::FMT(this->annotation_prefix, " CMP_signed")));
+                                        FMT(this->annotation_prefix, " CMP_signed")));
 
         components[tinyram_opcode_UMULH].reset(
             new ALU_umul_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
@@ -128,13 +128,13 @@ public:
                                         instruction_flags[tinyram_opcode_MULL],
                                         instruction_results[tinyram_opcode_UMULH],
                                         instruction_flags[tinyram_opcode_UMULH],
-                                        libff::FMT(this->annotation_prefix, " MUL_unsigned")));
+                                        FMT(this->annotation_prefix, " MUL_unsigned")));
 
         components[tinyram_opcode_SMULH].reset(
             new ALU_smul_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
                                         instruction_results[tinyram_opcode_SMULH],
                                         instruction_flags[tinyram_opcode_SMULH],
-                                        libff::FMT(this->annotation_prefix, " MUL_signed")));
+                                        FMT(this->annotation_prefix, " MUL_signed")));
 
 
         components[tinyram_opcode_UDIV].reset(
@@ -143,7 +143,7 @@ public:
                                           instruction_flags[tinyram_opcode_UDIV],
                                           instruction_results[tinyram_opcode_UMOD],
                                           instruction_flags[tinyram_opcode_UMOD],
-                                          libff::FMT(this->annotation_prefix, " DIV")));
+                                          FMT(this->annotation_prefix, " DIV")));
 
         components[tinyram_opcode_SHR].reset(
             new ALU_shr_shl_gadget<FieldT>(pb, opcode_indicators, desval, arg1val, arg2val, flag,
@@ -151,23 +151,23 @@ public:
                                            instruction_flags[tinyram_opcode_SHR],
                                            instruction_results[tinyram_opcode_SHL],
                                            instruction_flags[tinyram_opcode_SHL],
-                                           libff::FMT(this->annotation_prefix, " SHR_SHL")));
+                                           FMT(this->annotation_prefix, " SHR_SHL")));
 
         /* control flow */
         components[tinyram_opcode_JMP].reset(
             new ALU_jmp_gadget<FieldT>(pb, pc, arg2val, flag,
                                        instruction_results[tinyram_opcode_JMP],
-                                       libff::FMT(this->annotation_prefix, " JMP")));
+                                       FMT(this->annotation_prefix, " JMP")));
 
         components[tinyram_opcode_CJMP].reset(
             new ALU_cjmp_gadget<FieldT>(pb, pc, arg2val, flag,
                                         instruction_results[tinyram_opcode_CJMP],
-                                        libff::FMT(this->annotation_prefix, " CJMP")));
+                                        FMT(this->annotation_prefix, " CJMP")));
 
         components[tinyram_opcode_CNJMP].reset(
             new ALU_cnjmp_gadget<FieldT>(pb, pc, arg2val, flag,
                                          instruction_results[tinyram_opcode_CNJMP],
-                                         libff::FMT(this->annotation_prefix, " CNJMP")));
+                                         FMT(this->annotation_prefix, " CNJMP")));
     }
 
     void generate_r1cs_constraints();

@@ -40,8 +40,8 @@ fooram_cpu_checker<FieldT>::fooram_cpu_checker(fooram_protoboard<FieldT> &pb,
     next_has_accepted(next_has_accepted)
 {
     /* increment PC */
-    packed_next_pc_addr.allocate(pb, libff::FMT(annotation_prefix, " packed_next_pc_addr"));
-    pack_next_pc_addr.reset(new packing_gadget<FieldT>(pb, next_pc_addr, packed_next_pc_addr, libff::FMT(annotation_prefix, " pack_next_pc_addr")));
+    packed_next_pc_addr.allocate(pb, FMT(annotation_prefix, " packed_next_pc_addr"));
+    pack_next_pc_addr.reset(new packing_gadget<FieldT>(pb, next_pc_addr, packed_next_pc_addr, FMT(annotation_prefix, " pack_next_pc_addr")));
 
     one_as_addr.resize(next_pc_addr.size());
     one_as_addr[0].assign(this->pb, 1);
@@ -51,45 +51,45 @@ fooram_cpu_checker<FieldT>::fooram_cpu_checker(fooram_protoboard<FieldT> &pb,
     }
 
     /* packed_next_pc_addr = prev_pc_addr + one_as_addr */
-    increment_pc.reset(new bar_gadget<FieldT>(pb, prev_pc_addr, FieldT::one(), one_as_addr, FieldT::one(), packed_next_pc_addr, libff::FMT(annotation_prefix, " increment_pc")));
+    increment_pc.reset(new bar_gadget<FieldT>(pb, prev_pc_addr, FieldT::one(), one_as_addr, FieldT::one(), packed_next_pc_addr, FMT(annotation_prefix, " increment_pc")));
 
     /* packed_store_addr = prev_pc_addr + prev_pc_val */
-    packed_store_addr.allocate(pb, libff::FMT(annotation_prefix, " packed_store_addr"));
-    compute_packed_store_addr.reset(new bar_gadget<FieldT>(pb, prev_pc_addr, FieldT::one(), prev_pc_val, FieldT::one(), packed_store_addr, libff::FMT(annotation_prefix, " compute_packed_store_addr")));
+    packed_store_addr.allocate(pb, FMT(annotation_prefix, " packed_store_addr"));
+    compute_packed_store_addr.reset(new bar_gadget<FieldT>(pb, prev_pc_addr, FieldT::one(), prev_pc_val, FieldT::one(), packed_store_addr, FMT(annotation_prefix, " compute_packed_store_addr")));
 
     /* packed_load_addr = 2 * x + next_pc_addr */
-    packed_load_addr.allocate(pb, libff::FMT(annotation_prefix, " packed_load_addr"));
-    compute_packed_load_addr.reset(new bar_gadget<FieldT>(pb, prev_pc_val, FieldT(2), next_pc_addr, FieldT::one(), packed_load_addr, libff::FMT(annotation_prefix, " compute_packed_load_addr")));
+    packed_load_addr.allocate(pb, FMT(annotation_prefix, " packed_load_addr"));
+    compute_packed_load_addr.reset(new bar_gadget<FieldT>(pb, prev_pc_val, FieldT(2), next_pc_addr, FieldT::one(), packed_load_addr, FMT(annotation_prefix, " compute_packed_load_addr")));
 
     /*
       packed_ls_addr = x0 * packed_load_addr + (1-x0) * packed_store_addr
       packed_ls_addr ~ ls_addr
     */
-    packed_ls_addr.allocate(pb, libff::FMT(annotation_prefix, " packed_ls_addr"));
+    packed_ls_addr.allocate(pb, FMT(annotation_prefix, " packed_ls_addr"));
     pack_ls_addr.reset(new packing_gadget<FieldT>(pb, ls_addr, packed_ls_addr, " pack_ls_addr"));
 
     /* packed_store_val = prev_state_bits + prev_pc_addr */
-    packed_store_val.allocate(pb, libff::FMT(annotation_prefix, " packed_store_val"));
-    compute_packed_store_val.reset(new bar_gadget<FieldT>(pb, prev_state, FieldT::one(), prev_pc_addr, FieldT::one(), packed_store_val, libff::FMT(annotation_prefix, " compute_packed_store_val")));
+    packed_store_val.allocate(pb, FMT(annotation_prefix, " packed_store_val"));
+    compute_packed_store_val.reset(new bar_gadget<FieldT>(pb, prev_state, FieldT::one(), prev_pc_addr, FieldT::one(), packed_store_val, FMT(annotation_prefix, " compute_packed_store_val")));
 
     /*
       packed_ls_next_val = x0 * packed_ls_prev_val + (1-x0) * packed_store_val
       packed_ls_next_val ~ ls_next_val
     */
-    packed_ls_prev_val.allocate(pb, libff::FMT(annotation_prefix, " packed_ls_prev_val"));
-    pack_ls_prev_val.reset(new packing_gadget<FieldT>(this->pb, ls_prev_val, packed_ls_prev_val, libff::FMT(annotation_prefix, " pack_ls_prev_val")));
-    packed_ls_next_val.allocate(pb, libff::FMT(annotation_prefix, " packed_ls_next_val"));
-    pack_ls_next_val.reset(new packing_gadget<FieldT>(this->pb, ls_next_val, packed_ls_next_val, libff::FMT(annotation_prefix, " pack_ls_next_val")));
+    packed_ls_prev_val.allocate(pb, FMT(annotation_prefix, " packed_ls_prev_val"));
+    pack_ls_prev_val.reset(new packing_gadget<FieldT>(this->pb, ls_prev_val, packed_ls_prev_val, FMT(annotation_prefix, " pack_ls_prev_val")));
+    packed_ls_next_val.allocate(pb, FMT(annotation_prefix, " packed_ls_next_val"));
+    pack_ls_next_val.reset(new packing_gadget<FieldT>(this->pb, ls_next_val, packed_ls_next_val, FMT(annotation_prefix, " pack_ls_next_val")));
 
     /*
       packed_next_state = x0 * packed_ls_prev_val + (1-x0) * packed_prev_state
       packed_next_state ~ next_state
       packed_prev_state ~ prev_state
     */
-    packed_prev_state.allocate(pb, libff::FMT(annotation_prefix, " packed_prev_state"));
+    packed_prev_state.allocate(pb, FMT(annotation_prefix, " packed_prev_state"));
     pack_prev_state.reset(new packing_gadget<FieldT>(pb, prev_state, packed_prev_state, " pack_prev_state"));
 
-    packed_next_state.allocate(pb, libff::FMT(annotation_prefix, " packed_next_state"));
+    packed_next_state.allocate(pb, FMT(annotation_prefix, " packed_next_state"));
     pack_next_state.reset(new packing_gadget<FieldT>(pb, next_state, packed_next_state, " pack_next_state"));
 
     /* next_has_accepted = 1 */
@@ -117,7 +117,7 @@ void fooram_cpu_checker<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(prev_pc_val[0],
                                                          packed_load_addr - packed_store_addr,
                                                          packed_ls_addr - packed_store_addr),
-                                 libff::FMT(this->annotation_prefix, " compute_ls_addr_packed"));
+                                 FMT(this->annotation_prefix, " compute_ls_addr_packed"));
 
     /* packed_store_val = prev_state_bits + prev_pc_addr */
     compute_packed_store_val->generate_r1cs_constraints();
@@ -132,7 +132,7 @@ void fooram_cpu_checker<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(prev_pc_val[0],
                                                          packed_ls_prev_val - packed_store_val,
                                                          packed_ls_next_val - packed_store_val),
-                                 libff::FMT(this->annotation_prefix, " compute_packed_ls_next_val"));
+                                 FMT(this->annotation_prefix, " compute_packed_ls_next_val"));
 
     /*
       packed_next_state = x0 * packed_ls_prev_val + (1-x0) * packed_prev_state
@@ -145,10 +145,10 @@ void fooram_cpu_checker<FieldT>::generate_r1cs_constraints()
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(prev_pc_val[0],
                                                          packed_ls_prev_val - packed_prev_state,
                                                          packed_next_state - packed_prev_state),
-                                 libff::FMT(this->annotation_prefix, " compute_packed_next_state"));
+                                 FMT(this->annotation_prefix, " compute_packed_next_state"));
 
     /* next_has_accepted = 1 */
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, next_has_accepted, 1), libff::FMT(this->annotation_prefix, " always_accepted"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, next_has_accepted, 1), FMT(this->annotation_prefix, " always_accepted"));
 }
 
 template<typename FieldT>

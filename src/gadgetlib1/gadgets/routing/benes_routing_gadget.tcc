@@ -48,7 +48,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
         routed_packets[column_idx].resize(num_packets);
         for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
         {
-            routed_packets[column_idx][packet_idx].allocate(pb, num_subpackets, libff::FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx, packet_idx));
+            routed_packets[column_idx][packet_idx].allocate(pb, num_subpackets, FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx, packet_idx));
         }
     }
 
@@ -62,7 +62,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
                                         pb_variable_array<FieldT>(routing_input_bits[packet_idx].begin(), routing_input_bits[packet_idx].end()),
                                         routed_packets[0][packet_idx],
                                         FieldT::capacity(),
-                                        libff::FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
+                                        FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
         if (packet_idx < lines_to_unpack)
         {
             unpack_outputs.emplace_back(
@@ -70,7 +70,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
                                             pb_variable_array<FieldT>(routing_output_bits[packet_idx].begin(), routing_output_bits[packet_idx].end()),
                                             routed_packets[num_columns][packet_idx],
                                             FieldT::capacity(),
-                                            libff::FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
+                                            FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
         }
     }
 
@@ -79,7 +79,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
         benes_switch_bits.resize(num_columns);
         for (size_t column_idx = 0; column_idx < num_columns; ++column_idx)
         {
-            benes_switch_bits[column_idx].allocate(pb, num_packets, libff::FMT(this->annotation_prefix, " benes_switch_bits_%zu", column_idx));
+            benes_switch_bits[column_idx].allocate(pb, num_packets, FMT(this->annotation_prefix, " benes_switch_bits_%zu", column_idx));
         }
     }
 }
@@ -101,7 +101,7 @@ void benes_routing_gadget<FieldT>::generate_r1cs_constraints()
             {
                 this->pb.add_r1cs_constraint(
                     r1cs_constraint<FieldT>(1, routed_packets[0][packet_idx][subpacket_idx], routed_packets[num_columns][packet_idx][subpacket_idx]),
-                    libff::FMT(this->annotation_prefix, " fix_line_%zu_subpacket_%zu", packet_idx, subpacket_idx));
+                    FMT(this->annotation_prefix, " fix_line_%zu_subpacket_%zu", packet_idx, subpacket_idx));
             }
         }
     }
@@ -122,13 +122,13 @@ void benes_routing_gadget<FieldT>::generate_r1cs_constraints()
                         routed_packets[column_idx][packet_idx][0] - routed_packets[column_idx+1][straight_edge][0],
                         routed_packets[column_idx][packet_idx][0] - routed_packets[column_idx+1][cross_edge][0],
                         0),
-                    libff::FMT(this->annotation_prefix, " easy_route_%zu_%zu", column_idx, packet_idx));
+                    FMT(this->annotation_prefix, " easy_route_%zu_%zu", column_idx, packet_idx));
             }
             else
             {
                 /* routing bit must be boolean */
                 generate_boolean_r1cs_constraint<FieldT>(this->pb, benes_switch_bits[column_idx][packet_idx],
-                                                         libff::FMT(this->annotation_prefix, " routing_bit_%zu_%zu", column_idx, packet_idx));
+                                                         FMT(this->annotation_prefix, " routing_bit_%zu_%zu", column_idx, packet_idx));
 
                 /* route forward according to routing bits */
                 for (size_t subpacket_idx = 0; subpacket_idx < num_subpackets; ++subpacket_idx)
@@ -142,7 +142,7 @@ void benes_routing_gadget<FieldT>::generate_r1cs_constraints()
                             benes_switch_bits[column_idx][packet_idx],
                             routed_packets[column_idx+1][cross_edge][subpacket_idx] - routed_packets[column_idx+1][straight_edge][subpacket_idx],
                             routed_packets[column_idx][packet_idx][subpacket_idx] - routed_packets[column_idx+1][straight_edge][subpacket_idx]),
-                        libff::FMT(this->annotation_prefix, " route_forward_%zu_%zu_%zu", column_idx, packet_idx, subpacket_idx));
+                        FMT(this->annotation_prefix, " route_forward_%zu_%zu_%zu", column_idx, packet_idx, subpacket_idx));
                 }
             }
         }
@@ -206,8 +206,8 @@ void test_benes_routing_gadget(const size_t num_packets, const size_t packet_siz
     std::vector<pb_variable_array<FieldT> > randbits(num_packets), outbits(num_packets);
     for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
     {
-        randbits[packet_idx].allocate(pb, packet_size, libff::FMT("", "randbits_%zu", packet_idx));
-        outbits[packet_idx].allocate(pb, packet_size, libff::FMT("", "outbits_%zu", packet_idx));
+        randbits[packet_idx].allocate(pb, packet_size, FMT("", "randbits_%zu", packet_idx));
+        outbits[packet_idx].allocate(pb, packet_size, FMT("", "outbits_%zu", packet_idx));
 
         for (size_t bit_idx = 0; bit_idx < packet_size; ++bit_idx)
         {

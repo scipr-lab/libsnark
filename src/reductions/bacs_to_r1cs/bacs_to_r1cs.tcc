@@ -52,7 +52,7 @@ r1cs_constraint_system<FieldT> bacs_to_r1cs_instance_map(const bacs_circuit<Fiel
             result.constraints.emplace_back(r1cs_constraint<FieldT>(1, g.output, 0));
 
 #ifdef DEBUG
-            result.constraint_annotations[result.constraints.size()-1] = libff::FMT("", "output_%zu_is_circuit_output", g.output.index);
+            result.constraint_annotations[result.constraints.size()-1] = FMT("", "output_%zu_is_circuit_output", g.output.index);
 #endif
         }
     }

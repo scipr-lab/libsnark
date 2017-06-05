@@ -39,7 +39,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     /* allocate all lines on the execution side of the routing network */
     libff::enter_block("Allocate initial state line");
     execution_lines.reserve(1 + time_bound);
-    execution_lines.emplace_back(execution_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " execution_lines_%zu", 0)));
+    execution_lines.emplace_back(execution_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " execution_lines_%zu", 0)));
     unrouted_memory_lines.emplace_back(&execution_lines[0]);
     libff::leave_block("Allocate initial state line");
 
@@ -47,7 +47,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     boot_lines.reserve(boot_trace_size_bound);
     for (size_t i = 0; i < boot_trace_size_bound; ++i)
     {
-        boot_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " boot_lines_%zu", i)));
+        boot_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " boot_lines_%zu", i)));
         unrouted_memory_lines.emplace_back(&boot_lines[i]);
     }
     libff::leave_block("Allocate boot lines");
@@ -56,13 +56,13 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     load_instruction_lines.reserve(time_bound+1); /* the last line is NOT a memory line, but here just for uniform coding (i.e. the (unusued) result of next PC) */
     for (size_t i = 0; i < time_bound; ++i)
     {
-        load_instruction_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " load_instruction_lines_%zu", i)));
+        load_instruction_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " load_instruction_lines_%zu", i)));
         unrouted_memory_lines.emplace_back(&load_instruction_lines[i]);
 
-        execution_lines.emplace_back(execution_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " execution_lines_%zu", i+1)));
+        execution_lines.emplace_back(execution_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " execution_lines_%zu", i+1)));
         unrouted_memory_lines.emplace_back(&execution_lines[i+1]);
     }
-    load_instruction_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " load_instruction_lines_%zu", time_bound)));
+    load_instruction_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " load_instruction_lines_%zu", time_bound)));
     libff::leave_block("Allocate instruction fetch and execution lines");
 
     /* deal with packing of the input */
@@ -83,7 +83,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
         pb_variable_array<FieldT> packed_boot_line = pb_variable_array<FieldT>(input_it, input_it + packed_line_size);
         std::advance(input_it, packed_line_size);
 
-        unpack_boot_lines.emplace_back(multipacking_gadget<FieldT>(pb, boot_line_bits, packed_boot_line, max_chunk_size, libff::FMT(annotation_prefix, " unpack_boot_lines_%zu", i)));
+        unpack_boot_lines.emplace_back(multipacking_gadget<FieldT>(pb, boot_line_bits, packed_boot_line, max_chunk_size, FMT(annotation_prefix, " unpack_boot_lines_%zu", i)));
     }
     libff::leave_block("Pack input");
 
@@ -91,7 +91,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     libff::enter_block("Allocate routed memory lines");
     for (size_t i = 0; i < num_memory_lines; ++i)
     {
-        routed_memory_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, libff::FMT(annotation_prefix, " routed_memory_lines_%zu", i)));
+        routed_memory_lines.emplace_back(memory_line_variable_gadget<ramT>(pb, timestamp_size, pb.ap, FMT(annotation_prefix, " routed_memory_lines_%zu", i)));
     }
     libff::leave_block("Allocate routed memory lines");
 
@@ -107,7 +107,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     libff::leave_block("Collect inputs/outputs for the routing network");
 
     libff::enter_block("Allocate routing network");
-    routing_network.reset(new as_waksman_routing_gadget<FieldT>(pb, num_memory_lines, routing_inputs, routing_outputs, libff::FMT(this->annotation_prefix, " routing_network")));
+    routing_network.reset(new as_waksman_routing_gadget<FieldT>(pb, num_memory_lines, routing_inputs, routing_outputs, FMT(this->annotation_prefix, " routing_network")));
     libff::leave_block("Allocate routing network");
 
     /* deal with all checkers */
@@ -125,7 +125,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
                                                               execution_lines[i+1].cpu_state, // next_state
                                                               load_instruction_lines[i+1].address->bits, // next_pc_addr
                                                               execution_lines[i+1].has_accepted, // next_has_accepted
-                                                              libff::FMT(annotation_prefix, " execution_checkers_%zu", i)));
+                                                              FMT(annotation_prefix, " execution_checkers_%zu", i)));
     }
     libff::leave_block("Allocate execution checkers");
 
@@ -137,7 +137,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
                                                                  timestamp_size,
                                                                  *unrouted_memory_lines[i],
                                                                  routed_memory_lines[i],
-                                                                 libff::FMT(this->annotation_prefix, " memory_checkers_%zu", i)));
+                                                                 FMT(this->annotation_prefix, " memory_checkers_%zu", i)));
     }
     libff::leave_block("Allocate all memory checkers");
 
@@ -189,7 +189,7 @@ void ram_universal_gadget<ramT>::generate_r1cs_constraints()
     {
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, load_instruction_lines[i].contents_before->packed,
                                                              load_instruction_lines[i].contents_after->packed),
-                                     libff::FMT(this->annotation_prefix, " load_instruction_%zu_is_a_load", i));
+                                     FMT(this->annotation_prefix, " load_instruction_%zu_is_a_load", i));
     }
 
     /* ensure correct execution */

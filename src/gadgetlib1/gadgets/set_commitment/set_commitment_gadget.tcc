@@ -22,17 +22,17 @@ set_commitment_gadget<FieldT, HashT>::set_commitment_gadget(protoboard<FieldT> &
     gadget<FieldT>(pb, annotation_prefix), tree_depth(libff::log2(max_entries)), element_bits(element_bits),
     root_digest(root_digest), proof(proof), check_successful(check_successful)
 {
-    element_block.reset(new block_variable<FieldT>(pb, { element_bits }, libff::FMT(annotation_prefix, " element_block")));
+    element_block.reset(new block_variable<FieldT>(pb, { element_bits }, FMT(annotation_prefix, " element_block")));
 
     if (tree_depth == 0)
     {
-        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, root_digest, libff::FMT(annotation_prefix, " hash_element")));
+        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, root_digest, FMT(annotation_prefix, " hash_element")));
     }
     else
     {
         element_digest.reset(new digest_variable<FieldT>(pb, HashT::get_digest_len(),
-                                                         libff::FMT(annotation_prefix, " element_digest")));
-        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, *element_digest, libff::FMT(annotation_prefix, " hash_element")));
+                                                         FMT(annotation_prefix, " element_digest")));
+        hash_element.reset(new HashT(pb, element_bits.size(), *element_block, *element_digest, FMT(annotation_prefix, " hash_element")));
         check_membership.reset(new merkle_tree_check_read_gadget<FieldT, HashT>(pb,
                                                                                 tree_depth,
                                                                                 proof.address_bits,
@@ -40,7 +40,7 @@ set_commitment_gadget<FieldT, HashT>::set_commitment_gadget(protoboard<FieldT> &
                                                                                 root_digest,
                                                                                 *proof.merkle_path,
                                                                                 check_successful,
-                                                                                libff::FMT(annotation_prefix, " check_membership")));
+                                                                                FMT(annotation_prefix, " check_membership")));
     }
 }
 

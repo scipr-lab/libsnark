@@ -34,15 +34,15 @@ bar_gadget<FieldT>::bar_gadget(protoboard<FieldT> &pb,
     assert(X.size() == Y.size());
     width = X.size();
 
-    result.allocate(pb, libff::FMT(annotation_prefix, " result"));
-    Z_bits.allocate(pb, width, libff::FMT(annotation_prefix, " Z_bits"));
-    overflow.allocate(pb, 2*width, libff::FMT(annotation_prefix, " overflow"));
+    result.allocate(pb, FMT(annotation_prefix, " result"));
+    Z_bits.allocate(pb, width, FMT(annotation_prefix, " Z_bits"));
+    overflow.allocate(pb, 2*width, FMT(annotation_prefix, " overflow"));
 
     unpacked_result.insert(unpacked_result.end(), Z_bits.begin(), Z_bits.end());
     unpacked_result.insert(unpacked_result.end(), overflow.begin(), overflow.end());
 
-    unpack_result.reset(new packing_gadget<FieldT>(pb, unpacked_result, result, libff::FMT(annotation_prefix, " unpack_result")));
-    pack_Z.reset(new packing_gadget<FieldT>(pb, Z_bits, Z_packed, libff::FMT(annotation_prefix, " pack_Z")));
+    unpack_result.reset(new packing_gadget<FieldT>(pb, unpacked_result, result, FMT(annotation_prefix, " unpack_result")));
+    pack_Z.reset(new packing_gadget<FieldT>(pb, Z_bits, Z_packed, FMT(annotation_prefix, " pack_Z")));
 }
 
 template<typename FieldT>
@@ -51,7 +51,7 @@ void bar_gadget<FieldT>::generate_r1cs_constraints()
     unpack_result->generate_r1cs_constraints(true);
     pack_Z->generate_r1cs_constraints(false);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, a * pb_packing_sum<FieldT>(X) + b * pb_packing_sum<FieldT>(Y), result), libff::FMT(this->annotation_prefix, " compute_result"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, a * pb_packing_sum<FieldT>(X) + b * pb_packing_sum<FieldT>(Y), result), FMT(this->annotation_prefix, " compute_result"));
 }
 
 template<typename FieldT>

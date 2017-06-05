@@ -15,7 +15,7 @@ digest_variable<FieldT>::digest_variable(protoboard<FieldT> &pb,
                                          const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), digest_size(digest_size)
 {
-    bits.allocate(pb, digest_size, libff::FMT(this->annotation_prefix, " bits"));
+    bits.allocate(pb, digest_size, FMT(this->annotation_prefix, " bits"));
 }
 
 template<typename FieldT>
@@ -39,7 +39,7 @@ void digest_variable<FieldT>::generate_r1cs_constraints()
 {
     for (size_t i = 0; i < digest_size; ++i)
     {
-        generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], libff::FMT(this->annotation_prefix, " bits_%zu", i));
+        generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], FMT(this->annotation_prefix, " bits_%zu", i));
     }
 }
 
@@ -61,7 +61,7 @@ block_variable<FieldT>::block_variable(protoboard<FieldT> &pb,
                                        const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix), block_size(block_size)
 {
-    bits.allocate(pb, block_size, libff::FMT(this->annotation_prefix, " bits"));
+    bits.allocate(pb, block_size, FMT(this->annotation_prefix, " bits"));
 }
 
 template<typename FieldT>

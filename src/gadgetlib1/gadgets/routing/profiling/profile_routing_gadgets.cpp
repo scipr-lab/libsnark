@@ -26,8 +26,8 @@ void get_as_waksman_size(const size_t n, const size_t l, size_t &num_constraints
     std::vector<pb_variable_array<FieldT> > randbits(n), outbits(n);
     for (size_t y = 0; y < n; ++y)
     {
-        randbits[y].allocate(pb, l, libff::FMT("", "randbits_%zu", y));
-        outbits[y].allocate(pb, l, libff::FMT("", "outbits_%zu", y));
+        randbits[y].allocate(pb, l, FMT("", "randbits_%zu", y));
+        outbits[y].allocate(pb, l, FMT("", "outbits_%zu", y));
     }
 
     as_waksman_routing_gadget<FieldT> r(pb, n, randbits, outbits, "main_routing_gadget");
@@ -48,8 +48,8 @@ void get_benes_size(const size_t n, const size_t l, size_t &num_constraints, siz
     std::vector<pb_variable_array<FieldT> > randbits(1ul<<t), outbits(1ul<<t);
     for (size_t y = 0; y < 1ul<<t; ++y)
     {
-        randbits[y].allocate(pb, l, libff::FMT("", "randbits_%zu", y));
-        outbits[y].allocate(pb, l, libff::FMT("", "outbits_%zu", y));
+        randbits[y].allocate(pb, l, FMT("", "randbits_%zu", y));
+        outbits[y].allocate(pb, l, FMT("", "outbits_%zu", y));
     }
 
     benes_routing_gadget<FieldT> r(pb, n, randbits, outbits, n, "main_routing_gadget");

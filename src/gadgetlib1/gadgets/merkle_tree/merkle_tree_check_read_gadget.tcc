@@ -48,17 +48,17 @@ merkle_tree_check_read_gadget<FieldT, HashT>::merkle_tree_check_read_gadget(prot
 
     for (size_t i = 0; i < tree_depth-1; ++i)
     {
-        internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, libff::FMT(this->annotation_prefix, " internal_output_%zu", i)));
+        internal_output.emplace_back(digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " internal_output_%zu", i)));
     }
 
-    computed_root.reset(new digest_variable<FieldT>(pb, digest_size, libff::FMT(this->annotation_prefix, " computed_root")));
+    computed_root.reset(new digest_variable<FieldT>(pb, digest_size, FMT(this->annotation_prefix, " computed_root")));
 
     for (size_t i = 0; i < tree_depth; ++i)
     {
-        block_variable<FieldT> inp(pb, path.left_digests[i], path.right_digests[i], libff::FMT(this->annotation_prefix, " inp_%zu", i));
+        block_variable<FieldT> inp(pb, path.left_digests[i], path.right_digests[i], FMT(this->annotation_prefix, " inp_%zu", i));
         hasher_inputs.emplace_back(inp);
         hashers.emplace_back(HashT(pb, 2*digest_size, inp, (i == 0 ? *computed_root : internal_output[i-1]),
-                                   libff::FMT(this->annotation_prefix, " load_hashers_%zu", i)));
+                                   FMT(this->annotation_prefix, " load_hashers_%zu", i)));
     }
 
     for (size_t i = 0; i < tree_depth; ++i)
@@ -70,10 +70,10 @@ merkle_tree_check_read_gadget<FieldT, HashT>::merkle_tree_check_read_gadget(prot
         */
         propagators.emplace_back(digest_selector_gadget<FieldT>(pb, digest_size, i < tree_depth - 1 ? internal_output[i] : leaf,
                                                                 address_bits[tree_depth-1-i], path.left_digests[i], path.right_digests[i],
-                                                                libff::FMT(this->annotation_prefix, " digest_selector_%zu", i)));
+                                                                FMT(this->annotation_prefix, " digest_selector_%zu", i)));
     }
 
-    check_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_root->bits, root.bits, read_successful, FieldT::capacity(), libff::FMT(annotation_prefix, " check_root")));
+    check_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_root->bits, root.bits, read_successful, FieldT::capacity(), FMT(annotation_prefix, " check_root")));
 }
 
 template<typename FieldT, typename HashT>
