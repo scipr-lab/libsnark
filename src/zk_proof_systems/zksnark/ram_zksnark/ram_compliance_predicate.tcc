@@ -127,7 +127,7 @@ ram_pcd_message_variable<ramT>::ram_pcd_message_variable(protoboard<FieldT> &pb,
 {
     const size_t unpacked_payload_size_in_bits = ram_pcd_message<ramT>::unpacked_payload_size_in_bits(ap);
     const size_t packed_payload_size = libff::div_ceil(unpacked_payload_size_in_bits, FieldT::capacity());
-    packed_payload.allocate(pb, packed_payload_size, libff::FMT(annotation_prefix, " packed_payload"));
+    packed_payload.allocate(pb, packed_payload_size, FMT(annotation_prefix, " packed_payload"));
 
     this->update_all_vars();
 }
@@ -137,14 +137,14 @@ void ram_pcd_message_variable<ramT>::allocate_unpacked_part()
 {
     const size_t digest_size = CRH_with_bit_out_gadget<FieldT>::get_digest_len();
 
-    timestamp.allocate(this->pb, ramT::timestamp_length, libff::FMT(this->annotation_prefix, " timestamp"));
-    root_initial.allocate(this->pb, digest_size, libff::FMT(this->annotation_prefix, " root_initial"));
-    root.allocate(this->pb, digest_size, libff::FMT(this->annotation_prefix, " root"));
-    pc_addr.allocate(this->pb, ap.address_size(), libff::FMT(this->annotation_prefix, " pc_addr"));
-    cpu_state.allocate(this->pb, ap.cpu_state_size(), libff::FMT(this->annotation_prefix, " cpu_state"));
-    pc_addr_initial.allocate(this->pb, ap.address_size(), libff::FMT(this->annotation_prefix, " pc_addr_initial"));
-    cpu_state_initial.allocate(this->pb, ap.cpu_state_size(), libff::FMT(this->annotation_prefix, " cpu_state_initial"));
-    has_accepted.allocate(this->pb, libff::FMT(this->annotation_prefix, " has_accepted"));
+    timestamp.allocate(this->pb, ramT::timestamp_length, FMT(this->annotation_prefix, " timestamp"));
+    root_initial.allocate(this->pb, digest_size, FMT(this->annotation_prefix, " root_initial"));
+    root.allocate(this->pb, digest_size, FMT(this->annotation_prefix, " root"));
+    pc_addr.allocate(this->pb, ap.address_size(), FMT(this->annotation_prefix, " pc_addr"));
+    cpu_state.allocate(this->pb, ap.cpu_state_size(), FMT(this->annotation_prefix, " cpu_state"));
+    pc_addr_initial.allocate(this->pb, ap.address_size(), FMT(this->annotation_prefix, " pc_addr_initial"));
+    cpu_state_initial.allocate(this->pb, ap.cpu_state_size(), FMT(this->annotation_prefix, " cpu_state_initial"));
+    has_accepted.allocate(this->pb, FMT(this->annotation_prefix, " has_accepted"));
 
     all_unpacked_vars.insert(all_unpacked_vars.end(), timestamp.begin(), timestamp.end());
     all_unpacked_vars.insert(all_unpacked_vars.end(), root_initial.begin(), root_initial.end());
@@ -155,7 +155,7 @@ void ram_pcd_message_variable<ramT>::allocate_unpacked_part()
     all_unpacked_vars.insert(all_unpacked_vars.end(), cpu_state_initial.begin(), cpu_state_initial.end());
     all_unpacked_vars.insert(all_unpacked_vars.end(), has_accepted);
 
-    unpack_payload.reset(new multipacking_gadget<FieldT>(this->pb, all_unpacked_vars, packed_payload, FieldT::capacity(), libff::FMT(this->annotation_prefix, " unpack_payload")));
+    unpack_payload.reset(new multipacking_gadget<FieldT>(this->pb, all_unpacked_vars, packed_payload, FieldT::capacity(), FMT(this->annotation_prefix, " unpack_payload")));
 }
 
 template<typename ramT>
@@ -225,7 +225,7 @@ ram_pcd_local_data_variable<ramT>::ram_pcd_local_data_variable(protoboard<FieldT
                                                                const std::string &annotation_prefix) :
     r1cs_pcd_local_data_variable<ram_base_field<ramT> >(pb, annotation_prefix)
 {
-    is_halt_case.allocate(pb, libff::FMT(annotation_prefix, " is_halt_case"));
+    is_halt_case.allocate(pb, FMT(annotation_prefix, " is_halt_case"));
 
     this->update_all_vars();
 }

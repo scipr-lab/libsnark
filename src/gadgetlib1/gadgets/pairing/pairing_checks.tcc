@@ -31,9 +31,9 @@ check_e_equals_e_gadget<ppT>::check_e_equals_e_gadget(protoboard<FieldT> &pb,
     rhs_G2(rhs_G2),
     result(result)
 {
-    ratio.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " ratio")));
-    compute_ratio.reset(new e_over_e_miller_loop_gadget<ppT>(pb, lhs_G1, lhs_G2, rhs_G1, rhs_G2, *ratio, libff::FMT(annotation_prefix, " compute_ratio")));
-    check_finexp.reset(new final_exp_gadget<ppT>(pb, *ratio, result, libff::FMT(annotation_prefix, " check_finexp")));
+    ratio.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " ratio")));
+    compute_ratio.reset(new e_over_e_miller_loop_gadget<ppT>(pb, lhs_G1, lhs_G2, rhs_G1, rhs_G2, *ratio, FMT(annotation_prefix, " compute_ratio")));
+    check_finexp.reset(new final_exp_gadget<ppT>(pb, *ratio, result, FMT(annotation_prefix, " check_finexp")));
 }
 
 template<typename ppT>
@@ -69,9 +69,9 @@ check_e_equals_ee_gadget<ppT>::check_e_equals_ee_gadget(protoboard<FieldT> &pb,
     rhs2_G2(rhs2_G2),
     result(result)
 {
-    ratio.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " ratio")));
-    compute_ratio.reset(new e_times_e_over_e_miller_loop_gadget<ppT>(pb, rhs1_G1, rhs1_G2, rhs2_G1, rhs2_G2, lhs_G1, lhs_G2, *ratio, libff::FMT(annotation_prefix, " compute_ratio")));
-    check_finexp.reset(new final_exp_gadget<ppT>(pb, *ratio, result, libff::FMT(annotation_prefix, " check_finexp")));
+    ratio.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " ratio")));
+    compute_ratio.reset(new e_times_e_over_e_miller_loop_gadget<ppT>(pb, rhs1_G1, rhs1_G2, rhs2_G1, rhs2_G2, lhs_G1, lhs_G2, *ratio, FMT(annotation_prefix, " compute_ratio")));
+    check_finexp.reset(new final_exp_gadget<ppT>(pb, *ratio, result, FMT(annotation_prefix, " check_finexp")));
 }
 
 template<typename ppT>

@@ -39,7 +39,7 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
 
 #ifdef DEBUG
         auto it = circuit.gate_annotations.find(g.output);
-        const std::string annotation = (it != circuit.gate_annotations.end() ? it->second : libff::FMT("", "compute_wire_%zu", g.output));
+        const std::string annotation = (it != circuit.gate_annotations.end() ? it->second : FMT("", "compute_wire_%zu", g.output));
 #else
         const std::string annotation = "";
 #endif
@@ -134,7 +134,7 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
     for (size_t i = 0; i < circuit.primary_input_size + circuit.auxiliary_input_size + circuit.gates.size(); ++i)
     {
         /* require that 2 * wire - 1 \in {-1,1}, that is wire \in {0,1} */
-        result.add_constraint(2 * variable<FieldT>(i) - 1, libff::FMT("", "wire_%zu", i));
+        result.add_constraint(2 * variable<FieldT>(i) - 1, FMT("", "wire_%zu", i));
     }
 
     for (auto &g : circuit.gates)
@@ -142,7 +142,7 @@ uscs_constraint_system<FieldT> tbcs_to_uscs_instance_map(const tbcs_circuit &cir
         if (g.is_circuit_output)
         {
             /* require that output + 1 \in {-1,1}, this together with output binary (above) enforces output = 0 */
-            result.add_constraint(variable<FieldT>(g.output) + 1, libff::FMT("", "output_%zu", g.output));
+            result.add_constraint(variable<FieldT>(g.output) + 1, FMT("", "output_%zu", g.output));
         }
     }
 

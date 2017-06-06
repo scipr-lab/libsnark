@@ -53,7 +53,7 @@ void knapsack_CRH_with_field_out_gadget<FieldT>::generate_r1cs_constraints()
                                                              pb_coeff_sum<FieldT>(input_block.bits,
                                                                                   std::vector<FieldT>(knapsack_coefficients.begin() + input_len * i,
                                                                                                       knapsack_coefficients.begin() + input_len * (i+1))),
-                                                             output[i]), libff::FMT(this->annotation_prefix, " knapsack_%zu", i));
+                                                             output[i]), FMT(this->annotation_prefix, " knapsack_%zu", i));
     }
 }
 
@@ -157,7 +157,7 @@ knapsack_CRH_with_bit_out_gadget<FieldT>::knapsack_CRH_with_bit_out_gadget(proto
                                                                               output_digest.bits.begin() + (i + 1) * FieldT::size_in_bits())));
     }
 
-    hasher.reset(new knapsack_CRH_with_field_out_gadget<FieldT>(pb, input_len, input_block, output, libff::FMT(annotation_prefix, " hasher")));
+    hasher.reset(new knapsack_CRH_with_field_out_gadget<FieldT>(pb, input_len, input_block, output, FMT(annotation_prefix, " hasher")));
 }
 
 
@@ -170,7 +170,7 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::generate_r1cs_constraints(const b
     {
         for (size_t k = 0; k < output_digest.bits.size(); ++k)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, output_digest.bits[k], libff::FMT(this->annotation_prefix, " output_digest_%zu", k));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, output_digest.bits[k], FMT(this->annotation_prefix, " output_digest_%zu", k));
         }
     }
 }

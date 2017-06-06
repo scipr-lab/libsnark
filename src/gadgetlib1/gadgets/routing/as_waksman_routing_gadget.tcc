@@ -44,7 +44,7 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
     routed_packets[0].resize(num_packets);
     for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
     {
-        routed_packets[0][packet_idx].allocate(pb, num_subpackets, libff::FMT(annotation_prefix, " routed_packets_0_%zu", packet_idx));
+        routed_packets[0][packet_idx].allocate(pb, num_subpackets, FMT(annotation_prefix, " routed_packets_0_%zu", packet_idx));
     }
 
     for (size_t column_idx = 0; column_idx < num_columns; ++column_idx)
@@ -62,8 +62,8 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
             {
                 const size_t straight_edge = neighbors[column_idx][row_idx].first;
                 const size_t cross_edge = neighbors[column_idx][row_idx].second;
-                routed_packets[column_idx+1][straight_edge].allocate(pb, num_subpackets, libff::FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx+1, straight_edge));
-                routed_packets[column_idx+1][cross_edge].allocate(pb, num_subpackets, libff::FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx+1, cross_edge));
+                routed_packets[column_idx+1][straight_edge].allocate(pb, num_subpackets, FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx+1, straight_edge));
+                routed_packets[column_idx+1][cross_edge].allocate(pb, num_subpackets, FMT(annotation_prefix, " routed_packets_%zu_%zu", column_idx+1, cross_edge));
                 ++row_idx; /* skip the next idx, as it to refers to the same packets */
             }
         }
@@ -78,13 +78,13 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
                                         pb_variable_array<FieldT>(routing_input_bits[packet_idx].begin(), routing_input_bits[packet_idx].end()),
                                         routed_packets[0][packet_idx],
                                         FieldT::capacity(),
-                                        libff::FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
+                                        FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
         unpack_outputs.emplace_back(
             multipacking_gadget<FieldT>(pb,
                                         pb_variable_array<FieldT>(routing_output_bits[packet_idx].begin(), routing_output_bits[packet_idx].end()),
                                         routed_packets[num_columns][packet_idx],
                                         FieldT::capacity(),
-                                        libff::FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
+                                        FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
     }
 
     /* allocate switch bits */
@@ -98,7 +98,7 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
             {
                 if (neighbors[column_idx][row_idx].first != neighbors[column_idx][row_idx].second)
                 {
-                    asw_switch_bits[column_idx][row_idx].allocate(pb, libff::FMT(annotation_prefix, " asw_switch_bits_%zu_%zu", column_idx, row_idx));
+                    asw_switch_bits[column_idx][row_idx].allocate(pb, FMT(annotation_prefix, " asw_switch_bits_%zu_%zu", column_idx, row_idx));
                     ++row_idx; /* next row_idx corresponds to the same switch, so skip it */
                 }
             }
@@ -141,14 +141,14 @@ void as_waksman_routing_gadget<FieldT>::generate_r1cs_constraints()
                         r1cs_constraint<FieldT>(routed_packets[column_idx][switch_input][0] - routed_packets[column_idx+1][straight_edge][0],
                                                 routed_packets[column_idx][switch_input][0] - routed_packets[column_idx+1][cross_edge][0],
                                                 0),
-                        libff::FMT(this->annotation_prefix, " easy_route_%zu_%zu", column_idx, switch_input));
+                        FMT(this->annotation_prefix, " easy_route_%zu_%zu", column_idx, switch_input));
                 }
             }
             else
             {
                 /* require switching bit to be boolean */
                 generate_boolean_r1cs_constraint<FieldT>(this->pb, asw_switch_bits[column_idx][row_idx],
-                                                         libff::FMT(this->annotation_prefix, " asw_switch_bits_%zu_%zu", column_idx, row_idx));
+                                                         FMT(this->annotation_prefix, " asw_switch_bits_%zu_%zu", column_idx, row_idx));
 
                 /* route forward according to the switch bit */
                 for (size_t subpacket_idx = 0; subpacket_idx < num_subpackets; ++subpacket_idx)
@@ -167,7 +167,7 @@ void as_waksman_routing_gadget<FieldT>::generate_r1cs_constraints()
                                 asw_switch_bits[column_idx][row_idx],
                                 routed_packets[column_idx+1][cross_edge][subpacket_idx] - routed_packets[column_idx+1][straight_edge][subpacket_idx],
                                 routed_packets[column_idx][switch_input][subpacket_idx] - routed_packets[column_idx+1][straight_edge][subpacket_idx]),
-                            libff::FMT(this->annotation_prefix, " route_forward_%zu_%zu_%zu", column_idx, switch_input, subpacket_idx));
+                            FMT(this->annotation_prefix, " route_forward_%zu_%zu_%zu", column_idx, switch_input, subpacket_idx));
                     }
                 }
             }
@@ -253,8 +253,8 @@ void test_as_waksman_routing_gadget(const size_t num_packets, const size_t packe
     std::vector<pb_variable_array<FieldT> > randbits(num_packets), outbits(num_packets);
     for (size_t packet_idx = 0; packet_idx < num_packets; ++packet_idx)
     {
-        randbits[packet_idx].allocate(pb, packet_size, libff::FMT("", "randbits_%zu", packet_idx));
-        outbits[packet_idx].allocate(pb, packet_size, libff::FMT("", "outbits_%zu", packet_idx));
+        randbits[packet_idx].allocate(pb, packet_size, FMT("", "randbits_%zu", packet_idx));
+        outbits[packet_idx].allocate(pb, packet_size, FMT("", "outbits_%zu", packet_idx));
 
         for (size_t bit_idx = 0; bit_idx < packet_size; ++bit_idx)
         {

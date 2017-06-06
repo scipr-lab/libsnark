@@ -68,7 +68,7 @@ public:
         c1.assign(pb, P.Y * ((libff::mnt4_twist).squared().c1));
 
         precomp.P.reset(new G1_variable<ppT>(P));
-        precomp.PY_twist_squared.reset(new Fqe_variable<ppT>(pb, c0, c1, libff::FMT(annotation_prefix, " PY_twist_squared")));
+        precomp.PY_twist_squared.reset(new Fqe_variable<ppT>(pb, c0, c1, FMT(annotation_prefix, " PY_twist_squared")));
     }
 
     template<typename FieldT>
@@ -86,7 +86,7 @@ public:
         c2.assign(pb, P.Y * ((libff::mnt6_twist).squared().c2));
 
         precomp.P.reset(new G1_variable<ppT>(P));
-        precomp.PY_twist_squared.reset(new Fqe_variable<ppT>(pb, c0, c1, c2, libff::FMT(annotation_prefix, " PY_twist_squared")));
+        precomp.PY_twist_squared.reset(new Fqe_variable<ppT>(pb, c0, c1, c2, FMT(annotation_prefix, " PY_twist_squared")));
     }
 
     void generate_r1cs_constraints();

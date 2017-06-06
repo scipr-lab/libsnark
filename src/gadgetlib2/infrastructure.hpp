@@ -44,7 +44,7 @@
 /********************************************************/
 
 namespace gadgetlib2 {
-// someday, if/when MSVC supports C++0x variadic templates, change libff::FMT in release version to the
+// someday, if/when MSVC supports C++0x variadic templates, change FMT in release version to the
 // following in order to increase efficiency:
 // #define GADGETLIB2_FMT(...) ""
 ::std::string GADGETLIB2_FMT(const char* format, ...);

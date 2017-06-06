@@ -28,36 +28,36 @@ mnt4_final_exp_gadget<ppT>::mnt4_final_exp_gadget(protoboard<FieldT> &pb,
     el(el),
     result_is_one(result_is_one)
 {
-    one.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " one")));
-    el_inv.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_inv")));
+    one.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " one")));
+    el_inv.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_inv")));
     el_q_3.reset(new Fqk_variable<ppT>(el.Frobenius_map(3)));
-    el_q_3_minus_1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_q_3_minus_1")));
+    el_q_3_minus_1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_q_3_minus_1")));
     alpha.reset(new Fqk_variable<ppT>(el_q_3_minus_1->Frobenius_map(1)));
-    beta.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " beta")));
+    beta.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " beta")));
     beta_q.reset(new Fqk_variable<ppT>(beta->Frobenius_map(1)));
 
     el_inv_q_3.reset(new Fqk_variable<ppT>(el_inv->Frobenius_map(3)));
-    el_inv_q_3_minus_1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_inv_q_3_minus_1")));
+    el_inv_q_3_minus_1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_inv_q_3_minus_1")));
     inv_alpha.reset(new Fqk_variable<ppT>(el_inv_q_3_minus_1->Frobenius_map(1)));
-    inv_beta.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " inv_beta")));
-    w1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " w1")));
-    w0.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " w0")));
-    result.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " result")));
+    inv_beta.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " inv_beta")));
+    w1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " w1")));
+    w0.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " w0")));
+    result.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " result")));
 
-    compute_el_inv.reset(new Fqk_mul_gadget<ppT>(pb, el, *el_inv, *one, libff::FMT(annotation_prefix, " compute_el_inv")));
-    compute_el_q_3_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_q_3, *el_inv, *el_q_3_minus_1, libff::FMT(annotation_prefix, " compute_el_q_3_minus_1")));
-    compute_beta.reset(new Fqk_mul_gadget<ppT>(pb, *alpha, *el_q_3_minus_1, *beta, libff::FMT(annotation_prefix, " compute_beta")));
+    compute_el_inv.reset(new Fqk_mul_gadget<ppT>(pb, el, *el_inv, *one, FMT(annotation_prefix, " compute_el_inv")));
+    compute_el_q_3_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_q_3, *el_inv, *el_q_3_minus_1, FMT(annotation_prefix, " compute_el_q_3_minus_1")));
+    compute_beta.reset(new Fqk_mul_gadget<ppT>(pb, *alpha, *el_q_3_minus_1, *beta, FMT(annotation_prefix, " compute_beta")));
 
-    compute_el_inv_q_3_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_inv_q_3, el, *el_inv_q_3_minus_1, libff::FMT(annotation_prefix, " compute_el_inv__q_3_minus_1")));
-    compute_inv_beta.reset(new Fqk_mul_gadget<ppT>(pb, *inv_alpha, *el_inv_q_3_minus_1, *inv_beta, libff::FMT(annotation_prefix, " compute_inv_beta")));
+    compute_el_inv_q_3_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_inv_q_3, el, *el_inv_q_3_minus_1, FMT(annotation_prefix, " compute_el_inv__q_3_minus_1")));
+    compute_inv_beta.reset(new Fqk_mul_gadget<ppT>(pb, *inv_alpha, *el_inv_q_3_minus_1, *inv_beta, FMT(annotation_prefix, " compute_inv_beta")));
 
     compute_w1.reset(new exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, libff::mnt6_q_limbs>(
-        pb, *beta_q, libff::mnt6_final_exponent_last_chunk_w1, *w1, libff::FMT(annotation_prefix, " compute_w1")));
+        pb, *beta_q, libff::mnt6_final_exponent_last_chunk_w1, *w1, FMT(annotation_prefix, " compute_w1")));
 
     compute_w0.reset(new exponentiation_gadget<FqkT<ppT>, Fp6_variable, Fp6_mul_gadget, Fp6_cyclotomic_sqr_gadget, libff::mnt6_q_limbs>(
-        pb, (libff::mnt6_final_exponent_last_chunk_is_w0_neg ? *inv_beta : *beta), libff::mnt6_final_exponent_last_chunk_abs_of_w0, *w0, libff::FMT(annotation_prefix, " compute_w0")));
+        pb, (libff::mnt6_final_exponent_last_chunk_is_w0_neg ? *inv_beta : *beta), libff::mnt6_final_exponent_last_chunk_abs_of_w0, *w0, FMT(annotation_prefix, " compute_w0")));
 
-    compute_result.reset(new Fqk_mul_gadget<ppT>(pb, *w1, *w0, *result, libff::FMT(annotation_prefix, " compute_result")));
+    compute_result.reset(new Fqk_mul_gadget<ppT>(pb, *w1, *w0, *result, FMT(annotation_prefix, " compute_result")));
 }
 
 template<typename ppT>
@@ -76,7 +76,7 @@ void mnt4_final_exp_gadget<ppT>::generate_r1cs_constraints()
     compute_w1->generate_r1cs_constraints();
     compute_result->generate_r1cs_constraints();
 
-    generate_boolean_r1cs_constraint<FieldT>(this->pb, result_is_one, libff::FMT(this->annotation_prefix, " result_is_one"));
+    generate_boolean_r1cs_constraint<FieldT>(this->pb, result_is_one, FMT(this->annotation_prefix, " result_is_one"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, 1 - result->c0.c0, 0), " check c0.c0");
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, result->c0.c1, 0), " check c0.c1");
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, result->c0.c2, 0), " check c0.c2");
@@ -119,26 +119,26 @@ mnt6_final_exp_gadget<ppT>::mnt6_final_exp_gadget(protoboard<FieldT> &pb,
     el(el),
     result_is_one(result_is_one)
 {
-    one.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " one")));
-    el_inv.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_inv")));
+    one.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " one")));
+    el_inv.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_inv")));
     el_q_2.reset(new Fqk_variable<ppT>(el.Frobenius_map(2)));
-    el_q_2_minus_1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_q_2_minus_1")));
+    el_q_2_minus_1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_q_2_minus_1")));
     el_q_3_minus_q.reset(new Fqk_variable<ppT>(el_q_2_minus_1->Frobenius_map(1)));
     el_inv_q_2.reset(new Fqk_variable<ppT>(el_inv->Frobenius_map(2)));
-    el_inv_q_2_minus_1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " el_inv_q_2_minus_1")));
-    w1.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " w1")));
-    w0.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " w0")));
-    result.reset(new Fqk_variable<ppT>(pb, libff::FMT(annotation_prefix, " result")));
+    el_inv_q_2_minus_1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " el_inv_q_2_minus_1")));
+    w1.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " w1")));
+    w0.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " w0")));
+    result.reset(new Fqk_variable<ppT>(pb, FMT(annotation_prefix, " result")));
 
-    compute_el_inv.reset(new Fqk_mul_gadget<ppT>(pb, el, *el_inv, *one, libff::FMT(annotation_prefix, " compute_el_inv")));
-    compute_el_q_2_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_q_2, *el_inv, *el_q_2_minus_1, libff::FMT(annotation_prefix, " compute_el_q_2_minus_1")));
-    compute_el_inv_q_2_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_inv_q_2, el, *el_inv_q_2_minus_1, libff::FMT(annotation_prefix, " compute_el_inv_q_2_minus_1")));
+    compute_el_inv.reset(new Fqk_mul_gadget<ppT>(pb, el, *el_inv, *one, FMT(annotation_prefix, " compute_el_inv")));
+    compute_el_q_2_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_q_2, *el_inv, *el_q_2_minus_1, FMT(annotation_prefix, " compute_el_q_2_minus_1")));
+    compute_el_inv_q_2_minus_1.reset(new Fqk_mul_gadget<ppT>(pb, *el_inv_q_2, el, *el_inv_q_2_minus_1, FMT(annotation_prefix, " compute_el_inv_q_2_minus_1")));
 
     compute_w1.reset(new exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, libff::mnt4_q_limbs>(
-        pb, *el_q_3_minus_q, libff::mnt4_final_exponent_last_chunk_w1, *w1, libff::FMT(annotation_prefix, " compute_w1")));
+        pb, *el_q_3_minus_q, libff::mnt4_final_exponent_last_chunk_w1, *w1, FMT(annotation_prefix, " compute_w1")));
     compute_w0.reset(new exponentiation_gadget<FqkT<ppT>, Fp4_variable, Fp4_mul_gadget, Fp4_cyclotomic_sqr_gadget, libff::mnt4_q_limbs>(
-        pb, (libff::mnt4_final_exponent_last_chunk_is_w0_neg ? *el_inv_q_2_minus_1 : *el_q_2_minus_1), libff::mnt4_final_exponent_last_chunk_abs_of_w0, *w0, libff::FMT(annotation_prefix, " compute_w0")));
-    compute_result.reset(new Fqk_mul_gadget<ppT>(pb, *w1, *w0, *result, libff::FMT(annotation_prefix, " compute_result")));
+        pb, (libff::mnt4_final_exponent_last_chunk_is_w0_neg ? *el_inv_q_2_minus_1 : *el_q_2_minus_1), libff::mnt4_final_exponent_last_chunk_abs_of_w0, *w0, FMT(annotation_prefix, " compute_w0")));
+    compute_result.reset(new Fqk_mul_gadget<ppT>(pb, *w1, *w0, *result, FMT(annotation_prefix, " compute_result")));
 }
 
 template<typename ppT>
@@ -153,7 +153,7 @@ void mnt6_final_exp_gadget<ppT>::generate_r1cs_constraints()
     compute_w0->generate_r1cs_constraints();
     compute_result->generate_r1cs_constraints();
 
-    generate_boolean_r1cs_constraint<FieldT>(this->pb, result_is_one, libff::FMT(this->annotation_prefix, " result_is_one"));
+    generate_boolean_r1cs_constraint<FieldT>(this->pb, result_is_one, FMT(this->annotation_prefix, " result_is_one"));
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, 1 - result->c0.c0, 0), " check c0.c0");
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, result->c0.c1, 0), " check c0.c1");
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(result_is_one, result->c1.c0, 0), " check c1.c0");

@@ -26,10 +26,10 @@ memory_line_variable_gadget<ramT>::memory_line_variable_gadget(ram_protoboard<ra
     const size_t address_size = ap.address_size();
     const size_t value_size = ap.value_size();
 
-    timestamp.reset(new dual_variable_gadget<FieldT>(pb, timestamp_size, libff::FMT(this->annotation_prefix, " timestamp")));
-    address.reset(new dual_variable_gadget<FieldT>(pb, address_size, libff::FMT(this->annotation_prefix, " address")));
-    contents_before.reset(new dual_variable_gadget<FieldT>(pb, value_size, libff::FMT(this->annotation_prefix, " contents_before")));
-    contents_after.reset(new dual_variable_gadget<FieldT>(pb, value_size, libff::FMT(this->annotation_prefix, " contents_after")));
+    timestamp.reset(new dual_variable_gadget<FieldT>(pb, timestamp_size, FMT(this->annotation_prefix, " timestamp")));
+    address.reset(new dual_variable_gadget<FieldT>(pb, address_size, FMT(this->annotation_prefix, " address")));
+    contents_before.reset(new dual_variable_gadget<FieldT>(pb, value_size, FMT(this->annotation_prefix, " contents_before")));
+    contents_after.reset(new dual_variable_gadget<FieldT>(pb, value_size, FMT(this->annotation_prefix, " contents_after")));
 }
 
 template<typename ramT>
@@ -80,8 +80,8 @@ execution_line_variable_gadget<ramT>::execution_line_variable_gadget(ram_protobo
 {
     const size_t cpu_state_size = ap.cpu_state_size();
 
-    cpu_state.allocate(pb, cpu_state_size, libff::FMT(annotation_prefix, " cpu_state"));
-    has_accepted.allocate(pb, libff::FMT(annotation_prefix, " has_accepted"));
+    cpu_state.allocate(pb, cpu_state_size, FMT(annotation_prefix, " cpu_state"));
+    has_accepted.allocate(pb, FMT(annotation_prefix, " has_accepted"));
 }
 
 

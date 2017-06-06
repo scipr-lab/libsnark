@@ -20,8 +20,8 @@ set_membership_proof_variable<FieldT, HashT>::set_membership_proof_variable(prot
 {
     if (tree_depth > 0)
     {
-        address_bits.allocate(pb, tree_depth, libff::FMT(annotation_prefix, " address_bits"));
-        merkle_path.reset(new merkle_authentication_path_variable<FieldT, HashT>(pb, tree_depth, libff::FMT(annotation_prefix, " merkle_path")));
+        address_bits.allocate(pb, tree_depth, FMT(annotation_prefix, " address_bits"));
+        merkle_path.reset(new merkle_authentication_path_variable<FieldT, HashT>(pb, tree_depth, FMT(annotation_prefix, " merkle_path")));
     }
 }
 
@@ -32,7 +32,7 @@ void set_membership_proof_variable<FieldT, HashT>::generate_r1cs_constraints()
     {
         for (size_t i = 0; i < tree_depth; ++i)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, address_bits[i], libff::FMT(this->annotation_prefix, " address_bits"));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, address_bits[i], FMT(this->annotation_prefix, " address_bits"));
         }
         merkle_path->generate_r1cs_constraints();
     }

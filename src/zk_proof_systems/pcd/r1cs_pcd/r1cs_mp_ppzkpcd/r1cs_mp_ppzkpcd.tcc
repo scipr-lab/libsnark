@@ -266,7 +266,7 @@ r1cs_mp_ppzkpcd_keypair<PCD_ppT> r1cs_mp_ppzkpcd_generator(const std::vector<r1c
 
     for (size_t i = 0; i < compliance_predicates.size(); ++i)
     {
-        libff::enter_block(libff::FMT("", "Process predicate %zu (with name %zu and type %zu)", i, compliance_predicates[i].name, compliance_predicates[i].type));
+        libff::enter_block(FMT("", "Process predicate %zu (with name %zu and type %zu)", i, compliance_predicates[i].name, compliance_predicates[i].type));
         assert(compliance_predicates[i].is_well_formed());
 
         libff::enter_block("Construct compliance step PCD circuit");
@@ -308,7 +308,7 @@ r1cs_mp_ppzkpcd_keypair<PCD_ppT> r1cs_mp_ppzkpcd_generator(const std::vector<r1c
         keypair.vk.translation_step_r1cs_vks.emplace_back(mp_translation_step_keypair.vk);
         libff::leave_block("Update r1cs_mp_ppzkpcd keypair");
 
-        libff::leave_block(libff::FMT("", "Process predicate %zu (with name %zu and type %zu)", i, compliance_predicates[i].name, compliance_predicates[i].type));
+        libff::leave_block(FMT("", "Process predicate %zu (with name %zu and type %zu)", i, compliance_predicates[i].name, compliance_predicates[i].type));
     }
 
     libff::enter_block("Compute set commitment and corresponding membership proofs");

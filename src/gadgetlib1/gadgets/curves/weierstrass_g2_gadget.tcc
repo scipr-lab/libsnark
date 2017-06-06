@@ -23,8 +23,8 @@ G2_variable<ppT>::G2_variable(protoboard<FieldT> &pb,
                               const std::string &annotation_prefix) :
     gadget<FieldT>(pb, annotation_prefix)
 {
-    X.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " X")));
-    Y.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " Y")));
+    X.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " X")));
+    Y.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " Y")));
 
     all_vars.insert(all_vars.end(), X->all_vars.begin(), X->all_vars.end());
     all_vars.insert(all_vars.end(), Y->all_vars.begin(), Y->all_vars.end());
@@ -39,8 +39,8 @@ G2_variable<ppT>::G2_variable(protoboard<FieldT> &pb,
     libff::G2<other_curve<ppT> > Q_copy = Q;
     Q_copy.to_affine_coordinates();
 
-    X.reset(new Fqe_variable<ppT>(pb, Q_copy.X(), libff::FMT(annotation_prefix, " X")));
-    Y.reset(new Fqe_variable<ppT>(pb, Q_copy.Y(), libff::FMT(annotation_prefix, " Y")));
+    X.reset(new Fqe_variable<ppT>(pb, Q_copy.X(), FMT(annotation_prefix, " X")));
+    Y.reset(new Fqe_variable<ppT>(pb, Q_copy.Y(), FMT(annotation_prefix, " Y")));
 
     all_vars.insert(all_vars.end(), X->all_vars.begin(), X->all_vars.end());
     all_vars.insert(all_vars.end(), Y->all_vars.begin(), Y->all_vars.end());
@@ -75,16 +75,16 @@ G2_checker_gadget<ppT>::G2_checker_gadget(protoboard<FieldT> &pb,
     gadget<FieldT>(pb, annotation_prefix),
     Q(Q)
 {
-    Xsquared.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " Xsquared")));
-    Ysquared.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " Ysquared")));
+    Xsquared.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " Xsquared")));
+    Ysquared.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " Ysquared")));
 
-    compute_Xsquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(Q.X), *Xsquared, libff::FMT(annotation_prefix, " compute_Xsquared")));
-    compute_Ysquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(Q.Y), *Ysquared, libff::FMT(annotation_prefix, " compute_Ysquared")));
+    compute_Xsquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(Q.X), *Xsquared, FMT(annotation_prefix, " compute_Xsquared")));
+    compute_Ysquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(Q.Y), *Ysquared, FMT(annotation_prefix, " compute_Ysquared")));
 
     Xsquared_plus_a.reset(new Fqe_variable<ppT>((*Xsquared) + libff::G2<other_curve<ppT> >::coeff_a));
     Ysquared_minus_b.reset(new Fqe_variable<ppT>((*Ysquared) + (-libff::G2<other_curve<ppT> >::coeff_b)));
 
-    curve_equation.reset(new Fqe_mul_gadget<ppT>(pb, *(Q.X), *Xsquared_plus_a, *Ysquared_minus_b, libff::FMT(annotation_prefix, " curve_equation")));
+    curve_equation.reset(new Fqe_mul_gadget<ppT>(pb, *(Q.X), *Xsquared_plus_a, *Ysquared_minus_b, FMT(annotation_prefix, " curve_equation")));
 }
 
 template<typename ppT>

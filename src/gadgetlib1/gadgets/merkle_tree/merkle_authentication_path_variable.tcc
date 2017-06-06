@@ -19,8 +19,8 @@ merkle_authentication_path_variable<FieldT, HashT>::merkle_authentication_path_v
 {
     for (size_t i = 0; i < tree_depth; ++i)
     {
-        left_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), libff::FMT(annotation_prefix, " left_digests_%zu", i)));
-        right_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), libff::FMT(annotation_prefix, " right_digests_%zu", i)));
+        left_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), FMT(annotation_prefix, " left_digests_%zu", i)));
+        right_digests.emplace_back(digest_variable<FieldT>(pb, HashT::get_digest_len(), FMT(annotation_prefix, " right_digests_%zu", i)));
     }
 }
 

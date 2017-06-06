@@ -32,7 +32,7 @@ G1_precomputation<ppT>::G1_precomputation(protoboard<FieldT> &pb,
 {
     libff::G1<other_curve<ppT> > P_val_copy = P_val;
     P_val_copy.to_affine_coordinates();
-    P.reset(new G1_variable<ppT>(pb, P_val_copy, libff::FMT(annotation_prefix, " P")));
+    P.reset(new G1_variable<ppT>(pb, P_val_copy, FMT(annotation_prefix, " P")));
     PY_twist_squared.reset(new Fqe_variable<ppT>(pb, P_val_copy.Y() * libff::G2<other_curve<ppT> >::twist.squared(), " PY_twist_squared"));
 }
 
@@ -82,17 +82,17 @@ G2_precomputation<ppT>::G2_precomputation(protoboard<FieldT> &pb,
                                           const libff::G2<other_curve<ppT> > &Q_val,
                                           const std::string &annotation_prefix)
 {
-    Q.reset(new G2_variable<ppT>(pb, Q_val, libff::FMT(annotation_prefix, " Q")));
+    Q.reset(new G2_variable<ppT>(pb, Q_val, FMT(annotation_prefix, " Q")));
     const libff::affine_ate_G2_precomp<other_curve<ppT> > native_precomp = other_curve<ppT>::affine_ate_precompute_G2(Q_val);
 
     coeffs.resize(native_precomp.coeffs.size() + 1); // the last precomp remains for convenient programming
     for (size_t i = 0; i < native_precomp.coeffs.size(); ++i)
     {
         coeffs[i].reset(new precompute_G2_gadget_coeffs<ppT>());
-        coeffs[i]->RX.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].old_RX, libff::FMT(annotation_prefix, " RX")));
-        coeffs[i]->RY.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].old_RY, libff::FMT(annotation_prefix, " RY")));
-        coeffs[i]->gamma.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].gamma, libff::FMT(annotation_prefix, " gamma")));
-        coeffs[i]->gamma_X.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].gamma_X, libff::FMT(annotation_prefix, " gamma_X")));
+        coeffs[i]->RX.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].old_RX, FMT(annotation_prefix, " RX")));
+        coeffs[i]->RY.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].old_RY, FMT(annotation_prefix, " RY")));
+        coeffs[i]->gamma.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].gamma, FMT(annotation_prefix, " gamma")));
+        coeffs[i]->gamma_X.reset(new Fqe_variable<ppT>(pb, native_precomp.coeffs[i].gamma_X, FMT(annotation_prefix, " gamma_X")));
     }
 }
 
@@ -106,10 +106,10 @@ template<typename ppT>
 precompute_G2_gadget_coeffs<ppT>::precompute_G2_gadget_coeffs(protoboard<FieldT> &pb,
                                                               const std::string &annotation_prefix)
 {
-    RX.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " RX")));
-    RY.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " RY")));
-    gamma.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " gamma")));
-    gamma_X.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " gamma_X")));
+    RX.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " RX")));
+    RY.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " RY")));
+    gamma.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " gamma")));
+    gamma_X.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " gamma_X")));
 }
 
 template<typename ppT>
@@ -119,8 +119,8 @@ precompute_G2_gadget_coeffs<ppT>::precompute_G2_gadget_coeffs(protoboard<FieldT>
 {
     RX.reset(new Fqe_variable<ppT>(*(Q.X)));
     RY.reset(new Fqe_variable<ppT>(*(Q.Y)));
-    gamma.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " gamma")));
-    gamma_X.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " gamma_X")));
+    gamma.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " gamma")));
+    gamma_X.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " gamma_X")));
 }
 
 /*
@@ -150,20 +150,20 @@ precompute_G2_gadget_doubling_step<ppT>::precompute_G2_gadget_doubling_step(prot
     cur(cur),
     next(next)
 {
-    RXsquared.reset(new Fqe_variable<ppT>(pb, libff::FMT(annotation_prefix, " RXsquared")));
-    compute_RXsquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.RX), *RXsquared, libff::FMT(annotation_prefix, " compute_RXsquared")));
+    RXsquared.reset(new Fqe_variable<ppT>(pb, FMT(annotation_prefix, " RXsquared")));
+    compute_RXsquared.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.RX), *RXsquared, FMT(annotation_prefix, " compute_RXsquared")));
     three_RXsquared_plus_a.reset(new Fqe_variable<ppT>((*RXsquared) * FieldT(3) + libff::G2<other_curve<ppT> >::coeff_a));
     two_RY.reset(new Fqe_variable<ppT>(*(cur.RY) * FieldT(2)));
 
-    compute_gamma.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *two_RY, *three_RXsquared_plus_a, libff::FMT(annotation_prefix, " compute_gamma")));
-    compute_gamma_X.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *(cur.RX), *(cur.gamma_X), libff::FMT(annotation_prefix, " compute_gamma_X")));
+    compute_gamma.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *two_RY, *three_RXsquared_plus_a, FMT(annotation_prefix, " compute_gamma")));
+    compute_gamma_X.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *(cur.RX), *(cur.gamma_X), FMT(annotation_prefix, " compute_gamma_X")));
 
     next_RX_plus_two_RX.reset(new Fqe_variable<ppT>(*(next.RX) + *(cur.RX) * FieldT(2)));
-    compute_next_RX.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.gamma), *next_RX_plus_two_RX, libff::FMT(annotation_prefix, " compute_next_RX")));
+    compute_next_RX.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.gamma), *next_RX_plus_two_RX, FMT(annotation_prefix, " compute_next_RX")));
 
     RX_minus_next_RX.reset(new Fqe_variable<ppT>(*(cur.RX) + *(next.RX) * (-FieldT::one())));
     RY_plus_next_RY.reset(new Fqe_variable<ppT>(*(cur.RY) + *(next.RY)));
-    compute_next_RY.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_next_RX, *RY_plus_next_RY, libff::FMT(annotation_prefix, " compute_next_RY")));
+    compute_next_RY.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_next_RX, *RY_plus_next_RY, FMT(annotation_prefix, " compute_next_RY")));
 }
 
 template<typename ppT>
@@ -237,15 +237,15 @@ precompute_G2_gadget_addition_step<ppT>::precompute_G2_gadget_addition_step(prot
     RY_minus_QY.reset(new Fqe_variable<ppT>(*(cur.RY) + *(Q.Y) * (!invert_Q ? -FieldT::one() : FieldT::one())));
 
     RX_minus_QX.reset(new Fqe_variable<ppT>(*(cur.RX) + *(Q.X) * (-FieldT::one())));
-    compute_gamma.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_QX, *RY_minus_QY, libff::FMT(annotation_prefix, " compute_gamma")));
-    compute_gamma_X.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *(Q.X), *(cur.gamma_X), libff::FMT(annotation_prefix, " compute_gamma_X")));
+    compute_gamma.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_QX, *RY_minus_QY, FMT(annotation_prefix, " compute_gamma")));
+    compute_gamma_X.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *(Q.X), *(cur.gamma_X), FMT(annotation_prefix, " compute_gamma_X")));
 
     next_RX_plus_RX_plus_QX.reset(new Fqe_variable<ppT>(*(next.RX) + *(cur.RX) + *(Q.X)));
-    compute_next_RX.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.gamma), *next_RX_plus_RX_plus_QX, libff::FMT(annotation_prefix, " compute_next_RX")));
+    compute_next_RX.reset(new Fqe_sqr_gadget<ppT>(pb, *(cur.gamma), *next_RX_plus_RX_plus_QX, FMT(annotation_prefix, " compute_next_RX")));
 
     RX_minus_next_RX.reset(new Fqe_variable<ppT>(*(cur.RX) + *(next.RX) * (-FieldT::one())));
     RY_plus_next_RY.reset(new Fqe_variable<ppT>(*(cur.RY) + *(next.RY)));
-    compute_next_RY.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_next_RX, *RY_plus_next_RY, libff::FMT(annotation_prefix, " compute_next_RY")));
+    compute_next_RY.reset(new Fqe_mul_gadget<ppT>(pb, *(cur.gamma), *RX_minus_next_RX, *RY_plus_next_RY, FMT(annotation_prefix, " compute_next_RY")));
 }
 
 template<typename ppT>
@@ -328,10 +328,10 @@ precompute_G2_gadget<ppT>::precompute_G2_gadget(protoboard<FieldT> &pb,
     addition_steps.resize(add_count);
     doubling_steps.resize(dbl_count);
 
-    precomp.coeffs[0].reset(new precompute_G2_gadget_coeffs<ppT>(pb, Q, libff::FMT(annotation_prefix, " coeffs_0")));
+    precomp.coeffs[0].reset(new precompute_G2_gadget_coeffs<ppT>(pb, Q, FMT(annotation_prefix, " coeffs_0")));
     for (size_t i = 1; i < coeff_count; ++i)
     {
-        precomp.coeffs[i].reset(new precompute_G2_gadget_coeffs<ppT>(pb, libff::FMT(annotation_prefix, " coeffs_%zu", i)));
+        precomp.coeffs[i].reset(new precompute_G2_gadget_coeffs<ppT>(pb, FMT(annotation_prefix, " coeffs_%zu", i)));
     }
 
     size_t add_id = 0;
@@ -349,14 +349,14 @@ precompute_G2_gadget<ppT>::precompute_G2_gadget(protoboard<FieldT> &pb,
         }
 
         doubling_steps[dbl_id].reset(new precompute_G2_gadget_doubling_step<ppT>(pb, *(precomp.coeffs[coeff_id]), *(precomp.coeffs[coeff_id+1]),
-                                                                                 libff::FMT(annotation_prefix, " doubling_steps_%zu", dbl_id)));
+                                                                                 FMT(annotation_prefix, " doubling_steps_%zu", dbl_id)));
         ++dbl_id;
         ++coeff_id;
 
         if (NAF[i] != 0)
         {
             addition_steps[add_id].reset(new precompute_G2_gadget_addition_step<ppT>(pb, NAF[i] < 0, *(precomp.coeffs[coeff_id]), *(precomp.coeffs[coeff_id+1]), Q,
-                                                                                     libff::FMT(annotation_prefix, " addition_steps_%zu", add_id)));
+                                                                                     FMT(annotation_prefix, " addition_steps_%zu", add_id)));
             ++add_id;
             ++coeff_id;
         }

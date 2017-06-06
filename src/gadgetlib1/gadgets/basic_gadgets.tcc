@@ -18,27 +18,27 @@ void generate_boolean_r1cs_constraint(protoboard<FieldT> &pb, const pb_linear_co
 /* forces lc to take value 0 or 1 by adding constraint lc * (1-lc) = 0 */
 {
     pb.add_r1cs_constraint(r1cs_constraint<FieldT>(lc, 1-lc, 0),
-                           libff::FMT(annotation_prefix, " boolean_r1cs_constraint"));
+                           FMT(annotation_prefix, " boolean_r1cs_constraint"));
 }
 
 template<typename FieldT>
 void generate_r1cs_equals_const_constraint(protoboard<FieldT> &pb, const pb_linear_combination<FieldT> &lc, const FieldT& c, const std::string &annotation_prefix)
 {
     pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, lc, c),
-                           libff::FMT(annotation_prefix, " constness_constraint"));
+                           FMT(annotation_prefix, " constness_constraint"));
 }
 
 template<typename FieldT>
 void packing_gadget<FieldT>::generate_r1cs_constraints(const bool enforce_bitness)
 /* adds constraint result = \sum  bits[i] * 2^i */
 {
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_packing_sum<FieldT>(bits), packed), libff::FMT(this->annotation_prefix, " packing_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, pb_packing_sum<FieldT>(bits), packed), FMT(this->annotation_prefix, " packing_constraint"));
 
     if (enforce_bitness)
     {
         for (size_t i = 0; i < bits.size(); ++i)
         {
-            generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], libff::FMT(this->annotation_prefix, " bitness_%zu", i));
+            generate_boolean_r1cs_constraint<FieldT>(this->pb, bits[i], FMT(this->annotation_prefix, " bitness_%zu", i));
         }
     }
 }
@@ -74,7 +74,7 @@ multipacking_gadget<FieldT>::multipacking_gadget(protoboard<FieldT> &pb,
     {
         packers.emplace_back(packing_gadget<FieldT>(this->pb, pb_linear_combination_array<FieldT>(bits.begin() + i * chunk_size,
                                                                                                   bits.begin() + std::min((i+1) * chunk_size, bits.size())),
-                                                    packed_vars[i], libff::FMT(this->annotation_prefix, " packers_%zu", i)));
+                                                    packed_vars[i], FMT(this->annotation_prefix, " packers_%zu", i)));
     }
 }
 
@@ -128,7 +128,7 @@ void field_vector_copy_gadget<FieldT>::generate_r1cs_constraints()
     for (size_t i = 0; i < source.size(); ++i)
     {
         this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(do_copy, source[i] - target[i], 0),
-                                     libff::FMT(this->annotation_prefix, " copying_check_%zu", i));
+                                     FMT(this->annotation_prefix, " copying_check_%zu", i));
     }
 }
 
@@ -158,13 +158,13 @@ bit_vector_copy_gadget<FieldT>::bit_vector_copy_gadget(protoboard<FieldT> &pb,
 {
     assert(source_bits.size() == target_bits.size());
 
-    packed_source.allocate(pb, num_chunks, libff::FMT(annotation_prefix, " packed_source"));
-    pack_source.reset(new multipacking_gadget<FieldT>(pb, source_bits, packed_source, chunk_size, libff::FMT(annotation_prefix, " pack_source")));
+    packed_source.allocate(pb, num_chunks, FMT(annotation_prefix, " packed_source"));
+    pack_source.reset(new multipacking_gadget<FieldT>(pb, source_bits, packed_source, chunk_size, FMT(annotation_prefix, " pack_source")));
 
-    packed_target.allocate(pb, num_chunks, libff::FMT(annotation_prefix, " packed_target"));
-    pack_target.reset(new multipacking_gadget<FieldT>(pb, target_bits, packed_target, chunk_size, libff::FMT(annotation_prefix, " pack_target")));
+    packed_target.allocate(pb, num_chunks, FMT(annotation_prefix, " packed_target"));
+    pack_target.reset(new multipacking_gadget<FieldT>(pb, target_bits, packed_target, chunk_size, FMT(annotation_prefix, " pack_target")));
 
-    copier.reset(new field_vector_copy_gadget<FieldT>(pb, packed_source, packed_target, do_copy, libff::FMT(annotation_prefix, " copier")));
+    copier.reset(new field_vector_copy_gadget<FieldT>(pb, packed_source, packed_target, do_copy, FMT(annotation_prefix, " copier")));
 }
 
 template<typename FieldT>
@@ -223,7 +223,7 @@ void disjunction_gadget<FieldT>::generate_r1cs_constraints()
     }
     c1.add_term(output);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), libff::FMT(this->annotation_prefix, " inv*sum=output"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), FMT(this->annotation_prefix, " inv*sum=output"));
 
     /* (1-output) * sum = 0 */
     linear_combination<FieldT> a2, b2, c2;
@@ -235,7 +235,7 @@ void disjunction_gadget<FieldT>::generate_r1cs_constraints()
     }
     c2.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), libff::FMT(this->annotation_prefix, " (1-output)*sum=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), FMT(this->annotation_prefix, " (1-output)*sum=0"));
 }
 
 template<typename FieldT>
@@ -314,7 +314,7 @@ void conjunction_gadget<FieldT>::generate_r1cs_constraints()
     c1.add_term(ONE);
     c1.add_term(output, -1);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), libff::FMT(this->annotation_prefix, " inv*(n-sum)=(1-output)"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a1, b1, c1), FMT(this->annotation_prefix, " inv*(n-sum)=(1-output)"));
 
     /* output * (n-sum) = 0 */
     linear_combination<FieldT> a2, b2, c2;
@@ -326,7 +326,7 @@ void conjunction_gadget<FieldT>::generate_r1cs_constraints()
     }
     c2.add_term(ONE, 0);
 
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), libff::FMT(this->annotation_prefix, " output*(n-sum)=0"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a2, b2, c2), FMT(this->annotation_prefix, " output*(n-sum)=0"));
 }
 
 template<typename FieldT>
@@ -411,16 +411,16 @@ void comparison_gadget<FieldT>::generate_r1cs_constraints()
 
     /* not_all_zeros to be Boolean, alpha_i are Boolean by packing gadget */
     generate_boolean_r1cs_constraint<FieldT>(this->pb, not_all_zeros,
-                                     libff::FMT(this->annotation_prefix, " not_all_zeros"));
+                                     FMT(this->annotation_prefix, " not_all_zeros"));
 
     /* constraints for packed(alpha) = 2^n + B - A */
     pack_alpha->generate_r1cs_constraints(true);
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, (FieldT(2)^n) + B - A, alpha_packed), libff::FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(1, (FieldT(2)^n) + B - A, alpha_packed), FMT(this->annotation_prefix, " main_constraint"));
 
     /* compute result */
     all_zeros_test->generate_r1cs_constraints();
     this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(less_or_eq, not_all_zeros, less),
-                                 libff::FMT(this->annotation_prefix, " less"));
+                                 FMT(this->annotation_prefix, " less"));
 }
 
 template<typename FieldT>
@@ -488,7 +488,7 @@ void inner_product_gadget<FieldT>::generate_r1cs_constraints()
         this->pb.add_r1cs_constraint(
             r1cs_constraint<FieldT>(A[i], B[i],
                                     (i == A.size()-1 ? result : S[i]) + (i == 0 ? 0 * ONE : -S[i-1])),
-            libff::FMT(this->annotation_prefix, " S_%zu", i));
+            FMT(this->annotation_prefix, " S_%zu", i));
     }
 }
 
@@ -561,7 +561,7 @@ void loose_multiplexing_gadget<FieldT>::generate_r1cs_constraints()
     {
         this->pb.add_r1cs_constraint(
             r1cs_constraint<FieldT>(alpha[i], index - i, 0),
-            libff::FMT(this->annotation_prefix, " alpha_%zu", i));
+            FMT(this->annotation_prefix, " alpha_%zu", i));
     }
 
     /* 1 * (\sum \alpha_i) = success_flag */
@@ -572,11 +572,11 @@ void loose_multiplexing_gadget<FieldT>::generate_r1cs_constraints()
         b.add_term(alpha[i]);
     }
     c.add_term(success_flag);
-    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(this->annotation_prefix, " main_constraint"));
+    this->pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(this->annotation_prefix, " main_constraint"));
 
     /* now success_flag is constrained to either 0 (if index is out of
        range) or \alpha_i. constrain it and \alpha_i to zero */
-    generate_boolean_r1cs_constraint<FieldT>(this->pb, success_flag, libff::FMT(this->annotation_prefix, " success_flag"));
+    generate_boolean_r1cs_constraint<FieldT>(this->pb, success_flag, FMT(this->annotation_prefix, " success_flag"));
 
     /* compute result */
     compute_result->generate_r1cs_constraints();
@@ -680,7 +680,7 @@ void create_linear_combination_constraints(protoboard<FieldT> &pb,
 
         c.add_term(target.all_vars[i]);
 
-        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), libff::FMT(annotation_prefix, " linear_combination_%zu", i));
+        pb.add_r1cs_constraint(r1cs_constraint<FieldT>(a, b, c), FMT(annotation_prefix, " linear_combination_%zu", i));
     }
 }
 

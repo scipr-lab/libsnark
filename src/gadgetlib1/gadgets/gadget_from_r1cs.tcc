@@ -43,7 +43,7 @@ gadget_from_r1cs<FieldT>::gadget_from_r1cs(protoboard<FieldT> &pb,
                 // handle annotations, except for re-annotating constant term
                 const std::map<size_t, std::string>::const_iterator it = cs.variable_annotations.find(cs_var_idx);
 
-                std::string annotation = libff::FMT(annotation_prefix, " variable_%zu", cs_var_idx);
+                std::string annotation = FMT(annotation_prefix, " variable_%zu", cs_var_idx);
                 if (it != cs.variable_annotations.end())
                 {
                     annotation = annotation_prefix + " " + it->second;
@@ -87,7 +87,7 @@ void gadget_from_r1cs<FieldT>::generate_r1cs_constraints()
             translated_constr.c.terms.emplace_back(linear_term<FieldT>(pb_variable<FieldT>(cs_to_vars[t.index]), t.coeff));
         }
 
-        std::string annotation = libff::FMT(this->annotation_prefix, " constraint_%zu", i);
+        std::string annotation = FMT(this->annotation_prefix, " constraint_%zu", i);
 
 #ifdef DEBUG
         auto it = cs.constraint_annotations.find(i);

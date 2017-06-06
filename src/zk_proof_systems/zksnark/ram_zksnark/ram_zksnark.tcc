@@ -155,7 +155,7 @@ ram_zksnark_proof<ram_zksnark_ppT> ram_zksnark_prover(const ram_zksnark_proving_
     bool want_halt = false;
     for (size_t step = 1; step <= time_bound; ++step)
     {
-        libff::enter_block(libff::FMT("", "Prove step %zu out of %zu", step, time_bound));
+        libff::enter_block(FMT("", "Prove step %zu out of %zu", step, time_bound));
 
         libff::enter_block("Execute witness map");
 
@@ -181,7 +181,7 @@ ram_zksnark_proof<ram_zksnark_ppT> ram_zksnark_prover(const ram_zksnark_proving_
         libff::leave_block("Execute witness map");
 
         cur_proof = r1cs_sp_ppzkpcd_prover<pcdT>(pk.pcd_pk, cp_primary_input, cp_auxiliary_input, { cur_proof });
-        libff::leave_block(libff::FMT("", "Prove step %zu out of %zu", step, time_bound));
+        libff::leave_block(FMT("", "Prove step %zu out of %zu", step, time_bound));
     }
     libff::leave_block("Execute and prove the computation");
 
