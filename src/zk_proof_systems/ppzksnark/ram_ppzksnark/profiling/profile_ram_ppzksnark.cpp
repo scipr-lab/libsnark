@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
-        print_compilation_info();
+        libff::print_compilation_info();
         return 0;
     }
 
@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
     const size_t boot_trace_size_bound = program_size + input_size;
     const bool satisfiable = true;
     ram_example<machine_ppT> example = gen_ram_example_complex<machine_ppT>(ap, boot_trace_size_bound, time_bound, satisfiable);
-    libff::enter_block("Generate RAM example");
+    libff::leave_block("Generate RAM example");
 
     libff::print_header("(enter) Profile RAM ppzkSNARK");
     const bool test_serialization = true;
