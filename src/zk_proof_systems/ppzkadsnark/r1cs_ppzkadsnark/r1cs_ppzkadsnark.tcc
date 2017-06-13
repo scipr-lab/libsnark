@@ -572,7 +572,7 @@ r1cs_ppzkadsnark_keypair<ppT> r1cs_ppzkadsnark_generator(const r1cs_ppzkadsnark_
     libff::enter_block("Compute the K-query", false);
     libff::G1_vector<snark_pp<ppT>> K_query = batch_exp(libff::Fr<snark_pp<ppT>>::size_in_bits(), g1_window, g1_table, Kt);
 #ifdef USE_MIXED_ADDITION
-    batch_to_special<libff::G1<snark_pp<ppT>> >(K_query);
+    libff::batch_to_special<libff::G1<snark_pp<ppT>> >(K_query);
 #endif
     libff::leave_block("Compute the K-query", false);
 
