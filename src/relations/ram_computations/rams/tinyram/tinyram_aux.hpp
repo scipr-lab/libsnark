@@ -17,9 +17,9 @@
 #include <map>
 
 #include "common/utils.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
-#include "relations/ram_computations/memory/memory_interface.hpp"
-#include "relations/ram_computations/rams/ram_params.hpp"
+#include "../../../constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../memory/memory_interface.hpp"
+#include "../ram_params.hpp"
 
 namespace libsnark {
 

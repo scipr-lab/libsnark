@@ -23,8 +23,8 @@ See r1cs_ppzkadsnark.hpp .
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 #include "algebra/scalar_multiplication/multiexp.hpp"
-#include "knowledge_commitment/kc_multiexp.hpp"
-#include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
+#include "../../../knowledge_commitment/kc_multiexp.hpp"
+#include "../../../reductions/r1cs_to_qap/r1cs_to_qap.hpp"
 
 namespace libsnark {
 

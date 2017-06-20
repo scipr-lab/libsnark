@@ -11,7 +11,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/routing_algorithms/benes_routing_algorithm.hpp"
+#include "benes_routing_algorithm.hpp"
 #include <cassert>
 
 namespace libsnark {

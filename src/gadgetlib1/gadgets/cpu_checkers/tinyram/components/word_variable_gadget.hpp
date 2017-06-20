@@ -12,7 +12,7 @@
 #ifndef WORD_VARIABLE_GADGET_HPP_
 #define WORD_VARIABLE_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp"
+#include "tinyram_protoboard.hpp"
 
 namespace libsnark {
 

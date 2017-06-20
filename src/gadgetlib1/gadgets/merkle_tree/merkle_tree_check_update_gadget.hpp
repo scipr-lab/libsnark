@@ -17,12 +17,12 @@
 #ifndef MERKLE_TREE_CHECK_UPDATE_GADGET_HPP_
 #define MERKLE_TREE_CHECK_UPDATE_GADGET_HPP_
 
-#include "common/data_structures/merkle_tree.hpp"
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/crh_gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "gadgetlib1/gadgets/hashes/digest_selector_gadget.hpp"
-#include "gadgetlib1/gadgets/merkle_tree/merkle_authentication_path_variable.hpp"
+#include "../../../common/data_structures/merkle_tree.hpp"
+#include "../../gadget.hpp"
+#include "../hashes/crh_gadget.hpp"
+#include "../hashes/hash_io.hpp"
+#include "../hashes/digest_selector_gadget.hpp"
+#include "merkle_authentication_path_variable.hpp"
 
 namespace libsnark {
 
@@ -86,6 +86,6 @@ void test_merkle_tree_check_update_gadget();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_update_gadget.tcc"
+#include "merkle_tree_check_update_gadget.tcc"
 
 #endif // MERKLE_TREE_CHECK_UPDATE_GADGET_HPP_

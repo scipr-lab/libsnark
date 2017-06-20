@@ -48,9 +48,9 @@
 
 #include <memory>
 
-#include "reductions/ram_to_r1cs/ram_to_r1cs.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark_params.hpp"
+#include "../../../reductions/ram_to_r1cs/ram_to_r1cs.hpp"
+#include "../r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "ram_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -222,6 +222,6 @@ bool ram_ppzksnark_verifier(const ram_ppzksnark_verification_key<ram_ppzksnark_p
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.tcc"
+#include "ram_ppzksnark.tcc"
 
 #endif // RAM_PPZKSNARK_HPP_

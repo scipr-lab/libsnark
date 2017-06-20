@@ -12,10 +12,10 @@
 #ifndef TINYRAM_PROTOBOARD_HPP_
 #define TINYRAM_PROTOBOARD_HPP_
 
-#include "relations/ram_computations/rams/ram_params.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_aux.hpp"
-#include "gadgetlib1/protoboard.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "../../../../../relations/ram_computations/rams/ram_params.hpp"
+#include "../../../../../relations/ram_computations/rams/tinyram/tinyram_aux.hpp"
+#include "../../../../protoboard.hpp"
+#include "../../../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -47,6 +47,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.tcc"
+#include "tinyram_protoboard.tcc"
 
 #endif // TINYRAM_PROTOBOARD_HPP_

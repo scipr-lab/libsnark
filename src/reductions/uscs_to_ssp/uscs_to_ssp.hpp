@@ -32,8 +32,8 @@
 #ifndef USCS_TO_SSP_HPP_
 #define USCS_TO_SSP_HPP_
 
-#include "relations/arithmetic_programs/ssp/ssp.hpp"
-#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "../../relations/arithmetic_programs/ssp/ssp.hpp"
+#include "../../relations/constraint_satisfaction_problems/uscs/uscs.hpp"
 
 namespace libsnark {
 
@@ -63,6 +63,6 @@ ssp_witness<FieldT> uscs_to_ssp_witness_map(const uscs_constraint_system<FieldT>
 
 } // libsnark
 
-#include "reductions/uscs_to_ssp/uscs_to_ssp.tcc"
+#include "uscs_to_ssp.tcc"
 
 #endif // USCS_TO_SSP_HPP_

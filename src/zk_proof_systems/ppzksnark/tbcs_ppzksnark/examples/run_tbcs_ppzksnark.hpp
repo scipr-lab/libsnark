@@ -13,7 +13,7 @@
 #ifndef RUN_TBCS_PPZKSNARK_HPP_
 #define RUN_TBCS_PPZKSNARK_HPP_
 
-#include "relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp"
+#include "../../../../relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp"
 
 namespace libsnark {
 
@@ -30,6 +30,6 @@ bool run_tbcs_ppzksnark(const tbcs_example &example,
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/run_tbcs_ppzksnark.tcc"
+#include "run_tbcs_ppzksnark.tcc"
 
 #endif // RUN_TBCS_PPZKSNARK_HPP_

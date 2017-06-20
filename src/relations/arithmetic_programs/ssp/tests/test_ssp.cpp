@@ -14,8 +14,8 @@
 #include "algebra/fields/field_utils.hpp"
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "reductions/uscs_to_ssp/uscs_to_ssp.hpp"
-#include "relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
+#include "../../../../reductions/uscs_to_ssp/uscs_to_ssp.hpp"
+#include "../../../constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
 
 using namespace libsnark;
 

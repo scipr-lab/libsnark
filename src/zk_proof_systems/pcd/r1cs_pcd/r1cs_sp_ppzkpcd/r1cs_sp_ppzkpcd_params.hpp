@@ -13,8 +13,8 @@
 #define R1CS_SP_PPZKPCD_PARAMS_HPP_
 
 #include "algebra/curves/public_params.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_pcd_params.hpp"
+#include "../compliance_predicate/compliance_predicate.hpp"
+#include "../r1cs_pcd_params.hpp"
 
 namespace libsnark {
 

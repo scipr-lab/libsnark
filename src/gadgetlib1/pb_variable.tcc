@@ -8,7 +8,7 @@
 #ifndef PB_VARIABLE_TCC_
 #define PB_VARIABLE_TCC_
 #include <cassert>
-#include "gadgetlib1/protoboard.hpp"
+#include "protoboard.hpp"
 #include "common/utils.hpp"
 
 namespace libsnark {

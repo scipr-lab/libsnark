@@ -42,10 +42,10 @@
 #ifndef RAM_UNIVERSAL_GADGET_HPP_
 #define RAM_UNIVERSAL_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/routing/as_waksman_routing_gadget.hpp"
-#include "reductions/ram_to_r1cs/gadgets/memory_checker_gadget.hpp"
-#include "reductions/ram_to_r1cs/gadgets/trace_lines.hpp"
-#include "relations/ram_computations/rams/ram_params.hpp"
+#include "../../../gadgetlib1/gadgets/routing/as_waksman_routing_gadget.hpp"
+#include "memory_checker_gadget.hpp"
+#include "trace_lines.hpp"
+#include "../../../relations/ram_computations/rams/ram_params.hpp"
 
 namespace libsnark {
 
@@ -133,6 +133,6 @@ public:
 
 } // libsnark
 
-#include "reductions/ram_to_r1cs/gadgets/ram_universal_gadget.tcc"
+#include "ram_universal_gadget.tcc"
 
 #endif // RAM_UNIVERSAL_GADGET_HPP_

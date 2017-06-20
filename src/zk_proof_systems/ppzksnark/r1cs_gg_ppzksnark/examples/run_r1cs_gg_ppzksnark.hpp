@@ -13,7 +13,7 @@
 #ifndef RUN_R1CS_GG_PPZKSNARK_HPP_
 #define RUN_R1CS_GG_PPZKSNARK_HPP_
 
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include "../../../../relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 
 namespace libsnark {
 
@@ -30,6 +30,6 @@ bool run_r1cs_gg_ppzksnark(const r1cs_example<libff::Fr<ppT> > &example,
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/examples/run_r1cs_gg_ppzksnark.tcc"
+#include "run_r1cs_gg_ppzksnark.tcc"
 
 #endif // RUN_R1CS_GG_PPZKSNARK_HPP_

@@ -4,12 +4,12 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-#include "common/default_types/ram_zksnark_pp.hpp"
-#include "relations/ram_computations/memory/examples/memory_contents_examples.hpp"
-#include "relations/ram_computations/rams/examples/ram_examples.hpp"
-#include "zk_proof_systems/zksnark/ram_zksnark/ram_zksnark.hpp"
-#include "zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_params.hpp"
+#include "../../../../common/default_types/ram_zksnark_pp.hpp"
+#include "../../../../relations/ram_computations/memory/examples/memory_contents_examples.hpp"
+#include "../../../../relations/ram_computations/rams/examples/ram_examples.hpp"
+#include "../ram_zksnark.hpp"
+#include "../examples/run_ram_zksnark.hpp"
+#include "../../../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"
 
 #include <boost/program_options.hpp>
 

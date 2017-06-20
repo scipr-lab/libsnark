@@ -9,7 +9,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/default_types/tinyram_ppzksnark_pp.hpp"
+#include "tinyram_ppzksnark_pp.hpp"
 
 namespace libsnark {
 

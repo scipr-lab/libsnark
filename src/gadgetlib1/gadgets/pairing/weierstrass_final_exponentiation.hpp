@@ -16,8 +16,8 @@
 #define WEIERSTRASS_FINAL_EXPONENTIATION_HPP_
 
 #include <memory>
-#include "gadgetlib1/gadgets/pairing/mnt_pairing_params.hpp"
-#include "gadgetlib1/gadgets/fields/exponentiation_gadget.hpp"
+#include "mnt_pairing_params.hpp"
+#include "../fields/exponentiation_gadget.hpp"
 
 namespace libsnark {
 
@@ -105,6 +105,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/pairing/weierstrass_final_exponentiation.tcc"
+#include "weierstrass_final_exponentiation.tcc"
 
 #endif // WEIERSTRASS_FINAL_EXPONENTIATION_HPP_

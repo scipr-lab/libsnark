@@ -7,7 +7,7 @@
 #ifndef CRH_GADGET_HPP_
 #define CRH_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/hashes/knapsack/knapsack_gadget.hpp"
+#include "knapsack/knapsack_gadget.hpp"
 
 namespace libsnark {
 

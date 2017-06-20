@@ -13,9 +13,9 @@
 #ifndef R1CS_PPZKADSNARK_PP_HPP_
 #define R1CS_PPZKADSNARK_PP_HPP_
 
-#include "common/default_types/r1cs_ppzksnark_pp.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/prf/aes_ctr_prf.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/signature/ed25519_signature.hpp"
+#include "r1cs_ppzksnark_pp.hpp"
+#include "../../zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/prf/aes_ctr_prf.hpp"
+#include "../../zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/signature/ed25519_signature.hpp"
 
 namespace libsnark {
 

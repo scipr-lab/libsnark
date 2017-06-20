@@ -8,7 +8,7 @@
 #ifndef SIMPLE_EXAMPLE_TCC_
 #define SIMPLE_EXAMPLE_TCC_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "../gadgets/basic_gadgets.hpp"
 
 namespace libsnark {
 

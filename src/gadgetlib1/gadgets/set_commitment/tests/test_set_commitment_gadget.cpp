@@ -11,8 +11,8 @@
 #include "algebra/curves/edwards/edwards_pp.hpp"
 #include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "gadgetlib1/gadgets/set_commitment/set_commitment_gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_gadget.hpp"
+#include "../set_commitment_gadget.hpp"
+#include "../../hashes/sha256/sha256_gadget.hpp"
 
 using namespace libsnark;
 

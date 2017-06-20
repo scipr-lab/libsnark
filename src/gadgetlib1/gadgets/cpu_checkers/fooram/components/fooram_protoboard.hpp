@@ -12,8 +12,8 @@
 #ifndef FOORAM_PROTOBOARD_HPP_
 #define FOORAM_PROTOBOARD_HPP_
 
-#include "gadgetlib1/gadget.hpp"
-#include "relations/ram_computations/rams/fooram/fooram_aux.hpp"
+#include "../../../../gadget.hpp"
+#include "../../../../../relations/ram_computations/rams/fooram/fooram_aux.hpp"
 
 namespace libsnark {
 
@@ -35,6 +35,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/components/fooram_protoboard.tcc"
+#include "fooram_protoboard.tcc"
 
 #endif // FOORAM_PROTOBOARD_HPP_

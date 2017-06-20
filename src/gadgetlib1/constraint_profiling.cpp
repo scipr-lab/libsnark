@@ -11,7 +11,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "gadgetlib1/constraint_profiling.hpp"
+#include "constraint_profiling.hpp"
 #include "common/profiling.hpp"
 
 namespace libsnark {

@@ -53,6 +53,6 @@ void test_instruction_packing();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/instruction_packing_gadget.tcc"
+#include "instruction_packing_gadget.tcc"
 
 #endif // INSTRUCTION_PACKING_GADGET_HPP_

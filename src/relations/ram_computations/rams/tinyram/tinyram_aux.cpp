@@ -16,7 +16,7 @@
 #include <string>
 
 #include "common/profiling.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_aux.hpp"
+#include "tinyram_aux.hpp"
 #include "common/utils.hpp"
 
 namespace libsnark {

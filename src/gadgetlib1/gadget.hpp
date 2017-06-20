@@ -8,7 +8,7 @@
 #ifndef GADGET_HPP_
 #define GADGET_HPP_
 
-#include "gadgetlib1/protoboard.hpp"
+#include "protoboard.hpp"
 
 namespace libsnark {
 
@@ -22,6 +22,6 @@ public:
 };
 
 } // libsnark
-#include "gadgetlib1/gadget.tcc"
+#include "gadget.tcc"
 
 #endif // GADGET_HPP_

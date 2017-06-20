@@ -4,8 +4,8 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-#include "common/default_types/r1cs_ppzkpcd_pp.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/examples/run_r1cs_mp_ppzkpcd.hpp"
+#include "../../../../../common/default_types/r1cs_ppzkpcd_pp.hpp"
+#include "../examples/run_r1cs_mp_ppzkpcd.hpp"
 
 using namespace libsnark;
 

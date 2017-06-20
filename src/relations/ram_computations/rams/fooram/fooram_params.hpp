@@ -12,9 +12,9 @@
 #ifndef FOORAM_PARAMS_HPP_
 #define FOORAM_PARAMS_HPP_
 
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/fooram_cpu_checker.hpp"
-#include "relations/ram_computations/rams/fooram/fooram_aux.hpp"
-#include "relations/ram_computations/rams/ram_params.hpp"
+#include "../../../../gadgetlib1/gadgets/cpu_checkers/fooram/fooram_cpu_checker.hpp"
+#include "fooram_aux.hpp"
+#include "../ram_params.hpp"
 
 namespace libsnark {
 

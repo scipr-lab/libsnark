@@ -11,9 +11,9 @@
 #include "algebra/curves/edwards/edwards_pp.hpp"
 #include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
 #include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_read_gadget.hpp"
-#include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_update_gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_gadget.hpp"
+#include "../merkle_tree_check_read_gadget.hpp"
+#include "../merkle_tree_check_update_gadget.hpp"
+#include "../../hashes/sha256/sha256_gadget.hpp"
 
 using namespace libsnark;
 

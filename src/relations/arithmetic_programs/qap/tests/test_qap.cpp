@@ -14,8 +14,8 @@
 #include "algebra/fields/field_utils.hpp"
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include "../../../../reductions/r1cs_to_qap/r1cs_to_qap.hpp"
+#include "../../../constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 
 using namespace libsnark;
 

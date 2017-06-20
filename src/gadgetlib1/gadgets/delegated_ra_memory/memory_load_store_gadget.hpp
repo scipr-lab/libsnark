@@ -15,7 +15,7 @@
 #ifndef MEMORY_LOAD_STORE_GADGET_HPP_
 #define MEMORY_LOAD_STORE_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_update_gadget.hpp"
+#include "../merkle_tree/merkle_tree_check_update_gadget.hpp"
 
 namespace libsnark {
 

@@ -13,8 +13,8 @@
 #ifndef RUN_RAM_PPZKSNARK_HPP_
 #define RUN_RAM_PPZKSNARK_HPP_
 
-#include "relations/ram_computations/rams/examples/ram_examples.hpp"
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark_params.hpp"
+#include "../../../../relations/ram_computations/rams/examples/ram_examples.hpp"
+#include "../ram_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -31,6 +31,6 @@ bool run_ram_ppzksnark(const ram_example<ram_ppzksnark_machine_pp<ram_ppzksnark_
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.tcc"
+#include "run_ram_ppzksnark.tcc"
 
 #endif // RUN_RAM_PPZKSNARK_HPP_

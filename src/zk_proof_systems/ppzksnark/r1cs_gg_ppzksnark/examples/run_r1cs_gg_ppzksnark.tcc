@@ -15,7 +15,7 @@
 #ifndef RUN_R1CS_GG_PPZKSNARK_TCC_
 #define RUN_R1CS_GG_PPZKSNARK_TCC_
 
-#include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark.hpp"
+#include "../r1cs_gg_ppzksnark.hpp"
 
 #include <sstream>
 #include <type_traits>

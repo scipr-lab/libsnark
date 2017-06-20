@@ -15,10 +15,10 @@
 #ifndef BENES_ROUTING_GADGET_HPP_
 #define BENES_ROUTING_GADGET_HPP_
 
-#include "common/data_structures/integer_permutation.hpp"
-#include "common/routing_algorithms/benes_routing_algorithm.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/protoboard.hpp"
+#include "../../../common/data_structures/integer_permutation.hpp"
+#include "../../../common/routing_algorithms/benes_routing_algorithm.hpp"
+#include "../basic_gadgets.hpp"
+#include "../../protoboard.hpp"
 
 namespace libsnark {
 
@@ -76,6 +76,6 @@ void test_benes_routing_gadget(const size_t num_packets, const size_t packet_siz
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/routing/benes_routing_gadget.tcc"
+#include "benes_routing_gadget.tcc"
 
 #endif // BENES_ROUTING_GADGET_HPP_

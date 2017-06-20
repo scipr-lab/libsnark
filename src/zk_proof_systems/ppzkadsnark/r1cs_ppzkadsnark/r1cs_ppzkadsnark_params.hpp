@@ -12,7 +12,7 @@
 #ifndef R1CS_PPZKADSNARK_PARAMS_HPP_
 #define R1CS_PPZKADSNARK_PARAMS_HPP_
 
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 
 namespace libsnark {
 

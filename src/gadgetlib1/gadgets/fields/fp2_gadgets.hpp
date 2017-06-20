@@ -15,7 +15,7 @@
 #ifndef FP2_GADGETS_HPP_
 #define FP2_GADGETS_HPP_
 
-#include "gadgetlib1/gadget.hpp"
+#include "../../gadget.hpp"
 #include <memory>
 
 namespace libsnark {
@@ -127,6 +127,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/fields/fp2_gadgets.tcc"
+#include "fp2_gadgets.tcc"
 
 #endif // FP2_GADGETS_HPP_

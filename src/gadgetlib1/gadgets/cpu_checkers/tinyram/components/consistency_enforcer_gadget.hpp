@@ -66,6 +66,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/consistency_enforcer_gadget.tcc"
+#include "consistency_enforcer_gadget.tcc"
 
 #endif // CONSISTENCY_ENFORCER_GADGET_HPP_

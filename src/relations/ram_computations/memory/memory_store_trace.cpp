@@ -11,7 +11,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "relations/ram_computations/memory/memory_store_trace.hpp"
+#include "memory_store_trace.hpp"
 
 namespace libsnark {
 

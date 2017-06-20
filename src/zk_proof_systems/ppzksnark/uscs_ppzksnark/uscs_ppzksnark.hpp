@@ -49,10 +49,10 @@
 #include <memory>
 
 #include "algebra/curves/public_params.hpp"
-#include "common/data_structures/accumulation_vector.hpp"
-#include "knowledge_commitment/knowledge_commitment.hpp"
-#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
-#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark_params.hpp"
+#include "../../../common/data_structures/accumulation_vector.hpp"
+#include "../../../knowledge_commitment/knowledge_commitment.hpp"
+#include "../../../relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "uscs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -423,6 +423,6 @@ bool uscs_ppzksnark_online_verifier_strong_IC(const uscs_ppzksnark_processed_ver
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.tcc"
+#include "uscs_ppzksnark.tcc"
 
 #endif // USCS_PPZKSNARK_HPP_

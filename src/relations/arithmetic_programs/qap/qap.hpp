@@ -188,6 +188,6 @@ public:
 
 } // libsnark
 
-#include "relations/arithmetic_programs/qap/qap.tcc"
+#include "qap.tcc"
 
 #endif // QAP_HPP_

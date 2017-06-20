@@ -43,9 +43,9 @@
 #ifndef KNAPSACK_GADGET_HPP_
 #define KNAPSACK_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "common/data_structures/merkle_tree.hpp"
+#include "../../basic_gadgets.hpp"
+#include "../hash_io.hpp"
+#include "../../../../common/data_structures/merkle_tree.hpp"
 
 namespace libsnark {
 
@@ -129,6 +129,6 @@ void test_knapsack_CRH_with_bit_out_gadget();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/hashes/knapsack/knapsack_gadget.tcc"
+#include "knapsack_gadget.tcc"
 
 #endif // KNAPSACK_GADGET_HPP_

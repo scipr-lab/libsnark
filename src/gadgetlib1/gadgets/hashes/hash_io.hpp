@@ -8,7 +8,7 @@
 #define HASH_IO_HPP_
 #include <cstddef>
 #include <vector>
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -58,6 +58,6 @@ public:
 };
 
 } // libsnark
-#include "gadgetlib1/gadgets/hashes/hash_io.tcc"
+#include "hash_io.tcc"
 
 #endif // HASH_IO_HPP_

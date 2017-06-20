@@ -32,8 +32,8 @@
 #ifndef R1CS_TO_QAP_HPP_
 #define R1CS_TO_QAP_HPP_
 
-#include "relations/arithmetic_programs/qap/qap.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../relations/arithmetic_programs/qap/qap.hpp"
+#include "../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 
 namespace libsnark {
 
@@ -65,6 +65,6 @@ qap_witness<FieldT> r1cs_to_qap_witness_map(const r1cs_constraint_system<FieldT>
 
 } // libsnark
 
-#include "reductions/r1cs_to_qap/r1cs_to_qap.tcc"
+#include "r1cs_to_qap.tcc"
 
 #endif // R1CS_TO_QAP_HPP_

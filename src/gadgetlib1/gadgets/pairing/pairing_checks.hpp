@@ -17,9 +17,9 @@
 #define PAIRING_CHECKS_HPP_
 
 #include <memory>
-#include "gadgetlib1/gadgets/pairing/pairing_params.hpp"
-#include "gadgetlib1/gadgets/pairing/weierstrass_miller_loop.hpp"
-#include "gadgetlib1/gadgets/pairing/weierstrass_final_exponentiation.hpp"
+#include "pairing_params.hpp"
+#include "weierstrass_miller_loop.hpp"
+#include "weierstrass_final_exponentiation.hpp"
 
 namespace libsnark {
 
@@ -89,6 +89,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/pairing/pairing_checks.tcc"
+#include "pairing_checks.tcc"
 
 #endif // PAIRING_CHECKS_HPP_

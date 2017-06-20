@@ -12,7 +12,7 @@
 #ifndef USCS_EXAMPLES_HPP_
 #define USCS_EXAMPLES_HPP_
 
-#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "../uscs.hpp"
 
 namespace libsnark {
 
@@ -67,6 +67,6 @@ uscs_example<FieldT> generate_uscs_example_with_binary_input(const size_t num_co
 
 } // libsnark
 
-#include "relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.tcc"
+#include "uscs_examples.tcc"
 
 #endif // USCS_EXAMPLES_HPP_

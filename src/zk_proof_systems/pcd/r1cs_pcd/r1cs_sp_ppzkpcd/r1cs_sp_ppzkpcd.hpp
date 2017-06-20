@@ -42,8 +42,8 @@
 
 #include <memory>
 
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd_params.hpp"
+#include "../../../ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "r1cs_sp_ppzkpcd_params.hpp"
 
 namespace libsnark {
 
@@ -303,6 +303,6 @@ bool r1cs_sp_ppzkpcd_online_verifier(const r1cs_sp_ppzkpcd_processed_verificatio
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd.tcc"
+#include "r1cs_sp_ppzkpcd.tcc"
 
 #endif // R1CS_SP_PPZKPCD_HPP_

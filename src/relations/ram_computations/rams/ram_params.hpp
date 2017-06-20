@@ -14,7 +14,7 @@
 
 #include <vector>
 
-#include "relations/ram_computations/memory/memory_store_trace.hpp"
+#include "../memory/memory_store_trace.hpp"
 
 namespace libsnark {
 

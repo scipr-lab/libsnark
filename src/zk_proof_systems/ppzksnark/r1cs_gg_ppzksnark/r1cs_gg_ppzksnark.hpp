@@ -44,10 +44,10 @@ References:
 #include <memory>
 
 #include "algebra/curves/public_params.hpp"
-#include "common/data_structures/accumulation_vector.hpp"
-#include "knowledge_commitment/knowledge_commitment.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark_params.hpp"
+#include "../../../common/data_structures/accumulation_vector.hpp"
+#include "../../../knowledge_commitment/knowledge_commitment.hpp"
+#include "../../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "r1cs_gg_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -452,6 +452,6 @@ bool r1cs_gg_ppzksnark_affine_verifier_weak_IC(const r1cs_gg_ppzksnark_verificat
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/r1cs_gg_ppzksnark.tcc"
+#include "r1cs_gg_ppzksnark.tcc"
 
 #endif // R1CS_GG_PPZKSNARK_HPP_

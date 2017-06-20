@@ -15,9 +15,9 @@
 #ifndef RUN_R1CS_PPZKADSNARK_TCC_
 #define RUN_R1CS_PPZKADSNARK_TCC_
 
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/prf/aes_ctr_prf.tcc"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/signature/ed25519_signature.tcc"
+#include "../r1cs_ppzkadsnark.hpp"
+#include "prf/aes_ctr_prf.tcc"
+#include "signature/ed25519_signature.tcc"
 
 #include <sstream>
 #include <type_traits>

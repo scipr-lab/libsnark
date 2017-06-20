@@ -1,5 +1,3 @@
-include_directories(.)
-
 set(SNARK_EXTRALIBS)
 if(${CURVE} STREQUAL "BN128")
   set(

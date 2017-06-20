@@ -13,7 +13,7 @@
 #ifndef RAM_EXAMPLES_HPP_
 #define RAM_EXAMPLES_HPP_
 
-#include "relations/ram_computations/rams/ram_params.hpp"
+#include "../ram_params.hpp"
 
 namespace libsnark {
 
@@ -40,6 +40,6 @@ ram_example<ramT> gen_ram_example_complex(const ram_architecture_params<ramT> &a
 
 } // libsnark
 
-#include "relations/ram_computations/rams/examples/ram_examples.tcc"
+#include "ram_examples.tcc"
 
 #endif // RAM_EXAMPLES_HPP_

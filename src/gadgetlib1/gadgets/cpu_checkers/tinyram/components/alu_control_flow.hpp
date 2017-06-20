@@ -14,8 +14,8 @@
 #ifndef ALU_CONTROL_FLOW_HPP_
 #define ALU_CONTROL_FLOW_HPP_
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "tinyram_protoboard.hpp"
+#include "../../../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -97,6 +97,6 @@ void test_ALU_cnjmp_gadget();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_control_flow.tcc"
+#include "alu_control_flow.tcc"
 
 #endif // ALU_CONTROL_FLOW_HPP_

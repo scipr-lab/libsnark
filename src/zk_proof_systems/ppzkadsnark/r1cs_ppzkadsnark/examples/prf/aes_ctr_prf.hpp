@@ -12,7 +12,7 @@
 #ifndef AESCTRPRF_HPP_
 #define AESCTRPRF_HPP_
 
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_prf.hpp"
+#include "../../r1cs_ppzkadsnark_prf.hpp"
 
 namespace libsnark {
 

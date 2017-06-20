@@ -14,7 +14,7 @@
 #ifndef BACS_PPZKSNARK_TCC_
 #define BACS_PPZKSNARK_TCC_
 
-#include "reductions/bacs_to_r1cs/bacs_to_r1cs.hpp"
+#include "../../../reductions/bacs_to_r1cs/bacs_to_r1cs.hpp"
 
 namespace libsnark {
 

@@ -173,6 +173,6 @@ public:
 
 } // libsnark
 
-#include "relations/arithmetic_programs/ssp/ssp.tcc"
+#include "ssp.tcc"
 
 #endif // SSP_HPP_

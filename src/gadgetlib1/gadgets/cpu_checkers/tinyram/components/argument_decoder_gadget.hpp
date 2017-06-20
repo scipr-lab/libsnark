@@ -61,6 +61,6 @@ void test_argument_decoder_gadget();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/argument_decoder_gadget.tcc"
+#include "argument_decoder_gadget.tcc"
 
 #endif // ARGUMENT_DECODER_GADGET_HPP_

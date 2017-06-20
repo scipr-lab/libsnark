@@ -13,8 +13,8 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include "gadgetlib1/pb_variable.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "pb_variable.hpp"
+#include "../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "common/utils.hpp"
 
 namespace libsnark {
@@ -71,5 +71,5 @@ private:
 };
 
 } // libsnark
-#include "gadgetlib1/protoboard.tcc"
+#include "protoboard.tcc"
 #endif // PROTOBOARD_HPP_

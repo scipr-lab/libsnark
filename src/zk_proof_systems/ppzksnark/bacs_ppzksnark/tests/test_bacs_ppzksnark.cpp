@@ -11,10 +11,10 @@
 #include <cassert>
 #include <cstdio>
 
-#include "common/default_types/bacs_ppzksnark_pp.hpp"
+#include "../../../../common/default_types/bacs_ppzksnark_pp.hpp"
 #include "common/profiling.hpp"
-#include "relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp"
-#include "zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/run_bacs_ppzksnark.hpp"
+#include "../../../../relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp"
+#include "../examples/run_bacs_ppzksnark.hpp"
 
 using namespace libsnark;
 

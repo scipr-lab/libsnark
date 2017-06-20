@@ -20,8 +20,8 @@
 
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
-#include "common/libsnark_serialization.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/mp_pcd_circuits.hpp"
+#include "../../../../common/libsnark_serialization.hpp"
+#include "mp_pcd_circuits.hpp"
 
 namespace libsnark {
 

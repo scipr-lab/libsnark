@@ -12,7 +12,7 @@
 #ifndef PRF_HPP_
 #define PRF_HPP_
 
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_params.hpp"
+#include "r1cs_ppzkadsnark_params.hpp"
 
 namespace libsnark {
 

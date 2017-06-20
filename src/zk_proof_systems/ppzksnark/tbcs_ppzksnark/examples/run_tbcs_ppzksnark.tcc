@@ -15,7 +15,7 @@
 #ifndef RUN_TBCS_PPZKSNARK_TCC_
 #define RUN_TBCS_PPZKSNARK_TCC_
 
-#include "zk_proof_systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark.hpp"
+#include "../tbcs_ppzksnark.hpp"
 
 #include <sstream>
 

@@ -12,7 +12,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp"
+#include "tbcs_examples.hpp"
 
 #include <cassert>
 

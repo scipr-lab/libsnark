@@ -34,6 +34,6 @@ bool run_r1cs_mp_ppzkpcd_tally_example(const size_t wordsize,
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/examples/run_r1cs_mp_ppzkpcd.tcc"
+#include "run_r1cs_mp_ppzkpcd.tcc"
 
 #endif // RUN_R1CS_MP_PPZKPCD_HPP_

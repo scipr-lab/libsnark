@@ -13,7 +13,7 @@
 
 #include <cassert>
 
-#include "common/routing_algorithms/as_waksman_routing_algorithm.hpp"
+#include "as_waksman_routing_algorithm.hpp"
 
 namespace libsnark {
 

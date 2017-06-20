@@ -46,12 +46,12 @@ IEEE Symposium on Security and Privacy 2015,
 #include <memory>
 
 #include "algebra/curves/public_params.hpp"
-#include "common/data_structures/accumulation_vector.hpp"
-#include "knowledge_commitment/knowledge_commitment.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_params.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_signature.hpp"
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_prf.hpp"
+#include "../../../common/data_structures/accumulation_vector.hpp"
+#include "../../../knowledge_commitment/knowledge_commitment.hpp"
+#include "../../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "r1cs_ppzkadsnark_params.hpp"
+#include "r1cs_ppzkadsnark_signature.hpp"
+#include "r1cs_ppzkadsnark_prf.hpp"
 
 namespace libsnark {
 
@@ -669,6 +669,6 @@ bool r1cs_ppzkadsnark_online_verifier(const r1cs_ppzkadsnark_processed_verificat
 
 } // libsnark
 
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark.tcc"
+#include "r1cs_ppzkadsnark.tcc"
 
 #endif // R1CS_PPZKSNARK_HPP_

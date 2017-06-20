@@ -15,7 +15,7 @@
 #define WEIERSTRASS_PRECOMPUTATION_TCC_
 
 #include <type_traits>
-#include "gadgetlib1/gadgets/pairing/mnt_pairing_params.hpp"
+#include "mnt_pairing_params.hpp"
 
 namespace libsnark {
 

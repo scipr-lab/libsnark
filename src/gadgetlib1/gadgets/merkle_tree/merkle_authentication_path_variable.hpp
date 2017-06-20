@@ -8,9 +8,9 @@
 #ifndef MERKLE_AUTHENTICATION_PATH_VARIABLE_HPP_
 #define MERKLE_AUTHENTICATION_PATH_VARIABLE_HPP_
 
-#include "common/data_structures/merkle_tree.hpp"
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
+#include "../../../common/data_structures/merkle_tree.hpp"
+#include "../../gadget.hpp"
+#include "../hashes/hash_io.hpp"
 
 namespace libsnark {
 
@@ -33,6 +33,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/merkle_tree/merkle_authentication_path_variable.tcc"
+#include "merkle_authentication_path_variable.tcc"
 
 #endif // MERKLE_AUTHENTICATION_PATH_VARIABLE_HPP

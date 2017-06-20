@@ -12,9 +12,9 @@
 #ifndef SHA256_COMPONENTS_HPP_
 #define SHA256_COMPONENTS_HPP_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_aux.hpp"
+#include "../../basic_gadgets.hpp"
+#include "../hash_io.hpp"
+#include "sha256_aux.hpp"
 
 namespace libsnark {
 
@@ -103,6 +103,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_components.tcc"
+#include "sha256_components.tcc"
 
 #endif // SHA256_COMPONENTS_HPP_

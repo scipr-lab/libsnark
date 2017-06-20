@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include "relations/variable.hpp"
+#include "../../variable.hpp"
 
 namespace libsnark {
 
@@ -150,6 +150,6 @@ public:
 
 } // libsnark
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.tcc"
+#include "bacs.tcc"
 
 #endif // BACS_HPP_

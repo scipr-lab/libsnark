@@ -17,7 +17,7 @@
 
 #include <algorithm>
 #include "common/utils.hpp"
-#include "gadgetlib1/constraint_profiling.hpp"
+#include "../../../../gadgetlib1/constraint_profiling.hpp"
 
 namespace libsnark {
 

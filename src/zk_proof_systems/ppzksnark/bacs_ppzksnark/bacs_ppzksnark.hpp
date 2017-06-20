@@ -34,9 +34,9 @@
 #ifndef BACS_PPZKSNARK_HPP_
 #define BACS_PPZKSNARK_HPP_
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
-#include "zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark_params.hpp"
+#include "../../../relations/circuit_satisfaction_problems/bacs/bacs.hpp"
+#include "../r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "bacs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -253,6 +253,6 @@ bool bacs_ppzksnark_online_verifier_strong_IC(const bacs_ppzksnark_processed_ver
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark.tcc"
+#include "bacs_ppzksnark.tcc"
 
 #endif // BACS_PPZKSNARK_HPP_
