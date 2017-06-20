@@ -13,7 +13,7 @@
 
 #include <cassert>
 
-#include "relations/ram_computations/memory/ra_memory.hpp"
+#include "ra_memory.hpp"
 
 namespace libsnark {
 

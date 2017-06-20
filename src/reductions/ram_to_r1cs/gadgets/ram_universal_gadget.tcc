@@ -14,11 +14,11 @@
 #ifndef RAM_UNIVERSAL_GADGET_TCC_
 #define RAM_UNIVERSAL_GADGET_TCC_
 
-#include "common/data_structures/integer_permutation.hpp"
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
-#include "algebra/fields/field_utils.hpp"
-#include "relations/ram_computations/memory/ra_memory.hpp"
+#include "../../../common/data_structures/integer_permutation.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
+#include <libff/algebra/fields/field_utils.hpp>
+#include "../../../relations/ram_computations/memory/ra_memory.hpp"
 
 namespace libsnark {
 

@@ -11,8 +11,8 @@
 #include <cstddef>
 #include <string>
 #include <vector>
-#include "common/utils.hpp"
-#include "relations/variable.hpp"
+#include <libff/common/utils.hpp>
+#include "../relations/variable.hpp"
 
 namespace libsnark {
 
@@ -139,6 +139,6 @@ template<typename FieldT>
 linear_combination<FieldT> pb_coeff_sum(const pb_linear_combination_array<FieldT> &v, const std::vector<FieldT> &coeffs);
 
 } // libsnark
-#include "gadgetlib1/pb_variable.tcc"
+#include "pb_variable.tcc"
 
 #endif // PB_VARIABLE_HPP_

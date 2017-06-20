@@ -14,9 +14,9 @@
 
 #include <memory>
 #include <vector>
-#include "algebra/fields/bigint.hpp"
-#include "algebra/scalar_multiplication/wnaf.hpp"
-#include "gadgetlib1/gadget.hpp"
+#include <libff/algebra/fields/bigint.hpp>
+#include <libff/algebra/scalar_multiplication/wnaf.hpp>
+#include "../../gadget.hpp"
 
 namespace libsnark {
 
@@ -59,6 +59,6 @@ void test_exponentiation_gadget(const libff::bigint<m> &power, const std::string
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/fields/exponentiation_gadget.tcc"
+#include "exponentiation_gadget.tcc"
 
 #endif // EXPONENTIATION_GADGET_HPP_

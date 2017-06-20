@@ -5,10 +5,10 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 #include <sstream>
-#include "common/default_types/ram_zksnark_pp.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_params.hpp"
-#include "zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp"
-#include "relations/ram_computations/rams/examples/ram_examples.hpp"
+#include "../../../../common/default_types/ram_zksnark_pp.hpp"
+#include "../../../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"
+#include "../examples/run_ram_zksnark.hpp"
+#include "../../../../relations/ram_computations/rams/examples/ram_examples.hpp"
 
 using namespace libsnark;
 

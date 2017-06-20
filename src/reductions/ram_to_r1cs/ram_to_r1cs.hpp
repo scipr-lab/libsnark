@@ -16,7 +16,7 @@
 #ifndef RAM_TO_R1CS_HPP_
 #define RAM_TO_R1CS_HPP_
 
-#include "reductions/ram_to_r1cs/gadgets/ram_universal_gadget.hpp"
+#include "gadgets/ram_universal_gadget.hpp"
 
 namespace libsnark {
 
@@ -54,6 +54,6 @@ public:
 
 } // libsnark
 
-#include "reductions/ram_to_r1cs/ram_to_r1cs.tcc"
+#include "ram_to_r1cs.tcc"
 
 #endif // RAM_TO_R1CS_HPP_

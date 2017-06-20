@@ -10,7 +10,7 @@
 
 #include <cstdio>
 #include <cstdarg>
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

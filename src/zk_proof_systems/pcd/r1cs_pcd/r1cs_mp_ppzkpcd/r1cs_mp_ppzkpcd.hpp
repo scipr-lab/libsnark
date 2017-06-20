@@ -41,10 +41,10 @@
 #include <memory>
 #include <vector>
 
-#include "common/data_structures/set_commitment.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/ppzkpcd_compliance_predicate.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd_params.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "../../../../common/data_structures/set_commitment.hpp"
+#include "../ppzkpcd_compliance_predicate.hpp"
+#include "r1cs_mp_ppzkpcd_params.hpp"
+#include "../../../ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
 
 namespace libsnark {
 
@@ -323,6 +323,6 @@ bool r1cs_mp_ppzkpcd_online_verifier(const r1cs_mp_ppzkpcd_processed_verificatio
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd.tcc"
+#include "r1cs_mp_ppzkpcd.tcc"
 
 #endif // R1CS_MP_PPZKPCD_HPP_

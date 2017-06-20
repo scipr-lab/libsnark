@@ -14,8 +14,10 @@
 #ifndef ALU_ARITHMETIC_TCC_
 #define ALU_ARITHMETIC_TCC_
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <functional>
+
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

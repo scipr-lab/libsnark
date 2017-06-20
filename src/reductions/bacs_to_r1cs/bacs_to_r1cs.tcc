@@ -14,8 +14,8 @@ See bacs_to_r1cs.hpp .
 #ifndef BACS_TO_R1CS_TCC_
 #define BACS_TO_R1CS_TCC_
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../relations/circuit_satisfaction_problems/bacs/bacs.hpp"
+#include "../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 
 namespace libsnark {
 

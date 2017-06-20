@@ -14,9 +14,9 @@
 #ifndef WEIERSTRASS_MILLER_LOOP_TCC_
 #define WEIERSTRASS_MILLER_LOOP_TCC_
 
-#include "algebra/scalar_multiplication/wnaf.hpp"
-#include "gadgetlib1/constraint_profiling.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include <libff/algebra/scalar_multiplication/wnaf.hpp>
+#include "../../constraint_profiling.hpp"
+#include "../basic_gadgets.hpp"
 
 namespace libsnark {
 

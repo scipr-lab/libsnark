@@ -12,8 +12,8 @@
 #ifndef BAR_GADGET_HPP_
 #define BAR_GADGET_HPP_
 
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "../../../../gadget.hpp"
+#include "../../../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -59,6 +59,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/components/bar_gadget.tcc"
+#include "bar_gadget.tcc"
 
 #endif // BAR_GADGET_HPP_

@@ -18,8 +18,8 @@
 #ifndef BACS_TO_R1CS_HPP_
 #define BACS_TO_R1CS_HPP_
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../relations/circuit_satisfaction_problems/bacs/bacs.hpp"
+#include "../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 
 namespace libsnark {
 
@@ -39,6 +39,6 @@ r1cs_variable_assignment<FieldT> bacs_to_r1cs_witness_map(const bacs_circuit<Fie
 
 } // libsnark
 
-#include "reductions/bacs_to_r1cs/bacs_to_r1cs.tcc"
+#include "bacs_to_r1cs.tcc"
 
 #endif // BACS_TO_R1CS_HPP_

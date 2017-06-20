@@ -14,7 +14,7 @@
 #ifndef R1CS_PPZKSNARK_VERIFIER_GADGET_TCC_
 #define R1CS_PPZKSNARK_VERIFIER_GADGET_TCC_
 
-#include "gadgetlib1/constraint_profiling.hpp"
+#include "../../constraint_profiling.hpp"
 
 namespace libsnark {
 

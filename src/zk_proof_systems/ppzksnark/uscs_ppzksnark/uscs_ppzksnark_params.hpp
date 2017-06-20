@@ -12,7 +12,7 @@
 #ifndef USCS_PPZKSNARK_PARAMS_HPP_
 #define USCS_PPZKSNARK_PARAMS_HPP_
 
-#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "../../../relations/constraint_satisfaction_problems/uscs/uscs.hpp"
 
 namespace libsnark {
 

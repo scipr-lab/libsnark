@@ -27,8 +27,8 @@
 
 #include <vector>
 
-#include "common/data_structures/integer_permutation.hpp"
-#include "common/utils.hpp"
+#include "../data_structures/integer_permutation.hpp"
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

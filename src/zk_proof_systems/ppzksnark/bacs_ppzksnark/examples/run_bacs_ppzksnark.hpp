@@ -13,7 +13,7 @@
 #ifndef RUN_BACS_PPZKSNARK_HPP_
 #define RUN_BACS_PPZKSNARK_HPP_
 
-#include "relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp"
+#include "../../../../relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp"
 
 namespace libsnark {
 
@@ -30,6 +30,6 @@ bool run_bacs_ppzksnark(const bacs_example<libff::Fr<ppT> > &example,
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/run_bacs_ppzksnark.tcc"
+#include "run_bacs_ppzksnark.tcc"
 
 #endif // RUN_BACS_PPZKSNARK_HPP_

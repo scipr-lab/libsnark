@@ -15,10 +15,10 @@
 #ifndef AS_WAKSMAN_ROUTING_GADGET_HPP_
 #define AS_WAKSMAN_ROUTING_GADGET_HPP_
 
-#include "gadgetlib1/protoboard.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "common/data_structures/integer_permutation.hpp"
-#include "common/routing_algorithms/as_waksman_routing_algorithm.hpp"
+#include "../../protoboard.hpp"
+#include "../basic_gadgets.hpp"
+#include "../../../common/data_structures/integer_permutation.hpp"
+#include "../../../common/routing_algorithms/as_waksman_routing_algorithm.hpp"
 
 namespace libsnark {
 
@@ -77,6 +77,6 @@ void test_as_waksman_routing_gadget(const size_t num_packets, const size_t packe
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/routing/as_waksman_routing_gadget.tcc"
+#include "as_waksman_routing_gadget.tcc"
 
 #endif // AS_WAKSMAN_ROUTING_GADGET_HPP_

@@ -14,7 +14,7 @@
 
 #include <map>
 
-#include "gadgetlib1/gadget.hpp"
+#include "../gadget.hpp"
 
 namespace libsnark {
 
@@ -40,6 +40,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/gadget_from_r1cs.tcc"
+#include "gadget_from_r1cs.tcc"
 
 #endif // GADGET_FROM_R1CS_HPP_

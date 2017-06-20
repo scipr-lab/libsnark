@@ -8,7 +8,7 @@
 #define R1CS_PCD_PARAMS_HPP_
 
 #include <memory>
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
+#include "compliance_predicate/compliance_predicate.hpp"
 
 namespace libsnark {
 
@@ -38,6 +38,6 @@ public:
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_pcd_params.tcc"
+#include "r1cs_pcd_params.tcc"
 
 #endif // R1CS_PCD_PARAMS_HPP_

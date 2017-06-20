@@ -10,9 +10,9 @@
 #include <boost/program_options.hpp>
 #endif
 
-#include "common/default_types/tinyram_ppzksnark_pp.hpp"
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_params.hpp"
+#include "../../../../common/default_types/tinyram_ppzksnark_pp.hpp"
+#include "../ram_ppzksnark.hpp"
+#include "../../../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"
 
 #ifndef MINDEPS
 namespace po = boost::program_options;

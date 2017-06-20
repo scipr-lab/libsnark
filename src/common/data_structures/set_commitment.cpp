@@ -5,8 +5,8 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/data_structures/set_commitment.hpp"
-#include "common/serialization.hpp"
+#include "set_commitment.hpp"
+#include <libff/common/serialization.hpp>
 
 namespace libsnark {
 

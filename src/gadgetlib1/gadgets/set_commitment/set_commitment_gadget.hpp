@@ -7,11 +7,11 @@
 #ifndef SET_COMMITMENT_GADGET_HPP_
 #define SET_COMMITMENT_GADGET_HPP_
 
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "gadgetlib1/gadgets/merkle_tree/merkle_tree_check_read_gadget.hpp"
-#include "gadgetlib1/gadgets/set_commitment/set_membership_proof_variable.hpp"
+#include "../../gadget.hpp"
+#include "../basic_gadgets.hpp"
+#include "../hashes/hash_io.hpp"
+#include "../merkle_tree/merkle_tree_check_read_gadget.hpp"
+#include "set_membership_proof_variable.hpp"
 
 namespace libsnark {
 
@@ -52,6 +52,6 @@ void test_set_commitment_gadget();
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/set_commitment/set_commitment_gadget.tcc"
+#include "set_commitment_gadget.tcc"
 
 #endif // SET_COMMITMENT_GADGET_HPP_

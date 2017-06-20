@@ -208,6 +208,6 @@ linear_combination<FieldT> operator-(const FieldT &field_coeff, const linear_com
 
 } // libsnark
 
-#include "relations/variable.tcc"
+#include "variable.tcc"
 
 #endif // VARIABLE_HPP_

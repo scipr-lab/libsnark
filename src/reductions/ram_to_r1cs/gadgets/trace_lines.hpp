@@ -13,7 +13,7 @@
 #define TRACE_LINES_HPP_
 
 #include <memory>
-#include "relations/ram_computations/rams/ram_params.hpp"
+#include "../../../relations/ram_computations/rams/ram_params.hpp"
 
 namespace libsnark {
 
@@ -74,6 +74,6 @@ public:
 
 } // libsnark
 
-#include "reductions/ram_to_r1cs/gadgets/trace_lines.tcc"
+#include "trace_lines.tcc"
 
 #endif // TRACE_LINES_HPP_

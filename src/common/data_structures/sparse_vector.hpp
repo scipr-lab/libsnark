@@ -74,6 +74,6 @@ std::istream& operator>>(std::istream& in, sparse_vector<T> &v);
 
 } // libsnark
 
-#include "common/data_structures/sparse_vector.tcc"
+#include "sparse_vector.tcc"
 
 #endif // SPARSE_VECTOR_HPP_

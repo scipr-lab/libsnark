@@ -14,8 +14,8 @@
 #ifndef ALU_GADGET_HPP_
 #define ALU_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_arithmetic.hpp"
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_control_flow.hpp"
+#include "alu_arithmetic.hpp"
+#include "alu_control_flow.hpp"
 
 namespace libsnark {
 
@@ -178,6 +178,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_gadget.tcc"
+#include "alu_gadget.tcc"
 
 #endif // ALU_GADGET_HPP_

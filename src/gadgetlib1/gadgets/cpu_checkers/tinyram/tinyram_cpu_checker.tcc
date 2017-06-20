@@ -14,7 +14,7 @@
 #ifndef TINYRAM_CPU_CHECKER_TCC_
 #define TINYRAM_CPU_CHECKER_TCC_
 
-#include "algebra/fields/field_utils.hpp"
+#include <libff/algebra/fields/field_utils.hpp>
 
 namespace libsnark {
 

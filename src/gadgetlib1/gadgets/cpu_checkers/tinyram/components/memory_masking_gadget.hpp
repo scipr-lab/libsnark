@@ -89,6 +89,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/memory_masking_gadget.tcc"
+#include "memory_masking_gadget.tcc"
 
 #endif // MEMORY_MASKING_GADGET_HPP_

@@ -13,7 +13,7 @@
 #ifndef RAM_ZKSNARK_PP_HPP_
 #define RAM_ZKSNARK_PP_HPP_
 
-#include "common/default_types/tinyram_zksnark_pp.hpp"
+#include "tinyram_zksnark_pp.hpp"
 
 namespace libsnark {
 

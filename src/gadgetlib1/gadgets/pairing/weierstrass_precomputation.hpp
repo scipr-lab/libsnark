@@ -15,9 +15,9 @@
 #define WEIERSTRASS_PRECOMPUTATION_HPP_
 
 #include <memory>
-#include "gadgetlib1/gadgets/curves/weierstrass_g1_gadget.hpp"
-#include "gadgetlib1/gadgets/curves/weierstrass_g2_gadget.hpp"
-#include "gadgetlib1/gadgets/pairing/pairing_params.hpp"
+#include "../curves/weierstrass_g1_gadget.hpp"
+#include "../curves/weierstrass_g2_gadget.hpp"
+#include "pairing_params.hpp"
 
 namespace libsnark {
 
@@ -275,6 +275,6 @@ void test_G2_variable_precomp(const std::string &annotation);
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/pairing/weierstrass_precomputation.tcc"
+#include "weierstrass_precomputation.tcc"
 
 #endif // WEIERSTRASS_PRECOMPUTATION_HPP_

@@ -17,7 +17,7 @@
 #ifndef COMPLIANCE_PREDICATE_HPP_
 #define COMPLIANCE_PREDICATE_HPP_
 
-#include "relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
+#include "../../../../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 
 namespace libsnark {
 
@@ -155,6 +155,6 @@ public:
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.tcc"
+#include "compliance_predicate.tcc"
 
 #endif // COMPLIANCE_PREDICATE_HPP_

@@ -14,7 +14,7 @@
 #ifndef BENES_ROUTING_GADGET_TCC_
 #define BENES_ROUTING_GADGET_TCC_
 
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 #include <algorithm>
 

@@ -42,9 +42,9 @@
 
 #include <memory>
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd.hpp"
-#include "zk_proof_systems/zksnark/ram_zksnark/ram_compliance_predicate.hpp"
-#include "zk_proof_systems/zksnark/ram_zksnark/ram_zksnark_params.hpp"
+#include "../../pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd.hpp"
+#include "ram_compliance_predicate.hpp"
+#include "ram_zksnark_params.hpp"
 
 namespace libsnark {
 
@@ -219,6 +219,6 @@ bool ram_zksnark_verifier(const ram_zksnark_verification_key<ram_zksnark_ppT> &v
 
 } // libsnark
 
-#include "zk_proof_systems/zksnark/ram_zksnark/ram_zksnark.tcc"
+#include "ram_zksnark.tcc"
 
 #endif // RAM_ZKSNARK_HPP_

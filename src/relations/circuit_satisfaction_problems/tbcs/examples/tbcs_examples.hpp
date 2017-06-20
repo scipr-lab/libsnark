@@ -13,7 +13,7 @@
 #ifndef TBCS_EXAMPLES_HPP_
 #define TBCS_EXAMPLES_HPP_
 
-#include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
+#include "../tbcs.hpp"
 
 namespace libsnark {
 

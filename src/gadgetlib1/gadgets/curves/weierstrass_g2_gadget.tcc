@@ -14,7 +14,7 @@
 #ifndef WEIERSTRASS_G2_GADGET_TCC_
 #define WEIERSTRASS_G2_GADGET_TCC_
 
-#include "algebra/scalar_multiplication/wnaf.hpp"
+#include <libff/algebra/scalar_multiplication/wnaf.hpp>
 
 namespace libsnark {
 

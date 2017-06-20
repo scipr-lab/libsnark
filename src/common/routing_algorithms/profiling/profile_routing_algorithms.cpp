@@ -11,9 +11,9 @@
 
 #include <algorithm>
 
-#include "common/profiling.hpp"
-#include "common/routing_algorithms/as_waksman_routing_algorithm.hpp"
-#include "common/routing_algorithms/benes_routing_algorithm.hpp"
+#include <libff/common/profiling.hpp>
+#include "../as_waksman_routing_algorithm.hpp"
+#include "../benes_routing_algorithm.hpp"
 
 using namespace libsnark;
 

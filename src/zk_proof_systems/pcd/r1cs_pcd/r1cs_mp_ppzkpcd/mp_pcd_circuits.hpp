@@ -25,12 +25,12 @@
 #ifndef MP_PCD_CIRCUITS_HPP_
 #define MP_PCD_CIRCUITS_HPP_
 
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/gadget_from_r1cs.hpp"
-#include "gadgetlib1/gadgets/hashes/crh_gadget.hpp"
-#include "gadgetlib1/gadgets/set_commitment/set_commitment_gadget.hpp"
-#include "gadgetlib1/gadgets/verifiers/r1cs_ppzksnark_verifier_gadget.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp"
+#include "../../../../gadgetlib1/gadget.hpp"
+#include "../../../../gadgetlib1/gadgets/gadget_from_r1cs.hpp"
+#include "../../../../gadgetlib1/gadgets/hashes/crh_gadget.hpp"
+#include "../../../../gadgetlib1/gadgets/set_commitment/set_commitment_gadget.hpp"
+#include "../../../../gadgetlib1/gadgets/verifiers/r1cs_ppzksnark_verifier_gadget.hpp"
+#include "../compliance_predicate/cp_handler.hpp"
 
 namespace libsnark {
 
@@ -178,6 +178,6 @@ r1cs_primary_input<libff::Fr<ppT> > get_mp_translation_step_pcd_circuit_input(co
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/mp_pcd_circuits.tcc"
+#include "mp_pcd_circuits.tcc"
 
 #endif // MP_PCD_CIRCUITS_HPP_

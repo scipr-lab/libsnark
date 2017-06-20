@@ -5,10 +5,10 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/default_types/ec_pp.hpp"
-#include "common/utils.hpp"
-#include "common/profiling.hpp"
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_gadget.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
+#include <libff/common/utils.hpp>
+#include <libff/common/profiling.hpp>
+#include "../sha256_gadget.hpp"
 
 using namespace libsnark;
 

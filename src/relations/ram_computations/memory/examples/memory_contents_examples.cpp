@@ -11,7 +11,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "relations/ram_computations/memory/examples/memory_contents_examples.hpp"
+#include "memory_contents_examples.hpp"
 
 #include <cstdlib>
 #include <map>

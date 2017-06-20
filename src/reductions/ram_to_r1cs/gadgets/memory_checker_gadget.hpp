@@ -13,7 +13,7 @@
 #ifndef MEMORY_CHECKER_GADGET_HPP_
 #define MEMORY_CHECKER_GADGET_HPP_
 
-#include "reductions/ram_to_r1cs/gadgets/trace_lines.hpp"
+#include "trace_lines.hpp"
 
 namespace libsnark {
 
@@ -53,6 +53,6 @@ public:
 
 } // libsnark
 
-#include "reductions/ram_to_r1cs/gadgets/memory_checker_gadget.tcc"
+#include "memory_checker_gadget.tcc"
 
 #endif // MEMORY_CHECKER_GADGET_HPP_

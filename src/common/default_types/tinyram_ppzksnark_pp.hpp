@@ -13,8 +13,8 @@
 #ifndef TINYRAM_PPZKSNARK_PP_HPP_
 #define TINYRAM_PPZKSNARK_PP_HPP_
 
-#include "common/default_types/r1cs_ppzksnark_pp.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_params.hpp"
+#include "r1cs_ppzksnark_pp.hpp"
+#include "../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"
 
 namespace libsnark {
 

@@ -18,7 +18,7 @@
 #ifndef ED25519SIG_HPP_
 #define ED25519SIG_HPP_
 
-#include "zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_signature.hpp"
+#include "../../r1cs_ppzkadsnark_signature.hpp"
 
 namespace libsnark {
 

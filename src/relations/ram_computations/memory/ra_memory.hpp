@@ -12,7 +12,7 @@
 #ifndef RA_MEMORY_HPP_
 #define RA_MEMORY_HPP_
 
-#include "relations/ram_computations/memory/memory_interface.hpp"
+#include "memory_interface.hpp"
 
 namespace libsnark {
 

@@ -195,6 +195,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/fields/fp4_gadgets.tcc"
+#include "fp4_gadgets.tcc"
 
 #endif // FP4_GADGETS_HPP_

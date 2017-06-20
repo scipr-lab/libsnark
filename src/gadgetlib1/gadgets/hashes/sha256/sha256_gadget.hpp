@@ -12,10 +12,10 @@
 #ifndef SHA256_GADGET_HPP_
 #define SHA256_GADGET_HPP_
 
-#include "common/data_structures/merkle_tree.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_components.hpp"
+#include "../../../../common/data_structures/merkle_tree.hpp"
+#include "../../basic_gadgets.hpp"
+#include "../hash_io.hpp"
+#include "sha256_components.hpp"
 
 namespace libsnark {
 
@@ -93,6 +93,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_gadget.tcc"
+#include "sha256_gadget.tcc"
 
 #endif // SHA256_GADGET_HPP_

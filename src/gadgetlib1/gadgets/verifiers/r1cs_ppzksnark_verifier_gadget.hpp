@@ -18,12 +18,12 @@
 #ifndef R1CS_PPZKSNARK_VERIFIER_GADGET_HPP_
 #define R1CS_PPZKSNARK_VERIFIER_GADGET_HPP_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/curves/weierstrass_g1_gadget.hpp"
-#include "gadgetlib1/gadgets/curves/weierstrass_g2_gadget.hpp"
-#include "gadgetlib1/gadgets/pairing/pairing_checks.hpp"
-#include "gadgetlib1/gadgets/pairing/pairing_params.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include "../basic_gadgets.hpp"
+#include "../curves/weierstrass_g1_gadget.hpp"
+#include "../curves/weierstrass_g2_gadget.hpp"
+#include "../pairing/pairing_checks.hpp"
+#include "../pairing/pairing_params.hpp"
+#include "../../../zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
 
 namespace libsnark {
 
@@ -245,6 +245,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/verifiers/r1cs_ppzksnark_verifier_gadget.tcc"
+#include "r1cs_ppzksnark_verifier_gadget.tcc"
 
 #endif // R1CS_PPZKSNARK_VERIFIER_GADGET_HPP_

@@ -12,9 +12,9 @@
 #ifndef SET_COMMITMENT_HPP_
 #define SET_COMMITMENT_HPP_
 
-#include "common/utils.hpp"
-#include "common/data_structures/merkle_tree.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp" // TODO: the current structure is suboptimal
+#include <libff/common/utils.hpp>
+#include "merkle_tree.hpp"
+#include "../../gadgetlib1/gadgets/hashes/hash_io.hpp" // TODO: the current structure is suboptimal
 
 namespace libsnark {
 
@@ -55,6 +55,6 @@ public:
 /* note that set_commitment has both .cpp, for implementation of
    non-templatized code (methods of set_membership_proof) and .tcc
    (implementation of set_commitment_accumulator<HashT> */
-#include "common/data_structures/set_commitment.tcc"
+#include "set_commitment.tcc"
 
 #endif // SET_COMMITMENT_HPP_

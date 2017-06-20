@@ -16,8 +16,8 @@
 #include <memory>
 #include <vector>
 
-#include "common/data_structures/merkle_tree.hpp"
-#include "relations/ram_computations/memory/memory_interface.hpp"
+#include "../../../common/data_structures/merkle_tree.hpp"
+#include "memory_interface.hpp"
 
 namespace libsnark {
 
@@ -45,6 +45,6 @@ public:
 
 } // libsnark
 
-#include "relations/ram_computations/memory/delegated_ra_memory.tcc"
+#include "delegated_ra_memory.tcc"
 
 #endif // DELEGATED_RA_MEMORY_HPP_

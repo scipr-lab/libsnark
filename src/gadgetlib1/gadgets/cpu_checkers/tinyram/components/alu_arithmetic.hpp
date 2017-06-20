@@ -15,8 +15,8 @@
 #define ALU_ARITHMETIC_HPP_
 #include <memory>
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "tinyram_protoboard.hpp"
+#include "../../../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -679,6 +679,6 @@ void test_ALU_shl_gadget(const size_t w);
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_arithmetic.tcc"
+#include "alu_arithmetic.tcc"
 
 #endif // ALU_ARITHMETIC_HPP_

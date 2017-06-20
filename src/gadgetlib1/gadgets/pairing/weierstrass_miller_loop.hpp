@@ -15,8 +15,8 @@
 #define WEIERSTRASS_MILLER_LOOP_HPP_
 
 #include <memory>
-#include "gadgetlib1/gadgets/pairing/pairing_params.hpp"
-#include "gadgetlib1/gadgets/pairing/weierstrass_precomputation.hpp"
+#include "pairing_params.hpp"
+#include "weierstrass_precomputation.hpp"
 
 namespace libsnark {
 
@@ -251,6 +251,6 @@ void test_mnt_e_times_e_over_e_miller_loop(const std::string &annotation);
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/pairing/weierstrass_miller_loop.tcc"
+#include "weierstrass_miller_loop.tcc"
 
 #endif // WEIERSTRASS_MILLER_LOOP_HPP_

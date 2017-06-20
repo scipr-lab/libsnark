@@ -130,6 +130,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/fields/fp3_gadgets.tcc"
+#include "fp3_gadgets.tcc"
 
 #endif // FP3_GADGETS_HPP_

@@ -11,7 +11,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/data_structures/integer_permutation.hpp"
+#include "integer_permutation.hpp"
 
 #include <algorithm>
 #include <cassert>

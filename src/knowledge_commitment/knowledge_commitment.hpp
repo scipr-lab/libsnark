@@ -14,8 +14,8 @@
 #ifndef KNOWLEDGE_COMMITMENT_HPP_
 #define KNOWLEDGE_COMMITMENT_HPP_
 
-#include "algebra/fields/fp.hpp"
-#include "common/data_structures/sparse_vector.hpp"
+#include <libff/algebra/fields/fp.hpp>
+#include "../common/data_structures/sparse_vector.hpp"
 
 namespace libsnark {
 
@@ -79,6 +79,6 @@ using knowledge_commitment_vector = sparse_vector<knowledge_commitment<T1, T2> >
 
 } // libsnark
 
-#include "knowledge_commitment/knowledge_commitment.tcc"
+#include "knowledge_commitment.tcc"
 
 #endif // KNOWLEDGE_COMMITMENT_HPP_

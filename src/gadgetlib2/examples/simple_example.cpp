@@ -5,11 +5,11 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "gadgetlib2/examples/simple_example.hpp"
+#include "simple_example.hpp"
 
-#include "gadgetlib2/adapters.hpp"
-#include "gadgetlib2/gadget.hpp"
-#include "gadgetlib2/integration.hpp"
+#include "../adapters.hpp"
+#include "../gadget.hpp"
+#include "../integration.hpp"
 
 namespace libsnark {
 

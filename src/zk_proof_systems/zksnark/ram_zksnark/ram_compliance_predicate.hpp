@@ -37,12 +37,12 @@
 #ifndef RAM_COMPLIANCE_PREDICATE_HPP_
 #define RAM_COMPLIANCE_PREDICATE_HPP_
 
-#include "gadgetlib1/gadgets/delegated_ra_memory/memory_load_gadget.hpp"
-#include "gadgetlib1/gadgets/delegated_ra_memory/memory_load_store_gadget.hpp"
-#include "relations/ram_computations/memory/delegated_ra_memory.hpp"
-#include "relations/ram_computations/rams/ram_params.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp"
+#include "../../../gadgetlib1/gadgets/delegated_ra_memory/memory_load_gadget.hpp"
+#include "../../../gadgetlib1/gadgets/delegated_ra_memory/memory_load_store_gadget.hpp"
+#include "../../../relations/ram_computations/memory/delegated_ra_memory.hpp"
+#include "../../../relations/ram_computations/rams/ram_params.hpp"
+#include "../../pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
+#include "../../pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp"
 
 namespace libsnark {
 
@@ -243,6 +243,6 @@ public:
 
 } // libsnark
 
-#include "zk_proof_systems/zksnark/ram_zksnark/ram_compliance_predicate.tcc"
+#include "ram_compliance_predicate.tcc"
 
 #endif // RAM_COMPLIANCE_PREDICATE_HPP_

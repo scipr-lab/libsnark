@@ -14,7 +14,7 @@
 #ifndef ALU_CONTROL_FLOW_TCC_
 #define ALU_CONTROL_FLOW_TCC_
 
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

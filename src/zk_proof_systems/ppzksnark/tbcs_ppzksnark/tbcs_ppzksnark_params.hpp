@@ -12,7 +12,7 @@
 #ifndef TBCS_PPZKSNARK_PARAMS_HPP_
 #define TBCS_PPZKSNARK_PARAMS_HPP_
 
-#include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
+#include "../../../relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
 
 namespace libsnark {
 

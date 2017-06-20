@@ -8,8 +8,8 @@
 #ifndef SIMPLE_EXAMPLE_HPP_
 #define SIMPLE_EXAMPLE_HPP_
 
-#include "common/default_types/ec_pp.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
+#include "../../relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 
 namespace libsnark {
 

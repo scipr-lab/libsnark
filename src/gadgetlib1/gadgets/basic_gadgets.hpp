@@ -11,7 +11,7 @@
 #include <cassert>
 #include <memory>
 
-#include "gadgetlib1/gadget.hpp"
+#include "../gadget.hpp"
 
 namespace libsnark {
 
@@ -346,6 +346,6 @@ void create_linear_combination_witness(protoboard<FieldT> &pb,
                                        const VarT &target);
 
 } // libsnark
-#include "gadgetlib1/gadgets/basic_gadgets.tcc"
+#include "basic_gadgets.tcc"
 
 #endif // BASIC_GADGETS_HPP_

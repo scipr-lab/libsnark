@@ -13,11 +13,11 @@
 #include <boost/program_options.hpp>
 #endif
 
-#include "common/default_types/tinyram_ppzksnark_pp.hpp"
-#include "common/profiling.hpp"
-#include "reductions/ram_to_r1cs/ram_to_r1cs.hpp"
-#include "relations/ram_computations/rams/tinyram/tinyram_params.hpp"
-#include "zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp"
+#include "../../../common/default_types/tinyram_ppzksnark_pp.hpp"
+#include <libff/common/profiling.hpp>
+#include "../ram_to_r1cs.hpp"
+#include "../../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"
+#include "../../../zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp"
 
 #ifndef MINDEPS
 namespace po = boost::program_options;

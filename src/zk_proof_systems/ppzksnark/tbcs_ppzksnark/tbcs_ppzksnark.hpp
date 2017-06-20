@@ -34,9 +34,9 @@
 #ifndef TBCS_PPZKSNARK_HPP_
 #define TBCS_PPZKSNARK_HPP_
 
-#include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
-#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.hpp"
-#include "zk_proof_systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark_params.hpp"
+#include "../../../relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
+#include "../uscs_ppzksnark/uscs_ppzksnark.hpp"
+#include "tbcs_ppzksnark_params.hpp"
 
 namespace libsnark {
 
@@ -255,6 +255,6 @@ bool tbcs_ppzksnark_online_verifier_strong_IC(const tbcs_ppzksnark_processed_ver
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark.tcc"
+#include "tbcs_ppzksnark.tcc"
 
 #endif // TBCS_PPZKSNARK_HPP_

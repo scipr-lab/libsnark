@@ -15,8 +15,8 @@
 #ifndef WEIERSTRASS_G1_GADGET_HPP_
 #define WEIERSTRASS_G1_GADGET_HPP_
 
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/pairing/pairing_params.hpp"
+#include "../../gadget.hpp"
+#include "../pairing/pairing_params.hpp"
 
 namespace libsnark {
 
@@ -148,6 +148,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/curves/weierstrass_g1_gadget.tcc"
+#include "weierstrass_g1_gadget.tcc"
 
 #endif // WEIERSTRASS_G1_GADGET_TCC_

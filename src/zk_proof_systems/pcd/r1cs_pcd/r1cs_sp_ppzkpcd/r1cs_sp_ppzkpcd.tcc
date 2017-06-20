@@ -18,9 +18,9 @@
 #include <cassert>
 #include <iostream>
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
-#include "zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/sp_pcd_circuits.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
+#include "sp_pcd_circuits.hpp"
 
 namespace libsnark {
 

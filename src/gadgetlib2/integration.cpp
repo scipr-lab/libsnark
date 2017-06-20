@@ -5,8 +5,8 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "gadgetlib2/adapters.hpp"
-#include "gadgetlib2/integration.hpp"
+#include "adapters.hpp"
+#include "integration.hpp"
 
 namespace libsnark {
 

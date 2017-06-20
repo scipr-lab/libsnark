@@ -17,7 +17,7 @@
   Will probably go away in more general exp refactoring.
 */
 
-#include "knowledge_commitment/knowledge_commitment.hpp"
+#include "knowledge_commitment.hpp"
 
 namespace libsnark {
 
@@ -50,6 +50,6 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
 
 } // libsnark
 
-#include "knowledge_commitment/kc_multiexp.tcc"
+#include "kc_multiexp.tcc"
 
 #endif // KC_MULTIEXP_HPP_

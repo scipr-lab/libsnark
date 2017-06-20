@@ -8,10 +8,10 @@
 #ifndef SET_MEMBERSHIP_PROOF_VARIABLE_HPP_
 #define SET_MEMBERSHIP_PROOF_VARIABLE_HPP_
 
-#include "common/data_structures/set_commitment.hpp"
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
-#include "gadgetlib1/gadgets/merkle_tree/merkle_authentication_path_variable.hpp"
+#include "../../../common/data_structures/set_commitment.hpp"
+#include "../../gadget.hpp"
+#include "../hashes/hash_io.hpp"
+#include "../merkle_tree/merkle_authentication_path_variable.hpp"
 
 namespace libsnark {
 
@@ -38,6 +38,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/set_commitment/set_membership_proof_variable.tcc"
+#include "set_membership_proof_variable.tcc"
 
 #endif // SET_MEMBERSHIP_PROOF_VARIABLE_HPP

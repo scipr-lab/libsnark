@@ -22,7 +22,7 @@
 #ifndef QAP_HPP_
 #define QAP_HPP_
 
-#include "evaluation_domain/evaluation_domain.hpp"
+#include <libfqfft/evaluation_domain/evaluation_domain.hpp>
 
 namespace libsnark {
 
@@ -188,6 +188,6 @@ public:
 
 } // libsnark
 
-#include "relations/arithmetic_programs/qap/qap.tcc"
+#include "qap.tcc"
 
 #endif // QAP_HPP_

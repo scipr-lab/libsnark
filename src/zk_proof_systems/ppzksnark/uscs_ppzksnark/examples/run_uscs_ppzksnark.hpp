@@ -13,7 +13,7 @@
 #ifndef RUN_USCS_PPZKSNARK_HPP_
 #define RUN_USCS_PPZKSNARK_HPP_
 
-#include "relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
+#include "../../../../relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
 
 namespace libsnark {
 
@@ -30,6 +30,6 @@ bool run_uscs_ppzksnark(const uscs_example<libff::Fr<ppT> > &example,
 
 } // libsnark
 
-#include "zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/run_uscs_ppzksnark.tcc"
+#include "run_uscs_ppzksnark.tcc"
 
 #endif // RUN_USCS_PPZKSNARK_HPP_

@@ -9,8 +9,8 @@
 
 #include <vector>
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/hashes/hash_io.hpp"
+#include "../basic_gadgets.hpp"
+#include "hash_io.hpp"
 
 namespace libsnark {
 
@@ -37,6 +37,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/hashes/digest_selector_gadget.tcc"
+#include "digest_selector_gadget.tcc"
 
 #endif // DIGEST_SELECTOR_GADGET_HPP_

@@ -14,7 +14,7 @@
 #ifndef TBCS_PPZKSNARK_TCC_
 #define TBCS_PPZKSNARK_TCC_
 
-#include "reductions/tbcs_to_uscs/tbcs_to_uscs.hpp"
+#include "../../../reductions/tbcs_to_uscs/tbcs_to_uscs.hpp"
 
 namespace libsnark {
 

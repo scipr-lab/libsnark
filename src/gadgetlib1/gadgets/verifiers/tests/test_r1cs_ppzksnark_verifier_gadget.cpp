@@ -4,16 +4,16 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-#include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
-#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "algebra/fields/field_utils.hpp"
-#include "gadgetlib1/gadgets/fields/fp2_gadgets.hpp"
-#include "gadgetlib1/gadgets/fields/fp3_gadgets.hpp"
-#include "gadgetlib1/gadgets/fields/fp4_gadgets.hpp"
-#include "gadgetlib1/gadgets/fields/fp6_gadgets.hpp"
-#include "gadgetlib1/gadgets/verifiers/r1cs_ppzksnark_verifier_gadget.hpp"
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
+#include <libff/algebra/curves/mnt/mnt4/mnt4_pp.hpp>
+#include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
+#include <libff/algebra/fields/field_utils.hpp>
+#include "../../fields/fp2_gadgets.hpp"
+#include "../../fields/fp3_gadgets.hpp"
+#include "../../fields/fp4_gadgets.hpp"
+#include "../../fields/fp6_gadgets.hpp"
+#include "../r1cs_ppzksnark_verifier_gadget.hpp"
+#include "../../../../relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include "../../../../zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp"
 
 using namespace libsnark;
 

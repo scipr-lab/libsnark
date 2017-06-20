@@ -14,7 +14,7 @@
 
 #include <map>
 #include <vector>
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 
@@ -66,6 +66,6 @@ public:
 
 } // libsnark
 
-#include "common/data_structures/merkle_tree.tcc"
+#include "merkle_tree.tcc"
 
 #endif // MERKLE_TREE_HPP_

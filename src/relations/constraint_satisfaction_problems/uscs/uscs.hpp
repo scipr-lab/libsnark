@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-#include "relations/variable.hpp"
+#include "../../variable.hpp"
 
 namespace libsnark {
 
@@ -119,6 +119,6 @@ public:
 
 } // libsnark
 
-#include "relations/constraint_satisfaction_problems/uscs/uscs.tcc"
+#include "uscs.tcc"
 
 #endif // USCS_HPP_

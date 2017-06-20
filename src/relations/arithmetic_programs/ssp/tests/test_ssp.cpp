@@ -10,12 +10,12 @@
 #include <cstring>
 #include <vector>
 
-#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "algebra/fields/field_utils.hpp"
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
-#include "reductions/uscs_to_ssp/uscs_to_ssp.hpp"
-#include "relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
+#include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
+#include <libff/algebra/fields/field_utils.hpp>
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
+#include "../../../../reductions/uscs_to_ssp/uscs_to_ssp.hpp"
+#include "../../../constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
 
 using namespace libsnark;
 

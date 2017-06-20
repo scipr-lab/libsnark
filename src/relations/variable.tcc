@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "algebra/fields/bigint.hpp"
+#include <libff/algebra/fields/bigint.hpp>
 
 namespace libsnark {
 

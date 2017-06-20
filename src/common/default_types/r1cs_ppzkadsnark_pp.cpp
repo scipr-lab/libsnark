@@ -9,7 +9,7 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "common/default_types/r1cs_ppzkadsnark_pp.hpp"
+#include "r1cs_ppzkadsnark_pp.hpp"
 
 namespace libsnark {
 

@@ -12,7 +12,7 @@
 #ifndef SHA256_AUX_HPP_
 #define SHA256_AUX_HPP_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
+#include "../../basic_gadgets.hpp"
 
 namespace libsnark {
 
@@ -155,6 +155,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/hashes/sha256/sha256_aux.tcc"
+#include "sha256_aux.tcc"
 
 #endif // SHA256_AUX_HPP_

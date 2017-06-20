@@ -22,7 +22,7 @@
 #ifndef SSP_HPP_
 #define SSP_HPP_
 
-#include "evaluation_domain/evaluation_domain.hpp"
+#include <libfqfft/evaluation_domain/evaluation_domain.hpp>
 
 namespace libsnark {
 
@@ -173,6 +173,6 @@ public:
 
 } // libsnark
 
-#include "relations/arithmetic_programs/ssp/ssp.tcc"
+#include "ssp.tcc"
 
 #endif // SSP_HPP_

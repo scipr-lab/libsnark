@@ -6,12 +6,12 @@
  *****************************************************************************/
 
 #ifdef CURVE_BN128
-#include "algebra/curves/bn128/bn128_pp.hpp"
+#include <libff/algebra/curves/bn128/bn128_pp.hpp>
 #endif
-#include "algebra/curves/edwards/edwards_pp.hpp"
-#include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
-#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "gadgetlib1/gadgets/hashes/knapsack/knapsack_gadget.hpp"
+#include <libff/algebra/curves/edwards/edwards_pp.hpp>
+#include <libff/algebra/curves/mnt/mnt4/mnt4_pp.hpp>
+#include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
+#include "../knapsack_gadget.hpp"
 
 namespace libsnark {
 

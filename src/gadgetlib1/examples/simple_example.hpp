@@ -8,7 +8,7 @@
 #ifndef SIMPLE_EXAMPLE_HPP_
 #define SIMPLE_EXAMPLE_HPP_
 
-#include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
+#include "../../relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 
 namespace libsnark {
 
@@ -18,6 +18,6 @@ r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constrain
 
 } // libsnark
 
-#include "gadgetlib1/examples/simple_example.tcc"
+#include "simple_example.tcc"
 
 #endif // SIMPLE_EXAMPLE_HPP_

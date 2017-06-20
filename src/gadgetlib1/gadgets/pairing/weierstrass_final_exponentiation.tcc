@@ -14,8 +14,8 @@
 #ifndef WEIERSTRASS_FINAL_EXPONENTIATION_TCC_
 #define WEIERSTRASS_FINAL_EXPONENTIATION_TCC_
 
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/pairing/mnt_pairing_params.hpp"
+#include "../basic_gadgets.hpp"
+#include "mnt_pairing_params.hpp"
 
 namespace libsnark {
 

@@ -8,8 +8,8 @@
 #ifndef BASIC_GADGETS_TCC_
 #define BASIC_GADGETS_TCC_
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

@@ -12,7 +12,7 @@
 #ifndef MEMORY_CONTENTS_EXAMPLES_HPP_
 #define MEMORY_CONTENTS_EXAMPLES_HPP_
 
-#include "relations/ram_computations/memory/memory_interface.hpp"
+#include "../memory_interface.hpp"
 
 namespace libsnark {
 

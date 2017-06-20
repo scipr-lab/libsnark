@@ -12,7 +12,7 @@
 #ifndef BACS_PPZKSNARK_PARAMS_HPP_
 #define BACS_PPZKSNARK_PARAMS_HPP_
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
+#include "../../../relations/circuit_satisfaction_problems/bacs/bacs.hpp"
 
 namespace libsnark {
 

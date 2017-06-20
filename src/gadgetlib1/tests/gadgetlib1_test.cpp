@@ -8,8 +8,8 @@
  *****************************************************************************/
 
 #include <gtest/gtest.h>
-#include "gadgetlib1/examples/simple_example.hpp"
-#include "zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp"
+#include "../examples/simple_example.hpp"
+#include "../../zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp"
 
 namespace {
 

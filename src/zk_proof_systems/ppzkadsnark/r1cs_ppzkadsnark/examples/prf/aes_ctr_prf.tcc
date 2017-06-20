@@ -10,7 +10,7 @@
  *****************************************************************************/
 
 #include "gmp.h"
-#include "common/default_types/r1cs_ppzkadsnark_pp.hpp"
+#include "../../../../../common/default_types/r1cs_ppzkadsnark_pp.hpp"
 #include "third_party/libsnark-supercop/include/crypto_core_aes128encrypt.h"
 #include "third_party/libsnark-supercop/include/randombytes.h"
 

@@ -7,7 +7,7 @@
 #ifndef SET_COMMITMENT_GADGET_TCC_
 #define SET_COMMITMENT_GADGET_TCC_
 
-#include "common/data_structures/set_commitment.hpp"
+#include "../../../common/data_structures/set_commitment.hpp"
 
 namespace libsnark {
 

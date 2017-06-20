@@ -11,10 +11,10 @@
 
 #include <algorithm>
 
-#include "common/default_types/ec_pp.hpp"
-#include "common/profiling.hpp"
-#include "gadgetlib1/gadgets/routing/benes_routing_gadget.hpp"
-#include "gadgetlib1/gadgets/routing/as_waksman_routing_gadget.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
+#include <libff/common/profiling.hpp>
+#include "../benes_routing_gadget.hpp"
+#include "../as_waksman_routing_gadget.hpp"
 
 using namespace libsnark;
 

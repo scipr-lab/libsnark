@@ -12,7 +12,7 @@
 #ifndef ACCUMULATION_VECTOR_HPP_
 #define ACCUMULATION_VECTOR_HPP_
 
-#include "common/data_structures/sparse_vector.hpp"
+#include "sparse_vector.hpp"
 
 namespace libsnark {
 
@@ -69,6 +69,6 @@ std::istream& operator>>(std::istream &in, accumulation_vector<T> &v);
 
 } // libsnark
 
-#include "common/data_structures/accumulation_vector.tcc"
+#include "accumulation_vector.tcc"
 
 #endif // ACCUMULATION_VECTOR_HPP_

@@ -15,8 +15,8 @@
 #ifndef CP_HANDLER_HPP_
 #define CP_HANDLER_HPP_
 
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp"
-#include "gadgetlib1/protoboard.hpp"
+#include "compliance_predicate.hpp"
+#include "../../../../gadgetlib1/protoboard.hpp"
 
 namespace libsnark {
 
@@ -109,6 +109,6 @@ public:
 
 } // libsnark
 
-#include "zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.tcc"
+#include "cp_handler.tcc"
 
 #endif // CP_HANDLER_HPP_

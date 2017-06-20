@@ -29,8 +29,8 @@
 #ifndef TBCS_TO_USCS_HPP_
 #define TBCS_TO_USCS_HPP_
 
-#include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"
-#include "relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
+#include "../../relations/constraint_satisfaction_problems/uscs/uscs.hpp"
+#include "../../relations/circuit_satisfaction_problems/tbcs/tbcs.hpp"
 
 namespace libsnark {
 
@@ -50,6 +50,6 @@ uscs_variable_assignment<FieldT> tbcs_to_uscs_witness_map(const tbcs_circuit &ci
 
 } // libsnark
 
-#include "reductions/tbcs_to_uscs/tbcs_to_uscs.tcc"
+#include "tbcs_to_uscs.tcc"
 
 #endif // TBCS_TO_USCS_HPP_

@@ -15,7 +15,7 @@
 #ifndef RAM_EXAMPLES_TCC_
 #define RAM_EXAMPLES_TCC_
 
-#include "relations/ram_computations/rams/tinyram/tinyram_aux.hpp"
+#include "../tinyram/tinyram_aux.hpp"
 
 namespace libsnark {
 

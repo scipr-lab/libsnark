@@ -13,7 +13,7 @@
 #ifndef BACS_EXAMPLES_HPP_
 #define BACS_EXAMPLES_HPP_
 
-#include "relations/circuit_satisfaction_problems/bacs/bacs.hpp"
+#include "../bacs.hpp"
 
 namespace libsnark {
 
@@ -66,6 +66,6 @@ bacs_example<FieldT> generate_bacs_example(const size_t primary_input_size,
 
 } // libsnark
 
-#include "relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.tcc"
+#include "bacs_examples.tcc"
 
 #endif // BACS_EXAMPLES_HPP_

@@ -28,12 +28,12 @@
 #include <cstddef>
 #include <memory>
 
-#include "common/serialization.hpp"
-#include "gadgetlib1/gadget.hpp"
-#include "gadgetlib1/gadgets/basic_gadgets.hpp"
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/components/fooram_protoboard.hpp"
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/components/bar_gadget.hpp"
-#include "relations/ram_computations/memory/memory_interface.hpp"
+#include <libff/common/serialization.hpp>
+#include "../../../gadget.hpp"
+#include "../../basic_gadgets.hpp"
+#include "components/fooram_protoboard.hpp"
+#include "components/bar_gadget.hpp"
+#include "../../../../relations/ram_computations/memory/memory_interface.hpp"
 
 namespace libsnark {
 
@@ -102,6 +102,6 @@ public:
 
 } // libsnark
 
-#include "gadgetlib1/gadgets/cpu_checkers/fooram/fooram_cpu_checker.tcc"
+#include "fooram_cpu_checker.tcc"
 
 #endif // FORAM_CPU_CHECKER_HPP_
