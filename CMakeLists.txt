@@ -143,8 +143,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 # libfqfft
 find_path(LIBFQFFT_INCLUDE_DIR NAMES libfqfft)
-set(LIBFQFFT_DIRECTORY ${LIBFQFFT_INCLUDE_DIR}/libfqfft)
-include_directories(${LIBFQFFT_DIRECTORY})
+include_directories(${LIBFQFFT_INCLUDE_DIR})
 
 # libff
 find_path(LIBFF_INCLUDE_DIR NAMES libff)
