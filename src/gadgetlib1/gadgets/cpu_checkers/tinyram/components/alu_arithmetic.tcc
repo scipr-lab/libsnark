@@ -14,6 +14,8 @@
 #ifndef ALU_ARITHMETIC_TCC_
 #define ALU_ARITHMETIC_TCC_
 
+#include <functional>
+
 #include "common/profiling.hpp"
 #include "common/utils.hpp"
 
