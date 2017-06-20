@@ -16,7 +16,7 @@
 
 #include <cassert>
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

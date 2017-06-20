@@ -12,7 +12,7 @@
  *****************************************************************************/
 
 #include "constraint_profiling.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

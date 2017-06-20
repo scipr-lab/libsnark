@@ -19,9 +19,9 @@
 #include <sstream>
 
 #include "../../../reductions/uscs_to_ssp/uscs_to_ssp.hpp"
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
-#include "algebra/scalar_multiplication/multiexp.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 #include "../../../relations/arithmetic_programs/ssp/ssp.hpp"
 
 namespace libsnark {

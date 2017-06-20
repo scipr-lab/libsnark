@@ -12,7 +12,7 @@
 #ifndef R1CS_MP_PPZKPCD_PARAMS_HPP_
 #define R1CS_MP_PPZKPCD_PARAMS_HPP_
 
-#include "algebra/curves/public_params.hpp"
+#include <libff/algebra/curves/public_params.hpp>
 #include "../compliance_predicate/compliance_predicate.hpp"
 #include "../r1cs_pcd_params.hpp"
 

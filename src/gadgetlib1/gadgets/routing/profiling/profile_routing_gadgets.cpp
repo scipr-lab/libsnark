@@ -11,8 +11,8 @@
 
 #include <algorithm>
 
-#include "common/default_types/ec_pp.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
+#include <libff/common/profiling.hpp>
 #include "../benes_routing_gadget.hpp"
 #include "../as_waksman_routing_gadget.hpp"
 

@@ -8,7 +8,7 @@
 #ifndef INTEGRATION_HPP_
 #define INTEGRATION_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 #include "../relations/constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "protoboard.hpp"
 

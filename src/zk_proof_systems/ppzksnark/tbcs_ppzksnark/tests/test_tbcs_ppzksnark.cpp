@@ -12,7 +12,7 @@
 #include <cstdio>
 
 #include "../../../../common/default_types/tbcs_ppzksnark_pp.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 #include "../../../../relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp"
 #include "../examples/run_tbcs_ppzksnark.hpp"
 

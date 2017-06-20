@@ -14,7 +14,7 @@
 #endif
 
 #include "../../../../common/default_types/tinyram_ppzksnark_pp.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 #include "../../../../reductions/ram_to_r1cs/ram_to_r1cs.hpp"
 #include "../ram_ppzksnark.hpp"
 #include "../../../../relations/ram_computations/rams/tinyram/tinyram_params.hpp"

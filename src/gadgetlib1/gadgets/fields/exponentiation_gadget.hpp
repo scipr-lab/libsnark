@@ -14,8 +14,8 @@
 
 #include <memory>
 #include <vector>
-#include "algebra/fields/bigint.hpp"
-#include "algebra/scalar_multiplication/wnaf.hpp"
+#include <libff/algebra/fields/bigint.hpp>
+#include <libff/algebra/scalar_multiplication/wnaf.hpp>
 #include "../../gadget.hpp"
 
 namespace libsnark {

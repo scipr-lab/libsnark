@@ -12,7 +12,7 @@
 #ifndef SET_COMMITMENT_HPP_
 #define SET_COMMITMENT_HPP_
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "merkle_tree.hpp"
 #include "../../gadgetlib1/gadgets/hashes/hash_io.hpp" // TODO: the current structure is suboptimal
 

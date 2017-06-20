@@ -14,8 +14,8 @@
 
 /*********************** Define default PCD cycle ***************************/
 
-#include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
-#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
+#include <libff/algebra/curves/mnt/mnt4/mnt4_pp.hpp>
+#include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
 
 namespace libsnark {
 

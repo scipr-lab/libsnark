@@ -12,7 +12,7 @@
 #ifndef LIBSNARK_SERIALIZATION_HPP_
 #define LIBSNARK_SERIALIZATION_HPP_
 
-#include "common/serialization.hpp"
+#include <libff/common/serialization.hpp>
 
 namespace libsnark {
     using libff::consume_newline;

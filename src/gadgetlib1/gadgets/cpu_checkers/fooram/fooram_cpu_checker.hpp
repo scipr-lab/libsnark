@@ -28,7 +28,7 @@
 #include <cstddef>
 #include <memory>
 
-#include "common/serialization.hpp"
+#include <libff/common/serialization.hpp>
 #include "../../../gadget.hpp"
 #include "../../basic_gadgets.hpp"
 #include "components/fooram_protoboard.hpp"

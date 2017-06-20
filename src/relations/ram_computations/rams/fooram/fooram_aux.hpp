@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "../../memory/memory_interface.hpp"
 
 namespace libsnark {

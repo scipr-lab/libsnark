@@ -14,10 +14,10 @@
 #ifndef SSP_TCC_
 #define SSP_TCC_
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 #include "evaluation_domain/evaluation_domain.hpp"
-#include "algebra/scalar_multiplication/multiexp.hpp"
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 
 namespace libsnark {
 

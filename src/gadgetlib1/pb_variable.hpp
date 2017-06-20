@@ -11,7 +11,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "../relations/variable.hpp"
 
 namespace libsnark {

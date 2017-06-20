@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "../../../../common/default_types/r1cs_ppzkadsnark_pp.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 #include "run_r1cs_ppzkadsnark.hpp"
 
 using namespace libsnark;

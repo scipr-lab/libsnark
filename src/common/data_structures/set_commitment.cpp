@@ -6,7 +6,7 @@
  *****************************************************************************/
 
 #include "set_commitment.hpp"
-#include "common/serialization.hpp"
+#include <libff/common/serialization.hpp>
 
 namespace libsnark {
 

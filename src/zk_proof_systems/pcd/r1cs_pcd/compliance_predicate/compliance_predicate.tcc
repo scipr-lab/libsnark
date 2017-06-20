@@ -14,7 +14,7 @@
 #ifndef COMPLIANCE_PREDICATE_TCC_
 #define COMPLIANCE_PREDICATE_TCC_
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "../r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd_params.hpp"
 
 namespace libsnark {

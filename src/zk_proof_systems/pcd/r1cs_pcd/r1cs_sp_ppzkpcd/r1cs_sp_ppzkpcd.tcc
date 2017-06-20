@@ -18,8 +18,8 @@
 #include <cassert>
 #include <iostream>
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 #include "sp_pcd_circuits.hpp"
 
 namespace libsnark {

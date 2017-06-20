@@ -20,8 +20,8 @@
 #define BACS_TCC_
 
 #include <algorithm>
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

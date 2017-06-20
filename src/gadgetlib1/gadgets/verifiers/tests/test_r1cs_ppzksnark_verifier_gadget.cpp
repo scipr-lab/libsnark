@@ -4,9 +4,9 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-#include "algebra/curves/mnt/mnt4/mnt4_pp.hpp"
-#include "algebra/curves/mnt/mnt6/mnt6_pp.hpp"
-#include "algebra/fields/field_utils.hpp"
+#include <libff/algebra/curves/mnt/mnt4/mnt4_pp.hpp>
+#include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
+#include <libff/algebra/fields/field_utils.hpp>
 #include "../../fields/fp2_gadgets.hpp"
 #include "../../fields/fp3_gadgets.hpp"
 #include "../../fields/fp4_gadgets.hpp"

@@ -13,7 +13,7 @@
 #ifndef R1CS_GG_PPZKSNARK_PP_HPP_
 #define R1CS_GG_PPZKSNARK_PP_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 
 namespace libsnark {
 typedef libff::default_ec_pp default_r1cs_gg_ppzksnark_pp;

@@ -16,7 +16,7 @@
 #include <iostream>
 #include <map>
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "../../../constraint_satisfaction_problems/r1cs/r1cs.hpp"
 #include "../../memory/memory_interface.hpp"
 #include "../ram_params.hpp"
