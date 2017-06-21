@@ -16,8 +16,8 @@
 
 #include <functional>
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

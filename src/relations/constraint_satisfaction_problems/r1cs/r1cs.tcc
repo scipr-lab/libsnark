@@ -20,9 +20,9 @@
 #include <algorithm>
 #include <cassert>
 #include <set>
-#include "common/utils.hpp"
-#include "common/profiling.hpp"
-#include "algebra/fields/bigint.hpp"
+#include <libff/common/utils.hpp>
+#include <libff/common/profiling.hpp>
+#include <libff/algebra/fields/bigint.hpp>
 
 namespace libsnark {
 

@@ -13,7 +13,7 @@
 
 #include "relations/ram_computations/rams/fooram/fooram_aux.hpp"
 
-#include "common/serialization.hpp"
+#include <libff/common/serialization.hpp>
 
 namespace libsnark {
 

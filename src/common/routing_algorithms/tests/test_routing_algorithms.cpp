@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 #include "common/routing_algorithms/benes_routing_algorithm.hpp"
 #include "common/routing_algorithms/as_waksman_routing_algorithm.hpp"
 

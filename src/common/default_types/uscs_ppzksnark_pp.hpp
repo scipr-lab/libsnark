@@ -14,7 +14,7 @@
 #ifndef USCS_PPZKSNARK_PP_HPP_
 #define USCS_PPZKSNARK_PP_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 
 namespace libsnark {
 typedef libff::default_ec_pp default_uscs_ppzksnark_pp;

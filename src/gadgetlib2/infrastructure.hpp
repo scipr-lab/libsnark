@@ -12,7 +12,7 @@
 #include <sstream>
 #include <cmath>
 #include <cstdarg>
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 
 #ifndef  __infrastructure_HPP
 #define  __infrastructure_HPP

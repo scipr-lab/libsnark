@@ -22,7 +22,7 @@
 #ifndef QAP_HPP_
 #define QAP_HPP_
 
-#include "evaluation_domain/evaluation_domain.hpp"
+#include <libfqfft/evaluation_domain/evaluation_domain.hpp>
 
 namespace libsnark {
 

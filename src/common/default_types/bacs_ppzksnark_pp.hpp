@@ -14,7 +14,7 @@
 #ifndef BACS_PPZKSNARK_PP_HPP_
 #define BACS_PPZKSNARK_PP_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 
 namespace libsnark {
 typedef libff::default_ec_pp default_bacs_ppzksnark_pp;

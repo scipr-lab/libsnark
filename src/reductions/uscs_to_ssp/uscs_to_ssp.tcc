@@ -14,9 +14,9 @@
 #ifndef USCS_TO_SSP_TCC_
 #define USCS_TO_SSP_TCC_
 
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
-#include "evaluation_domain/evaluation_domain.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
+#include <libfqfft/evaluation_domain/evaluation_domain.hpp>
 
 namespace libsnark {
 

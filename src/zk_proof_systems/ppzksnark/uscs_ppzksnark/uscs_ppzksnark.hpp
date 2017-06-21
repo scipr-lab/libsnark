@@ -48,7 +48,7 @@
 
 #include <memory>
 
-#include "algebra/curves/public_params.hpp"
+#include <libff/algebra/curves/public_params.hpp>
 #include "common/data_structures/accumulation_vector.hpp"
 #include "knowledge_commitment/knowledge_commitment.hpp"
 #include "relations/constraint_satisfaction_problems/uscs/uscs.hpp"

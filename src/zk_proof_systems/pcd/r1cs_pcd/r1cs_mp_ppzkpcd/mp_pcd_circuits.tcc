@@ -16,7 +16,7 @@
 #define MP_PCD_CIRCUITS_TCC_
 
 #include <algorithm>
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "gadgetlib1/constraint_profiling.hpp"
 
 namespace libsnark {

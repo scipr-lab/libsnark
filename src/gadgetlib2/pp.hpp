@@ -10,7 +10,7 @@
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_PP_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_PP_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 
 #include <memory>
 #include <vector>

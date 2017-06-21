@@ -14,8 +14,8 @@
 #ifndef KNAPSACK_GADGET_TCC_
 #define KNAPSACK_GADGET_TCC_
 
-#include "algebra/fields/field_utils.hpp"
-#include "common/rng.hpp"
+#include <libff/algebra/fields/field_utils.hpp>
+#include <libff/common/rng.hpp>
 
 namespace libsnark {
 

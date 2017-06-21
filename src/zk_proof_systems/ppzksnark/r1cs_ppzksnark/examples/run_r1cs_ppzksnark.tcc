@@ -20,7 +20,7 @@
 #include <sstream>
 #include <type_traits>
 
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

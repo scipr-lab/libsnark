@@ -6,7 +6,7 @@
  *****************************************************************************/
 #include "common/default_types/r1cs_ppzksnark_pp.hpp"
 #include "common/default_types/r1cs_ppzkpcd_pp.hpp"
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp"
 #include "zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp"
 

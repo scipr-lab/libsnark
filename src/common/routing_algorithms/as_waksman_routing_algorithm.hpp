@@ -42,7 +42,7 @@
 #include <map>
 #include <vector>
 
-#include "common/utils.hpp"
+#include <libff/common/utils.hpp>
 #include "common/data_structures/integer_permutation.hpp"
 
 namespace libsnark {

@@ -14,7 +14,7 @@
 #ifndef RAM_ZKSNARK_TCC_
 #define RAM_ZKSNARK_TCC_
 
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

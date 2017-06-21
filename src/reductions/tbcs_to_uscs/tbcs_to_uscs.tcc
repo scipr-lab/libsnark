@@ -14,7 +14,7 @@ See tbcs_to_uscs.hpp .
 #ifndef TBCS_TO_USCS_TCC_
 #define TBCS_TO_USCS_TCC_
 
-#include "algebra/fields/field_utils.hpp"
+#include <libff/algebra/fields/field_utils.hpp>
 
 namespace libsnark {
 

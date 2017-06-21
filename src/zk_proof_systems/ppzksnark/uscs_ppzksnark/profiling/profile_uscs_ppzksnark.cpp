@@ -27,8 +27,8 @@
 #include <cstdio>
 
 #include "common/default_types/uscs_ppzksnark_pp.hpp"
-#include "common/profiling.hpp"
-#include "common/utils.hpp"
+#include <libff/common/profiling.hpp>
+#include <libff/common/utils.hpp>
 #include "relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp"
 #include "zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/run_uscs_ppzksnark.hpp"
 

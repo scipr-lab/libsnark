@@ -11,7 +11,7 @@
 #include <string>
 
 #include "common/default_types/ram_ppzksnark_pp.hpp"
-#include "common/profiling.hpp"
+#include <libff/common/profiling.hpp>
 #include "relations/ram_computations/rams/examples/ram_examples.hpp"
 #include "zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp"
 

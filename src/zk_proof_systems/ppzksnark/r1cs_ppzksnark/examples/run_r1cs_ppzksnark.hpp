@@ -13,7 +13,7 @@
 #ifndef RUN_R1CS_PPZKSNARK_HPP_
 #define RUN_R1CS_PPZKSNARK_HPP_
 
-#include "common/default_types/ec_pp.hpp"
+#include <libff/common/default_types/ec_pp.hpp>
 #include "relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp"
 
 namespace libsnark {
