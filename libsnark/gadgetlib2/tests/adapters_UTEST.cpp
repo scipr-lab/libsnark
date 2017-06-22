@@ -1,5 +1,4 @@
-/** @file
- *****************************************************************************
+/** @file *****************************************************************************
  Unit tests for gadgetlib2
  *****************************************************************************
  * @author     This file is part of libsnark, developed by SCIPR Lab
@@ -8,8 +7,8 @@
  *****************************************************************************/
 
 #include <gtest/gtest.h>
-#include <gadgetlib2/pp.hpp>
-#include <gadgetlib2/adapters.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
+#include <libsnark/gadgetlib2/adapters.hpp>
 
 using namespace gadgetlib2;
 

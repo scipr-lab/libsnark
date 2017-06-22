@@ -8,8 +8,8 @@
  *****************************************************************************/
 
 #include <set>
-#include <gadgetlib2/pp.hpp>
-#include <gadgetlib2/variable.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
+#include <libsnark/gadgetlib2/variable.hpp>
 
 #include "third_party/gtest/googletest/include/gtest/gtest.h"
 

@@ -10,9 +10,9 @@
 #include <iostream>
 #include <sstream>
 #include <gtest/gtest.h>
-#include <gadgetlib2/pp.hpp>
-#include <gadgetlib2/protoboard.hpp>
-#include <gadgetlib2/gadget.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
+#include <libsnark/gadgetlib2/protoboard.hpp>
+#include <libsnark/gadgetlib2/gadget.hpp>
 
 using ::std::cerr;
 using ::std::cout;
