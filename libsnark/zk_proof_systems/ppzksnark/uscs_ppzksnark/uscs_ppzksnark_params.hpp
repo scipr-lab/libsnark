@@ -12,6 +12,8 @@
 #ifndef USCS_PPZKSNARK_PARAMS_HPP_
 #define USCS_PPZKSNARK_PARAMS_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/uscs/uscs.hpp>
 
 namespace libsnark {

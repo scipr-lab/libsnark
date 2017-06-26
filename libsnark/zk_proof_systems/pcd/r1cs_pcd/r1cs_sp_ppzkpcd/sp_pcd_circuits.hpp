@@ -26,11 +26,11 @@
 #ifndef SP_PCD_CIRCUITS_HPP_
 #define SP_PCD_CIRCUITS_HPP_
 
-#include <libsnark/gadgetlib1/protoboard.hpp>
 #include <libsnark/gadgetlib1/gadgets/gadget_from_r1cs.hpp>
 #include <libsnark/gadgetlib1/gadgets/hashes/crh_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/pairing/pairing_params.hpp>
 #include <libsnark/gadgetlib1/gadgets/verifiers/r1cs_ppzksnark_verifier_gadget.hpp>
+#include <libsnark/gadgetlib1/protoboard.hpp>
 #include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp>
 
 namespace libsnark {

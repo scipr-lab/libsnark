@@ -15,7 +15,9 @@
 #ifndef FP6_GADGETS_HPP_
 #define FP6_GADGETS_HPP_
 
+#include <libsnark/gadgetlib1/gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/fields/fp2_gadgets.hpp>
+#include <libsnark/gadgetlib1/gadgets/fields/fp3_gadgets.hpp>
 
 namespace libsnark {
 

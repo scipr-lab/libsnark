@@ -16,8 +16,9 @@
 #include <string>
 
 #include <libff/common/profiling.hpp>
-#include <libsnark/relations/ram_computations/rams/tinyram/tinyram_aux.hpp>
 #include <libff/common/utils.hpp>
+
+#include <libsnark/relations/ram_computations/rams/tinyram/tinyram_aux.hpp>
 
 namespace libsnark {
 

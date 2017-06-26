@@ -5,16 +5,18 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 #include <algorithm>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 #ifndef MINDEPS
 #include <boost/program_options.hpp>
 #endif
 
-#include <libsnark/common/default_types/tinyram_ppzksnark_pp.hpp>
+#include <libff/common/default_types/ec_pp.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/default_types/tinyram_ppzksnark_pp.hpp>
 #include <libsnark/reductions/ram_to_r1cs/ram_to_r1cs.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_params.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp>

@@ -20,9 +20,10 @@ See r1cs_ppzksnark.hpp .
 #include <iostream>
 #include <sstream>
 
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
-#include <libff/algebra/scalar_multiplication/multiexp.hpp>
+
 #include <libsnark/knowledge_commitment/kc_multiexp.hpp>
 #include <libsnark/reductions/r1cs_to_qap/r1cs_to_qap.hpp>
 

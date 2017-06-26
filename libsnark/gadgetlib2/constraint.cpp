@@ -9,9 +9,10 @@
 
 #include <algorithm>
 #include <cassert>
-#include <set>
 #include <iostream>
 #include <memory>
+#include <set>
+
 #include <libsnark/gadgetlib2/constraint.hpp>
 #include <libsnark/gadgetlib2/variable.hpp>
 

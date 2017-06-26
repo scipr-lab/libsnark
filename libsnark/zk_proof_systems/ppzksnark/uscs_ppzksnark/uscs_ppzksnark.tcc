@@ -18,10 +18,11 @@
 #include <iostream>
 #include <sstream>
 
-#include <libsnark/reductions/uscs_to_ssp/uscs_to_ssp.hpp>
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
-#include <libff/algebra/scalar_multiplication/multiexp.hpp>
+
+#include <libsnark/reductions/uscs_to_ssp/uscs_to_ssp.hpp>
 #include <libsnark/relations/arithmetic_programs/ssp/ssp.hpp>
 
 namespace libsnark {

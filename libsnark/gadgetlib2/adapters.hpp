@@ -10,13 +10,14 @@
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_ADAPTERS_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_ADAPTERS_HPP_
 
-#include <utility>
-#include <tuple>
 #include <map>
-#include <libsnark/gadgetlib2/pp.hpp>
-#include <libsnark/gadgetlib2/variable.hpp>
+#include <tuple>
+#include <utility>
+
 #include <libsnark/gadgetlib2/constraint.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
 #include <libsnark/gadgetlib2/protoboard.hpp>
+#include <libsnark/gadgetlib2/variable.hpp>
 
 using gadgetlib2::LinearTerm;
 using gadgetlib2::LinearCombination;

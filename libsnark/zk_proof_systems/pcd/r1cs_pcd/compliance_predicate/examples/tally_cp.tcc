@@ -17,6 +17,8 @@
 #include <algorithm>
 #include <functional>
 
+#include <libff/algebra/fields/field_utils.hpp>
+
 namespace libsnark {
 
 template<typename FieldT>

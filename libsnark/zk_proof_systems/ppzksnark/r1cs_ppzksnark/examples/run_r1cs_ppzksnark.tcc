@@ -15,12 +15,12 @@
 #ifndef RUN_R1CS_PPZKSNARK_TCC_
 #define RUN_R1CS_PPZKSNARK_TCC_
 
-#include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp>
-
 #include <sstream>
 #include <type_traits>
 
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp>
 
 namespace libsnark {
 

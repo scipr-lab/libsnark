@@ -11,9 +11,9 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/relations/ram_computations/rams/fooram/fooram_aux.hpp>
-
 #include <libff/common/serialization.hpp>
+
+#include <libsnark/relations/ram_computations/rams/fooram/fooram_aux.hpp>
 
 namespace libsnark {
 

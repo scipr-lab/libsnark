@@ -14,6 +14,7 @@
 
 #include <map>
 #include <vector>
+
 #include <libff/common/utils.hpp>
 
 namespace libsnark {

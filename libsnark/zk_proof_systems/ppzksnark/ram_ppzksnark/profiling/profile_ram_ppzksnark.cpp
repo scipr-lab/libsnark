@@ -6,16 +6,17 @@
  *****************************************************************************/
 #include <algorithm>
 #include <cstring>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
-#include <libsnark/common/default_types/ram_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/default_types/ram_ppzksnark_pp.hpp>
 #include <libsnark/relations/ram_computations/rams/examples/ram_examples.hpp>
-#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_params.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp>
 
 using namespace libsnark;
 

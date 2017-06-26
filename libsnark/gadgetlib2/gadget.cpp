@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <memory>
+
 #include <libsnark/gadgetlib2/gadget.hpp>
 
 using ::std::shared_ptr;

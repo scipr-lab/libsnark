@@ -13,8 +13,8 @@
 #define MEMORY_INTERFACE_HPP_
 
 #include <cstddef>
-#include <vector>
 #include <map>
+#include <vector>
 
 namespace libsnark {
 

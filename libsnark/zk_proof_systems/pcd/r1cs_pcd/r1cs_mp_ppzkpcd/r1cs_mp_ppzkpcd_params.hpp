@@ -13,6 +13,7 @@
 #define R1CS_MP_PPZKPCD_PARAMS_HPP_
 
 #include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp>
 #include <libsnark/zk_proof_systems/pcd/r1cs_pcd/r1cs_pcd_params.hpp>
 

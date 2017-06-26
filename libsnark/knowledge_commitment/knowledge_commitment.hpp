@@ -15,6 +15,7 @@
 #define KNOWLEDGE_COMMITMENT_HPP_
 
 #include <libff/algebra/fields/fp.hpp>
+
 #include <libsnark/common/data_structures/sparse_vector.hpp>
 
 namespace libsnark {

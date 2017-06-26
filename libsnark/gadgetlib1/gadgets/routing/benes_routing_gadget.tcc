@@ -14,9 +14,9 @@
 #ifndef BENES_ROUTING_GADGET_TCC_
 #define BENES_ROUTING_GADGET_TCC_
 
-#include <libff/common/profiling.hpp>
-
 #include <algorithm>
+
+#include <libff/common/profiling.hpp>
 
 namespace libsnark {
 

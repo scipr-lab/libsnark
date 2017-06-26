@@ -35,8 +35,8 @@
 #define BACS_PPZKSNARK_HPP_
 
 #include <libsnark/relations/circuit_satisfaction_problems/bacs/bacs.hpp>
-#include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark_params.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/r1cs_ppzksnark.hpp>
 
 namespace libsnark {
 

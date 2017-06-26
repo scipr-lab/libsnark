@@ -43,9 +43,9 @@
 #ifndef KNAPSACK_GADGET_HPP_
 #define KNAPSACK_GADGET_HPP_
 
+#include <libsnark/common/data_structures/merkle_tree.hpp>
 #include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 #include <libsnark/gadgetlib1/gadgets/hashes/hash_io.hpp>
-#include <libsnark/common/data_structures/merkle_tree.hpp>
 
 namespace libsnark {
 

@@ -19,8 +19,9 @@
 
 #include <cstdio>
 
-#include <libsnark/common/default_types/bacs_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/default_types/bacs_ppzksnark_pp.hpp>
 #include <libsnark/relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/bacs_ppzksnark/examples/run_bacs_ppzksnark.hpp>
 
@@ -33,7 +34,7 @@ int main(int argc, const char * argv[])
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
-        print_compilation_info();
+        libff::print_compilation_info();
         return 0;
     }
 

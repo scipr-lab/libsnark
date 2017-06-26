@@ -12,10 +12,10 @@
 #ifndef TINYRAM_PROTOBOARD_HPP_
 #define TINYRAM_PROTOBOARD_HPP_
 
+#include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
+#include <libsnark/gadgetlib1/protoboard.hpp>
 #include <libsnark/relations/ram_computations/rams/ram_params.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_aux.hpp>
-#include <libsnark/gadgetlib1/protoboard.hpp>
-#include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 
 namespace libsnark {
 

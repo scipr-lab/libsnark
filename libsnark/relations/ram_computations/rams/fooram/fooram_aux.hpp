@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <libff/common/utils.hpp>
+
 #include <libsnark/relations/ram_computations/memory/memory_interface.hpp>
 
 namespace libsnark {

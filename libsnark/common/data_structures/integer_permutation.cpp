@@ -11,12 +11,12 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/common/data_structures/integer_permutation.hpp>
-
 #include <algorithm>
 #include <cassert>
 #include <numeric>
 #include <unordered_set>
+
+#include <libsnark/common/data_structures/integer_permutation.hpp>
 
 namespace libsnark {
 

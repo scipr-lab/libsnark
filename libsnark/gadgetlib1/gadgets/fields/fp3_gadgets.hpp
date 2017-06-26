@@ -15,6 +15,10 @@
 #ifndef FP3_GADGETS_HPP_
 #define FP3_GADGETS_HPP_
 
+#include <memory>
+
+#include <libsnark/gadgetlib1/gadget.hpp>
+
 namespace libsnark {
 
 /**

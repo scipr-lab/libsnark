@@ -13,8 +13,9 @@
 
 #include <libff/common/default_types/ec_pp.hpp>
 #include <libff/common/profiling.hpp>
-#include <libsnark/gadgetlib1/gadgets/routing/benes_routing_gadget.hpp>
+
 #include <libsnark/gadgetlib1/gadgets/routing/as_waksman_routing_gadget.hpp>
+#include <libsnark/gadgetlib1/gadgets/routing/benes_routing_gadget.hpp>
 
 using namespace libsnark;
 

@@ -11,8 +11,8 @@
 #endif
 
 #include <libsnark/common/default_types/tinyram_ppzksnark_pp.hpp>
-#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_params.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp>
 
 #ifndef MINDEPS
 namespace po = boost::program_options;

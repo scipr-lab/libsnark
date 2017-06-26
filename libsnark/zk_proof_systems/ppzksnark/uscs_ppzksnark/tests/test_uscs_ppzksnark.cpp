@@ -11,9 +11,10 @@
 #include <cassert>
 #include <cstdio>
 
-#include <libsnark/common/default_types/uscs_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
+
+#include <libsnark/common/default_types/uscs_ppzksnark_pp.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/run_uscs_ppzksnark.hpp>
 

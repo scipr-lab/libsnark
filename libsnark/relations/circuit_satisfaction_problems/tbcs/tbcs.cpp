@@ -14,10 +14,11 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/relations/circuit_satisfaction_problems/tbcs/tbcs.hpp>
-
 #include <algorithm>
+
 #include <libff/common/utils.hpp>
+
+#include <libsnark/relations/circuit_satisfaction_problems/tbcs/tbcs.hpp>
 
 namespace libsnark {
 

@@ -20,9 +20,10 @@ See r1cs_gg_ppzksnark.hpp .
 #include <iostream>
 #include <sstream>
 
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
-#include <libff/algebra/scalar_multiplication/multiexp.hpp>
+
 #include <libsnark/knowledge_commitment/kc_multiexp.hpp>
 #include <libsnark/reductions/r1cs_to_qap/r1cs_to_qap.hpp>
 
@@ -255,7 +256,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::enter_block("Compute gamma_ABC for R1CS verification key");
     libff::Fr_vector<ppT> gamma_ABC;
     gamma_ABC.reserve(qap.num_inputs());
-    
+
     const libff::Fr<ppT> gamma_ABC_0 = (beta * At[0] + alpha * Bt[0] + Ct[0]) * gamma_inverse;
     for (size_t i = 1; i < qap.num_inputs() + 1; ++i)
     {
@@ -267,7 +268,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::enter_block("Compute L query for R1CS proving key");
     libff::Fr_vector<ppT> Lt;
     Lt.reserve(qap.num_variables() - qap.num_inputs());
-    
+
     const size_t Lt_offset = qap.num_inputs() + 1;
     for (size_t i = 0; i < qap.num_variables() - qap.num_inputs(); ++i)
     {

@@ -20,6 +20,7 @@
 #define BACS_TCC_
 
 #include <algorithm>
+
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 

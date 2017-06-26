@@ -14,8 +14,9 @@
 #ifndef LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_CONSTRAINT_HPP_
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_CONSTRAINT_HPP_
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include <libsnark/gadgetlib2/variable.hpp>
 
 namespace gadgetlib2 {

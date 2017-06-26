@@ -15,9 +15,8 @@
 #ifndef RUN_R1CS_MP_PPZKPCD_TCC_
 #define RUN_R1CS_MP_PPZKPCD_TCC_
 
-#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd.hpp>
-
 #include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/examples/tally_cp.hpp>
+#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/r1cs_mp_ppzkpcd.hpp>
 
 namespace libsnark {
 

@@ -8,6 +8,7 @@
 #define HASH_IO_HPP_
 #include <cstddef>
 #include <vector>
+
 #include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 
 namespace libsnark {

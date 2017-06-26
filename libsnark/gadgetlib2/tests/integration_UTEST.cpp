@@ -7,14 +7,15 @@
 
 #include <iostream>
 #include <sstream>
-#include <libsnark/gadgetlib2/pp.hpp>
-#include <libsnark/gadgetlib2/protoboard.hpp>
-#include <libsnark/gadgetlib2/gadget.hpp>
+
+#include "third_party/gtest/googletest/include/gtest/gtest.h"
 
 #include <libsnark/common/default_types/r1cs_ppzksnark_pp.hpp>
 #include <libsnark/gadgetlib2/examples/simple_example.hpp>
+#include <libsnark/gadgetlib2/gadget.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
+#include <libsnark/gadgetlib2/protoboard.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp>
-#include "third_party/gtest/googletest/include/gtest/gtest.h"
 #include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp>
 
 using namespace gadgetlib2;

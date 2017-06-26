@@ -8,6 +8,7 @@
  *****************************************************************************/
 
 #include <gtest/gtest.h>
+
 #include <libsnark/gadgetlib1/examples/simple_example.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp>
 

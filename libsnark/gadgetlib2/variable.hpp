@@ -11,15 +11,16 @@
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_VARIABLE_HPP_
 
 #include <cstddef>
-#include <string>
-#include <vector>
-#include <set>
+#include <iostream>
 #include <map>
+#include <set>
+#include <string>
 #include <unordered_set>
 #include <utility>
-#include <iostream>
-#include <libsnark/gadgetlib2/pp.hpp>
+#include <vector>
+
 #include <libsnark/gadgetlib2/infrastructure.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
 
 namespace gadgetlib2 {
 

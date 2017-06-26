@@ -15,6 +15,7 @@
 #define WEIERSTRASS_MILLER_LOOP_TCC_
 
 #include <libff/algebra/scalar_multiplication/wnaf.hpp>
+
 #include <libsnark/gadgetlib1/constraint_profiling.hpp>
 #include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 

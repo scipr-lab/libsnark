@@ -15,6 +15,9 @@
 #ifndef FP4_GADGETS_HPP_
 #define FP4_GADGETS_HPP_
 
+#include <libsnark/gadgetlib1/gadget.hpp>
+#include <libsnark/gadgetlib1/gadgets/fields/fp2_gadgets.hpp>
+
 namespace libsnark {
 
 /**

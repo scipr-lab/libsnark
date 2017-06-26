@@ -12,9 +12,10 @@
 #include <set>
 #include <stdexcept>
 #include <vector>
-#include <libsnark/gadgetlib2/variable.hpp>
-#include <libsnark/gadgetlib2/pp.hpp>
+
 #include <libsnark/gadgetlib2/infrastructure.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
+#include <libsnark/gadgetlib2/variable.hpp>
 
 using ::std::string;
 using ::std::stringstream;

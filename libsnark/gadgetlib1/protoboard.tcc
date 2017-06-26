@@ -8,8 +8,9 @@
 #ifndef PROTOBOARD_TCC_
 #define PROTOBOARD_TCC_
 
-#include <cstdio>
 #include <cstdarg>
+#include <cstdio>
+
 #include <libff/common/profiling.hpp>
 
 namespace libsnark {

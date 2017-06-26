@@ -15,7 +15,6 @@
 #define COMPLIANCE_PREDICATE_TCC_
 
 #include <libff/common/utils.hpp>
-#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/r1cs_sp_ppzkpcd_params.hpp>
 
 namespace libsnark {
 

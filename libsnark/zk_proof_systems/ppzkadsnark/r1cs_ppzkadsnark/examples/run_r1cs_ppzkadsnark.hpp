@@ -13,7 +13,10 @@
 #ifndef RUN_R1CS_PPZKADSNARK_HPP_
 #define RUN_R1CS_PPZKADSNARK_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp>
+#include <libsnark/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/r1cs_ppzkadsnark_params.hpp>
 
 namespace libsnark {
 

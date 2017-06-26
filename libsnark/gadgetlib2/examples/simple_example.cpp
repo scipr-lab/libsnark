@@ -5,9 +5,8 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/gadgetlib2/examples/simple_example.hpp>
-
 #include <libsnark/gadgetlib2/adapters.hpp>
+#include <libsnark/gadgetlib2/examples/simple_example.hpp>
 #include <libsnark/gadgetlib2/gadget.hpp>
 #include <libsnark/gadgetlib2/integration.hpp>
 

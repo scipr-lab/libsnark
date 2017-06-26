@@ -18,6 +18,7 @@
 #define TBCS_HPP_
 
 #include <libff/common/profiling.hpp>
+
 #include <libsnark/relations/variable.hpp>
 
 namespace libsnark {

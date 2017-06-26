@@ -14,6 +14,8 @@
 #ifndef RAM_COMPLIANCE_PREDICATE_TCC_
 #define RAM_COMPLIANCE_PREDICATE_TCC_
 
+#include <libsnark/gadgetlib1/constraint_profiling.hpp>
+
 namespace libsnark {
 
 template<typename ramT>

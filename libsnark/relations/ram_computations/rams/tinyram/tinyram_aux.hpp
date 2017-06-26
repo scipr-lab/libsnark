@@ -17,6 +17,7 @@
 #include <map>
 
 #include <libff/common/utils.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
 #include <libsnark/relations/ram_computations/memory/memory_interface.hpp>
 #include <libsnark/relations/ram_computations/rams/ram_params.hpp>

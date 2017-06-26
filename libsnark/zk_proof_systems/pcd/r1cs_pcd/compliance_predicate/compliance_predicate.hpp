@@ -17,6 +17,8 @@
 #ifndef COMPLIANCE_PREDICATE_HPP_
 #define COMPLIANCE_PREDICATE_HPP_
 
+#include <memory>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
 
 namespace libsnark {

@@ -37,6 +37,8 @@
 #ifndef RAM_COMPLIANCE_PREDICATE_HPP_
 #define RAM_COMPLIANCE_PREDICATE_HPP_
 
+#include <numeric>
+
 #include <libsnark/gadgetlib1/gadgets/delegated_ra_memory/memory_load_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/delegated_ra_memory/memory_load_store_gadget.hpp>
 #include <libsnark/relations/ram_computations/memory/delegated_ra_memory.hpp>

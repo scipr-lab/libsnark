@@ -12,6 +12,8 @@
 #ifndef RAM_ZKSNARK_PARAMS_HPP_
 #define RAM_ZKSNARK_PARAMS_HPP_
 
+#include <libsnark/relations/ram_computations/rams/ram_params.hpp>
+
 namespace libsnark {
 
 /**

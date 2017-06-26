@@ -7,12 +7,12 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/gadgetlib2/infrastructure.hpp>
-
-#include <iostream>
 #include <cassert>
-#include <stdexcept>
 #include <climits>
+#include <iostream>
+#include <stdexcept>
+
+#include <libsnark/gadgetlib2/infrastructure.hpp>
 #ifdef __linux__
 #include <unistd.h>
 #endif

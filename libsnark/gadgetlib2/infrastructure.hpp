@@ -7,11 +7,12 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <cstdint>
-#include <string>
-#include <sstream>
 #include <cmath>
 #include <cstdarg>
+#include <cstdint>
+#include <sstream>
+#include <string>
+
 #include <libff/common/utils.hpp>
 
 #ifndef  __infrastructure_HPP
