@@ -26,9 +26,10 @@
 #include <cassert>
 #include <cstdio>
 
-#include <libsnark/common/default_types/uscs_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
+
+#include <libsnark/common/default_types/uscs_ppzksnark_pp.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/uscs_ppzksnark/examples/run_uscs_ppzksnark.hpp>
 
@@ -41,7 +42,7 @@ int main(int argc, const char * argv[])
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
-        print_compilation_info();
+        libff::print_compilation_info();
         return 0;
     }
 

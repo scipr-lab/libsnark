@@ -15,8 +15,11 @@
 #ifndef CP_HANDLER_HPP_
 #define CP_HANDLER_HPP_
 
-#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp>
+#include <numeric>
+
+#include <libsnark/gadgetlib1/gadget.hpp>
 #include <libsnark/gadgetlib1/protoboard.hpp>
+#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp>
 
 namespace libsnark {
 

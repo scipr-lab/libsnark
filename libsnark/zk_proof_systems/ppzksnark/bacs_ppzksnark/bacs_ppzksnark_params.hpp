@@ -12,6 +12,8 @@
 #ifndef BACS_PPZKSNARK_PARAMS_HPP_
 #define BACS_PPZKSNARK_PARAMS_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/circuit_satisfaction_problems/bacs/bacs.hpp>
 
 namespace libsnark {

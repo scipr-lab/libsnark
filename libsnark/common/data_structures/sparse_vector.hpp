@@ -12,6 +12,7 @@
 #ifndef SPARSE_VECTOR_HPP_
 #define SPARSE_VECTOR_HPP_
 
+#include <iostream>
 #include <vector>
 
 namespace libsnark {

@@ -13,6 +13,8 @@
 #ifndef RUN_R1CS_GG_PPZKSNARK_HPP_
 #define RUN_R1CS_GG_PPZKSNARK_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp>
 
 namespace libsnark {

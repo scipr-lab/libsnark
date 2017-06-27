@@ -12,6 +12,8 @@
 #ifndef R1CS_PPZKSNARK_PARAMS_HPP_
 #define R1CS_PPZKSNARK_PARAMS_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
 
 namespace libsnark {

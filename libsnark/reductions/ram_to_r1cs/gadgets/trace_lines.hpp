@@ -13,6 +13,10 @@
 #define TRACE_LINES_HPP_
 
 #include <memory>
+
+#include <libff/common/utils.hpp>
+
+#include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 #include <libsnark/relations/ram_computations/rams/ram_params.hpp>
 
 namespace libsnark {

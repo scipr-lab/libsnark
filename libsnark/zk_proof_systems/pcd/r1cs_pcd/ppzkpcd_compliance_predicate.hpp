@@ -13,6 +13,7 @@
 #define PPZKPCD_COMPLIANCE_PREDICATE_HPP_
 
 #include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp>
 
 namespace libsnark {

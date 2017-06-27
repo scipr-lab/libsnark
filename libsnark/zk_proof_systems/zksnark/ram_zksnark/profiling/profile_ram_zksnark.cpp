@@ -4,14 +4,15 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
+#include <boost/program_options.hpp>
+#include <libff/common/profiling.hpp>
+
 #include <libsnark/common/default_types/ram_zksnark_pp.hpp>
 #include <libsnark/relations/ram_computations/memory/examples/memory_contents_examples.hpp>
 #include <libsnark/relations/ram_computations/rams/examples/ram_examples.hpp>
-#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/ram_zksnark.hpp>
-#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_params.hpp>
-
-#include <boost/program_options.hpp>
+#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp>
+#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/ram_zksnark.hpp>
 
 using namespace libsnark;
 
@@ -60,16 +61,16 @@ void print_ram_zksnark_verifier_profiling()
 
                 profile_ram_zksnark_verifier<ppT>(ap, input_size, program_size);
 
-                const double input_map = last_times["Call to ram_zksnark_verifier_input_map"];
-                const double preprocessing = last_times["Call to r1cs_ppzksnark_verifier_process_vk"];
-                const double accumulate = last_times["Call to r1cs_ppzksnark_IC_query::accumulate"];
-                const double pairings = last_times["Online pairing computations"];
-                const double total = last_times["Call to ram_zksnark_verifier"];
+                const double input_map = libff::last_times["Call to ram_zksnark_verifier_input_map"];
+                const double preprocessing = libff::last_times["Call to r1cs_ppzksnark_verifier_process_vk"];
+                const double accumulate = libff::last_times["Call to r1cs_ppzksnark_IC_query::accumulate"];
+                const double pairings = libff::last_times["Online pairing computations"];
+                const double total = libff::last_times["Call to ram_zksnark_verifier"];
                 const double rest = total - (input_map + preprocessing + accumulate + pairings);
 
-                const double delegated_ra_memory_init = last_times["Construct delegated_ra_memory from memory map"];
+                const double delegated_ra_memory_init = libff::last_times["Construct delegated_ra_memory from memory map"];
                 simulate_random_memory_contents<libff::Fr<typename ppT::curve_A_pp> >(ap, input_size, program_size);
-                const double delegated_ra_memory_init_random = last_times["Initialize random delegated memory"];
+                const double delegated_ra_memory_init_random = libff::last_times["Initialize random delegated memory"];
                 const double input_map_random = input_map - delegated_ra_memory_init + delegated_ra_memory_init_random;
                 const double total_random = total - delegated_ra_memory_init + delegated_ra_memory_init_random;
 
@@ -118,7 +119,7 @@ bool process_command_line(const int argc, const char** argv,
 
         if (vm.count("v"))
         {
-            print_compilation_info();
+            libff::print_compilation_info();
             exit(0);
         }
 

@@ -15,10 +15,10 @@
 #ifndef AS_WAKSMAN_ROUTING_GADGET_HPP_
 #define AS_WAKSMAN_ROUTING_GADGET_HPP_
 
-#include <libsnark/gadgetlib1/protoboard.hpp>
-#include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
 #include <libsnark/common/data_structures/integer_permutation.hpp>
 #include <libsnark/common/routing_algorithms/as_waksman_routing_algorithm.hpp>
+#include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
+#include <libsnark/gadgetlib1/protoboard.hpp>
 
 namespace libsnark {
 

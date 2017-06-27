@@ -16,8 +16,9 @@
 
 #include <algorithm>
 
-#include <libsnark/common/routing_algorithms/as_waksman_routing_algorithm.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/routing_algorithms/as_waksman_routing_algorithm.hpp>
 
 namespace libsnark {
 

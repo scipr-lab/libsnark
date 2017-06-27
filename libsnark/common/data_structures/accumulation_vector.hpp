@@ -12,6 +12,8 @@
 #ifndef ACCUMULATION_VECTOR_HPP_
 #define ACCUMULATION_VECTOR_HPP_
 
+#include <iostream>
+
 #include <libsnark/common/data_structures/sparse_vector.hpp>
 
 namespace libsnark {

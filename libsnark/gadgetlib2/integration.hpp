@@ -9,8 +9,9 @@
 #define INTEGRATION_HPP_
 
 #include <libff/common/default_types/ec_pp.hpp>
-#include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
+
 #include <libsnark/gadgetlib2/protoboard.hpp>
+#include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
 
 namespace libsnark {
 

@@ -14,6 +14,7 @@
 #define RUN_R1CS_PPZKSNARK_HPP_
 
 #include <libff/common/default_types/ec_pp.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp>
 
 namespace libsnark {

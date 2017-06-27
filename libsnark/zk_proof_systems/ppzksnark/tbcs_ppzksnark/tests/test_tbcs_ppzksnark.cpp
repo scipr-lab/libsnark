@@ -11,8 +11,9 @@
 #include <cassert>
 #include <cstdio>
 
-#include <libsnark/common/default_types/tbcs_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/default_types/tbcs_ppzksnark_pp.hpp>
 #include <libsnark/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/run_tbcs_ppzksnark.hpp>
 

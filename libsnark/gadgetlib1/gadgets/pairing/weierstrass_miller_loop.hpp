@@ -15,6 +15,7 @@
 #define WEIERSTRASS_MILLER_LOOP_HPP_
 
 #include <memory>
+
 #include <libsnark/gadgetlib1/gadgets/pairing/pairing_params.hpp>
 #include <libsnark/gadgetlib1/gadgets/pairing/weierstrass_precomputation.hpp>
 

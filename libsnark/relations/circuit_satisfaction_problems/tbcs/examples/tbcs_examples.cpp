@@ -12,11 +12,11 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp>
-
 #include <cassert>
 
 #include <libff/common/utils.hpp>
+
+#include <libsnark/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp>
 
 namespace libsnark {
 

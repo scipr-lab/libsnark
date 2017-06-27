@@ -9,6 +9,7 @@
 
 #include <cassert>
 #include <vector>
+
 #include <libsnark/gadgetlib2/pp.hpp>
 
 namespace gadgetlib2 {

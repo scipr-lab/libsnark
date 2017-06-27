@@ -13,6 +13,8 @@
 #ifndef RUN_USCS_PPZKSNARK_HPP_
 #define RUN_USCS_PPZKSNARK_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp>
 
 namespace libsnark {

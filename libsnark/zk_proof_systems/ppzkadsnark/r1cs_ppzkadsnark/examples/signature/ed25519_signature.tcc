@@ -15,8 +15,9 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/common/default_types/r1cs_ppzkadsnark_pp.hpp>
 #include "third_party/libsnark-supercop/include/crypto_sign.h"
+
+#include <libsnark/common/default_types/r1cs_ppzkadsnark_pp.hpp>
 
 namespace libsnark {
 

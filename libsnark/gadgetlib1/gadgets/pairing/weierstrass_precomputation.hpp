@@ -15,6 +15,10 @@
 #define WEIERSTRASS_PRECOMPUTATION_HPP_
 
 #include <memory>
+
+#include <libff/algebra/curves/mnt/mnt4/mnt4_init.hpp>
+#include <libff/algebra/curves/mnt/mnt6/mnt6_init.hpp>
+
 #include <libsnark/gadgetlib1/gadgets/curves/weierstrass_g1_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/curves/weierstrass_g2_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/pairing/pairing_params.hpp>

@@ -17,9 +17,10 @@
 
 #include <cstdio>
 
-#include <libsnark/common/default_types/tbcs_ppzksnark_pp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
+
+#include <libsnark/common/default_types/tbcs_ppzksnark_pp.hpp>
 #include <libsnark/relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/tbcs_ppzksnark/examples/run_tbcs_ppzksnark.hpp>
 
@@ -32,7 +33,7 @@ int main(int argc, const char * argv[])
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
-        print_compilation_info();
+        libff::print_compilation_info();
         return 0;
     }
 

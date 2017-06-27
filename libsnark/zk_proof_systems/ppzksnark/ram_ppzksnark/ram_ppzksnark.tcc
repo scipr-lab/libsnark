@@ -15,6 +15,7 @@
 #define RAM_PPZKSNARK_TCC_
 
 #include <libff/common/profiling.hpp>
+
 #include <libsnark/reductions/ram_to_r1cs/ram_to_r1cs.hpp>
 
 namespace libsnark {

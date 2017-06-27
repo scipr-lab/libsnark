@@ -12,9 +12,9 @@
 #ifndef TINYRAM_PARAMS_HPP_
 #define TINYRAM_PARAMS_HPP_
 
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/tinyram_cpu_checker.hpp>
 #include <libsnark/relations/ram_computations/rams/ram_params.hpp>
 #include <libsnark/relations/ram_computations/rams/tinyram/tinyram_aux.hpp>
-#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/tinyram_cpu_checker.hpp>
 
 namespace libsnark {
 

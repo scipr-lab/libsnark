@@ -8,10 +8,11 @@
  *****************************************************************************/
 
 #include <set>
-#include <libsnark/gadgetlib2/pp.hpp>
-#include <libsnark/gadgetlib2/constraint.hpp>
 
 #include "third_party/gtest/googletest/include/gtest/gtest.h"
+
+#include <libsnark/gadgetlib2/constraint.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
 
 using ::std::set;
 using namespace gadgetlib2;

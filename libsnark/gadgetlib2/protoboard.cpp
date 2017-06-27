@@ -8,6 +8,7 @@
  *****************************************************************************/
 
 #include <cstdio>
+
 #include <libsnark/gadgetlib2/protoboard.hpp>
 
 using ::std::string;

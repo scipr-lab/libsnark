@@ -12,6 +12,8 @@
 #ifndef ARGUMENT_DECODER_GADGET_HPP_
 #define ARGUMENT_DECODER_GADGET_HPP_
 
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp>
+
 namespace libsnark {
 
 template<typename FieldT>

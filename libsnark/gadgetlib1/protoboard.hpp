@@ -13,9 +13,11 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+
+#include <libff/common/utils.hpp>
+
 #include <libsnark/gadgetlib1/pb_variable.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>
-#include <libff/common/utils.hpp>
 
 namespace libsnark {
 

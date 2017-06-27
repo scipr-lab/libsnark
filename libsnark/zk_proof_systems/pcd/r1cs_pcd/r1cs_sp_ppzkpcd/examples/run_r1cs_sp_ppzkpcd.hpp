@@ -13,6 +13,8 @@
 #ifndef RUN_R1CS_SP_PPZKPCD_HPP_
 #define RUN_R1CS_SP_PPZKPCD_HPP_
 
+#include <cstddef>
+
 namespace libsnark {
 
 /**

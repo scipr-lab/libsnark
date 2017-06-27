@@ -15,8 +15,9 @@
 #ifndef FP2_GADGETS_HPP_
 #define FP2_GADGETS_HPP_
 
-#include <libsnark/gadgetlib1/gadget.hpp>
 #include <memory>
+
+#include <libsnark/gadgetlib1/gadget.hpp>
 
 namespace libsnark {
 

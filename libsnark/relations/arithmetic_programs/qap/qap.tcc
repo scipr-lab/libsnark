@@ -14,10 +14,10 @@ See qap.hpp .
 #ifndef QAP_TCC_
 #define QAP_TCC_
 
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 #include <libfqfft/evaluation_domain/evaluation_domain.hpp>
-#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 
 namespace libsnark {
 

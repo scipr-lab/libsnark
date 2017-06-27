@@ -29,10 +29,11 @@
 #include <memory>
 
 #include <libff/common/serialization.hpp>
+
 #include <libsnark/gadgetlib1/gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/basic_gadgets.hpp>
-#include <libsnark/gadgetlib1/gadgets/cpu_checkers/fooram/components/fooram_protoboard.hpp>
 #include <libsnark/gadgetlib1/gadgets/cpu_checkers/fooram/components/bar_gadget.hpp>
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/fooram/components/fooram_protoboard.hpp>
 #include <libsnark/relations/ram_computations/memory/memory_interface.hpp>
 
 namespace libsnark {

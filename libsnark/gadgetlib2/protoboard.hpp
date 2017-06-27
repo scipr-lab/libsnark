@@ -11,9 +11,10 @@
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_PROTOBOARD_HPP_
 
 #include <string>
+
+#include <libsnark/gadgetlib2/constraint.hpp>
 #include <libsnark/gadgetlib2/pp.hpp>
 #include <libsnark/gadgetlib2/variable.hpp>
-#include <libsnark/gadgetlib2/constraint.hpp>
 
 #define ASSERT_CONSTRAINTS_SATISFIED(pb) \
     ASSERT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED))

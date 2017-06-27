@@ -15,11 +15,11 @@
 #ifndef RUN_RAM_PPZKSNARK_TCC_
 #define RUN_RAM_PPZKSNARK_TCC_
 
-#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp>
-
 #include <sstream>
 
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/ram_ppzksnark.hpp>
 
 namespace libsnark {
 

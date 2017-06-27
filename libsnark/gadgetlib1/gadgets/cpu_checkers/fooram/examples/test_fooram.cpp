@@ -4,13 +4,13 @@
  *             and contributors (see AUTHORS).
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
-#include <libsnark/common/default_types/r1cs_ppzksnark_pp.hpp>
-#include <libsnark/common/default_types/r1cs_ppzkpcd_pp.hpp>
 #include <libff/common/utils.hpp>
-#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp>
-#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp>
 
+#include <libsnark/common/default_types/r1cs_ppzkpcd_pp.hpp>
+#include <libsnark/common/default_types/r1cs_ppzksnark_pp.hpp>
 #include <libsnark/relations/ram_computations/rams/fooram/fooram_params.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/ram_ppzksnark/examples/run_ram_ppzksnark.hpp>
+#include <libsnark/zk_proof_systems/zksnark/ram_zksnark/examples/run_ram_zksnark.hpp>
 
 namespace libsnark {
 

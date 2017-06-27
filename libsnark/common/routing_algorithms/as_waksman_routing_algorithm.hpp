@@ -43,6 +43,7 @@
 #include <vector>
 
 #include <libff/common/utils.hpp>
+
 #include <libsnark/common/data_structures/integer_permutation.hpp>
 
 namespace libsnark {

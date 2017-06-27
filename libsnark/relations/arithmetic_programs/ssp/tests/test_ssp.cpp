@@ -14,6 +14,7 @@
 #include <libff/algebra/fields/field_utils.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
+
 #include <libsnark/reductions/uscs_to_ssp/uscs_to_ssp.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/uscs/examples/uscs_examples.hpp>
 

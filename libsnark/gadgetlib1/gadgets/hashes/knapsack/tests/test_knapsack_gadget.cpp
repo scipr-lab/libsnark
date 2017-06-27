@@ -11,6 +11,7 @@
 #include <libff/algebra/curves/edwards/edwards_pp.hpp>
 #include <libff/algebra/curves/mnt/mnt4/mnt4_pp.hpp>
 #include <libff/algebra/curves/mnt/mnt6/mnt6_pp.hpp>
+
 #include <libsnark/gadgetlib1/gadgets/hashes/knapsack/knapsack_gadget.hpp>
 
 namespace libsnark {

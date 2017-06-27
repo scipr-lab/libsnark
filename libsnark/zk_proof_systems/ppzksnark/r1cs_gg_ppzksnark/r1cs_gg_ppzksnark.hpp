@@ -44,6 +44,7 @@ References:
 #include <memory>
 
 #include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/common/data_structures/accumulation_vector.hpp>
 #include <libsnark/knowledge_commitment/knowledge_commitment.hpp>
 #include <libsnark/relations/constraint_satisfaction_problems/r1cs/r1cs.hpp>

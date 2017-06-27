@@ -15,11 +15,11 @@
 #ifndef RUN_BACS_PPZKSNARK_TCC_
 #define RUN_BACS_PPZKSNARK_TCC_
 
-#include <libsnark/zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark.hpp>
-
 #include <sstream>
 
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/zk_proof_systems/ppzksnark/bacs_ppzksnark/bacs_ppzksnark.hpp>
 
 namespace libsnark {
 

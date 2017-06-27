@@ -5,13 +5,14 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 #include <algorithm>
-#include <cstdio>
 #include <cassert>
+#include <cstdio>
 #include <cstring>
 #include <vector>
 
-#include <libsnark/common/default_types/r1cs_ppzkadsnark_pp.hpp>
 #include <libff/common/profiling.hpp>
+
+#include <libsnark/common/default_types/r1cs_ppzkadsnark_pp.hpp>
 #include <libsnark/zk_proof_systems/ppzkadsnark/r1cs_ppzkadsnark/examples/run_r1cs_ppzkadsnark.hpp>
 
 using namespace libsnark;
@@ -23,7 +24,7 @@ int main(int argc, const char * argv[])
 
     if (argc == 2 && strcmp(argv[1], "-v") == 0)
     {
-        print_compilation_info();
+        libff::print_compilation_info();
         return 0;
     }
 

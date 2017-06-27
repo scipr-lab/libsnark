@@ -12,6 +12,9 @@
 #ifndef MEMORY_MASKING_GADGET_HPP_
 #define MEMORY_MASKING_GADGET_HPP_
 
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp>
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/word_variable_gadget.hpp>
+
 namespace libsnark {
 
 /**

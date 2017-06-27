@@ -8,7 +8,9 @@
 #define R1CS_PCD_PARAMS_HPP_
 
 #include <memory>
-#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/compliance_predicate.hpp>
+#include <vector>
+
+#include <libsnark/zk_proof_systems/pcd/r1cs_pcd/compliance_predicate/cp_handler.hpp>
 
 namespace libsnark {
 

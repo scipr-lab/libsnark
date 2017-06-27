@@ -13,6 +13,8 @@
 #ifndef RUN_BACS_PPZKSNARK_HPP_
 #define RUN_BACS_PPZKSNARK_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/relations/circuit_satisfaction_problems/bacs/examples/bacs_examples.hpp>
 
 namespace libsnark {

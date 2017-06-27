@@ -35,8 +35,8 @@
 #define TBCS_PPZKSNARK_HPP_
 
 #include <libsnark/relations/circuit_satisfaction_problems/tbcs/tbcs.hpp>
-#include <libsnark/zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.hpp>
 #include <libsnark/zk_proof_systems/ppzksnark/tbcs_ppzksnark/tbcs_ppzksnark_params.hpp>
+#include <libsnark/zk_proof_systems/ppzksnark/uscs_ppzksnark/uscs_ppzksnark.hpp>
 
 namespace libsnark {
 

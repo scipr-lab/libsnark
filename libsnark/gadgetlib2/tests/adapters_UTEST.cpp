@@ -7,8 +7,9 @@
  *****************************************************************************/
 
 #include <gtest/gtest.h>
-#include <libsnark/gadgetlib2/pp.hpp>
+
 #include <libsnark/gadgetlib2/adapters.hpp>
+#include <libsnark/gadgetlib2/pp.hpp>
 
 using namespace gadgetlib2;
 

@@ -15,6 +15,8 @@
 #ifndef WEIERSTRASS_G1_GADGET_HPP_
 #define WEIERSTRASS_G1_GADGET_HPP_
 
+#include <libff/algebra/curves/public_params.hpp>
+
 #include <libsnark/gadgetlib1/gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/pairing/pairing_params.hpp>
 

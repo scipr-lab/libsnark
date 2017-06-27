@@ -13,6 +13,7 @@
 #define SET_COMMITMENT_HPP_
 
 #include <libff/common/utils.hpp>
+
 #include <libsnark/common/data_structures/merkle_tree.hpp>
 #include <libsnark/gadgetlib1/gadgets/hashes/hash_io.hpp> // TODO: the current structure is suboptimal
 

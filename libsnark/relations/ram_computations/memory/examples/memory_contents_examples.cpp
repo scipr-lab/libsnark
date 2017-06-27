@@ -11,11 +11,11 @@
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include <libsnark/relations/ram_computations/memory/examples/memory_contents_examples.hpp>
-
 #include <cstdlib>
 #include <map>
 #include <set>
+
+#include <libsnark/relations/ram_computations/memory/examples/memory_contents_examples.hpp>
 
 namespace libsnark {
 

@@ -29,8 +29,8 @@
 #ifndef TBCS_TO_USCS_HPP_
 #define TBCS_TO_USCS_HPP_
 
-#include <libsnark/relations/constraint_satisfaction_problems/uscs/uscs.hpp>
 #include <libsnark/relations/circuit_satisfaction_problems/tbcs/tbcs.hpp>
+#include <libsnark/relations/constraint_satisfaction_problems/uscs/uscs.hpp>
 
 namespace libsnark {
 

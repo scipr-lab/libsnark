@@ -14,12 +14,12 @@
 #ifndef TINYRAM_CPU_CHECKER_HPP_
 #define TINYRAM_CPU_CHECKER_HPP_
 
-#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp>
-#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/word_variable_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/alu_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/argument_decoder_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/consistency_enforcer_gadget.hpp>
 #include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/memory_masking_gadget.hpp>
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp>
+#include <libsnark/gadgetlib1/gadgets/cpu_checkers/tinyram/components/word_variable_gadget.hpp>
 
 namespace libsnark {
 

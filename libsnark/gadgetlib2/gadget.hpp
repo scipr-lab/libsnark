@@ -37,9 +37,10 @@
 #define LIBSNARK_GADGETLIB2_INCLUDE_GADGETLIB2_GADGET_HPP_
 
 #include <vector>
-#include <libsnark/gadgetlib2/variable.hpp>
-#include <libsnark/gadgetlib2/protoboard.hpp>
+
 #include <libsnark/gadgetlib2/gadgetMacros.hpp>
+#include <libsnark/gadgetlib2/protoboard.hpp>
+#include <libsnark/gadgetlib2/variable.hpp>
 
 namespace gadgetlib2 {
 

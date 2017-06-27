@@ -14,9 +14,9 @@
 #ifndef SPARSE_VECTOR_TCC_
 #define SPARSE_VECTOR_TCC_
 
-#include <libff/algebra/scalar_multiplication/multiexp.hpp>
-
 #include <numeric>
+
+#include <libff/algebra/scalar_multiplication/multiexp.hpp>
 
 namespace libsnark {
 
