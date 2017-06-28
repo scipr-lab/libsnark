@@ -22,6 +22,9 @@
 #ifndef QAP_HPP_
 #define QAP_HPP_
 
+#include <map>
+#include <memory>
+
 #include <libfqfft/evaluation_domain/evaluation_domain.hpp>
 
 namespace libsnark {
