@@ -88,76 +88,6 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
     return acc + libff::multi_exp<knowledge_commitment<T1, T2>, FieldT, Method>(g.begin(), g.end(), p.begin(), p.end(), chunks);
 }
 
-template<typename T1, typename T2>
-void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec)
-{
-    libff::enter_block("Batch-convert knowledge-commitments to special form");
-
-    std::vector<T1> g_vec;
-    g_vec.reserve(vec.size());
-
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (!vec[i].g.is_zero())
-        {
-            g_vec.emplace_back(vec[i].g);
-        }
-    }
-
-    libff::batch_to_special_all_non_zeros<T1>(g_vec);
-    auto g_it = g_vec.begin();
-    T1 T1_zero_special = T1::zero();
-    T1_zero_special.to_special();
-
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (!vec[i].g.is_zero())
-        {
-            vec[i].g = *g_it;
-            ++g_it;
-        }
-        else
-        {
-            vec[i].g = T1_zero_special;
-        }
-    }
-
-    g_vec.clear();
-
-    std::vector<T2> h_vec;
-    h_vec.reserve(vec.size());
-
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (!vec[i].h.is_zero())
-        {
-            h_vec.emplace_back(vec[i].h);
-        }
-    }
-
-    libff::batch_to_special_all_non_zeros<T2>(h_vec);
-    auto h_it = h_vec.begin();
-    T2 T2_zero_special = T2::zero();
-    T2_zero_special.to_special();
-
-    for (size_t i = 0; i < vec.size(); ++i)
-    {
-        if (!vec[i].h.is_zero())
-        {
-            vec[i].h = *h_it;
-            ++h_it;
-        }
-        else
-        {
-            vec[i].h = T2_zero_special;
-        }
-    }
-
-    g_vec.clear();
-
-    libff::leave_block("Batch-convert knowledge-commitments to special form");
-}
-
 template<typename T1, typename T2, typename FieldT>
 knowledge_commitment_vector<T1, T2> kc_batch_exp_internal(const size_t scalar_size,
                                                           const size_t T1_window,
@@ -248,7 +178,7 @@ knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
         tmp[i] = kc_batch_exp_internal<T1, T2, FieldT>(scalar_size, T1_window, T2_window, T1_table, T2_table, T1_coeff, T2_coeff, v,
                                                        chunk_pos[i], chunk_pos[i+1], i == num_chunks - 1 ? last_chunk : chunk_size);
 #ifdef USE_MIXED_ADDITION
-        kc_batch_to_special<T1, T2>(tmp[i].values);
+        libff::batch_to_special<knowledge_commitment<T1, T2>>(tmp[i].values);
 #endif
     }
 

@@ -35,9 +35,6 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
                                                                 typename std::vector<FieldT>::const_iterator scalar_end,
                                                                 const size_t chunks);
 
-template<typename T1, typename T2>
-void kc_batch_to_special(std::vector<knowledge_commitment<T1, T2> > &vec);
-
 template<typename T1, typename T2, typename FieldT>
 knowledge_commitment_vector<T1, T2> kc_batch_exp(const size_t scalar_size,
                                                  const size_t T1_window,

@@ -44,6 +44,33 @@ knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::operator+(const knowled
 }
 
 template<typename T1, typename T2>
+knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::mixed_add(const knowledge_commitment<T1,T2> &other) const
+{
+    return knowledge_commitment<T1,T2>(this->g.mixed_add(other.g),
+                                       this->h.mixed_add(other.h));
+}
+
+template<typename T1, typename T2>
+knowledge_commitment<T1,T2> knowledge_commitment<T1,T2>::dbl() const
+{
+    return knowledge_commitment<T1,T2>(this->g.dbl(),
+                                       this->h.dbl());
+}
+
+template<typename T1, typename T2>
+void knowledge_commitment<T1,T2>::to_special()
+{
+    this->g.to_special();
+    this->h.to_special();
+}
+
+template<typename T1, typename T2>
+bool knowledge_commitment<T1,T2>::is_special() const
+{
+    return this->g->is_special() && this->h->is_special();
+}
+
+template<typename T1, typename T2>
 bool knowledge_commitment<T1,T2>::is_zero() const
 {
     return (g.is_zero() && h.is_zero());
@@ -104,6 +131,80 @@ std::istream& operator>>(std::istream& in, knowledge_commitment<T1,T2> &kc)
     libff::consume_OUTPUT_SEPARATOR(in);
     in >> kc.h;
     return in;
+}
+
+template<typename T1, typename T2>
+void knowledge_commitment<T1,T2>::batch_to_special_all_non_zeros(
+    std::vector<knowledge_commitment<T1,T2> > &vec)
+{
+    // it is guaranteed that every vec[i] is non-zero,
+    // but, for any i, *one* of vec[i].g and vec[i].h might still be zero,
+    // so we still have to handle zeros separately
+
+    // we separately process g's first, then h's
+    // to lower memory consumption
+    std::vector<T1> g_vec;
+    g_vec.reserve(vec.size());
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (!vec[i].g.is_zero())
+        {
+            g_vec.emplace_back(vec[i].g);
+        }
+    }
+
+    T1::batch_to_special_all_non_zeros(g_vec);
+    auto g_it = g_vec.begin();
+    T1 T1_zero_special = T1::zero();
+    T1_zero_special.to_special();
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (!vec[i].g.is_zero())
+        {
+            vec[i].g = *g_it;
+            ++g_it;
+        }
+        else
+        {
+            vec[i].g = T1_zero_special;
+        }
+    }
+
+    g_vec.clear();
+
+    // exactly the same thing, but for h:
+    std::vector<T2> h_vec;
+    h_vec.reserve(vec.size());
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (!vec[i].h.is_zero())
+        {
+            h_vec.emplace_back(vec[i].h);
+        }
+    }
+
+    T2::batch_to_special_all_non_zeros(h_vec);
+    auto h_it = h_vec.begin();
+    T2 T2_zero_special = T2::zero();
+    T2_zero_special.to_special();
+
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        if (!vec[i].h.is_zero())
+        {
+            vec[i].h = *h_it;
+            ++h_it;
+        }
+        else
+        {
+            vec[i].h = T2_zero_special;
+        }
+    }
+
+    h_vec.clear();
 }
 
 } // libsnark
