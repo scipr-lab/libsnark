@@ -339,7 +339,7 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     libff::enter_block("Compute the L-query", false);
     libff::G1_vector<ppT> L_query = batch_exp(g1_scalar_size, g1_window_size, g1_table, Lt);
 #ifdef USE_MIXED_ADDITION
-    batch_to_special<libff::G1<ppT> >(L_query);
+    libff::batch_to_special<libff::G1<ppT> >(L_query);
 #endif
     libff::leave_block("Compute the L-query", false);
     libff::leave_block("Generate queries");
