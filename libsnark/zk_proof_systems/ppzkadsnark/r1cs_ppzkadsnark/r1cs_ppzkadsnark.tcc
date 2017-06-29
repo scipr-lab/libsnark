@@ -572,6 +572,9 @@ r1cs_ppzkadsnark_keypair<ppT> r1cs_ppzkadsnark_generator(const r1cs_ppzkadsnark_
 
     libff::enter_block("Compute the H-query", false);
     libff::G1_vector<snark_pp<ppT>> H_query = batch_exp(libff::Fr<snark_pp<ppT>>::size_in_bits(), g1_window, g1_table, Ht);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<snark_pp<ppT>> >(H_query);
+#endif
     libff::leave_block("Compute the H-query", false);
 
     libff::enter_block("Compute the K-query", false);
@@ -751,7 +754,7 @@ r1cs_ppzkadsnark_proof<ppT> r1cs_ppzkadsnark_prover(const r1cs_ppzkadsnark_provi
     libff::enter_block("Compute answer to H-query", false);
     g_H = g_H + libff::multi_exp<libff::G1<snark_pp<ppT>>,
                                  libff::Fr<snark_pp<ppT>>,
-                                 libff::multi_exp_method_bos_coster>(
+                                 libff::multi_exp_method_djb>(
         pk.H_query.begin(),
         pk.H_query.begin()+qap_wit.degree()+1,
         qap_wit.coefficients_for_H.begin(),

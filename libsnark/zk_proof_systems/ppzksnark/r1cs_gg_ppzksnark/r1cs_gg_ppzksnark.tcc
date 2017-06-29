@@ -330,10 +330,15 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
 
     libff::enter_block("Compute the B-query", false);
     knowledge_commitment_vector<libff::G2<ppT>, libff::G1<ppT> > B_query = kc_batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window_size, g1_window_size, g2_table, g1_table, libff::Fr<ppT>::one(), libff::Fr<ppT>::one(), Bt, chunks);
+    // NOTE: if USE_MIXED_ADDITION is defined,
+    // kc_batch_exp will convert its output to special form internally
     libff::leave_block("Compute the B-query", false);
 
     libff::enter_block("Compute the H-query", false);
     libff::G1_vector<ppT> H_query = batch_exp_with_coeff(g1_scalar_size, g1_window_size, g1_table, qap.Zt * delta_inverse, Ht);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(H_query);
+#endif
     libff::leave_block("Compute the H-query", false);
 
     libff::enter_block("Compute the L-query", false);
@@ -436,7 +441,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
 
     libff::G1<ppT> evaluation_At = libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
                                                                         libff::Fr<ppT>,
-                                                                        libff::multi_exp_method_bos_coster>(
+                                                                        libff::multi_exp_method_djb>(
         pk.A_query.begin(),
         pk.A_query.begin() + qap_wit.num_variables() + 1,
         const_padded_assignment.begin(),
@@ -448,7 +453,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > evaluation_Bt = kc_multi_exp_with_mixed_addition<libff::G2<ppT>,
                                                                                                            libff::G1<ppT>,
                                                                                                            libff::Fr<ppT>,
-                                                                                                           libff::multi_exp_method_bos_coster>(
+                                                                                                           libff::multi_exp_method_djb>(
         pk.B_query,
         0,
         qap_wit.num_variables() + 1,
@@ -460,7 +465,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::enter_block("Compute evaluation to H-query", false);
     libff::G1<ppT> evaluation_Ht = libff::multi_exp<libff::G1<ppT>,
                                                     libff::Fr<ppT>,
-                                                    libff::multi_exp_method_bos_coster>(
+                                                    libff::multi_exp_method_djb>(
         pk.H_query.begin(),
         pk.H_query.begin() + (qap_wit.degree() - 1),
         qap_wit.coefficients_for_H.begin(),
@@ -471,7 +476,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::enter_block("Compute evaluation to L-query", false);
     libff::G1<ppT> evaluation_Lt = libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
                                                                         libff::Fr<ppT>,
-                                                                        libff::multi_exp_method_bos_coster>(
+                                                                        libff::multi_exp_method_djb>(
         pk.L_query.begin(),
         pk.L_query.end(),
         const_padded_assignment.begin() + qap_wit.num_inputs() + 1,
