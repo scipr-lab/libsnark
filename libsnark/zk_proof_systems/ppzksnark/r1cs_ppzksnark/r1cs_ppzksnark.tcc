@@ -475,36 +475,54 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     libff::enter_block("Compute the proof");
 
     libff::enter_block("Compute answer to A-query", false);
-    g_A = g_A + kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.A_query,
-                                                                             1, 1+qap_wit.num_variables(),
-                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
-                                                                             chunks, true);
+    g_A = g_A + kc_multi_exp_with_mixed_addition<libff::G1<ppT>,
+                                                 libff::G1<ppT>,
+                                                 libff::Fr<ppT>,
+                                                 libff::multi_exp_method_bos_coster>(
+        pk.A_query,
+        1, 1+qap_wit.num_variables(),
+        qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute answer to A-query", false);
 
     libff::enter_block("Compute answer to B-query", false);
-    g_B = g_B + kc_multi_exp_with_mixed_addition<libff::G2<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.B_query,
-                                                                             1, 1+qap_wit.num_variables(),
-                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
-                                                                             chunks, true);
+    g_B = g_B + kc_multi_exp_with_mixed_addition<libff::G2<ppT>,
+                                                 libff::G1<ppT>,
+                                                 libff::Fr<ppT>,
+                                                 libff::multi_exp_method_bos_coster>(
+        pk.B_query,
+        1, 1+qap_wit.num_variables(),
+        qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute answer to B-query", false);
 
     libff::enter_block("Compute answer to C-query", false);
-    g_C = g_C + kc_multi_exp_with_mixed_addition<libff::G1<ppT>, libff::G1<ppT>, libff::Fr<ppT> >(pk.C_query,
-                                                                             1, 1+qap_wit.num_variables(),
-                                                                             qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
-                                                                             chunks, true);
+    g_C = g_C + kc_multi_exp_with_mixed_addition<libff::G1<ppT>,
+                                                 libff::G1<ppT>,
+                                                 libff::Fr<ppT>,
+                                                 libff::multi_exp_method_bos_coster>(
+        pk.C_query,
+        1, 1+qap_wit.num_variables(),
+        qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute answer to C-query", false);
 
     libff::enter_block("Compute answer to H-query", false);
-    g_H = g_H + libff::multi_exp<libff::G1<ppT>, libff::Fr<ppT> >(pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree()+1,
-                                             qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree()+1,
-                                             chunks, true);
+    g_H = g_H + libff::multi_exp<libff::G1<ppT>,
+                                 libff::Fr<ppT>,
+                                 libff::multi_exp_method_bos_coster>(
+        pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree()+1,
+        qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree()+1,
+        chunks);
     libff::leave_block("Compute answer to H-query", false);
 
     libff::enter_block("Compute answer to K-query", false);
-    g_K = g_K + libff::multi_exp_with_mixed_addition<libff::G1<ppT>, libff::Fr<ppT> >(pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_variables(),
-                                                                 qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
-                                                                 chunks, true);
+    g_K = g_K + libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
+                                                     libff::Fr<ppT>,
+                                                     libff::multi_exp_method_bos_coster>(
+        pk.K_query.begin()+1, pk.K_query.begin()+1+qap_wit.num_variables(),
+        qap_wit.coefficients_for_ABCs.begin(), qap_wit.coefficients_for_ABCs.begin()+qap_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute answer to K-query", false);
 
     libff::leave_block("Compute the proof");
