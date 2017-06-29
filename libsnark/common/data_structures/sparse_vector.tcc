@@ -16,6 +16,10 @@
 
 #include <numeric>
 
+#ifdef MULTICORE
+#include <omp.h>
+#endif
+
 #include <libff/algebra/scalar_multiplication/multiexp.hpp>
 
 namespace libsnark {

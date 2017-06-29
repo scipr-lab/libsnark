@@ -22,6 +22,10 @@
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 
+#ifdef MULTICORE
+#include <omp.h>
+#endif
+
 #include <libsnark/reductions/uscs_to_ssp/uscs_to_ssp.hpp>
 #include <libsnark/relations/arithmetic_programs/ssp/ssp.hpp>
 

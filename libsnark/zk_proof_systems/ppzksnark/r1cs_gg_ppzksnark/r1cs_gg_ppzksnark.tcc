@@ -24,6 +24,10 @@ See r1cs_gg_ppzksnark.hpp .
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 
+#ifdef MULTICORE
+#include <omp.h>
+#endif
+
 #include <libsnark/knowledge_commitment/kc_multiexp.hpp>
 #include <libsnark/reductions/r1cs_to_qap/r1cs_to_qap.hpp>
 
