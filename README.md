@@ -232,7 +232,7 @@ The libsnark library relies on the following:
 So far we have tested these only on Linux, though we have been able to make the
 libsnark work, with some features disabled (such as memory profiling or GTest tests),
 on Windows via Cygwin and on Mac OS X. See also the notes on [portability](#portability)
-below. (If you port libsnark to additional platforms, please let us know!) 
+below. (If you port libsnark to additional platforms, please let us know!)
 
 Concretely, here are the requisite packages in some Linux distributions:
 
@@ -263,7 +263,7 @@ Fetch dependencies from their GitHub repos:
 
 Create the Makefile:
 
-    $ mkdir build && cd build && cmake .. 
+    $ mkdir build && cd build && cmake ..
 
 Then, to compile the library, tests, and profiling harness, run this within the `build directory:
 
@@ -287,7 +287,7 @@ This will install `libsnark.a` into `/install/path/lib`; so your application sho
 
 In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be installed and should be linked in using `-lsnark_adsnark`.
 
-When you use compile you application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/src/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
+When you use compile you application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/libsnark/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
 
 ### Building on Windows using Cygwin
 
@@ -315,16 +315,16 @@ Tutorials
 
 libsnark includes a tutorial, and some usage examples, for the high-level API.
 
-* `src/gadgetlib1/examples1` contains a simple example for constructing a
+* `libsnark/gadgetlib1/examples1` contains a simple example for constructing a
   constraint system using gadgetlib1.
 
-* `src/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
+* `libsnark/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
   NP statements as constraint systems. It introduces basic terminology, design
   overview, and recommended programming style. It also shows how to invoke
   ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
   into a standalone executable.
 
-* `src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
+* `libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
   constructs a simple constraint system and runs the ppzksnark. See below for how to
    run it.
 
@@ -335,7 +335,7 @@ Executing profiling example
 
 The command
 
-     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
 
 exercises the ppzkSNARK (first generator, then prover, then verifier) on an
 R1CS instance with 1000 equations and an input consisting of 10 field elements.
@@ -345,7 +345,7 @@ R1CS instance with 1000 equations and an input consisting of 10 field elements.
 
 The command
 
-     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
 
 does the same but now the input consists of 10 bytes.
 
@@ -487,7 +487,7 @@ Directory structure
 
 The directory structure of the libsnark library is as follows:
 
-* src/ --- main C++ source code, containing the following modules:
+* libsnark/ --- main C++ source code, containing the following modules:
     * common/ --- miscellaneous utilities
     * gadgetlib1/ --- gadgetlib1, a library to construct R1CS instances
         * gadgets/ --- basic gadgets for gadgetlib1
@@ -505,7 +505,7 @@ The directory structure of the libsnark library is as follows:
         * examples/ --- example code and tutorials for this module
         * tests/ --- unit tests for this module
 
-    In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples/` and `src/gadgetlib2/examples/`.
+    In particular, the top-level API examples are at `libsnark/r1cs_ppzksnark/examples/` and `libsnark/gadgetlib2/examples/`.
 
 
 --------------------------------------------------------------------------------

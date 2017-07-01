@@ -143,12 +143,11 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 # libfqfft
 find_path(LIBFQFFT_INCLUDE_DIR NAMES libfqfft)
-set(LIBFQFFT_DIRECTORY ${LIBFQFFT_INCLUDE_DIR}/libfqfft)
-include_directories(${LIBFQFFT_DIRECTORY})
+include_directories(${LIBFQFFT_INCLUDE_DIR})
 
 # libff
 find_path(LIBFF_INCLUDE_DIR NAMES libff)
-include_directories(${LIBFF_INCLUDE_DIR}/libff)
+include_directories(${LIBFF_INCLUDE_DIR})
 find_library(LIBFF_LIBRARIES NAMES ff libff)
 
 add_definitions(
@@ -244,4 +243,4 @@ endif(CCACHE_FOUND)
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 add_subdirectory(third_party)
-add_subdirectory(src)
+add_subdirectory(libsnark)
