@@ -252,14 +252,11 @@ Concretely, here are the requisite packages in some Linux distributions:
 
         $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
 
-Follow the build guides in [libff](https://github.com/scipr-lab/libff) and [libfqfft](https://github.com/scipr-lab/libfqfft) to
-install these respective libraries.
-
 ### Building
 
 Fetch dependencies from their GitHub repos:
 
-    $ git submodule init && git submodule update
+    $ git submodule update --init --recursive
 
 Create the Makefile:
 
