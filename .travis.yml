@@ -24,29 +24,9 @@ before_install:
   # Checking versions
   - g++ --version
 
-# TODO (howardwu): Update this install process once libff and libfqfft support are resolved.
-install:
-  # Install libff
-  - git clone https://github.com/scipr-lab/libff.git
-  - cd libff
-  - git submodule init && git submodule update
-  - mkdir build && cd build
-  - cmake ..
-  - make
-  - sudo make install
-  - cd ../..
-  # Install libfqfft
-  - git clone https://github.com/scipr-lab/libfqfft.git
-  - cd libfqfft
-  - mkdir build && cd build
-  - cmake ..
-  - make
-  - sudo make install
-  - cd ../..
-
 before_script:
   # Install git submodules
-  - git submodule init && git submodule update
+  - git submodule update --init --recursive
   - mkdir build
   - cd build
   - cmake ..
