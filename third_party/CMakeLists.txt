@@ -38,3 +38,24 @@ if("${WITH_SUPERCOP}")
     ${CRYPTO_LIBRARIES}
   )
 endif()
+
+
+
+include(ExternalProject)
+ExternalProject_Add(
+  fqfft
+
+  SOURCE_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}/libfqfft
+
+  CMAKE_ARGS
+  -DDEBUG=${DEBUG}
+  -DMULTICORE=${MULTICORE}
+  -DOPT_FLAGS=${OPT_FLAGS}
+  -DPROF_DOUBLE=${PROF_DOUBLE}
+  -DWITH_PROCPS=${WITH_PROCPS}  
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}/libfqfft
+
+  INSTALL_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}/libfqfft
+)

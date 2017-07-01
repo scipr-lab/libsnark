@@ -48,8 +48,15 @@ target_link_libraries(
   ${GMPXX_LIBRARIES}
   ${CRYPTO_LIBRARIES}
   ${PROCPS_LIBRARIES}
-  ${LIBFF_LIBRARIES}
   ${SNARK_EXTRALIBS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/third_party/libff/lib/libff.a
+)
+target_include_directories(
+  snark
+
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/third_party/libff/include
 )
 
 install(
