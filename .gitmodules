@@ -10,3 +10,6 @@
 [submodule "third_party/libsnark-supercop"]
 	path = third_party/libsnark-supercop
 	url = git://github.com/mbbarbosa/libsnark-supercop.git
+[submodule "third_party/libfqfft"]
+	path = third_party/libfqfft
+	url = https://github.com/howardwu/libfqfft.git
