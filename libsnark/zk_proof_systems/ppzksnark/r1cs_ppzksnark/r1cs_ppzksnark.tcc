@@ -517,7 +517,7 @@ r1cs_ppzksnark_proof<ppT> r1cs_ppzksnark_prover(const r1cs_ppzksnark_proving_key
     libff::enter_block("Compute answer to H-query", false);
     g_H = g_H + libff::multi_exp<libff::G1<ppT>,
                                  libff::Fr<ppT>,
-                                 libff::multi_exp_method_djb>(
+                                 libff::multi_exp_method_BDLO12>(
         pk.H_query.begin(), pk.H_query.begin()+qap_wit.degree()+1,
         qap_wit.coefficients_for_H.begin(), qap_wit.coefficients_for_H.begin()+qap_wit.degree()+1,
         chunks);

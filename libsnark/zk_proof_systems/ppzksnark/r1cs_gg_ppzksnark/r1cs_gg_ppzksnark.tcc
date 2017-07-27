@@ -441,7 +441,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
 
     libff::G1<ppT> evaluation_At = libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
                                                                         libff::Fr<ppT>,
-                                                                        libff::multi_exp_method_djb>(
+                                                                        libff::multi_exp_method_BDLO12>(
         pk.A_query.begin(),
         pk.A_query.begin() + qap_wit.num_variables() + 1,
         const_padded_assignment.begin(),
@@ -453,7 +453,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     knowledge_commitment<libff::G2<ppT>, libff::G1<ppT> > evaluation_Bt = kc_multi_exp_with_mixed_addition<libff::G2<ppT>,
                                                                                                            libff::G1<ppT>,
                                                                                                            libff::Fr<ppT>,
-                                                                                                           libff::multi_exp_method_djb>(
+                                                                                                           libff::multi_exp_method_BDLO12>(
         pk.B_query,
         0,
         qap_wit.num_variables() + 1,
@@ -465,7 +465,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::enter_block("Compute evaluation to H-query", false);
     libff::G1<ppT> evaluation_Ht = libff::multi_exp<libff::G1<ppT>,
                                                     libff::Fr<ppT>,
-                                                    libff::multi_exp_method_djb>(
+                                                    libff::multi_exp_method_BDLO12>(
         pk.H_query.begin(),
         pk.H_query.begin() + (qap_wit.degree() - 1),
         qap_wit.coefficients_for_H.begin(),
@@ -476,7 +476,7 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::enter_block("Compute evaluation to L-query", false);
     libff::G1<ppT> evaluation_Lt = libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
                                                                         libff::Fr<ppT>,
-                                                                        libff::multi_exp_method_djb>(
+                                                                        libff::multi_exp_method_BDLO12>(
         pk.L_query.begin(),
         pk.L_query.end(),
         const_padded_assignment.begin() + qap_wit.num_inputs() + 1,
