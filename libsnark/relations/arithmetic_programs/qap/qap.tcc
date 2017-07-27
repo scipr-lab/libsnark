@@ -242,14 +242,22 @@ bool qap_instance_evaluation<FieldT>::is_satisfied(const qap_witness<FieldT> &wi
     FieldT ans_C = this->Ct[0] + witness.d3*this->Zt;
     FieldT ans_H = FieldT::zero();
 
-    ans_A = ans_A + libff::naive_plain_exp<FieldT, FieldT>(this->At.begin()+1, this->At.begin()+1+this->num_variables(),
-                                                    witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_B = ans_B + libff::naive_plain_exp<FieldT, FieldT>(this->Bt.begin()+1, this->Bt.begin()+1+this->num_variables(),
-                                                    witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_C = ans_C + libff::naive_plain_exp<FieldT, FieldT>(this->Ct.begin()+1, this->Ct.begin()+1+this->num_variables(),
-                                                    witness.coefficients_for_ABCs.begin(), witness.coefficients_for_ABCs.begin()+this->num_variables());
-    ans_H = ans_H + libff::naive_plain_exp<FieldT, FieldT>(this->Ht.begin(), this->Ht.begin()+this->degree()+1,
-                                                    witness.coefficients_for_H.begin(), witness.coefficients_for_H.begin()+this->degree()+1);
+    ans_A = ans_A + libff::inner_product<FieldT>(this->At.begin()+1,
+                                                 this->At.begin()+1+this->num_variables(),
+                                                 witness.coefficients_for_ABCs.begin(),
+                                                 witness.coefficients_for_ABCs.begin()+this->num_variables());
+    ans_B = ans_B + libff::inner_product<FieldT>(this->Bt.begin()+1,
+                                                 this->Bt.begin()+1+this->num_variables(),
+                                                 witness.coefficients_for_ABCs.begin(),
+                                                 witness.coefficients_for_ABCs.begin()+this->num_variables());
+    ans_C = ans_C + libff::inner_product<FieldT>(this->Ct.begin()+1,
+                                                 this->Ct.begin()+1+this->num_variables(),
+                                                 witness.coefficients_for_ABCs.begin(),
+                                                 witness.coefficients_for_ABCs.begin()+this->num_variables());
+    ans_H = ans_H + libff::inner_product<FieldT>(this->Ht.begin(),
+                                                 this->Ht.begin()+this->degree()+1,
+                                                 witness.coefficients_for_H.begin(),
+                                                 witness.coefficients_for_H.begin()+this->degree()+1);
 
     if (ans_A * ans_B - ans_C != ans_H * this->Zt)
     {

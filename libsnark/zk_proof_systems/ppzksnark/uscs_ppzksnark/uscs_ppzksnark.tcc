@@ -22,6 +22,10 @@
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 
+#ifdef MULTICORE
+#include <omp.h>
+#endif
+
 #include <libsnark/reductions/uscs_to_ssp/uscs_to_ssp.hpp>
 #include <libsnark/relations/arithmetic_programs/ssp/ssp.hpp>
 
@@ -263,18 +267,30 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constr
 
     libff::enter_block("Compute the query for V_g1", false);
     libff::G1_vector<ppT> V_g1_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, Vt_table_minus_Xt_table);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(V_g1_query);
+#endif
     libff::leave_block("Compute the query for V_g1", false);
 
     libff::enter_block("Compute the query for alpha_V_g1", false);
     libff::G1_vector<ppT> alpha_V_g1_query = batch_exp_with_coeff(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(alpha_V_g1_query);
+#endif
     libff::leave_block("Compute the query for alpha_V_g1", false);
 
     libff::enter_block("Compute the query for H_g1", false);
     libff::G1_vector<ppT> H_g1_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, Ht_table);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(H_g1_query);
+#endif
     libff::leave_block("Compute the query for H_g1", false);
 
     libff::enter_block("Compute the query for V_g2", false);
     libff::G2_vector<ppT> V_g2_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g2_table, Vt_table);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G2<ppT> >(V_g2_query);
+#endif
     libff::leave_block("Compute the query for V_g2", false);
 
     libff::leave_block("Generate proof components");
@@ -359,31 +375,39 @@ uscs_ppzksnark_proof<ppT> uscs_ppzksnark_prover(const uscs_ppzksnark_proving_key
     libff::enter_block("Compute the proof");
 
     libff::enter_block("Compute V_g1, the 1st component of the proof", false);
-    V_g1 = V_g1 + libff::multi_exp_with_mixed_addition<libff::G1<ppT>, libff::Fr<ppT> >(pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
-                                                                   ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
-                                                                   chunks,
-                                                                   true);
+    V_g1 = V_g1 + libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
+                                                       libff::Fr<ppT>,
+                                                       libff::multi_exp_method_BDLO12>(
+        pk.V_g1_query.begin(), pk.V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
+        ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute V_g1, the 1st component of the proof", false);
 
     libff::enter_block("Compute alpha_V_g1, the 2nd component of the proof", false);
-    alpha_V_g1 = alpha_V_g1 + libff::multi_exp_with_mixed_addition<libff::G1<ppT>, libff::Fr<ppT> >(pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
-                                                                               ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
-                                                                               chunks,
-                                                                               true);
+    alpha_V_g1 = alpha_V_g1 + libff::multi_exp_with_mixed_addition<libff::G1<ppT>,
+                                                                   libff::Fr<ppT>,
+                                                                   libff::multi_exp_method_BDLO12>(
+        pk.alpha_V_g1_query.begin(), pk.alpha_V_g1_query.begin()+(ssp_wit.num_variables()-ssp_wit.num_inputs()),
+        ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_inputs(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute alpha_V_g1, the 2nd component of the proof", false);
 
     libff::enter_block("Compute H_g1, the 3rd component of the proof", false);
-    H_g1 = H_g1 + libff::multi_exp<libff::G1<ppT>, libff::Fr<ppT> >(pk.H_g1_query.begin(), pk.H_g1_query.begin()+ssp_wit.degree()+1,
-                                               ssp_wit.coefficients_for_H.begin(), ssp_wit.coefficients_for_H.begin()+ssp_wit.degree()+1,
-                                               chunks,
-                                               true);
+    H_g1 = H_g1 + libff::multi_exp<libff::G1<ppT>,
+                                   libff::Fr<ppT>,
+                                   libff::multi_exp_method_BDLO12>(
+        pk.H_g1_query.begin(), pk.H_g1_query.begin()+ssp_wit.degree()+1,
+        ssp_wit.coefficients_for_H.begin(), ssp_wit.coefficients_for_H.begin()+ssp_wit.degree()+1,
+        chunks);
     libff::leave_block("Compute H_g1, the 3rd component of the proof", false);
 
     libff::enter_block("Compute V_g2, the 4th component of the proof", false);
-    V_g2 = V_g2 + libff::multi_exp<libff::G2<ppT>, libff::Fr<ppT> >(pk.V_g2_query.begin()+1, pk.V_g2_query.begin()+ssp_wit.num_variables()+1,
-                                               ssp_wit.coefficients_for_Vs.begin(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
-                                               chunks,
-                                               true);
+    V_g2 = V_g2 + libff::multi_exp<libff::G2<ppT>,
+                                   libff::Fr<ppT>,
+                                   libff::multi_exp_method_BDLO12>(
+        pk.V_g2_query.begin()+1, pk.V_g2_query.begin()+ssp_wit.num_variables()+1,
+        ssp_wit.coefficients_for_Vs.begin(), ssp_wit.coefficients_for_Vs.begin()+ssp_wit.num_variables(),
+        chunks);
     libff::leave_block("Compute V_g2, the 4th component of the proof", false);
 
     libff::leave_block("Compute the proof");
