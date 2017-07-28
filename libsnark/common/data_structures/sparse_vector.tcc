@@ -16,6 +16,10 @@
 
 #include <numeric>
 
+#ifdef MULTICORE
+#include <omp.h>
+#endif
+
 #include <libff/algebra/scalar_multiplication/multiexp.hpp>
 
 namespace libsnark {
@@ -180,9 +184,11 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
                                                              const typename std::vector<FieldT>::const_iterator &it_end,
                                                              const size_t offset) const
 {
-    // TODO: does not really belong here.
+#ifdef MULTICORE
+    const size_t chunks = omp_get_max_threads(); // to override, set OMP_NUM_THREADS env var or call omp_set_num_threads()
+#else
     const size_t chunks = 1;
-    const bool use_multiexp = true;
+#endif
 
     T accumulated_value = T::zero();
     sparse_vector<T> resulting_vector;
@@ -215,11 +221,12 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
 #ifdef DEBUG
                 libff::print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
 #endif
-                accumulated_value = accumulated_value + libff::multi_exp<T, FieldT>(values.begin() + first_pos,
-                                                                             values.begin() + last_pos + 1,
-                                                                             it_begin + (indices[first_pos] - offset),
-                                                                             it_begin + (indices[last_pos] - offset) + 1,
-                                                                             chunks, use_multiexp);
+                accumulated_value = accumulated_value + libff::multi_exp<T, FieldT, libff::multi_exp_method_bos_coster>(
+                    values.begin() + first_pos,
+                    values.begin() + last_pos + 1,
+                    it_begin + (indices[first_pos] - offset),
+                    it_begin + (indices[last_pos] - offset) + 1,
+                    chunks);
             }
         }
         else
@@ -250,11 +257,12 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
 #ifdef DEBUG
         libff::print_indent(); printf("doing multiexp for w_%zu ... w_%zu\n", indices[first_pos], indices[last_pos]);
 #endif
-        accumulated_value = accumulated_value + libff::multi_exp<T, FieldT>(values.begin() + first_pos,
-                                                                     values.begin() + last_pos + 1,
-                                                                     it_begin + (indices[first_pos] - offset),
-                                                                     it_begin + (indices[last_pos] - offset) + 1,
-                                                                     chunks, use_multiexp);
+        accumulated_value = accumulated_value + libff::multi_exp<T, FieldT, libff::multi_exp_method_bos_coster>(
+            values.begin() + first_pos,
+            values.begin() + last_pos + 1,
+            it_begin + (indices[first_pos] - offset),
+            it_begin + (indices[last_pos] - offset) + 1,
+            chunks);
     }
 
     return std::make_pair(accumulated_value, resulting_vector);

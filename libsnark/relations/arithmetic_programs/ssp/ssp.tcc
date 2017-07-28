@@ -209,10 +209,14 @@ bool ssp_instance_evaluation<FieldT>::is_satisfied(const ssp_witness<FieldT> &wi
     FieldT ans_V = this->Vt[0] + witness.d*this->Zt;
     FieldT ans_H = FieldT::zero();
 
-    ans_V = ans_V + libff::naive_plain_exp<FieldT, FieldT>(this->Vt.begin()+1, this->Vt.begin()+1+this->num_variables(),
-                                                    witness.coefficients_for_Vs.begin(), witness.coefficients_for_Vs.begin()+this->num_variables());
-    ans_H = ans_H + libff::naive_plain_exp<FieldT, FieldT>(this->Ht.begin(), this->Ht.begin()+this->degree()+1,
-                                                    witness.coefficients_for_H.begin(), witness.coefficients_for_H.begin()+this->degree()+1);
+    ans_V = ans_V + libff::inner_product<FieldT>(this->Vt.begin()+1,
+                                                 this->Vt.begin()+1+this->num_variables(),
+                                                 witness.coefficients_for_Vs.begin(),
+                                                 witness.coefficients_for_Vs.begin()+this->num_variables());
+    ans_H = ans_H + libff::inner_product<FieldT>(this->Ht.begin(),
+                                                 this->Ht.begin()+this->degree()+1,
+                                                 witness.coefficients_for_H.begin(),
+                                                 witness.coefficients_for_H.begin()+this->degree()+1);
 
     if (ans_V.squared() - FieldT::one() != ans_H * this->Zt)
     {

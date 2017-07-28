@@ -45,6 +45,11 @@ struct knowledge_commitment {
     knowledge_commitment<T1,T2>& operator=(const knowledge_commitment<T1,T2> &other) = default;
     knowledge_commitment<T1,T2>& operator=(knowledge_commitment<T1,T2> &&other) = default;
     knowledge_commitment<T1,T2> operator+(const knowledge_commitment<T1, T2> &other) const;
+    knowledge_commitment<T1,T2> mixed_add(const knowledge_commitment<T1, T2> &other) const;
+    knowledge_commitment<T1,T2> dbl() const;
+
+    void to_special();
+    bool is_special() const;
 
     bool is_zero() const;
     bool operator==(const knowledge_commitment<T1,T2> &other) const;
@@ -56,6 +61,9 @@ struct knowledge_commitment {
     void print() const;
 
     static size_t size_in_bits();
+
+    static void batch_to_special_all_non_zeros(
+        std::vector<knowledge_commitment<T1,T2> > &vec);
 };
 
 template<typename T1, typename T2, mp_size_t m>
