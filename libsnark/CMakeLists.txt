@@ -49,14 +49,14 @@ target_link_libraries(
   ${CRYPTO_LIBRARIES}
   ${PROCPS_LIBRARIES}
   ${SNARK_EXTRALIBS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/third_party/libff/lib/libff.a
+  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/depends/libff/lib/libff.a
 )
 target_include_directories(
   snark
 
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/libfqfft/third_party/libff/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/depends/libff/include
 )
 
 install(
