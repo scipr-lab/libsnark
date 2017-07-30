@@ -56,7 +56,6 @@ target_include_directories(
 
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/depends/libff/include
 )
 
 install(
