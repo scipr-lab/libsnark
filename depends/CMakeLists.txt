@@ -63,7 +63,7 @@ ExternalProject_Add(
   ff
 
   SOURCE_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}/libfqfft/depends/libff
+  ${CMAKE_CURRENT_SOURCE_DIR}/libff
 
   CMAKE_ARGS
   -DDEBUG=${DEBUG}
@@ -79,8 +79,8 @@ ExternalProject_Add(
   -DPERFORMANCE=${PERFORMANCE}
   -DUSE_ASM=${USE_ASM}
   -DOPT_FLAGS=${OPT_FLAGS}
-  -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}/libfqfft/depends/libff
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_SOURCE_DIR}/libff
 
   INSTALL_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}/libfqfft/depends/libff
+  ${CMAKE_CURRENT_SOURCE_DIR}/libff
 )

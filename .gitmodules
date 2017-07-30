@@ -13,3 +13,6 @@
 [submodule "depends/libfqfft"]
 	path = depends/libfqfft
 	url = https://github.com/howardwu/libfqfft.git
+[submodule "depends/libff"]
+	path = depends/libff
+	url = https://github.com/howardwu/libff.git
