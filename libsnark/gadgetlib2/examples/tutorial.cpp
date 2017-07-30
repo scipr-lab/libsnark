@@ -10,7 +10,7 @@ This file is meant to be read top-down as a tutorial for gadget writing.
  * @copyright  MIT license (see LICENSE file)
  *****************************************************************************/
 
-#include "third_party/gtest/googletest/include/gtest/gtest.h"
+#include "depends/gtest/googletest/include/gtest/gtest.h"
 
 #include <libsnark/gadgetlib2/examples/simple_example.hpp>
 #include <libsnark/gadgetlib2/gadget.hpp>

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "third_party/gtest/googletest/include/gtest/gtest.h"
+#include "depends/gtest/googletest/include/gtest/gtest.h"
 
 #include <libsnark/common/default_types/r1cs_ppzksnark_pp.hpp>
 #include <libsnark/gadgetlib2/examples/simple_example.hpp>

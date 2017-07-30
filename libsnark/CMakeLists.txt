@@ -43,13 +43,13 @@ add_library(
 )
 target_link_libraries(
   snark
-
+  
+  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/depends/libff/lib/libff.a
   ${GMP_LIBRARIES}
   ${GMPXX_LIBRARIES}
   ${CRYPTO_LIBRARIES}
   ${PROCPS_LIBRARIES}
   ${SNARK_EXTRALIBS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/depends/libff/lib/libff.a
 )
 target_include_directories(
   snark

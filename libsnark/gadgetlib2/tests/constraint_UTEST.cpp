@@ -9,7 +9,7 @@
 
 #include <set>
 
-#include "third_party/gtest/googletest/include/gtest/gtest.h"
+#include "depends/gtest/googletest/include/gtest/gtest.h"
 
 #include <libsnark/gadgetlib2/constraint.hpp>
 #include <libsnark/gadgetlib2/pp.hpp>
