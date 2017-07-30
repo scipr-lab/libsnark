@@ -81,6 +81,12 @@ option(
   ON
 )
 
+option(
+  DEPENDS_DIR
+  "Optionally specify the dependency installation directory (default: inside dependency folder)"
+  ON
+)
+
 set(
   OPT_FLAGS
   ""
@@ -88,6 +94,10 @@ set(
   STRING
   "Override C++ compiler optimization flags"
 )
+
+if("${DEPENDS_DIR}")
+  set(DEPENDS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/depends")
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Common compilation flags and warning configuration

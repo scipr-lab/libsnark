@@ -44,7 +44,7 @@ add_library(
 target_link_libraries(
   snark
   
-  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libff/lib/libff.a
+  ${DEPENDS_DIR}/libff/lib/libff.a
   ${GMP_LIBRARIES}
   ${GMPXX_LIBRARIES}
   ${CRYPTO_LIBRARIES}
@@ -55,8 +55,8 @@ target_include_directories(
   snark
 
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libff/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../depends/libfqfft/include
+  ${DEPENDS_DIR}/libff/include
+  ${DEPENDS_DIR}/libfqfft/include
 )
 
 install(

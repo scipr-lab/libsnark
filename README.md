@@ -428,6 +428,10 @@ to control these (you can see the default at the top of CMakeLists.txt).
 
     Set the C++ compiler optimization flags, overriding the default (e.g., `-DOPT_FLAGS="-Os -march=i386"`).
 
+*   `cmake -DDEPENDS_DIR=...`
+
+    Sets the dependency installation directory to the provided path (default: installs dependencies in the respective dependency folders)
+
 Not all combinations are tested together or supported by every part of the codebase.
 
 
