@@ -33,33 +33,12 @@ before_script:
 
 script:
   - make
-  - make travis
   # TODO (howardwu): Resolve runtime on targets:
   #  - gadgetlib1_fooram_test
   #  - zk_proof_systems_r1cs_mp_ppzkpcd_test
   #  - zk_proof_systems_r1cs_sp_ppzkpcd_test
   #  - zk_proof_systems_ram_zksnark_test
-  - ./libsnark/common_routing_algorithms_test
-  - ./libsnark/gadgetlib1_simple_test
-  - ./libsnark/gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
-  - ./libsnark/gadgetlib2_adapters_test
-  - ./libsnark/gadgetlib2_constraint_test
-  - ./libsnark/gadgetlib2_gadget_test
-  - ./libsnark/gadgetlib2_integration_test
-  - ./libsnark/gadgetlib2_protoboard_test
-  - ./libsnark/gadgetlib2_variable_test
-  - ./libsnark/relations_qap_test
-  - ./libsnark/relations_ssp_test
-  - ./libsnark/zk_proof_systems_bacs_ppzksnark_test
-  - ./libsnark/zk_proof_systems_r1cs_ppzksnark_test
-  - ./libsnark/zk_proof_systems_r1cs_gg_ppzksnark_test
-  - ./libsnark/zk_proof_systems_ram_ppzksnark_test
-  - ./libsnark/zk_proof_systems_tbcs_ppzksnark_test
-  - ./libsnark/zk_proof_systems_uscs_ppzksnark_test
-  - ./libsnark/test_knapsack_gadget
-  - ./libsnark/test_merkle_tree_gadgets
-  - ./libsnark/test_set_commitment_gadget
-  - ./libsnark/test_sha256_gadget
+  - make travis
 
 notifications:
   email: false
