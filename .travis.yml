@@ -33,7 +33,7 @@ before_script:
 
 script:
   - make
-  - make gtest
+  - make travis
   # TODO (howardwu): Resolve runtime on targets:
   #  - gadgetlib1_fooram_test
   #  - zk_proof_systems_r1cs_mp_ppzkpcd_test

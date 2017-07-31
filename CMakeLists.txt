@@ -81,12 +81,6 @@ option(
   ON
 )
 
-option(
-  DEPENDS_DIR
-  "Optionally specify the dependency installation directory (default: inside dependency folder)"
-  ON
-)
-
 set(
   OPT_FLAGS
   ""
@@ -95,8 +89,16 @@ set(
   "Override C++ compiler optimization flags"
 )
 
-if("${DEPENDS_DIR}")
-  set(DEPENDS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/depends")
+if("${DEPENDS_DIR}" STREQUAL "")
+  set(
+    DEPENDS_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/depends"
+    CACHE
+    STRING
+    "Optionally specify the dependency installation directory relative to the source directory (default: inside dependency folder)"
+  )
+else()
+  set(DEPENDS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${DEPENDS_DIR}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -239,6 +241,9 @@ if(CCACHE_FOUND)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
+
+# Add a `make travis` target that builds libsnark and runs quick tests
+add_custom_target(travis COMMAND ${CMAKE_CTEST_COMMAND})
 
 # Add a `make check` target that builds and tests
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
