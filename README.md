@@ -430,7 +430,7 @@ to control these (you can see the default at the top of CMakeLists.txt).
 
 *   `cmake -DDEPENDS_DIR=...`
 
-    Sets the dependency installation directory to the provided relative path from the source directory (default: installs dependencies in the respective submodule directories)
+    Sets the dependency installation directory to the provided absolute path (default: installs dependencies in the respective submodule directories)
 
 Not all combinations are tested together or supported by every part of the codebase.
 

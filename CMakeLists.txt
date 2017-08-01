@@ -98,7 +98,7 @@ if("${DEPENDS_DIR}" STREQUAL "")
     "Optionally specify the dependency installation directory relative to the source directory (default: inside dependency folder)"
   )
 else()
-  set(DEPENDS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${DEPENDS_DIR}")
+  set(DEPENDS_DIR "${DEPENDS_DIR}")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

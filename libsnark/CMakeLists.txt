@@ -55,6 +55,7 @@ target_include_directories(
   snark
 
   PUBLIC
+  ${DEPENDS_DIR}/libff
   ${DEPENDS_DIR}/libfqfft
 )
 
@@ -741,3 +742,11 @@ add_dependencies(check test_merkle_tree_gadgets)
 add_dependencies(check test_set_commitment_gadget)
 add_dependencies(check test_sha256_gadget)
 
+set(
+  CTEST_CUSTOM_TESTS_IGNORE
+  ${CTEST_CUSTOM_TESTS_IGNORE}
+  gadgetlib1_fooram_test
+  zk_proof_systems_r1cs_mp_ppzkpcd_test
+  zk_proof_systems_r1cs_sp_ppzkpcd_test
+  zk_proof_systems_ram_zksnark_test
+)
