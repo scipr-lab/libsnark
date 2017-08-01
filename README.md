@@ -256,7 +256,7 @@ Concretely, here are the requisite packages in some Linux distributions:
 
 Fetch dependencies from their GitHub repos:
 
-    $ git submodule update --init --recursive
+    $ git submodule init && git submodule update
 
 Create the Makefile:
 

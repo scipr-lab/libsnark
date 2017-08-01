@@ -628,10 +628,6 @@ add_test(
   COMMAND gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
 )
 add_test(
-  NAME gadgetlib1_fooram_test
-  COMMAND gadgetlib1_fooram_test
-)
-add_test(
   NAME gadgetlib2_adapters_test
   COMMAND gadgetlib2_adapters_test
 )
@@ -668,10 +664,6 @@ add_test(
   COMMAND zk_proof_systems_bacs_ppzksnark_test
 )
 add_test(
-  NAME zk_proof_systems_r1cs_mp_ppzkpcd_test
-  COMMAND zk_proof_systems_r1cs_mp_ppzkpcd_test
-)
-add_test(
   NAME zk_proof_systems_r1cs_ppzksnark_test
   COMMAND zk_proof_systems_r1cs_ppzksnark_test
 )
@@ -680,16 +672,8 @@ add_test(
   COMMAND zk_proof_systems_r1cs_gg_ppzksnark_test
 )
 add_test(
-  NAME zk_proof_systems_r1cs_sp_ppzkpcd_test
-  COMMAND zk_proof_systems_r1cs_sp_ppzkpcd_test
-)
-add_test(
   NAME zk_proof_systems_ram_ppzksnark_test
   COMMAND zk_proof_systems_ram_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_ram_zksnark_test
-  COMMAND zk_proof_systems_ram_zksnark_test
 )
 add_test(
   NAME zk_proof_systems_tbcs_ppzksnark_test
@@ -719,7 +703,6 @@ add_test(
 add_dependencies(check common_routing_algorithms_test)
 add_dependencies(check gadgetlib1_simple_test)
 add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
-add_dependencies(check gadgetlib1_fooram_test)
 add_dependencies(check gadgetlib2_adapters_test)
 add_dependencies(check gadgetlib2_constraint_test)
 add_dependencies(check gadgetlib2_gadget_test)
@@ -729,12 +712,9 @@ add_dependencies(check gadgetlib2_variable_test)
 add_dependencies(check relations_qap_test)
 add_dependencies(check relations_ssp_test)
 add_dependencies(check zk_proof_systems_bacs_ppzksnark_test)
-add_dependencies(check zk_proof_systems_r1cs_mp_ppzkpcd_test)
 add_dependencies(check zk_proof_systems_r1cs_ppzksnark_test)
 add_dependencies(check zk_proof_systems_r1cs_gg_ppzksnark_test)
-add_dependencies(check zk_proof_systems_r1cs_sp_ppzkpcd_test)
 add_dependencies(check zk_proof_systems_ram_ppzksnark_test)
-add_dependencies(check zk_proof_systems_ram_zksnark_test)
 add_dependencies(check zk_proof_systems_tbcs_ppzksnark_test)
 add_dependencies(check zk_proof_systems_uscs_ppzksnark_test)
 add_dependencies(check test_knapsack_gadget)
@@ -742,11 +722,26 @@ add_dependencies(check test_merkle_tree_gadgets)
 add_dependencies(check test_set_commitment_gadget)
 add_dependencies(check test_sha256_gadget)
 
-set(
-  CTEST_CUSTOM_TESTS_IGNORE
-  ${CTEST_CUSTOM_TESTS_IGNORE}
-  gadgetlib1_fooram_test
-  zk_proof_systems_r1cs_mp_ppzkpcd_test
-  zk_proof_systems_r1cs_sp_ppzkpcd_test
-  zk_proof_systems_ram_zksnark_test
-)
+# TODO (howardwu): Resolve runtime on targets:
+# gadgetlib1_fooram_test, zk_proof_systems_r1cs_mp_ppzkpcd_test, zk_proof_systems_r1cs_sp_ppzkpcd_test, zk_proof_systems_ram_zksnark_test
+
+# add_test(
+#   NAME gadgetlib1_fooram_test
+#   COMMAND gadgetlib1_fooram_test
+# )
+# add_test(
+#   NAME zk_proof_systems_r1cs_mp_ppzkpcd_test
+#   COMMAND zk_proof_systems_r1cs_mp_ppzkpcd_test
+# )
+# add_test(
+#   NAME zk_proof_systems_r1cs_sp_ppzkpcd_test
+#   COMMAND zk_proof_systems_r1cs_sp_ppzkpcd_test
+# )
+# add_test(
+#   NAME zk_proof_systems_ram_zksnark_test
+#   COMMAND zk_proof_systems_ram_zksnark_test
+# )
+# add_dependencies(check gadgetlib1_fooram_test)
+# add_dependencies(check zk_proof_systems_r1cs_mp_ppzkpcd_test)
+# add_dependencies(check zk_proof_systems_r1cs_sp_ppzkpcd_test)
+# add_dependencies(check zk_proof_systems_ram_zksnark_test)
