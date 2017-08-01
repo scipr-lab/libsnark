@@ -242,9 +242,6 @@ if(CCACHE_FOUND)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-# Add a `make travis` target that builds libsnark and runs quick tests
-add_custom_target(travis COMMAND ${CMAKE_CTEST_COMMAND})
-
 # Add a `make check` target that builds and tests
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 

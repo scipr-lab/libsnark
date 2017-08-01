@@ -44,7 +44,7 @@ add_library(
 target_link_libraries(
   snark
   
-  ${DEPENDS_DIR}/libff/lib/libff.a
+  ff
   ${GMP_LIBRARIES}
   ${GMPXX_LIBRARIES}
   ${CRYPTO_LIBRARIES}
@@ -55,8 +55,7 @@ target_include_directories(
   snark
 
   PUBLIC
-  ${DEPENDS_DIR}/libff/include
-  ${DEPENDS_DIR}/libfqfft/include
+  ${DEPENDS_DIR}/libfqfft
 )
 
 install(
@@ -716,28 +715,6 @@ add_test(
   COMMAND test_sha256_gadget
 )
 
-add_dependencies(travis common_routing_algorithms_test)
-add_dependencies(travis gadgetlib1_simple_test)
-add_dependencies(travis gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
-add_dependencies(travis gadgetlib2_adapters_test)
-add_dependencies(travis gadgetlib2_constraint_test)
-add_dependencies(travis gadgetlib2_gadget_test)
-add_dependencies(travis gadgetlib2_integration_test)
-add_dependencies(travis gadgetlib2_protoboard_test)
-add_dependencies(travis gadgetlib2_variable_test)
-add_dependencies(travis relations_qap_test)
-add_dependencies(travis relations_ssp_test)
-add_dependencies(travis zk_proof_systems_bacs_ppzksnark_test)
-add_dependencies(travis zk_proof_systems_r1cs_ppzksnark_test)
-add_dependencies(travis zk_proof_systems_r1cs_gg_ppzksnark_test)
-add_dependencies(travis zk_proof_systems_ram_ppzksnark_test)
-add_dependencies(travis zk_proof_systems_tbcs_ppzksnark_test)
-add_dependencies(travis zk_proof_systems_uscs_ppzksnark_test)
-add_dependencies(travis test_knapsack_gadget)
-add_dependencies(travis test_merkle_tree_gadgets)
-add_dependencies(travis test_set_commitment_gadget)
-add_dependencies(travis test_sha256_gadget)
-
 add_dependencies(check common_routing_algorithms_test)
 add_dependencies(check gadgetlib1_simple_test)
 add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
@@ -763,3 +740,4 @@ add_dependencies(check test_knapsack_gadget)
 add_dependencies(check test_merkle_tree_gadgets)
 add_dependencies(check test_set_commitment_gadget)
 add_dependencies(check test_sha256_gadget)
+

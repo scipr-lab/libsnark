@@ -34,11 +34,8 @@ before_script:
 script:
   - make
   # TODO (howardwu): Resolve runtime on targets:
-  #  - gadgetlib1_fooram_test
-  #  - zk_proof_systems_r1cs_mp_ppzkpcd_test
-  #  - zk_proof_systems_r1cs_sp_ppzkpcd_test
-  #  - zk_proof_systems_ram_zksnark_test
-  - make travis
+  # gadgetlib1_fooram_test, zk_proof_systems_r1cs_mp_ppzkpcd_test, zk_proof_systems_r1cs_sp_ppzkpcd_test, zk_proof_systems_ram_zksnark_test
+  - make check
 
 notifications:
   email: false
