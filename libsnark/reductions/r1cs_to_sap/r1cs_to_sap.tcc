@@ -31,6 +31,24 @@ FieldT times_four(FieldT x)
 }
 
 /**
+ * Helper function to find evaluation domain that will be used by the reduction
+ * for a given R1CS instance.
+ */
+template<typename FieldT>
+std::shared_ptr<libfqfft::evaluation_domain<FieldT> > r1cs_to_sap_get_domain(const r1cs_constraint_system<FieldT> &cs)
+{
+    /*
+     * the SAP instance will have:
+     * - two constraints for every constraint in the original constraint system
+     * - two constraints for every public input, except the 0th, which
+     *   contributes just one extra constraint
+     * see comments in r1cs_to_sap_instance_map for details on where these
+     * constraints come from.
+     */
+    return libfqfft::get_evaluation_domain<FieldT>(2 * cs.num_constraints() + 2 * cs.num_inputs() + 1);
+}
+
+/**
  * Instance map for the R1CS-to-SAP reduction.
  */
 template<typename FieldT>
@@ -39,7 +57,7 @@ sap_instance<FieldT> r1cs_to_sap_instance_map(const r1cs_constraint_system<Field
     libff::enter_block("Call to r1cs_to_sap_instance_map");
 
     const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > domain =
-        libfqfft::get_evaluation_domain<FieldT>(2 * cs.num_constraints() + 2 * cs.num_inputs() + 1);
+        r1cs_to_sap_get_domain(cs);
 
     size_t sap_num_variables = cs.num_variables() + cs.num_constraints() + cs.num_inputs();
 
@@ -157,7 +175,7 @@ sap_instance_evaluation<FieldT> r1cs_to_sap_instance_map_with_evaluation(const r
     libff::enter_block("Call to r1cs_to_sap_instance_map_with_evaluation");
 
     const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > domain =
-        libfqfft::get_evaluation_domain<FieldT>(2 * cs.num_constraints() + 2 * cs.num_inputs() + 1);
+        r1cs_to_sap_get_domain(cs);
 
     size_t sap_num_variables = cs.num_variables() + cs.num_constraints() + cs.num_inputs();
 
@@ -284,7 +302,7 @@ sap_witness<FieldT> r1cs_to_sap_witness_map(const r1cs_constraint_system<FieldT>
     assert(cs.is_satisfied(primary_input, auxiliary_input));
 
     const std::shared_ptr<libfqfft::evaluation_domain<FieldT> > domain =
-        libfqfft::get_evaluation_domain<FieldT>(2 * cs.num_constraints() + 2 * cs.num_inputs() + 1);
+        r1cs_to_sap_get_domain(cs);
 
     size_t sap_num_variables = cs.num_variables() + cs.num_constraints() + cs.num_inputs();
 

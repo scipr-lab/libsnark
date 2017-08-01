@@ -228,8 +228,16 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 {
     libff::enter_block("Call to r1cs_se_ppzksnark_generator");
 
-    /* draw random element at which the SAP is evaluated */
-    const libff::Fr<ppT> t = libff::Fr<ppT>::random_element();
+    /**
+     * draw random element t at which the SAP is evaluated.
+     * it should be the case that Z(t) != 0
+     */
+    const std::shared_ptr<libfqfft::evaluation_domain<libff::Fr<ppT> > > domain =
+        r1cs_to_sap_get_domain(cs);
+    libff::Fr<ppT> t;
+    do {
+        t = libff::Fr<ppT>::random_element();
+    } while (domain->compute_vanishing_polynomial(t).is_zero());
 
     sap_instance_evaluation<libff::Fr<ppT> > sap_inst = r1cs_to_sap_instance_map_with_evaluation(cs, t);
 

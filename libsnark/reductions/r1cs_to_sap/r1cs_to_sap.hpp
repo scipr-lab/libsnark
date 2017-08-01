@@ -39,6 +39,13 @@
 namespace libsnark {
 
 /**
+ * Helper function to find evaluation domain that will be used by the reduction
+ * for a given R1CS instance.
+ */
+template<typename FieldT>
+std::shared_ptr<libfqfft::evaluation_domain<FieldT> > r1cs_to_sap_get_domain(const r1cs_constraint_system<FieldT> &cs);
+
+/**
  * Instance map for the R1CS-to-QAP reduction.
  */
 template<typename FieldT>
