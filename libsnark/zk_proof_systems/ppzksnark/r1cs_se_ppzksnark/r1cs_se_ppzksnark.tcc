@@ -327,6 +327,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
         G_table,
         tmp_exponents);
     tmp_exponents.clear();
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(A_query);
+#endif
 
     libff::G2_vector<ppT> B_query = libff::batch_exp<libff::G2<ppT>,
                                                      libff::Fr<ppT> >(
@@ -334,6 +337,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
         H_gamma_window,
         H_gamma_table,
         At);
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G2<ppT> >(B_query);
+#endif
 
     libff::G1<ppT> G_gamma = gamma * G;
     libff::G1<ppT> G_gamma_Z = sap_inst.Zt * G_gamma;
@@ -350,9 +356,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
         G_gamma2_Z_t.emplace_back(val);
         val = t * val;
     }
-    #ifdef USE_MIXED_ADDITION
+#ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(G_gamma2_Z_t);
-    #endif
+#endif
 
     tmp_exponents.reserve(sap_inst.num_variables() - sap_inst.num_inputs());
     for (size_t i = sap_inst.num_inputs() + 1;
@@ -369,6 +375,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
         G_table,
         tmp_exponents);
     tmp_exponents.clear();
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(C_query_1);
+#endif
 
     tmp_exponents.reserve(sap_inst.num_variables() + 1);
     libff::Fr<ppT> double_gamma2_Z = gamma * gamma * sap_inst.Zt;
@@ -384,6 +393,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
         G_table,
         tmp_exponents);
     tmp_exponents.clear();
+#ifdef USE_MIXED_ADDITION
+    libff::batch_to_special<libff::G1<ppT> >(C_query_2);
+#endif
 
     libff::leave_block("Generate R1CS proving key");
 
@@ -461,7 +473,7 @@ r1cs_se_ppzksnark_proof<ppT> r1cs_se_ppzksnark_prover(const r1cs_se_ppzksnark_pr
         sap_wit.d1 * pk.G_gamma_Z + // ZK-patch
         libff::multi_exp<libff::G1<ppT>,
                          libff::Fr<ppT>,
-                         libff::multi_exp_method_bos_coster>(
+                         libff::multi_exp_method_BDLO12>(
             pk.A_query.begin() + 1,
             pk.A_query.end(),
             sap_wit.coefficients_for_ACs.begin(),
@@ -479,7 +491,7 @@ r1cs_se_ppzksnark_proof<ppT> r1cs_se_ppzksnark_prover(const r1cs_se_ppzksnark_pr
         sap_wit.d1 * pk.H_gamma_Z + // ZK-patch
         libff::multi_exp<libff::G2<ppT>,
                          libff::Fr<ppT>,
-                         libff::multi_exp_method_bos_coster>(
+                         libff::multi_exp_method_BDLO12>(
             pk.B_query.begin() + 1,
             pk.B_query.end(),
             sap_wit.coefficients_for_ACs.begin(),
@@ -500,7 +512,7 @@ r1cs_se_ppzksnark_proof<ppT> r1cs_se_ppzksnark_prover(const r1cs_se_ppzksnark_pr
      */
     libff::G1<ppT> C = libff::multi_exp<libff::G1<ppT>,
                                         libff::Fr<ppT>,
-                                        libff::multi_exp_method_bos_coster>(
+                                        libff::multi_exp_method_BDLO12>(
             pk.C_query_1.begin(),
             pk.C_query_1.end(),
             sap_wit.coefficients_for_ACs.begin() + sap_wit.num_inputs(),
@@ -513,7 +525,7 @@ r1cs_se_ppzksnark_proof<ppT> r1cs_se_ppzksnark_prover(const r1cs_se_ppzksnark_pr
         (r + r) * sap_wit.d1 * pk.G_gamma2_Z2 + // ZK-patch for C_query_2
         r * libff::multi_exp<libff::G1<ppT>,
                              libff::Fr<ppT>,
-                             libff::multi_exp_method_bos_coster>(
+                             libff::multi_exp_method_BDLO12>(
             pk.C_query_2.begin() + 1,
             pk.C_query_2.end(),
             sap_wit.coefficients_for_ACs.begin(),
