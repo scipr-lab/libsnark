@@ -194,6 +194,18 @@ target_link_libraries(
 )
 
 add_executable(
+  profile_r1cs_ppzksnark
+  EXCLUDE_FROM_ALL
+
+  zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp
+)
+target_link_libraries(
+  profile_r1cs_ppzksnark
+
+  snark
+)
+
+add_executable(
   profile_r1cs_mp_ppzkpcd
   EXCLUDE_FROM_ALL
 
