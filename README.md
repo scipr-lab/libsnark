@@ -75,9 +75,13 @@ The libsnark library currently provides a C++ implementation of:
     4. A preprocessing SNARK for a language of Boolean circuits, "TBCS"
        (_Two-input Boolean Circuit Satisfiability_). Internally, it reduces to USCS.
        This is much more  efficient than going through R1CS.
-    5. ADSNARK, a preprocessing SNARKs for proving statements on authenticated
+    5. A simulation-extractable preprocessing SNARK for R1CS.
+       This construction uses the approach described in \[GM17]. For arithmetic
+       circuits, it is slower than the \[BCTV14a] approach, but produces shorter
+       proofs.
+    6. ADSNARK, a preprocessing SNARKs for proving statements on authenticated
        data, as described in \[BBFR15].
-    6. Proof-Carrying Data (PCD). This uses recursive composition of SNARKs, as
+    7. Proof-Carrying Data (PCD). This uses recursive composition of SNARKs, as
        explained in \[BCCT13] and optimized in \[BCTV14b].
 2.  Gadget libraries (gadgetlib1 and gadgetlib2) for constructing R1CS
     instances out of modular "gadget" classes.
@@ -585,6 +589,13 @@ References
 ](https://eprint.iacr.org/2014/718),
   George Danezis, Cedric Fournet, Jens Groth, Markulf Kohlweiss,
   ASIACCS 2014
+
+\[GM17] [
+  Snarky Signatures: Minimal Signatures of Knowledge from Simulation-Extractable
+  SNARKs
+](https://eprint.iacr.org/2017/540),
+  Jens Groth and Mary Maller,
+  IACR-CRYPTO-2017
 
 \[GGPR13] [
   _Quadratic span programs and succinct NIZKs without PCPs_
