@@ -1,9 +1,5 @@
 add_subdirectory(gtest EXCLUDE_FROM_ALL)
 
-# TODO(scripr-lab): upstream these buildsystems to the respective
-# projects.
-
-
 if(${CURVE} STREQUAL "BN128")
   include_directories(ate-pairing/include)
   include_directories(xbyak)
@@ -15,8 +11,6 @@ if(${CURVE} STREQUAL "BN128")
     ate-pairing/src/zm2.cpp
   )
 endif()
-
-
 
 if("${WITH_SUPERCOP}")
   include_directories(libsnark-supercop/include)
@@ -38,8 +32,6 @@ if("${WITH_SUPERCOP}")
     ${CRYPTO_LIBRARIES}
   )
 endif()
-
-
 
 OPTION(IS_LIBFF_PARENT OFF)
 add_subdirectory(libff)

@@ -16,16 +16,8 @@ addons:
 
 before_install:
   - sudo apt-get install build-essential cmake git libboost-all-dev cmake libgmp3-dev libssl-dev libprocps3-dev pkg-config gnuplot-x11 python-markdown
-  # Install GTest
-  - sudo apt-get install libgtest-dev
-  - sudo cmake /usr/src/gtest/CMakeLists.txt
-  - sudo make -C /usr/src/gtest/
-  - sudo cp /usr/src/gtest/*.a /usr/lib
-  # Checking versions
-  - g++ --version
 
 before_script:
-  # Install git submodules
   - git submodule init && git submodule update
   - mkdir build
   - cd build
