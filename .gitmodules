@@ -10,9 +10,9 @@
 [submodule "depends/libsnark-supercop"]
 	path = depends/libsnark-supercop
 	url = git://github.com/mbbarbosa/libsnark-supercop.git
-[submodule "depends/libfqfft"]
-	path = depends/libfqfft
-	url = https://github.com/howardwu/libfqfft.git
 [submodule "depends/libff"]
 	path = depends/libff
-	url = https://github.com/howardwu/libff.git
+	url = https://github.com/scipr-lab/libff.git
+[submodule "depends/libfqfft"]
+	path = depends/libfqfft
+	url = https://github.com/scipr-lab/libfqfft.git
