@@ -140,7 +140,7 @@ public:
 
     size_t G2_size() const
     {
-        return B_query.size();
+        return B_query.size() + 1;
     }
 
     size_t size_in_bits() const
