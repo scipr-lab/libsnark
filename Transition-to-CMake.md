@@ -34,6 +34,7 @@ The compile flags are mostly analogous, but use different and more consistent no
 
 * Added `DEPENDS_DIR` flag for customizing the dependency installation directory,
 * Removed `NO_GTEST` (that was used to skip tests that use the Google Test library)
+* The `BINARY_OUTPUT` flag is now enabled by default
 * The `USE_PT_COMPRESSION` CMake flag is the inverse of the old `NO_PT_COMPRESSION` flag (but the default is still to use point compression)
 
 Handling dependencies shared with submodules
