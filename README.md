@@ -225,9 +225,13 @@ The libsnark library relies on the following:
 - CMake build infrastructure
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
-- [libff](https://github.com/scipr-lab/libff) for finite fields and elliptic curves
-- [libfqfft](https://github.com/scipr-lab/libfqfft) for fast polynomial evaluation and interpolation in various finite domains
-- third-party libraries via git submodules (included)
+- Fetched and compiled via Git submodules:
+    - [libff](https://github.com/scipr-lab/libff) for finite fields and elliptic curves
+    - [libfqfft](https://github.com/scipr-lab/libfqfft) for fast polynomial evaluation and interpolation in various finite domains
+    - [Google Test](https://github.com/google/googletest) (GTest) for unit tests
+    - [ate-pairing](https://github.com/herumi/ate-pairing) for the BN128 elliptic curve
+    - [xbyak](https://github.com/herumi/xbyak) just-in-time assembler, for the BN128 elliptic curve
+    - [Subset of SUPERCOP](https://github.com/mbbarbosa/libsnark-supercop) for crypto primitives needed by ADSNARK
 
 So far we have tested these only on Linux, though we have been able to make the
 libsnark work, with some features disabled (such as memory profiling or GTest tests),
@@ -499,6 +503,7 @@ The directory structure of the libsnark library is as follows:
         * ram_computations/ --- RAM computation languages
     * zk_proof_systems --- interfaces and implementations of the proof systems
     * reductions --- reductions between languages (used internally, but contains many examples of building constraints)
+    * depends --- external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
 
     Some of these module directories have the following subdirectories:
 
