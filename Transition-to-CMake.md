@@ -28,7 +28,7 @@ As part of this transition, we will maintain a copy of the deprecated version un
 Transition Notes
 ----------------
 
-See [the “Building section of README.md”](./README.md#buillding) for the new build  instructions.
+See the [the Building section of README.md](./README.md#building) for the new build  instructions.
 
 The compile flags are mostly analogous, but use different and more consistent notation (e.g.,  instead of `make OPTFLAGS=...` use ``cmake -DOPT_FLAGS=... && make`. Notable changes: 
 
