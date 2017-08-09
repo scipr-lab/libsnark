@@ -32,10 +32,13 @@ See the [the Building section of README.md](./README.md#building) for the new bu
 
 The compile flags are mostly analogous, but use different and more consistent notation (e.g.,  instead of `make OPTFLAGS=...` use ``cmake -DOPT_FLAGS=... && make`. Notable changes: 
 
-* Added `DEPENDS_DIR` flag for customizing the dependency installation directory,
-* Removed `NO_GTEST` (that was used to skip tests that use the Google Test library)
-* The `BINARY_OUTPUT` flag is now enabled by default
-* The `USE_PT_COMPRESSION` CMake flag is the inverse of the old `NO_PT_COMPRESSION` flag (but the default is still to use point compression)
+* Use `cmake -DCUVE=curvename ..` instead of the old `make CURVE=curvename`.
+* Use `cmake -DLOWMEM=ON`/`OFF ..` instead of the old `make LOWMEM=1`/`0`. Similarly for `MULTICORE`, `MONTGOMERY_OUTPUT`, `USE_ASM`, `USE_MIXED_ADDITION` and `PERFORMANCE`. (The defaults are unchanged.)
+* Binary output is now enabled by default; use `cmake -DBINARY_PUTPUT=OFF ..` to disable it for streaming-format compatibility with the old default.
+* Use `cmake -DUSE_PT_COMPRESSION=OFF ..` instead of defining `NO_PT_COMPRESSION` (but the default is still to use point compression).
+* Use `cmake -DWITH_PROCPS=OFF ..` instead of the old `make NO_PROCPS=1` flag (but the default is still to use procps). Similarly for `SUPERCOP`.
+* Removed `NO_GTEST` (that was used to skip tests that use the Google Test library).
+* The new `DEPENDS_DIR` flag customizes the dependencies installation directory.
 
 Handling dependencies shared with submodules
 --------------------------------------------
