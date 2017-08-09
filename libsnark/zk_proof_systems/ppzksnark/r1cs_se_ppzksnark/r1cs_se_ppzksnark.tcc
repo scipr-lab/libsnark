@@ -448,7 +448,7 @@ r1cs_se_ppzksnark_proof<ppT> r1cs_se_ppzksnark_prover(const r1cs_se_ppzksnark_pr
     assert(pk.B_query.size() == sap_wit.num_variables() + 1);
     assert(pk.C_query_1.size() == sap_wit.num_variables() - sap_wit.num_inputs());
     assert(pk.C_query_2.size() == sap_wit.num_variables() + 1);
-    assert(pk.G_gamma2_Z_t >= sap_wit.degree() - 1);
+    assert(pk.G_gamma2_Z_t.size() >= sap_wit.degree() - 1);
 #endif
 
 #ifdef MULTICORE
