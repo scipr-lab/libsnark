@@ -34,7 +34,7 @@ The compile flags are mostly analogous, but use different and more consistent no
 
 * Use `cmake -DCURVE=curvename ..` instead of the old `make CURVE=curvename`.
 * Use `cmake -DLOWMEM=ON`/`OFF ..` instead of the old `make LOWMEM=1`/`0`. Similarly for `MULTICORE`, `MONTGOMERY_OUTPUT`, `USE_ASM`, `USE_MIXED_ADDITION` and `PERFORMANCE`. (The defaults are unchanged.)
-* Binary output is now enabled by default; use `cmake -DBINARY_PUTPUT=OFF ..` to disable it for streaming-format compatibility with the old default.
+* Binary output is now enabled by default; use `cmake -DBINARY_OUTPUT=OFF ..` to disable it for streaming-format compatibility with the old default.
 * Use `cmake -DUSE_PT_COMPRESSION=OFF ..` instead of defining `NO_PT_COMPRESSION` (but the default is still to use point compression).
 * Use `cmake -DWITH_PROCPS=OFF ..` instead of the old `make NO_PROCPS=1` flag (but the default is still to use procps). Similarly for `SUPERCOP`.
 * Removed `NO_GTEST` (that was used to skip tests that use the Google Test library).
