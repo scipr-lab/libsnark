@@ -201,6 +201,30 @@ target_link_libraries(
 )
 
 add_executable(
+  profile_r1cs_ppzksnark
+  EXCLUDE_FROM_ALL
+
+  zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp
+)
+target_link_libraries(
+  profile_r1cs_ppzksnark
+
+  snark
+)
+
+add_executable(
+  profile_r1cs_se_ppzksnark
+  EXCLUDE_FROM_ALL
+
+  zk_proof_systems/ppzksnark/r1cs_se_ppzksnark/profiling/profile_r1cs_se_ppzksnark.cpp
+)
+target_link_libraries(
+  profile_r1cs_se_ppzksnark
+
+  snark
+)
+
+add_executable(
   profile_r1cs_mp_ppzkpcd
   EXCLUDE_FROM_ALL
 
@@ -447,6 +471,18 @@ target_link_libraries(
 )
 
 add_executable(
+  relations_sap_test
+  EXCLUDE_FROM_ALL
+
+  relations/arithmetic_programs/sap/tests/test_sap.cpp
+)
+target_link_libraries(
+  relations_sap_test
+
+  snark
+)
+
+add_executable(
   relations_ssp_test
   EXCLUDE_FROM_ALL
 
@@ -502,6 +538,18 @@ add_executable(
 )
 target_link_libraries(
   zk_proof_systems_r1cs_ppzksnark_test
+
+  snark
+)
+
+add_executable(
+  zk_proof_systems_r1cs_se_ppzksnark_test
+  EXCLUDE_FROM_ALL
+
+  zk_proof_systems/ppzksnark/r1cs_se_ppzksnark/tests/test_r1cs_se_ppzksnark.cpp
+)
+target_link_libraries(
+  zk_proof_systems_r1cs_se_ppzksnark_test
 
   snark
 )
@@ -656,6 +704,10 @@ add_test(
   COMMAND relations_qap_test
 )
 add_test(
+  NAME relations_sap_test
+  COMMAND relations_sap_test
+)
+add_test(
   NAME relations_ssp_test
   COMMAND relations_ssp_test
 )
@@ -666,6 +718,10 @@ add_test(
 add_test(
   NAME zk_proof_systems_r1cs_ppzksnark_test
   COMMAND zk_proof_systems_r1cs_ppzksnark_test
+)
+add_test(
+  NAME zk_proof_systems_r1cs_se_ppzksnark_test
+  COMMAND zk_proof_systems_r1cs_se_ppzksnark_test
 )
 add_test(
   NAME zk_proof_systems_r1cs_gg_ppzksnark_test
@@ -710,9 +766,11 @@ add_dependencies(check gadgetlib2_integration_test)
 add_dependencies(check gadgetlib2_protoboard_test)
 add_dependencies(check gadgetlib2_variable_test)
 add_dependencies(check relations_qap_test)
+add_dependencies(check relations_sap_test)
 add_dependencies(check relations_ssp_test)
 add_dependencies(check zk_proof_systems_bacs_ppzksnark_test)
 add_dependencies(check zk_proof_systems_r1cs_ppzksnark_test)
+add_dependencies(check zk_proof_systems_r1cs_se_ppzksnark_test)
 add_dependencies(check zk_proof_systems_r1cs_gg_ppzksnark_test)
 add_dependencies(check zk_proof_systems_ram_ppzksnark_test)
 add_dependencies(check zk_proof_systems_tbcs_ppzksnark_test)
