@@ -318,46 +318,6 @@ might need to explicitly provide the paths to the header files and libraries by
 appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line
 above.
 
---------------------------------------------------------------------------------
-Tutorials
---------------------------------------------------------------------------------
-
-libsnark includes a tutorial, and some usage examples, for the high-level API.
-
-* `libsnark/gadgetlib1/examples1` contains a simple example for constructing a
-  constraint system using gadgetlib1.
-
-* `libsnark/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
-  NP statements as constraint systems. It introduces basic terminology, design
-  overview, and recommended programming style. It also shows how to invoke
-  ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
-  into a standalone executable.
-
-* `libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
-  constructs a simple constraint system and runs the ppzksnark. See below for how to
-   run it.
-
-
---------------------------------------------------------------------------------
-Executing profiling example
---------------------------------------------------------------------------------
-
-The command
-
-     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
-
-exercises the ppzkSNARK (first generator, then prover, then verifier) on an
-R1CS instance with 1000 equations and an input consisting of 10 field elements.
-
-(If you get the error `zmInit ERR:can't protect`, see the discussion
-[above](#elliptic-curve-choices).)
-
-The command
-
-     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
-
-does the same but now the input consists of 10 bytes.
-
 
 --------------------------------------------------------------------------------
 Build options
@@ -445,6 +405,47 @@ to control these (you can see the default at the top of CMakeLists.txt).
     Sets the dependency installation directory to the provided absolute path (default: installs dependencies in the respective submodule directories)
 
 Not all combinations are tested together or supported by every part of the codebase.
+
+
+--------------------------------------------------------------------------------
+Tutorials
+--------------------------------------------------------------------------------
+
+libsnark includes a tutorial, and some usage examples, for the high-level API.
+
+* `libsnark/gadgetlib1/examples1` contains a simple example for constructing a
+  constraint system using gadgetlib1.
+
+* `libsnark/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
+  NP statements as constraint systems. It introduces basic terminology, design
+  overview, and recommended programming style. It also shows how to invoke
+  ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
+  into a standalone executable.
+
+* `libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
+  constructs a simple constraint system and runs the ppzksnark. See below for how to
+   run it.
+
+
+--------------------------------------------------------------------------------
+Executing profiling example
+--------------------------------------------------------------------------------
+
+The command
+
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
+
+exercises the ppzkSNARK (first generator, then prover, then verifier) on an
+R1CS instance with 1000 equations and an input consisting of 10 field elements.
+
+(If you get the error `zmInit ERR:can't protect`, see the discussion
+[above](#elliptic-curve-choices).)
+
+The command
+
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
+
+does the same but now the input consists of 10 bytes.
 
 
 --------------------------------------------------------------------------------
