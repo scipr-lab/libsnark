@@ -274,6 +274,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     libff::enter_block("Generating G multiexp table");
     size_t G_exp_count = sap_inst.num_inputs() + 1 // verifier_query
                          + non_zero_At // A_query
+                         + sap_inst.degree() + 1 // G_gamma2_Z_t
                          // C_query_1
                          + sap_inst.num_variables() - sap_inst.num_inputs()
                          + sap_inst.num_variables() + 1, // C_query_2
@@ -347,15 +348,21 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     libff::G1<ppT> G_ab_gamma_Z = (alpha + beta) * G_gamma_Z;
     libff::G1<ppT> G_gamma2_Z2 = (sap_inst.Zt * gamma) * G_gamma_Z;
 
-    libff::G1_vector<ppT> G_gamma2_Z_t;
-    G_gamma2_Z_t.reserve(sap_inst.degree() + 1);
+    tmp_exponents.reserve(sap_inst.degree() + 1);
 
-    libff::G1<ppT> val = gamma * G_gamma_Z;
+    libff::Fr<ppT> gamma_Z_t = sap_inst.Zt * gamma.squared(); /* t^i * gamma * G_gamma */
     for (size_t i = 0; i < sap_inst.degree() + 1; ++i)
     {
-        G_gamma2_Z_t.emplace_back(val);
-        val = t * val;
+        tmp_exponents.emplace_back(gamma_Z_t);
+        gamma_Z_t *= t;
     }
+    libff::G1_vector<ppT> G_gamma2_Z_t = libff::batch_exp<libff::G1<ppT>,
+                                                          libff::Fr<ppT> >(
+        libff::Fr<ppT>::size_in_bits(),
+        G_window,
+        G_table,
+        tmp_exponents);
+    tmp_exponents.clear();
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(G_gamma2_Z_t);
 #endif
