@@ -274,6 +274,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     libff::enter_block("Generating G multiexp table");
     size_t G_exp_count = sap_inst.num_inputs() + 1 // verifier_query
                          + non_zero_At // A_query
+                         + sap_inst.degree() + 1 // G_gamma2_Z_t
                          // C_query_1
                          + sap_inst.num_variables() - sap_inst.num_inputs()
                          + sap_inst.num_variables() + 1, // C_query_2
@@ -314,6 +315,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 
     libff::enter_block("Generate R1CS proving key");
 
+    libff::enter_block("Compute the A-query", false);
     tmp_exponents.reserve(sap_inst.num_variables() + 1);
     for (size_t i = 0; i < At.size(); i++)
     {
@@ -330,7 +332,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(A_query);
 #endif
+    libff::leave_block("Compute the A-query", false);
 
+    libff::enter_block("Compute the B-query", false);
     libff::G2_vector<ppT> B_query = libff::batch_exp<libff::G2<ppT>,
                                                      libff::Fr<ppT> >(
         libff::Fr<ppT>::size_in_bits(),
@@ -340,26 +344,37 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G2<ppT> >(B_query);
 #endif
+    libff::leave_block("Compute the B-query", false);
 
+    libff::enter_block("Compute the G_gamma-query", false);
     libff::G1<ppT> G_gamma = gamma * G;
     libff::G1<ppT> G_gamma_Z = sap_inst.Zt * G_gamma;
     libff::G2<ppT> H_gamma_Z = sap_inst.Zt * H_gamma;
     libff::G1<ppT> G_ab_gamma_Z = (alpha + beta) * G_gamma_Z;
     libff::G1<ppT> G_gamma2_Z2 = (sap_inst.Zt * gamma) * G_gamma_Z;
 
-    libff::G1_vector<ppT> G_gamma2_Z_t;
-    G_gamma2_Z_t.reserve(sap_inst.degree() + 1);
+    tmp_exponents.reserve(sap_inst.degree() + 1);
 
-    libff::G1<ppT> val = gamma * G_gamma_Z;
+    /* Compute the vector G_gamma2_Z_t := Z(t) * t^i * gamma^2 * G */
+    libff::Fr<ppT> gamma2_Z_t = sap_inst.Zt * gamma.squared();
     for (size_t i = 0; i < sap_inst.degree() + 1; ++i)
     {
-        G_gamma2_Z_t.emplace_back(val);
-        val = t * val;
+        tmp_exponents.emplace_back(gamma2_Z_t);
+        gamma2_Z_t *= t;
     }
+    libff::G1_vector<ppT> G_gamma2_Z_t = libff::batch_exp<libff::G1<ppT>,
+                                                          libff::Fr<ppT> >(
+        libff::Fr<ppT>::size_in_bits(),
+        G_window,
+        G_table,
+        tmp_exponents);
+    tmp_exponents.clear();
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(G_gamma2_Z_t);
 #endif
+    libff::leave_block("Compute the G_gamma-query", false);
 
+    libff::enter_block("Compute the C_1-query", false);
     tmp_exponents.reserve(sap_inst.num_variables() - sap_inst.num_inputs());
     for (size_t i = sap_inst.num_inputs() + 1;
          i <= sap_inst.num_variables();
@@ -378,7 +393,9 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(C_query_1);
 #endif
+    libff::leave_block("Compute the C_1-query", false);
 
+    libff::enter_block("Compute the C_2-query", false);
     tmp_exponents.reserve(sap_inst.num_variables() + 1);
     libff::Fr<ppT> double_gamma2_Z = gamma * gamma * sap_inst.Zt;
     double_gamma2_Z = double_gamma2_Z + double_gamma2_Z;
@@ -396,6 +413,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(C_query_2);
 #endif
+    libff::leave_block("Compute the C_2-query", false);
 
     libff::leave_block("Generate R1CS proving key");
 
