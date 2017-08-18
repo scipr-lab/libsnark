@@ -501,26 +501,26 @@ Directory structure
 
 The directory structure of the libsnark library is as follows:
 
-* libsnark/ --- main C++ source code, containing the following modules:
-    * common/ --- miscellaneous utilities
-    * gadgetlib1/ --- gadgetlib1, a library to construct R1CS instances
-        * gadgets/ --- basic gadgets for gadgetlib1
-    * gadgetlib2/ --- gadgetlib2, a library to construct R1CS instances
-    * relations/ --- interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
-        * constraint_satisfaction_problems/ --- R1CS and USCS languages
-        * circuit_satisfaction_problems/ ---  Boolean and arithmetic circuit satisfiability languages
-        * ram_computations/ --- RAM computation languages
-    * zk_proof_systems --- interfaces and implementations of the proof systems
-    * reductions --- reductions between languages (used internally, but contains many examples of building constraints)
-    * depends --- external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
+* [__libsnark__](libsnark): main C++ source code, containing the following modules:
+    * [__common__](libsnark/common): miscellaneous utilities
+    * [__gadgetlib1__](libsnark/gadgetlib1): gadgetlib1, a library to construct R1CS instances
+        * [__gadgets__](libsnark/gadgetlib1/gadgets): basic gadgets for gadgetlib1
+    * [__gadgetlib2__](libsnark/gadgetlib2): gadgetlib2, a library to construct R1CS instances
+    * [__relations__](libsnark/relations): interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
+        * [__constraint_\satisfaction_\problems__](libsnark/relations/constraint_satisfaction_problems): R1CS and USCS languages
+        * [__circuit_\satisfaction_\problems__](libsnark/relations/circuit_satisfaction_problems):  Boolean and arithmetic circuit satisfiability languages
+        * [__ram_\computations__](libsnark/relations/ram_computations): RAM computation languages
+    * [__zk_\proof_\systems__](libsnark/zk_proof_systems): interfaces and implementations of the proof systems
+    * [__reductions__](libsnark/reductions): reductions between languages (used internally, but contains many examples of building constraints)
+* [__depends__](libsnark/depends): external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
 
-    Some of these module directories have the following subdirectories:
+Some of these module directories have the following subdirectories:
 
-    * ...
-        * examples/ --- example code and tutorials for this module
-        * tests/ --- unit tests for this module
+* ...
+    * [__examples__](): example code and tutorials for this module
+    * [__tests__](): unit tests for this module
 
-    In particular, the top-level API examples are at `libsnark/r1cs_ppzksnark/examples/` and `libsnark/gadgetlib2/examples/`.
+In particular, the top-level API examples are at `libsnark/r1cs_ppzksnark/examples/` and `libsnark/gadgetlib2/examples/`.
 
 
 --------------------------------------------------------------------------------
