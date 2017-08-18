@@ -143,6 +143,18 @@ mnt4_GT mnt4_reduced_pairing(const mnt4_G1 &P,
 mnt4_GT mnt4_affine_reduced_pairing(const mnt4_G1 &P,
                                     const mnt4_G2 &Q);
 
+//Ariel additions
+mnt4_Fq4 mnt4_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+);
+mnt4_Fq4 mnt4_ate_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+);
+
 } // libsnark
 
 #endif // MNT4_PAIRING_HPP_

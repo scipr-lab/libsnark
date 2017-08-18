@@ -118,5 +118,12 @@ edwards_Fq6 edwards_pairing(const edwards_G1& P,
 edwards_GT edwards_reduced_pairing(const edwards_G1 &P,
                                    const edwards_G2 &Q);
 
+/**Ariel additions***/
+edwards_Fq6 edwards_multiple_miller_loop(const std::initializer_list<std::pair<
+        const edwards_G1_precomp&,
+        const edwards_G2_precomp&
+    > >& v
+);
+
 } // libsnark
 #endif // EDWARDS_PAIRING_HPP_

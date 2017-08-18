@@ -738,5 +738,89 @@ mnt4_GT mnt4_affine_reduced_pairing(const mnt4_G1 &P,
     const mnt4_GT result = mnt4_final_exponentiation(f);
     return result;
 }
+//Ariel additions
+mnt4_Fq4 mnt4_ate_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+)
+{
+    enter_block("Call to mnt4_ate_multiple_miller_loop");
 
+    
+    mnt4_Fq4 f = mnt4_Fq4::one();
+
+    bool found_one = false;
+    size_t dbl_idx = 0;
+    size_t add_idx = 0;
+
+    const bigint<mnt4_Fr::num_limbs> &loop_count = mnt4_ate_loop_count;
+    for (long i = loop_count.max_bits() - 1; i >= 0; --i)
+    {
+        const bool bit = loop_count.test_bit(i);
+
+        if (!found_one)
+        {
+            /* this skips the MSB itself */
+            found_one |= bit;
+            continue;
+        }
+
+        /* code below gets executed for all bits (EXCEPT the MSB itself) of
+           mnt4_param_p (skipping leading zeros) in MSB to LSB
+           order */
+        
+        f=f.squared();
+        for(auto& p:v)
+        {
+            mnt4_ate_dbl_coeffs dc = p.second.dbl_coeffs[dbl_idx];
+            mnt4_Fq4 g_RR_at_P = mnt4_Fq4(- dc.c_4C - dc.c_J * p.first.PX_twist + dc.c_L,
+                                       dc.c_H * p.first.PY_twist);
+            f=f*g_RR_at_P;
+                
+        }
+        ++dbl_idx;
+
+        if (bit)
+        {
+            for(auto& p:v)
+            {
+                auto L1_coeff = mnt4_Fq2(p.first.PX, mnt4_Fq::zero()) - p.second.QX_over_twist;
+                auto ac = p.second.add_coeffs[add_idx];
+                mnt4_Fq4 g_RQ_at_P = mnt4_Fq4(ac.c_RZ * p.first.PY_twist,
+                                           -(p.second.QY_over_twist * ac.c_RZ + L1_coeff * ac.c_L1));
+                f =f* g_RQ_at_P;
+    
+            }
+            ++add_idx;
+        }
+        
+    }
+
+    if (mnt4_ate_is_loop_count_neg)
+    {
+        for(auto& p:v)
+            {
+                auto L1_coeff = mnt4_Fq2(p.first.PX, mnt4_Fq::zero()) - p.second.QX_over_twist;
+                auto ac = p.second.add_coeffs[add_idx];
+                mnt4_Fq4 g_RnegR_at_P = mnt4_Fq4(ac.c_RZ * p.first.PY_twist,
+                                          -(p.second.QY_over_twist * ac.c_RZ + L1_coeff * ac.c_L1));
+                f =f* g_RnegR_at_P;
+    
+            }
+        f=f.inverse();
+        ++add_idx;
+    }
+    leave_block("Call to mnt4_ate_multiple_miller_loop");
+    return f;
+
+}
+mnt4_Fq4 mnt4_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt4_G1_precomp&,
+        const mnt4_G2_precomp&
+    > >& v
+)
+{
+    return mnt4_ate_multiple_miller_loop(v);
+}
 } // libsnark

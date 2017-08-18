@@ -42,6 +42,15 @@ edwards_Fq6 edwards_pp::double_miller_loop(const edwards_G1_precomp &prec_P1,
 {
     return edwards_double_miller_loop(prec_P1, prec_Q1, prec_P2, prec_Q2);
 }
+edwards_Fq6 edwards_pp::multiple_miller_loop(
+    const std::initializer_list<std::pair<
+        const edwards_G1_precomp&,
+        const edwards_G2_precomp&
+    > >& v
+)
+{
+   return edwards_multiple_miller_loop(v); 
+}
 
 edwards_Fq6 edwards_pp::pairing(const edwards_G1 &P,
                                 const edwards_G2 &Q)

@@ -25,7 +25,7 @@ See r1cs_ppzksnark.hpp .
 #include "algebra/scalar_multiplication/multiexp.hpp"
 #include "algebra/scalar_multiplication/kc_multiexp.hpp"
 #include "reductions/r1cs_to_qap/r1cs_to_qap.hpp"
-
+#include "algebra/curves/alt_bn128/alt_bn128_pp.hpp"
 namespace libsnark {
 
 template<typename ppT>
@@ -34,7 +34,7 @@ bool r1cs_ppzksnark_proving_key<ppT>::operator==(const r1cs_ppzksnark_proving_ke
     return (this->A_query == other.A_query &&
             this->B_query == other.B_query &&
             this->C_query == other.C_query &&
-            this->H_query == other.H_query &&
+            this->H_query == other.H_query && 
             this->K_query == other.K_query &&
             this->constraint_system == other.constraint_system);
 }
@@ -692,8 +692,9 @@ bool r1cs_ppzksnark_verifier_strong_IC(const r1cs_ppzksnark_verification_key<ppT
                                        const r1cs_ppzksnark_proof<ppT> &proof)
 {
     enter_block("Call to r1cs_ppzksnark_verifier_strong_IC");
-    r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
-    bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof);
+    //r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
+    //bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof);
+    bool result = r1cs_ppzksnark_probabilistic_verifier<ppT>(vk,primary_input,proof);
     leave_block("Call to r1cs_ppzksnark_verifier_strong_IC");
     return result;
 }
@@ -788,5 +789,241 @@ bool r1cs_ppzksnark_affine_verifier_weak_IC(const r1cs_ppzksnark_verification_ke
     return result;
 }
 
+
+
+
+
+/*****Ariel stuff from here ****/
+
+template<typename ppT>
+r1cs_ppzksnark_processed_batch_verification_key<ppT> r1cs_ppzksnark_batch_verifier_process_vk(const r1cs_ppzksnark_verification_key<alt_bn128_pp> &vk)
+{
+    enter_block("Call to r1cs_ppzksnark_batch_verifier_process_vk");
+    r1cs_ppzksnark_processed_batch_verification_key<ppT> pvk;
+    pvk.pair1 = ppT::precompute_G2(vk.alphaA_g2);
+    
+    //computing the second input for the second ML factor
+    // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
+    pvk.pair2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::one());
+    //computing the second input for the third ML factor
+    // r3Pi_c and vk_C
+    pvk.pair3 = alt_bn128_pp::precompute_G2(vk.alphaC_g2) ;
+    
+    //computing the second input for the fourth ML factor
+    // r4Pi_K and vk_gamma
+    pvk.pair4 = alt_bn128_pp::precompute_G2(vk.gamma_g2);
+    
+    //computing the second input for the fifth ML factor
+    //−r 4(vk x + πA + πC) and vk^2_betagamma
+    pvk.pair5 = alt_bn128_pp::precompute_G2(vk.gamma_beta_g2);
+
+    //computing the second input for the six ML factor
+    //r5Pi_H and -vk_Z
+    pvk.pair6 = alt_bn128_pp::precompute_G2(-vk.rC_Z_g2);
+    
+    leave_block("Call to r1cs_ppzksnark_batch_verifier_process_vk");
+    return pvk;
+}
+
+
+
+
+/*
+ * accumulate another proof inside acc for the final batch check
+ */
+template<typename ppT>
+void r1cs_ppzksnark_batcher(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            batch_verification_accumulator<ppT> &acc,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
+{
+    enter_block("Call to r1cs_ppzksnark_batcher");
+    const accumulation_vector<G1<ppT> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<ppT> >(primary_input.begin(), primary_input.end(), 0);
+    const G1<ppT> &accu = accumulated_IC.first;
+    //computing the random coefficients that will be used
+    auto r_1 = Fr<ppT>::random_element();
+    auto r_2 = Fr<ppT>::random_element();
+    auto r_3 = Fr<ppT>::random_element();
+    auto r_4 = Fr<ppT>::random_element();
+    auto r_5 = Fr<ppT>::random_element();
+
+
+    //computing left input for the first ML factor
+    // r1Pi_a and vk_A
+    acc.pair1 = acc.pair1 + r_1*proof.g_A.g;
+    
+    //computing left input for the second ML factor
+    // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
+    acc.pair2 = acc.pair2 + r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g;
+    //computing left input for the third ML factor
+    // r3Pi_c and vk_C
+    acc.pair3 = acc.pair3 + r_3*proof.g_C.g;
+
+    //computing left input for the fourth ML factor
+    // r4Pi_K and vk_gamma
+    acc.pair4 = acc.pair4 + r_4*proof.g_K;
+        //computing left input for the fifth ML factor
+    //−r 4(vk x + πA + πC) and vk^2_betagamma
+    acc.pair5 = acc.pair5 + -r_4*(accu + proof.g_A.g + proof.g_C.g);
+    
+    //computing left input for the six ML factor
+    //r5Pi_H and -vk_Z
+    acc.pair6 = acc.pair6 + r_5*proof.g_H;
+    
+    //computing left input for the seventh ML factor
+    //r_2 vk_B-r_4 vk^1_{\beta\gamma}+r_5(vk_x + \pi_A) and pi_B
+    auto left_7 = ppT::precompute_G1(r_2*vk.alphaB_g1-r_4*vk.gamma_beta_g1+r_5*(accu+proof.g_A.g));
+    auto right_7 = ppT::precompute_G2(proof.g_B.g);
+    acc.pair7 = acc.pair7*ppT::miller_loop(left_7,right_7);
+
+    leave_block("Call to r1cs_ppzksnark_batcher");
+}
+
+
+
+
+/*A verifier that batches all pairing checks into zero using random coefficients
+  requires only zero FE (final expzerontiation).
+  Also requires only zero call to multiple_miller_loop, as only needs to compute zero product of 
+  Miller loops (MLs).
+  Also uses rule e(a,c)*e(b,c)=e(a+b,c) to reduce number of factors in the ML product
+  If proof is wrong has at most 1/|F| probability of accepting it
+  Always accepts correct proofs
+*/
+template<>
+bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key<alt_bn128_pp> &vk,
+                                            const r1cs_ppzksnark_primary_input<alt_bn128_pp> &primary_input,
+                                            const r1cs_ppzksnark_proof<alt_bn128_pp> &proof)
+{
+    enter_block("Call to r1cs_ppzksnark_probabilistic_verifier");
+    const accumulation_vector<G1<alt_bn128_pp> > accumulated_IC = vk.encoded_IC_query.template accumulate_chunk<Fr<alt_bn128_pp> >(primary_input.begin(), primary_input.end(), 0);
+    const G1<alt_bn128_pp> &acc = accumulated_IC.first;
+    //computing the random coefficients that will be used
+    auto r_1 = Fr<alt_bn128_pp>::random_element();
+    auto r_2 = Fr<alt_bn128_pp>::random_element();
+    auto r_3 = Fr<alt_bn128_pp>::random_element();
+    auto r_4 = Fr<alt_bn128_pp>::random_element();
+    auto r_5 = Fr<alt_bn128_pp>::random_element();
+
+    enter_block("Preparing 7 ML factors");
+
+    //computing left input for the first ML factor
+    // r1Pi_a and vk_A
+    auto left_1 = alt_bn128_pp::precompute_G1(r_1*proof.g_A.g);
+    auto right_1 = alt_bn128_pp::precompute_G2(vk.alphaA_g2);
+    auto pair_1 = std::make_pair(left_1,right_1);
+    
+    //computing left input for the second ML factor
+    // r1Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
+    auto left_2 = alt_bn128_pp::precompute_G1(r_1*proof.g_A.h+r_2*proof.g_B.h + r_3*proof.g_C.h + r_5*proof.g_C.g);
+    auto right_2 = alt_bn128_pp::precompute_G2(-G2<alt_bn128_pp>::one());
+    auto pair_2 = std::make_pair(left_2,right_2);
+    //computing left input for the third ML factor
+    // r3Pi_c and vk_C
+    auto left_3 = alt_bn128_pp::precompute_G1(r_3*proof.g_C.g);
+    auto right_3 = alt_bn128_pp::precompute_G2(vk.alphaC_g2) ;
+    auto pair_3 = std::make_pair(left_3,right_3);
+
+    //computing left input for the fourth ML factor
+    // r4Pi_K and vk_gamma
+    auto left_4 = alt_bn128_pp::precompute_G1(r_4*proof.g_K);
+    auto right_4 = alt_bn128_pp::precompute_G2(vk.gamma_g2);
+    auto pair_4 = std::make_pair(left_4,right_4);
+
+    //computing left input for the fifth ML factor
+    //−r 4(vk x + πA + πC) and vk^2_betagamma
+    auto left_5 = alt_bn128_pp::precompute_G1(-r_4*(acc + proof.g_A.g + proof.g_C.g));
+    auto right_5 = alt_bn128_pp::precompute_G2(vk.gamma_beta_g2);
+    auto pair_5 = std::make_pair(left_5,right_5);
+
+    //computing left input for the six ML factor
+    //r5Pi_H and -vk_Z
+    auto left_6 = alt_bn128_pp::precompute_G1(r_5*proof.g_H);
+    auto right_6 = alt_bn128_pp::precompute_G2(-vk.rC_Z_g2);
+    auto pair_6 = std::make_pair(left_6,right_6);
+
+    //computing left input for the seventh ML factor
+    //r_2 vk_B-r_4 vk^1_{\beta\gamma}+r_5(vk_x + \pi_A) and pi_B
+    auto left_7 = alt_bn128_pp::precompute_G1(r_2*vk.alphaB_g1-r_4*vk.gamma_beta_g1+r_5*(acc+proof.g_A.g));
+    auto right_7 = alt_bn128_pp::precompute_G2(proof.g_B.g);
+    auto pair_7 = std::make_pair(left_7,right_7);
+    leave_block("Preparing 7 ML factors");
+
+   /* auto ML1 = alt_bn128_pp::double_miller_loop(left_1,right_1,left_2,right_2);
+    auto ML2 = alt_bn128_pp::double_miller_loop(left_3,right_3,left_4,right_4);
+    auto ML3 = alt_bn128_pp::double_miller_loop(left_5,right_5,left_6,right_6);
+    auto ML4 = alt_bn128_pp::miller_loop(left_7,right_7);*/
+    alt_bn128_Fq12 ML  = alt_bn128_pp::multiple_miller_loop({
+       pair_1,pair_2,pair_3,pair_4,pair_5,pair_6,pair_7
+    });
+    auto FE= alt_bn128_pp::final_exponentiation(ML);
+    leave_block("Call to r1cs_ppzksnark_probabilistic_verifier");
+    return (FE==GT<alt_bn128_pp>::one());
+}
+
+template<typename ppT>
+bool r1cs_ppzksnark_probabilistic_verifier(const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
+{
+    r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(vk);
+    bool result = r1cs_ppzksnark_online_verifier_strong_IC<ppT>(pvk, primary_input, proof); 
+    return result;  
+}
+
+template<>
+bool r1cs_ppzksnark_batch_verifier(const r1cs_ppzksnark_processed_batch_verification_key <alt_bn128_pp> &pvk,
+                                            const batch_verification_accumulator <alt_bn128_pp> &acc,
+                                            const r1cs_ppzksnark_primary_input<alt_bn128_pp> &primary_input,
+                                            const r1cs_ppzksnark_proof<alt_bn128_pp> &proof)
+{
+     enter_block("Call to r1cs_ppzksnark_batch_verifier");
+
+    enter_block("Preparing 7 ML factors");
+
+    //computing left input for the first ML factor
+    // r3Pi_a and vk_A
+    auto pair_1 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair1),pvk.pair1);
+    
+    //computing left input for the second ML factor
+    // r3Pi'_a + R2Pi'_B+r3Pi'_C + r5Pi_C and -g2
+     auto pair_2 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair2),pvk.pair2);
+    //computing left input for the third ML factor
+    // r3Pi_c and vk_C
+    auto pair_3 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair3),pvk.pair3);
+
+    //computing left input for the fourth ML factor
+    // r4Pi_K and vk_gamma
+    auto pair_4 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair4),pvk.pair4);
+
+    //computing left input for the fifth ML factor
+    //−r 4(vk x + πA + πC) and vk^2_betagamma
+    auto pair_5 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair5),pvk.pair5);
+
+    //computing left input for the six ML factor
+    //r5Pi_H and -vk_Z
+    auto pair_6 = std::make_pair(alt_bn128_pp::precompute_G1(acc.pair6),pvk.pair6);
+
+    //computing left input for the seventh ML factor
+    //r_2 vk_B-r_4 vk^3_{\beta\gamma}+r_5(vk_x + \pi_A) and pi_B
+    leave_block("Preparing 7 ML factors");
+
+    alt_bn128_Fq12 ML  = alt_bn128_pp::multiple_miller_loop({
+       pair_1,pair_2,pair_3,pair_4,pair_5,pair_6
+    })*acc.pair7;
+    auto FE= alt_bn128_pp::final_exponentiation(ML);
+    leave_block("Call to r1cs_ppzksnark_batch_verifier");
+    return (FE==GT<alt_bn128_pp>::one());
+}
+
+template<typename ppT>
+bool r1cs_ppzksnark_batch_verifier(const r1cs_ppzksnark_processed_batch_verification_key <ppT> &pvk,
+                                            const batch_verification_accumulator <ppT> &acc,
+                                            const r1cs_ppzksnark_primary_input<ppT> &primary_input,
+                                            const r1cs_ppzksnark_proof<ppT> &proof)
+{
+    assert(false);
+    return false;  
+}
 } // libsnark
 #endif // R1CS_PPZKSNARK_TCC_

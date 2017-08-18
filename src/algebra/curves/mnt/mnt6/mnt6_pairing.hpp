@@ -143,6 +143,19 @@ mnt6_GT mnt6_reduced_pairing(const mnt6_G1 &P,
 mnt6_GT mnt6_affine_reduced_pairing(const mnt6_G1 &P,
                                     const mnt6_G2 &Q);
 
+//Ariel additions
+mnt6_Fq6 mnt6_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+);
+mnt6_Fq6 mnt6_ate_multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+);
+
+
 } // libsnark
 
 #endif // MNT6_PAIRING_HPP_

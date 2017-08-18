@@ -66,6 +66,14 @@ mnt6_Fq6 mnt6_pp::double_miller_loop(const mnt6_G1_precomp &prec_P1,
     return mnt6_double_miller_loop(prec_P1, prec_Q1, prec_P2, prec_Q2);
 }
 
+mnt6_Fq6 mnt6_pp::multiple_miller_loop(const std::initializer_list<std::pair<
+        const mnt6_G1_precomp&,
+        const mnt6_G2_precomp&
+    > >& v
+)
+{
+  return mnt6_multiple_miller_loop(v);
+}  
 mnt6_Fq6 mnt6_pp::affine_ate_e_over_e_miller_loop(const mnt6_affine_ate_G1_precomputation &prec_P1,
                                                   const mnt6_affine_ate_G2_precomputation &prec_Q1,
                                                   const mnt6_affine_ate_G1_precomputation &prec_P2,

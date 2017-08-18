@@ -109,6 +109,47 @@ bool run_r1cs_ppzksnark(const r1cs_example<Fr<ppT> > &example,
     return ans;
 }
 
+
+
+///***Ariel version for testing batch verifier****//
+
+
+/**
+ * The code below provides an example of all stages of running a R1CS ppzkSNARK.
+ *
+ * Of course, in a real-life scenario, we would have three distinct entities,
+ * mangled into one in the demonstration below. The three entities are as follows.
+ * (1) The "generator", which runs the ppzkSNARK generator on input a given
+ *     constraint system CS to create a proving and a verification key for CS.
+ * (2) The "prover", which runs the ppzkSNARK prover on input the proving key,
+ *     a primary input for CS, and an auxiliary input for CS.
+ * (3) The "verifier", which runs the ppzkSNARK verifier on input the verification key,
+ *     a primary input for CS, and a proof.
+ */
+template<typename ppT>
+void add_proof_in_batch_verifier_test(batch_verification_accumulator<ppT> &acc,
+                                       const r1cs_ppzksnark_proof<ppT> &proof,
+                                       const r1cs_ppzksnark_verification_key<ppT> &vk,
+                                       const r1cs_primary_input<Fr<ppT> > &primary_input)
+{
+    enter_block("Call to add_proof_in_batch_verifier_test");
+
+    //r1cs_ppzksnark_keypair<ppT> keypair = r1cs_ppzksnark_generator<ppT>(example.constraint_system);
+
+    
+
+    print_header("R1CS ppzkSNARK Prover");
+    //r1cs_ppzksnark_proof<ppT> proof = r1cs_ppzksnark_prover<ppT>(keypair.pk, example.primary_input, example.auxiliary_input);
+
+    r1cs_ppzksnark_batcher<ppT>(vk, acc, primary_input, proof);
+
+    
+    leave_block("Call to add_proof_in_batch_verifier_test");
+
+    
+}
+
+
 } // libsnark
 
 #endif // RUN_R1CS_PPZKSNARK_TCC_

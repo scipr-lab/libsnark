@@ -46,6 +46,13 @@ bn128_Fq12 bn128_double_ate_miller_loop(const bn128_ate_G1_precomp &prec_P1,
 bn128_Fq12 bn128_ate_miller_loop(const bn128_ate_G1_precomp &prec_P,
                                  const bn128_ate_G2_precomp &prec_Q);
 
+//returns the product of Miller loops of all pairs in the list
+bn128_Fq12 bn128_ate_multiple_miller_loop(
+    const std::initializer_list<std::pair<
+        const bn128_ate_G1_precomp&,
+        const bn128_ate_G2_precomp&
+    > >& v
+);
 bn128_GT bn128_final_exponentiation(const bn128_Fq12 &elt);
 
 } // libsnark

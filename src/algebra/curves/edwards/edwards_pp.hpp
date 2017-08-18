@@ -39,6 +39,12 @@ public:
                                           const edwards_G2_precomp &prec_Q1,
                                           const edwards_G1_precomp &prec_P2,
                                           const edwards_G2_precomp &prec_Q2);
+    static edwards_Fq6 multiple_miller_loop(
+        const std::initializer_list<std::pair<
+            const edwards_G1_precomp&,
+            const edwards_G2_precomp&
+        > >& v
+    );
     /* the following are used in test files */
     static edwards_Fq6 pairing(const edwards_G1 &P,
                                const edwards_G2 &Q);

@@ -418,18 +418,19 @@ alt_bn128_Fq12 alt_bn128_ate_miller_loop(const alt_bn128_ate_G1_precomp &prec_P,
     return f;
 }
 
-alt_bn128_Fq12 alt_bn128_ate_double_miller_loop(const alt_bn128_ate_G1_precomp &prec_P1,
-                                     const alt_bn128_ate_G2_precomp &prec_Q1,
-                                     const alt_bn128_ate_G1_precomp &prec_P2,
-                                     const alt_bn128_ate_G2_precomp &prec_Q2)
-{
-    enter_block("Call to alt_bn128_ate_double_miller_loop");
 
-    alt_bn128_Fq12 f = alt_bn128_Fq12::one();
+alt_bn128_Fq12 alt_bn128_ate_multiple_miller_loop(
+    const std::initializer_list<std::pair<
+        const alt_bn128_ate_G1_precomp&,
+        const alt_bn128_ate_G2_precomp&
+    > >& v
+)
+{
+    enter_block("Call to alt_bn128_ate_multiple_miller_loop");
+    auto f = alt_bn128_Fq12::one();
 
     bool found_one = false;
     size_t idx = 0;
-
     const bigint<alt_bn128_Fr::num_limbs> &loop_count = alt_bn128_ate_loop_count;
     for (long i = loop_count.max_bits(); i >= 0; --i)
     {
@@ -445,47 +446,61 @@ alt_bn128_Fq12 alt_bn128_ate_double_miller_loop(const alt_bn128_ate_G1_precomp &
            alt_bn128_param_p (skipping leading zeros) in MSB to LSB
            order */
 
-        alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
-        alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
-        ++idx;
-
         f = f.squared();
-
-        f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
-        f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
+        for(auto& p:v){
+            auto c = p.second.coeffs[idx];
+            f = f.mul_by_024(c.ell_0, p.first.PY * c.ell_VW, p.first.PX * c.ell_VV);
+        }
+        ++idx;       
 
         if (bit)
         {
-            alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
-            alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
+            for(auto& p:v){
+                auto c = p.second.coeffs[idx];
+                f = f.mul_by_024(c.ell_0, p.first.PY * c.ell_VW, p.first.PX * c.ell_VV);
+            }
             ++idx;
 
-            f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
-            f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
         }
     }
 
     if (alt_bn128_ate_is_loop_count_neg)
     {
-    	f = f.inverse();
+        f = f.inverse();
     }
 
-    alt_bn128_ate_ell_coeffs c1 = prec_Q1.coeffs[idx];
-    alt_bn128_ate_ell_coeffs c2 = prec_Q2.coeffs[idx];
-    ++idx;
-    f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
-    f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
+    for(auto& p:v){
+        auto c = p.second.coeffs[idx];
+        f = f.mul_by_024(c.ell_0, p.first.PY * c.ell_VW, p.first.PX * c.ell_VV);
+    }
+    ++idx;       
 
-    c1 = prec_Q1.coeffs[idx];
-    c2 = prec_Q2.coeffs[idx];
-    ++idx;
-    f = f.mul_by_024(c1.ell_0, prec_P1.PY * c1.ell_VW, prec_P1.PX * c1.ell_VV);
-    f = f.mul_by_024(c2.ell_0, prec_P2.PY * c2.ell_VW, prec_P2.PX * c2.ell_VV);
+    for(auto& p:v){
+        auto c = p.second.coeffs[idx];
+        f = f.mul_by_024(c.ell_0, p.first.PY * c.ell_VW, p.first.PX * c.ell_VV);
+    }
+    ++idx;       
 
+    leave_block("Call to alt_bn128_ate_multiple_miller_loop"); 
+    return f;
+}
+
+alt_bn128_Fq12 alt_bn128_ate_double_miller_loop(const alt_bn128_ate_G1_precomp &prec_P1,
+                                     const alt_bn128_ate_G2_precomp &prec_Q1,
+                                     const alt_bn128_ate_G1_precomp &prec_P2,
+                                     const alt_bn128_ate_G2_precomp &prec_Q2)
+{
+    enter_block("Call to alt_bn128_ate_double_miller_loop");
+
+    auto f = alt_bn128_ate_multiple_miller_loop({
+        std::make_pair(prec_P1,prec_Q1),
+        std::make_pair(prec_P2,prec_Q2)
+    });
     leave_block("Call to alt_bn128_ate_double_miller_loop");
 
     return f;
 }
+
 
 alt_bn128_Fq12 alt_bn128_ate_pairing(const alt_bn128_G1& P, const alt_bn128_G2 &Q)
 {
