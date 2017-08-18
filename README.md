@@ -263,6 +263,7 @@ with some (currently sparse) comments, install the `doxygen` and `graphviz` pack
 
 To develop an application that uses libsnark, you could add it within the libsnark directory tree and adjust the Makefile, but it is far better to build libsnark as a (shared or static) library. You can then write your code in a separate directory tree, and link it against libsnark.
 
+See a full example in ./link_example/.
 
 To build just the shared object library `libsnark.so`, run:
 
