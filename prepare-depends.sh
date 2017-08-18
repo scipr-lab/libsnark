@@ -20,6 +20,18 @@ cd ../..
 cp -rv $DEPSRC/ate-pairing/include $DEPINST/
 cp -rv $DEPSRC/ate-pairing/lib $DEPINST/
 
+# mcl library, and its dependency, xbyak and cybozulib (needed for MCL_BN128 curve)
+cd $DEPSRC
+[ ! -d xbyak ] && git clone git://github.com/herumi/xbyak.git
+[ ! -d cybozulib ] && git clone git://github.com/herumi/cybozulib.git
+[ ! -d mcl ] && git clone git://github.com/herumi/mcl.git
+cd mcl
+make -j
+cd ../..
+cp -rv $DEPSRC/mcl/include/mcl $DEPINST/include/
+cp -rv $DEPSRC/cybozulib/include/cybozu $DEPINST/include/
+cp -rv $DEPSRC/mcl/lib $DEPINST/
+
 # SUPERCOP library (optimized crypto implementations, used by ADSNARK)
 cd $DEPSRC
 [ ! -d libsnark-supercop ] && git clone git://github.com/mbbarbosa/libsnark-supercop.git
