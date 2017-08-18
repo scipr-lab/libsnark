@@ -507,10 +507,10 @@ The directory structure of the libsnark library is as follows:
         * [__gadgets__](libsnark/gadgetlib1/gadgets): basic gadgets for gadgetlib1
     * [__gadgetlib2__](libsnark/gadgetlib2): gadgetlib2, a library to construct R1CS instances
     * [__relations__](libsnark/relations): interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
-        * [__constraint_\satisfaction_\problems__](libsnark/relations/constraint_satisfaction_problems): R1CS and USCS languages
-        * [__circuit_\satisfaction_\problems__](libsnark/relations/circuit_satisfaction_problems):  Boolean and arithmetic circuit satisfiability languages
-        * [__ram_\computations__](libsnark/relations/ram_computations): RAM computation languages
-    * [__zk_\proof_\systems__](libsnark/zk_proof_systems): interfaces and implementations of the proof systems
+        * [__constraint_satisfaction_problems__](libsnark/relations/constraint_satisfaction_problems): R1CS and USCS languages
+        * [__circuit_satisfaction_problems__](libsnark/relations/circuit_satisfaction_problems):  Boolean and arithmetic circuit satisfiability languages
+        * [__ram_computations__](libsnark/relations/ram_computations): RAM computation languages
+    * [__zk_proof_systems__](libsnark/zk_proof_systems): interfaces and implementations of the proof systems
     * [__reductions__](libsnark/reductions): reductions between languages (used internally, but contains many examples of building constraints)
 * [__depends__](libsnark/depends): external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
 
