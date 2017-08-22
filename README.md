@@ -2,13 +2,15 @@ libsnark: a C++ library for zkSNARK proofs
 ================================================================================
 
 --------------------------------------------------------------------------------
-Authors
+Authors and contacts
 --------------------------------------------------------------------------------
 
 The libsnark library is developed by the [SCIPR Lab] project and contributors
 and is released under the MIT License (see the [LICENSE] file).
 
 Copyright (c) 2012-2017 SCIPR Lab and contributors (see [AUTHORS] file).
+
+For announcements and discussions, see the [libsnark mailing list](https://groups.google.com/forum/#!forum/libsnark).
 
 --------------------------------------------------------------------------------
 [TOC]
