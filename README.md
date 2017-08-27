@@ -514,13 +514,13 @@ The directory structure of the libsnark library is as follows:
         * [__ram_computations__](libsnark/relations/ram_computations): RAM computation languages
     * [__zk_proof_systems__](libsnark/zk_proof_systems): interfaces and implementations of the proof systems
     * [__reductions__](libsnark/reductions): reductions between languages (used internally, but contains many examples of building constraints)
-* [__depends__](libsnark/depends): external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
+* [__depends__](depends): external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
 
 Some of these module directories have the following subdirectories:
 
 * ...
-    * [__examples__](): example code and tutorials for this module
-    * [__tests__](): unit tests for this module
+    * __examples__: example code and tutorials for this module
+    * __tests__: unit tests for this module
 
 In particular, the top-level API examples are at `libsnark/r1cs_ppzksnark/examples/` and `libsnark/gadgetlib2/examples/`.
 
