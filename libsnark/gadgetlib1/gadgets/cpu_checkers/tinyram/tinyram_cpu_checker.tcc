@@ -326,12 +326,12 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_witness_other(tinyram_input_tape
     }
 
     this->pb.val(read_not1) = this->pb.val(opcode_indicators[tinyram_opcode_READ]) * (FieldT::one() - this->pb.val(arg2val->packed));
-    if (this->pb.val(read_not1) != FieldT::one())
+    if (this->pb.val(read_not1) != FieldT::zero())
     {
-        /* reading from tape other than 0 raises the flag */
+        /* reading from tape other than 1 raises the flag */
         this->pb.val(instruction_flags[tinyram_opcode_READ]) = FieldT::one();
     }
-    else
+    else if (this->pb.val(opcode_indicators[tinyram_opcode_READ]) != FieldT::zero())
     {
         /* otherwise perform the actual read */
         if (aux_it != aux_end)
