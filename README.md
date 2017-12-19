@@ -408,6 +408,17 @@ to control these (you can see the default at the top of CMakeLists.txt).
 
 Not all combinations are tested together or supported by every part of the codebase.
 
+--------------------------------------------------------------------------------
+Docker
+--------------------------------------------------------------------------------
+
+You can run `libsnark` on Docker:
+
+```
+$ docker build -t libsnark .
+$ docker run -ti libsnark /bin/bash
+```
+
 
 --------------------------------------------------------------------------------
 Tutorials
