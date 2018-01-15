@@ -23,7 +23,7 @@ using namespace gadgetlib2;
 
 /*
     This test gives the first example of a construction of a constraint system. We use the terms
-    'Constraint System' and 'Circuit' interchangeably rather loosly. It is easy to
+    'Constraint System' and 'Circuit' interchangeably rather loosely. It is easy to
     visualize a circuit with inputs and outputs. Each gate imposes some logic on the inputs and
     output wires. For instance, AND(inp1, inp2) will impose the 'constraint' (inp1 & inp2 = out)
     Thus, we can also think of this circuit as a system of constraints. Each gate is a mathematical
@@ -53,7 +53,7 @@ TEST(Examples, ProtoboardUsage) {
     // We now create 3 input variables and one output
     VariableArray input(3, "input");
     Variable output("output");
-    // We can now add some constraints. The string is for debuging purposes and can be a textual
+    // We can now add some constraints. The string is for debugging purposes and can be a textual
     // description of the constraint
     pb->addRank1Constraint(input[0], 5 + input[2], output,
                            "Constraint 1: input[0] * (5 + input[2]) == output");
@@ -194,14 +194,14 @@ TEST(Examples, NAND_Gadget) {
     initPublicParamsFromDefaultPp();
     // create a protoboard for a system of rank 1 constraints over a prime field.
     ProtoboardPtr pb = Protoboard::create(R1P);
-    // create 5 variables inputs[0]...iputs[4]. The string "inputs" is used for debug messages
+    // create 5 variables inputs[0]...inputs[4]. The string "inputs" is used for debug messages
     FlagVariableArray inputs(5, "inputs");
     FlagVariable output("output");
     GadgetPtr nandGadget = NAND_Gadget::create(pb, inputs, output);
     // now we can generate a constraint system (or circuit)
     nandGadget->generateConstraints();
     // if we try to evaluate the circuit now, an exception will be thrown, because we will
-    // be attempting to evaluate unasigned variables.
+    // be attempting to evaluate unassigned variables.
     EXPECT_ANY_THROW(pb->isSatisfied());
     // so lets assign the input variables for NAND and try again after creating the witness
     for (const auto& input : inputs) {
@@ -338,7 +338,7 @@ TEST(Examples, HashDifficultyEnforcer_Gadget) {
 
 
 /*
-    In this exampe we will construct a gadget which builds a circuit for proof (witness) and
+    In this example we will construct a gadget which builds a circuit for proof (witness) and
     validation (constraints) that a bitcoin transaction's sum of inputs equals the the sum of
     outputs + miners fee. Construction of the proof will include finding the miners'
     fee. This fee can be thought of as an output of the circuit.
@@ -350,12 +350,12 @@ TEST(Examples, HashDifficultyEnforcer_Gadget) {
     integer values you would expect.
 
     The library design supports multiple field constructs due to different applied use cases. Some
-    cryptogragraphic applications may need extension fields while others may need prime fields
-    but with constraints which are not rank-1 and yet others may need boolean circuits. The library
+    cryptographic applications may need extension fields while others may need prime fields,
+    but with constraints which are not rank-1, and yet others may need boolean circuits. The library
     was designed so that high level gadgets can be reused by implementing only the low level for
     a new field or constraint structure.
 
-    Later we will supply a recipe for creation of such field specfic gadgets with agnostic
+    Later we will supply a recipe for creation of such field specific gadgets with agnostic
     interfaces. We use a few conventions here in order to ease the process by using macros.
 */
 
@@ -410,7 +410,7 @@ void R1P_VerifyTransactionAmounts_Gadget::generateConstraints() {
     // It would seem this is enough, but an adversary could cause an overflow of one side of the
     // equation over the field modulus. In fact, for every input/output sum we will always find a
     // miners' fee which will satisfy this constraint!
-    // It is left as an excercise for the reader to implement additional constraints (and witness)
+    // It is left as an exercise for the reader to implement additional constraints (and witness)
     // to check that each of the amounts (inputs, outputs, fee) are between 0 and 21,000,000 * 1E8
     // satoshis. Combine this with a maximum amount of inputs/outputs to disallow field overflow.
     //
