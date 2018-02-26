@@ -272,7 +272,7 @@ Create the Makefile:
 
     $ mkdir build && cd build && cmake ..
 
-Then, to compile the library, tests, and profiling harness, run this within the `build directory:
+Then, to compile the library, tests, and profiling harness, run this within the `build` directory:
 
     $ make
 
@@ -405,6 +405,10 @@ to control these (you can see the default at the top of CMakeLists.txt).
 *   `cmake -DDEPENDS_DIR=...`
 
     Sets the dependency installation directory to the provided absolute path (default: installs dependencies in the respective submodule directories)
+
+*   `cmake -DUSE_LINKED_LIBRARIES=ON`
+
+    Setting this flag enables CMake to include installed `libfqfft` and `libff` libraries. This will tell the compiler to ignore the `libfqfft` and `libff` dependencies provided in the `depends` folder.
 
 Not all combinations are tested together or supported by every part of the codebase.
 
