@@ -37,7 +37,7 @@ using namespace gadgetlib2;
         be very basic constraints which are defined over every field (e.g. x + y = 0).
     (2) All field specific examples in this library are for a prime characteristic field with the
         special form of 'quadratic rank 1 polynomials', or R1P. This is the only form used with the
-        current implementaition of SNARKs. The form for these constraints is
+        current implementation of SNARKs. The form for these constraints is
         (Linear Combination) * (Linear Combination) == (Linear Combination).
         The library has been designed to allow future addition of other characteristics/forms in
         the future by implementing only low level circuits for these forms.
@@ -87,7 +87,7 @@ TEST(Examples, ProtoboardUsage) {
     In the above example we explicitly wrote all constraints and assignments.
 
     In this example we will construct a very simple gadget, one that implements a NAND gate. This
-    gadget is field-agnostic as it only uses lower level gadgets and the field elments '0' and '1'.
+    gadget is field-agnostic as it only uses lower level gadgets and the field elements '0' & '1'.
 
     Gadgets are the framework which allow us to delegate construction of sophisticated circuitry
     to lower levels. Each gadget can construct a constraint system or a witness or both, by
@@ -97,7 +97,7 @@ TEST(Examples, ProtoboardUsage) {
 class NAND_Gadget : public Gadget {
 public:
     // This is a convention we use to always create gadgets as if from a factory class. This will
-    // be  needed later for gadgets which have different implementaions in different fields.
+    // be needed later for gadgets which have different implementations in different fields.
     static GadgetPtr create(ProtoboardPtr pb,
                             const FlagVariableArray& inputs,
                             const FlagVariable& output);
@@ -254,7 +254,7 @@ private:
     DualWord hashValue_;
     // This GadgetPtr will be a gadget to unpack hashValue_ from packed representation to bit
     // representation. Recall 'DualWord' holds both values, but only the packed version will be
-    // recieved as input to the constructor.
+    // received as input to the constructor.
     GadgetPtr hashValueUnpacker_;
 
     HashDifficultyEnforcer_Gadget(ProtoboardPtr pb,
@@ -278,7 +278,7 @@ void HashDifficultyEnforcer_Gadget::init() {
     // fits in the first element of a multipacked variable.
     GADGETLIB_ASSERT(hashValue_.multipacked().size() == 1, "multipacked word size too large");
     // A DualWord_Gadget's constraints assert that the unpacked and packed values represent the
-    // same integer element. The generateWitnes() method has two modes, one for packing (taking the
+    // same integer element. The generateWitness() method has two modes, one for packing (taking the
     // bit representation as input) and one for unpacking (creating the bit representation from
     // the packed representation)
     hashValueUnpacker_ = DualWord_Gadget::create(pb_, hashValue_, PackingMode::UNPACK);
