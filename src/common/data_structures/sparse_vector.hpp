@@ -13,6 +13,7 @@
 #define SPARSE_VECTOR_HPP_
 
 #include <vector>
+#include <numeric>
 
 namespace libsnark {
 
