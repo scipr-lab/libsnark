@@ -14,7 +14,7 @@
 #ifndef ALU_ARITHMETIC_HPP_
 #define ALU_ARITHMETIC_HPP_
 #include <memory>
-
+#include <functional> 
 #include "gadgetlib1/gadgets/cpu_checkers/tinyram/components/tinyram_protoboard.hpp"
 #include "gadgetlib1/gadgets/basic_gadgets.hpp"
 
