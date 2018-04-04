@@ -276,15 +276,21 @@ Then, to compile the library, tests, and profiling harness, run this within the 
 
     $ make
 
+To compile and run the tests for this library, run:
+
+    $ make check
+
 To create the HTML documentation, run
 
     $ make doc
 
 and then view the resulting `README.html` (which contains the very text you are reading now).
 
-To compile and run the tests for this library, run:
+To create the source code documentation install doxygen and graphviz. From the root of the repo run:
 
-    $ make check
+    $ doxygen doxygen.conf
+
+With a web browser open index.html from the resulting doxygen directory.
 
 ### Using libsnark as a library
 
