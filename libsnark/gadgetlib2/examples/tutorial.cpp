@@ -75,7 +75,7 @@ TEST(Examples, ProtoboardUsage) {
     // Notice the protoboard stores the assignment values.
     pb->val(input[0]) = pb->val(input[1]) = pb->val(input[2]) = pb->val(output) = 42;
     EXPECT_FALSE(pb->isSatisfied());
-    // The constraint system is not satisfied. Now lets try values which satisfy the two equations
+    // The constraint system is not satisfied. Now let's try values which satisfy the two equations
     // above:
     pb->val(input[0]) = 1;
     pb->val(input[1]) = pb->val(output) = 42; // input[1] - output == 0
@@ -203,20 +203,20 @@ TEST(Examples, NAND_Gadget) {
     // if we try to evaluate the circuit now, an exception will be thrown, because we will
     // be attempting to evaluate unassigned variables.
     EXPECT_ANY_THROW(pb->isSatisfied());
-    // so lets assign the input variables for NAND and try again after creating the witness
+    // so let's assign the input variables for NAND and try again after creating the witness
     for (const auto& input : inputs) {
         pb->val(input) = 1;
     }
     nandGadget->generateWitness();
     EXPECT_TRUE(pb->isSatisfied());
     EXPECT_TRUE(pb->val(output) == 0);
-    // now lets try to ruin something and see what happens
+    // now let's try to ruin something and see what happens
     pb->val(inputs[2]) = 0;
     EXPECT_FALSE(pb->isSatisfied());
-    // now let try to cheat. If we hadn't enforced booleanity, this would have worked!
+    // now let's try to cheat. If we hadn't enforced booleanity, this would have worked!
     pb->val(inputs[1]) = 2;
     EXPECT_FALSE(pb->isSatisfied());
-    // now lets reset inputs[1] to a valid value
+    // now let's reset inputs[1] to a valid value
     pb->val(inputs[1]) = 1;
     // before, we set both the inputs and the output. Notice the output is still set to '0'
     EXPECT_TRUE(pb->val(output) == 0);
@@ -339,7 +339,7 @@ TEST(Examples, HashDifficultyEnforcer_Gadget) {
 
 /*
     In this example we will construct a gadget which builds a circuit for proof (witness) and
-    validation (constraints) that a bitcoin transaction's sum of inputs equals the the sum of
+    validation (constraints) that a bitcoin transaction's sum of inputs equals the sum of
     outputs + miners fee. Construction of the proof will include finding the miners'
     fee. This fee can be thought of as an output of the circuit.
 
