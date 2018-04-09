@@ -76,7 +76,7 @@ The libsnark library currently provides a C++ implementation of:
        contribution of \[DFGK14]
     4. A preprocessing SNARK for a language of Boolean circuits, "TBCS"
        (_Two-input Boolean Circuit Satisfiability_). Internally, it reduces to USCS.
-       This is much more  efficient than going through R1CS.
+       This is much more efficient than going through R1CS.
     5. A simulation-extractable preprocessing SNARK for R1CS.
        This construction uses the approach described in \[GM17]. For arithmetic
        circuits, it is slower than the \[BCTV14a] approach, but produces shorter
@@ -298,7 +298,7 @@ This will install `libsnark.a` into `/install/path/lib`; so your application sho
 
 In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be installed and should be linked in using `-lsnark_adsnark`.
 
-When you use compile you application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/libsnark/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
+When you use compile your application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/libsnark/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
 
 ### Building on Windows using Cygwin
 
