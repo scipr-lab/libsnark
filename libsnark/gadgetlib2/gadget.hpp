@@ -717,14 +717,6 @@ private:
                           const FlagVariable& lessOrEqual);
     virtual void init();
 public:
-
-	static GadgetPtr create(ProtoboardPtr pb,
-							const size_t& wordBitSize,
-							const PackedWord& lhs,
-							const PackedWord& rhs,
-							const FlagVariable& less,
-							const FlagVariable& lessOrEqual);
-
     void generateConstraints();
     void generateWitness();
     friend class Comparison_Gadget;
@@ -732,7 +724,7 @@ private:
     DISALLOW_COPY_AND_ASSIGN(R1P_Comparison_Gadget);
 };
 
-CREATE_GADGET_FACTORY_CLASS_5(Comparison_Gadget, // TODO uncomment this
+CREATE_GADGET_FACTORY_CLASS_5(Comparison_Gadget,
                               size_t, wordBitSize,
                               PackedWord, lhs,
                               PackedWord, rhs,
