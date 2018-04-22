@@ -315,6 +315,39 @@ TEST(gadgetLib2,LogicImplication_Gadget) {
     ASSERT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
 }
 
+TEST(gadgetLib2,R1P_Comparison_Gadget_SimpleTest) {
+    initPublicParamsFromDefaultPp();
+    auto pb = Protoboard::create(R1P);
+
+    size_t wbs;
+    PackedWord lhs, rhs;
+    FlagVariable less, lessOrEqual;
+
+    auto comparisonGadget =
+        Comparison_Gadget::create(pb, wbs, lhs, rhs, less, lessOrEqual);
+
+    comparisonGadget->generateConstraints();
+
+    pb->val(wbs) = 8;
+    pb->val(lhs) = 1;
+    pb->val(rhs) = 2;
+    pb->val(less)= 1;
+    pb->val(lessOrEqual) = 1;
+
+    // Positive test for satisfy less && lessOrEqual
+    comparisonGadget->generateWitness();
+    EXPECT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
+
+    // Negative test for satisfy not(less) && lessOrEqual
+    pb->val(less) = 0;
+    EXPECT_FALSE(pb->isSatisfied());
+
+    // Positive test for satisfy not(less) && lessOrEqual
+    pb->val(lhs) = 2;
+    comparisonGadget->generateWitness();
+    EXPECT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
+}
+
 // TODO refactor this test --Shaul
 void packing_Gadget_R1P_ExhaustiveTest(ProtoboardPtr unpackingPB, ProtoboardPtr packingPB,
                                        const int n, VariableArray packed, VariableArray unpacked,

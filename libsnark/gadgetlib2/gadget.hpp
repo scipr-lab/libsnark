@@ -693,7 +693,7 @@ public:
 /*************************************************************************************************/
 /*************************************************************************************************/
 
-// TODO create unit test
+// TODO create exhaustive unit test
 CREATE_GADGET_BASE_CLASS(Comparison_GadgetBase);
 
 class R1P_Comparison_Gadget : public Comparison_GadgetBase, public R1P_Gadget {
