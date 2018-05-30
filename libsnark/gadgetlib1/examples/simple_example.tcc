@@ -45,4 +45,4 @@ r1cs_example<FieldT> gen_r1cs_example_from_protoboard(const size_t num_constrain
 }
 
 } // libsnark
-#endif // R1CS_EXAMPLES_TCC_
+#endif // SIMPLE_EXAMPLE_TCC_
