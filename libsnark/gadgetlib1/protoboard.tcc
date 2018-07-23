@@ -177,7 +177,7 @@ r1cs_primary_input<FieldT> protoboard<FieldT>::primary_input() const
 template<typename FieldT>
 r1cs_auxiliary_input<FieldT> protoboard<FieldT>::auxiliary_input() const
 {
-    return r1cs_primary_input<FieldT>(values.begin() + num_inputs(), values.end());
+    return r1cs_auxiliary_input<FieldT>(values.begin() + num_inputs(), values.end());
 }
 
 template<typename FieldT>
