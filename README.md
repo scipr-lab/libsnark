@@ -2,13 +2,15 @@ libsnark: a C++ library for zkSNARK proofs
 ================================================================================
 
 --------------------------------------------------------------------------------
-Authors
+Authors and contacts
 --------------------------------------------------------------------------------
 
 The libsnark library is developed by the [SCIPR Lab] project and contributors
 and is released under the MIT License (see the [LICENSE] file).
 
-Copyright (c) 2012-2014 SCIPR Lab and contributors (see [AUTHORS] file).
+Copyright (c) 2012-2017 SCIPR Lab and contributors (see [AUTHORS] file).
+
+For announcements and discussions, see the [libsnark mailing list](https://groups.google.com/forum/#!forum/libsnark).
 
 --------------------------------------------------------------------------------
 [TOC]
@@ -57,9 +59,14 @@ For formal definitions and theoretical discussions about these, see
 The libsnark library currently provides a C++ implementation of:
 
 1.  General-purpose proof systems:
-    1.  A preprocessing zkSNARK for the NP-complete language "R1CS"
-        (_Rank-1 Constraint Systems_), which is a language that is similar to arithmetic
-        circuit satisfiability.
+    1. A preprocessing zkSNARK for the NP-complete language "R1CS"
+       (_Rank-1 Constraint Systems_), which is a language that is similar to arithmetic
+       circuit satisfiability.
+
+       This zkSNARK construction follows, extends, and
+       optimizes the approach described in \[BCTV14a], itself an extension of
+       \[BCGTV13], following the approach of \[GGPR13] and \[BCIOP13]. (An alternative
+       implementation of this approach is the _Pinocchio_ system of \[PGHR13].)
     2. A preprocessing SNARK for a language of arithmetic circuits, "BACS"
        (_Bilinear Arithmetic Circuit Satisfiability_). This simplifies the writing
        of NP statements when the additional flexibility of R1CS is not needed.
@@ -69,10 +76,14 @@ The libsnark library currently provides a C++ implementation of:
        contribution of \[DFGK14]
     4. A preprocessing SNARK for a language of Boolean circuits, "TBCS"
        (_Two-input Boolean Circuit Satisfiability_). Internally, it reduces to USCS.
-       This is much more  efficient than going through R1CS.
-    5. ADSNARK, a preprocessing SNARKs for proving statements on authenticated
+       This is much more efficient than going through R1CS.
+    5. A simulation-extractable preprocessing SNARK for R1CS.
+       This construction uses the approach described in \[GM17]. For arithmetic
+       circuits, it is slower than the \[BCTV14a] approach, but produces shorter
+       proofs.
+    6. ADSNARK, a preprocessing SNARKs for proving statements on authenticated
        data, as described in \[BBFR15].
-    6. Proof-Carrying Data (PCD). This uses recursive composition of SNARKs, as
+    7. Proof-Carrying Data (PCD). This uses recursive composition of SNARKs, as
        explained in \[BCCT13] and optimized in \[BCTV14b].
 2.  Gadget libraries (gadgetlib1 and gadgetlib2) for constructing R1CS
     instances out of modular "gadget" classes.
@@ -86,11 +97,7 @@ The libsnark library currently provides a C++ implementation of:
     3. A scalable for TinyRAM using Proof-Carrying Data, as explained in \[BCTV14b]
     4. Zero-knowldge cluster MapReduce, as explained in \[CTV15].
 
-The zkSNARK construction implemented by libsnark follows, extends, and
-optimizes the approach described in \[BCTV14], itself an extension of
-\[BCGTV13], following the approach of \[BCIOP13] and \[GGPR13]. An alternative
-implementation of the basic approach is the _Pinocchio_ system of \[PGHR13].
-See these references for discussions of efficiency aspects that arise in
+See the above references for discussions of efficiency aspects that arise in
 practical use of such constructions, as well as security and trust
 considerations.
 
@@ -133,8 +140,8 @@ Elliptic curve choices
 --------------------------------------------------------------------------------
 
 The ppzkSNARK can be instantiated with different parameter choices, depending on
-which elliptic curve is used. The libsnark library currently provides three
-options:
+which elliptic curve is used. The [libff](https://github.com/scipr-lab/libff) library
+currently provides three options:
 
 * "edwards":
    an instantiation based on an Edwards curve, providing 80 bits of security.
@@ -216,187 +223,131 @@ Known issues include the following:
 Build instructions
 --------------------------------------------------------------------------------
 
+### Dependencies
+
 The libsnark library relies on the following:
 
 - C++ build environment
+- CMake build infrastructure
 - GMP for certain bit-integer arithmetic
 - libprocps for reporting memory usage
-- GTest for some of the unit tests
+- Fetched and compiled via Git submodules:
+    - [libff](https://github.com/scipr-lab/libff) for finite fields and elliptic curves
+    - [libfqfft](https://github.com/scipr-lab/libfqfft) for fast polynomial evaluation and interpolation in various finite domains
+    - [Google Test](https://github.com/google/googletest) (GTest) for unit tests
+    - [ate-pairing](https://github.com/herumi/ate-pairing) for the BN128 elliptic curve
+    - [xbyak](https://github.com/herumi/xbyak) just-in-time assembler, for the BN128 elliptic curve
+    - [Subset of SUPERCOP](https://github.com/mbbarbosa/libsnark-supercop) for crypto primitives needed by ADSNARK
 
-So far we have tested these only on Linux, though we have been able to make the library work,
-with some features disabled (such as memory profiling or GTest tests), on Windows via Cygwin
-and on Mac OS X. (If you succeed in achieving more complete ports of the library, please
-let us know!) See also the notes on [portability](#portability) below.
+So far we have tested these only on Linux, though we have been able to make the
+libsnark work, with some features disabled (such as memory profiling or GTest tests),
+on Windows via Cygwin and on Mac OS X. See also the notes on [portability](#portability)
+below. (If you port libsnark to additional platforms, please let us know!)
 
-For example, on a fresh install of Ubuntu 14.04, install the following packages:
+Concretely, here are the requisite packages in some Linux distributions:
 
-    $ sudo apt-get install build-essential git libgmp3-dev libprocps3-dev libgtest-dev python-markdown libboost-all-dev libssl-dev
+* On Ubuntu 16.04 LTS:
 
-Or, on Fedora 20:
+        $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps4-dev python-markdown libboost-all-dev libssl-dev
 
-    $ sudo yum install gcc-c++ make git gmp-devel procps-ng-devel gtest-devel python-markdown
+* On Ubuntu 14.04 LTS:
 
-Run the following, to fetch dependencies from their GitHub repos and compile them.
-(Not required if you set `CURVE` to other than the default `BN128` and also set `NO_SUPERCOP=1`.)
+        $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps3-dev python-markdown libboost-all-dev libssl-dev
 
-    $ ./prepare-depends.sh
+* On Fedora 21 through 23:
 
-Then, to compile the library, tests, profiling harness and documentation, run:
+        $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python2-markdown
+
+* On Fedora 20:
+
+        $ sudo yum install gcc-c++ cmake make git gmp-devel procps-ng-devel python-markdown
+
+### Building
+
+Fetch dependencies from their GitHub repos:
+
+    $ git submodule init && git submodule update
+
+Create the Makefile:
+
+    $ mkdir build && cd build && cmake ..
+
+Then, to compile the library, tests, and profiling harness, run this within the `build` directory:
 
     $ make
 
-To create just the HTML documentation, run
+To create the HTML documentation, run
 
     $ make doc
 
 and then view the resulting `README.html` (which contains the very text you are reading now).
 
-To create Doxygen documentation summarizing all files, classes and functions,
-with some (currently sparse) comments, install the `doxygen` and `graphviz` packages, then run
+To compile and run the tests for this library, run:
 
-    $ make doxy
-
-(this may take a few minutes). Then view the resulting [`doxygen/index.html`](doxygen/index.html).
+    $ make check
 
 ### Using libsnark as a library
 
-To develop an application that uses libsnark, you could add it within the libsnark directory tree and adjust the Makefile, but it is far better to build libsnark as a (shared or static) library. You can then write your code in a separate directory tree, and link it against libsnark.
-
-
-To build just the shared object library `libsnark.so`, run:
-
-    $ make lib
-
-To build just the static library `libsnark.a`, run:
-
-    $ make lib STATIC=1
-
-Note that static compilation requires static versions of all libraries it depends on.
-It may help to minize these dependencies by appending
-`CURVE=ALT_BN128 NO_PROCPS=1 NO_GTEST=1 NO_SUPERCOP=1`. On Fedora 21, the requisite 
-library RPM dependencies are then: 
-`boost-static glibc-static gmp-static libstdc++-static openssl-static zlib-static
- boost-devel glibc-devel gmp-devel gmp-devel libstdc++-devel openssl-devel openssl-devel`.
+To develop an application that uses libsnark, it's recommended to use your own build system that incorporates libsnark and dependencies. If you're using CMake, add libsnark as a git submodule, and then add it as a subdirectory. Then, add `snark` as a library dependency to the appropriate rules.
 
 To build *and install* the libsnark library:
 
-    $ make install PREFIX=/install/path
+    $ DESTDIR=/install/path make install
 
-This will install `libsnark.so` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
+This will install `libsnark.a` into `/install/path/lib`; so your application should be linked using `-L/install/path/lib -lsnark`. It also installs the requisite headers into `/install/path/include`; so your application should be compiled using `-I/install/path/include`.
 
-In addition, unless you use `NO_SUPERCOP=1`, `libsupercop.a` will be installed and should be linked in using `-lsupercop`.
+In addition, unless you use `WITH_SUPERCOP=OFF`, `libsnark_adsnark.a` will be installed and should be linked in using `-lsnark_adsnark`.
 
+When you use compile your application against `libsnark`, you must have the same conditional defines (`#define FOO` or `g++ -DFOO`) as when you compiled `libsnark`, due to the use of templates. One way to figure out the correct conditional defines is to look at `build/libsnark/CMakeFiles/snark.dir/flags.make` after running `cmake`. ([Issue #21](https://github.com/scipr-lab/libsnark/issues/21))
 
 ### Building on Windows using Cygwin
-Install Cygwin using the graphical installer, including the `g++`, `libgmp`
+
+Install Cygwin using the graphical installer, including the `g++`, `libgmp`, `cmake`,
 and `git` packages. Then disable the dependencies not easily supported under CygWin,
 using:
 
-    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
-
+    $ cmake -DWITH_PROCPS=OFF ..
 
 ### Building on Mac OS X
 
 On Mac OS X, install GMP from MacPorts (`port install gmp`). Then disable the
-dependencies not easily supported under CygWin, using:
+dependencies not easily supported under OS X, using:
 
-    $ make NO_PROCPS=1 NO_GTEST=1 NO_DOCS=1
+    $ cmake -DWITH_PROCPS=OFF ..
 
 MacPorts does not write its libraries into standard system folders, so you
 might need to explicitly provide the paths to the header files and libraries by
 appending `CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib` to the line
-above. Similarly, to pass the paths to ate-pairing you would run
-`INC_DIR=-I/opt/local/include LIB_DIR=-L/opt/local/lib ./prepare-depends.sh`
-instead of `./prepare-depends.sh` above.
-
---------------------------------------------------------------------------------
-Tutorials
---------------------------------------------------------------------------------
-
-libsnark includes a tutorial, and some usage examples, for the high-level API.
-
-* `src/gadgetlib1/examples1` contains a simple example for constructing a
-  constraint system using gadgetlib1.
-
-* `src/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
-  NP statements as constraint systems. It introduces basic terminology, design
-  overview, and recommended programming style. It also shows how to invoke
-  ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
-  into a standalone executable.
-
-* `src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
-  constructs a simple constraint system and runs the ppzksnark. See below for how to
-   run it.
-
-
---------------------------------------------------------------------------------
-Executing profiling example
---------------------------------------------------------------------------------
-
-The command
-
-     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
-
-exercises the ppzkSNARK (first generator, then prover, then verifier) on an
-R1CS instance with 1000 equations and an input consisting of 10 field elements.
-
-(If you get the error `zmInit ERR:can't protect`, see the discussion
-[above](#elliptic-curve-choices).)
-
-The command
-
-     $ src/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
-
-does the same but now the input consists of 10 bytes.
+above.
 
 
 --------------------------------------------------------------------------------
 Build options
 --------------------------------------------------------------------------------
 
-The following flags change the behavior of the compiled code.
+The following flags change the behavior of the compiled code. Use
 
-*    `make FEATUREFLAGS='-Dname1 -Dname2 ...'`
+     $ cmake -Dname1=ON -Dname2=OFF ...
 
-     Override the active conditional #define names (you can see the default at the top of the Makefile).
-     The next bullets list the most important conditionally-#defined features.
-     For example, `make FEATUREFLAGS='-DBINARY_OUTPUT'` enables binary output and disables the default
-     assembly optimizations and Montgomery-representation output.
+to control these (you can see the default at the top of CMakeLists.txt).
 
-*    define `BINARY_OUTPUT`
-
-     In serialization, output raw binary data (instead of decimal, when not set).
-
-*   `make CURVE=choice` / define `CURVE_choice` (where `choice` is one of: 
-     ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
+*   `cmake -DCURVE=choice` (where `choice` is one of: ALT_BN128, BN128, EDWARDS, MNT4, MNT6)
 
      Set the default curve to one of the above (see [elliptic curve choices](#elliptic-curve-choices)).
 
-*   `make DEBUG=1` / define `DEBUG`
+*   `cmake -DLOWMEM=ON`
 
-    Print additional information for debugging purposes.
+     Limit the size of multi-exponentiation tables, for low-memory platforms.
 
-*   `make LOWMEM=1` / define `LOWMEM`
-
-    Limit the size of multi-exponentiation tables, for low-memory platforms.
-
-*   `make NO_DOCS=1`
-
-     Do not generate HTML documentation, e.g. on platforms where Markdown is not easily available.
-
-*   `make NO_PROCPS=1`
+*   `cmake -DWITH_PROCPS=OFF`
 
      Do not link against libprocps. This disables memory profiling.
 
-*   `make NO_GTEST=1`
-
-     Do not link against GTest. The tutorial and test suite of gadgetlib2 tutorial won't be compiled.
-
-*   `make NO_SUPERCOP=1`
+*   `cmake -DWITH_SUPERCOP=OFF`
 
      Do not link against SUPERCOP for optimized crypto. The ADSNARK executables will not be built.
 
-*   `make MULTICORE=1`
+*   `cmake -DMULTICORE=ON`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
      This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
@@ -407,43 +358,111 @@ The following flags change the behavior of the compiled code.
      to the autodetected number of cores, but on some devices, dynamic core management confused
      OpenMP's autodetection, so setting `OMP_NUM_THREADS` is necessary for full utilization.
 
-*   define `NO_PT_COMPRESSION`
+*   `cmake -DUSE_PT_COMPRESSION=OFF`
 
     Do not use point compression.
     This gives much faster serialization times, at the expense of ~2x larger
     sizes for serialized keys and proofs.
 
-*   define `MONTGOMERY_OUTPUT` (on by default)
+*   `cmake -DMONTGOMERY_OUTPUT=ON` (enabled by default)
 
     Serialize Fp elements as their Montgomery representations. If this
     option is disabled then Fp elements are serialized as their
     equivalence classes, which is slower but produces human-readable
     output.
 
-*   `make PROFILE_OP_COUNTS=1` / define `PROFILE_OP_COUNTS`
+*    `cmake -DBINARY_OUTPUT=ON` (enabled by default)
+
+     In serialization, output raw binary data (instead of decimal), which is smaller and faster.
+
+*   `cmake -DPROFILE_OP_COUNTS=ON`
 
     Collect counts for field and curve operations inside static variables
     of the corresponding algebraic objects. This option works for all
     curves except bn128.
 
-*   define `USE_ASM` (on by default)
+*    `cmake -DUSE_ASM=ON` (enabled by default)
 
-    Use unrolled assembly routines for F[p] arithmetic and faster heap in
-    multi-exponentiation. (When not set, use GMP's `mpn_*` routines instead.)
+    Use architecture-specific assembly routines for F[p] arithmetic and heap in
+    multi-exponentiation. (If disabled, use GMP's `mpn_*` routines instead.)
 
-*   define `USE_MIXED_ADDITION`
+*   `cmake -DUSE_MIXED_ADDITION=ON`
 
     Convert each element of the proving key and verification key to
     affine coordinates. This allows using mixed addition formulas in
     multiexponentiation and results in slightly faster prover and
-    verifier runtime at expense of increased proving time.
+    verifier runtime at expense of increased generator runtime.
 
-*   `make PERFORMANCE=1`
+*   `cmake -DPERFORMANCE=ON`
 
     Enables compiler optimizations such as link-time optimization, and disables debugging aids.
     (On some distributions this causes a `plugin needed to handle lto object` link error and `undefined reference`s, which can be remedied by `AR=gcc-ar make ...`.)
 
+*   `cmake -DOPT_FLAGS=...`
+
+    Set the C++ compiler optimization flags, overriding the default (e.g., `-DOPT_FLAGS="-Os -march=i386"`).
+
+*   `cmake -DDEPENDS_DIR=...`
+
+    Sets the dependency installation directory to the provided absolute path (default: installs dependencies in the respective submodule directories)
+
+*   `cmake -DUSE_LINKED_LIBRARIES=ON`
+
+    Setting this flag enables CMake to include installed `libfqfft` and `libff` libraries. This will tell the compiler to ignore the `libfqfft` and `libff` dependencies provided in the `depends` folder.
+
 Not all combinations are tested together or supported by every part of the codebase.
+
+--------------------------------------------------------------------------------
+Docker
+--------------------------------------------------------------------------------
+
+You can run `libsnark` on Docker:
+
+```
+$ docker build -t libsnark .
+$ docker run -ti libsnark /bin/bash
+```
+
+
+--------------------------------------------------------------------------------
+Tutorials
+--------------------------------------------------------------------------------
+
+libsnark includes a tutorial, and some usage examples, for the high-level API.
+
+* `libsnark/gadgetlib1/examples1` contains a simple example for constructing a
+  constraint system using gadgetlib1.
+
+* `libsnark/gadgetlib2/examples` contains a tutorial for using gadgetlib2 to express
+  NP statements as constraint systems. It introduces basic terminology, design
+  overview, and recommended programming style. It also shows how to invoke
+  ppzkSNARKs on such constraint systems. The main file, `tutorial.cpp`, builds
+  into a standalone executable.
+
+* `libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark.cpp`
+  constructs a simple constraint system and runs the ppzksnark. See below for how to
+   run it.
+
+
+--------------------------------------------------------------------------------
+Executing profiling example
+--------------------------------------------------------------------------------
+
+The command
+
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 Fr
+
+exercises the ppzkSNARK (first generator, then prover, then verifier) on an
+R1CS instance with 1000 equations and an input consisting of 10 field elements.
+
+(If you get the error `zmInit ERR:can't protect`, see the discussion
+[above](#elliptic-curve-choices).)
+
+The command
+
+     $ libsnark/zk_proof_systems/ppzksnark/r1cs_ppzksnark/profiling/profile_r1cs_ppzksnark 1000 10 bytes
+
+does the same but now the input consists of 10 bytes.
 
 
 --------------------------------------------------------------------------------
@@ -469,22 +488,28 @@ with respect to portability. Specifically:
    (The decimal serialization routines have no such limitation.)
 
 5. libsnark requires a C++ compiler with good C++11 support. It has been
-   tested with g++ 4.7, g++ 4.8, and clang 3.4.
+   tested with g++ 4.7 and newer, and clang 3.4 and newer.
 
 6. On x86-64, we by default use highly optimized assembly implementations for some
    operations (see `USE_ASM` above). On other architectures we fall back to a
    portable C++ implementation, which is slower.
 
+7. The ate-pairing library, require by the BN128 curve, can be compiled only on i686 and x86-64. (On other platforms, use other `-DCURVE=...` choices.)
+
+8. The SUPERCOP library, required by ADSNARK, can be compiled only on i686 and x86-64. (On other platforms, use `-DWITH_SUPERCOP=OFF`.)
+
 Tested configurations include:
 
 * Debian jessie with g++ 4.7 on x86-64
 * Debian jessie with clang 3.4 on x86-64
-* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64 and i686
+* Fedora 20/21 with g++ 4.8.2/4.9.2 on x86-64
+* Fedora 21 with g++ 4.9.2 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-64
-* Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for EDWARDS and ALT_BN128 curve choices
+* Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
+* Ubuntu 15.04/16.04 LTS with g++ 4.9.2/5.3.1 on ARM AArch32/AArch64, for non-BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
-* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1, for EDWARDS and ALT_BN128 curve choices
-* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 with NO_PROCPS=1, NO_GTEST=1 and NO_DOCS=1
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`-DWITH_PROCPS=OFF` and GTestdisabled)
+* Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 (`-DWITH_PROCPS=OFF` and GTest disabled)
 
 
 --------------------------------------------------------------------------------
@@ -493,37 +518,26 @@ Directory structure
 
 The directory structure of the libsnark library is as follows:
 
-* src/ --- main C++ source code, containing the following modules:
-    * algebra/ --- fields and elliptic curve groups
-    * common/ --- miscellaneous utilities
-    * gadgetlib1/ --- gadgetlib1, a library to construct R1CS instances
-        * gadgets/ --- basic gadgets for gadgetlib1
-    * gadgetlib2/ --- gadgetlib2, a library to construct R1CS instances
-    * qap/ --- quadratic arithmetic program
-        * domains/ --- support for fast interpolation/evaluation, by providing
-          FFTs and Lagrange-coefficient computations for various domains
-    * relations/ --- interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
-        * constraint_satisfaction_problems/ --- R1CS and USCS languages
-        * circuit_satisfaction_problems/ ---  Boolean and arithmetic circuit satisfiability languages
-        * ram_computations/ --- RAM computation languages
-    * zk_proof_systems --- interfaces and implementations of the proof systems
-    * reductions --- reductions between languages (used internally, but contains many examples of building constraints)
+* [__libsnark__](libsnark): main C++ source code, containing the following modules:
+    * [__common__](libsnark/common): miscellaneous utilities
+    * [__gadgetlib1__](libsnark/gadgetlib1): gadgetlib1, a library to construct R1CS instances
+        * [__gadgets__](libsnark/gadgetlib1/gadgets): basic gadgets for gadgetlib1
+    * [__gadgetlib2__](libsnark/gadgetlib2): gadgetlib2, a library to construct R1CS instances
+    * [__relations__](libsnark/relations): interfaces for expressing statement (relations between instances and witnesses) as various NP-complete languages
+        * [__constraint_satisfaction_problems__](libsnark/relations/constraint_satisfaction_problems): R1CS and USCS languages
+        * [__circuit_satisfaction_problems__](libsnark/relations/circuit_satisfaction_problems):  Boolean and arithmetic circuit satisfiability languages
+        * [__ram_computations__](libsnark/relations/ram_computations): RAM computation languages
+    * [__zk_proof_systems__](libsnark/zk_proof_systems): interfaces and implementations of the proof systems
+    * [__reductions__](libsnark/reductions): reductions between languages (used internally, but contains many examples of building constraints)
+* [__depends__](depends): external dependencies which are automatically fetched and compiled (overridable by `cmake -DDEPENDS_DIR=...`)
 
-    Some of these module directories have the following subdirectories:
+Some of these module directories have the following subdirectories:
 
-    * ...
-        * examples/ --- example code and tutorials for this module
-        * tests/ --- unit tests for this module
+* ...
+    * __examples__: example code and tutorials for this module
+    * __tests__: unit tests for this module
 
-    In particular, the top-level API examples are at `src/r1cs_ppzksnark/examples/` and `src/gadgetlib2/examples/`.
-
-* depsrc/ --- created by `prepare_depends.sh` for retrieved sourcecode and local builds of external code
-  (currently: \[ate-pairing], and its dependency xbyak).
-
-* depinst/ --- created by `prepare_depends.sh` and `Makefile`
-  for local installation of locally-compiled dependencies.
-
-* doxygen/ --- created by `make doxy` and contains a Doxygen summary of all files, classes etc. in libsnark.
+In particular, the top-level API examples are at `libsnark/r1cs_ppzksnark/examples/` and `libsnark/gadgetlib2/examples/`.
 
 
 --------------------------------------------------------------------------------
@@ -538,7 +552,7 @@ on the size of the multiexponentiation instance *and* the platform.
 
 On our benchmarking platform (a 3.40 GHz Intel Core i7-4770 CPU), we have
 computed for each curve optimal windows, provided as
-"fixed_base_exp_window_table" initialization sequences, for each curve; see
+`fixed_base_exp_window_table` initialization sequences, for each curve; see
 `X_init.cpp` for X=edwards,bn128,alt_bn128.
 
 Performance on other platforms may not be optimal (but probably not be far off).
@@ -575,13 +589,13 @@ References
   CRYPTO 2013
 
 \[BCIOP13] [
-  _Succinct Non-Interactive Arguments via Linear Interactive Proofs_
+  _Succinct non-interactive arguments via linear interactive Proofs_
 ](http://eprint.iacr.org/2012/718),
   Nir Bitansky, Alessandro Chiesa, Yuval Ishai, Rafail Ostrovsky, Omer Paneth,
   Theory of Cryptography Conference 2013
 
 \[BCTV14a] [
-  _Succinct Non-Interactive Zero Knowledge for a von Neumann Architecture_
+  _Succinct non-interactive zero knowledge for a von Neumann architecture_
 ](http://eprint.iacr.org/2013/879),
   Eli Ben-Sasson, Alessandro Chiesa, Eran Tromer, Madars Virza,
   USENIX Security 2014
@@ -603,6 +617,13 @@ References
 ](https://eprint.iacr.org/2014/718),
   George Danezis, Cedric Fournet, Jens Groth, Markulf Kohlweiss,
   ASIACCS 2014
+
+\[GM17] [
+  Snarky Signatures: Minimal Signatures of Knowledge from Simulation-Extractable
+  SNARKs
+](https://eprint.iacr.org/2017/540),
+  Jens Groth and Mary Maller,
+  IACR-CRYPTO-2017
 
 \[GGPR13] [
   _Quadratic span programs and succinct NIZKs without PCPs_
