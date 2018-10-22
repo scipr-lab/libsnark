@@ -28,12 +28,12 @@ option(
 option(
   BINARY_OUTPUT
   "In serialization, output raw binary data (instead of decimal), which is smaller and faster."
-  ON
+  OFF
 )
 option(
   MONTGOMERY_OUTPUT
   "Serialize Fp elements as their Montgomery representations (faster but not human-readable)"
-  ON
+  OFF
 )
 option(
   USE_PT_COMPRESSION

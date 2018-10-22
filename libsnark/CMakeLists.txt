@@ -676,6 +676,31 @@ target_link_libraries(
   snark
 )
 
+
+file(MAKE_DIRECTORY jsnark_interface)
+
+add_executable(
+  run_ppzksnark
+
+  jsnark_interface/Util.hpp
+  jsnark_interface/Util.cpp
+  jsnark_interface/CircuitReader.hpp
+  jsnark_interface/CircuitReader.cpp
+  jsnark_interface/run_ppzksnark.cpp
+)
+target_link_libraries(
+  run_ppzksnark
+
+  snark
+)
+
+set_target_properties(run_ppzksnark
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "jsnark_interface/"
+    LIBRARY_OUTPUT_DIRECTORY "jsnark_interface/"
+    RUNTIME_OUTPUT_DIRECTORY "jsnark_interface/"
+)
+
 include(CTest)
 add_test(
   NAME common_routing_algorithms_test
