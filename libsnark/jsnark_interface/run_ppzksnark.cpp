@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 	int inputStartIndex = 0;
 	if(argc == 4){
 		if(strcmp(argv[1], "gg") != 0){
-			cout << "Invalid Argument (See Readme) - Terminating.." << endl;
+			cout << "Invalid Argument - Terminating.." << endl;
 			return -1;
 		} else{
 			cout << "Using ppzsknark in the generic group model [Gro16]." << endl;
@@ -70,8 +70,14 @@ int main(int argc, char **argv) {
 	cout << endl;
 #endif
 
-	assert(cs.is_valid());
-	assert(cs.is_satisfied(primary_input, auxiliary_input));
+	//assert(cs.is_valid());
+	//assert(cs.is_satisfied(primary_input, auxiliary_input));
+	if(!cs.is_valid() || !cs.is_satisfied(primary_input, auxiliary_input)){
+		cout << "The constraint system is either invalid or not satisifed by the value assignment - Terminating." << endl;
+		return -1;
+	}
+
+
 	r1cs_example<FieldT> example(cs, primary_input, auxiliary_input);
 	
 	const bool test_serialization = false;
@@ -86,7 +92,11 @@ int main(int argc, char **argv) {
 		successBit = libsnark::run_r1cs_gg_ppzksnark<libsnark::default_r1cs_gg_ppzksnark_pp>(
 			example, test_serialization);
 	}
-	assert(successBit);
+	//assert(successBit);
+	if(!successBit){
+		cout << "Problem occurred while running the ppzksnark algorithms .. " << endl;
+		return -1;
+	}	
 	return 0;
 }
 
