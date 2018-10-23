@@ -154,7 +154,13 @@ void CircuitReader::parseAndEval(char* arithFilepath, char* inputsFilepath) {
 				assert(0);
 			}
 
-			begin = libff::get_nsec_time();
+			// TODO: separate evaluation from parsing completely to get accurate evaluation cost
+			//	 Calling  libff::get_nsec_time(); repetitively as in the old version adds much overhead 
+			// TODO 2: change circuit format to enable skipping some lines during evaluation
+			//       Not all intermediate wire values need to be computed in this phase
+			// TODO 3: change circuit format to make common constants defined once			
+	
+			//begin = libff::get_nsec_time();
 			if (opcode == ADD_OPCODE) {
 				FieldT sum;
 				for (auto &v : inValues)
@@ -190,8 +196,8 @@ void CircuitReader::parseAndEval(char* arithFilepath, char* inputsFilepath) {
 			} else if (opcode == MULCONST_OPCODE) {
 				wireValues[outWires[0]] = constant * inValues[0];
 			}
-			end =  libff::get_nsec_time();
-			evalTime += (end - begin);
+			//end =  libff::get_nsec_time();
+			//evalTime += (end - begin);
 		} else {
 			printf("Error: unrecognized line: %s\n", line.c_str());
 			assert(0);
@@ -202,7 +208,7 @@ void CircuitReader::parseAndEval(char* arithFilepath, char* inputsFilepath) {
 	arithfs.close();
 
 	end = clock();
-	printf("\t Evaluation Done in %lf seconds \n", (double) (evalTime) * 1e-9);
+	// printf("\t Evaluation Done in %lf seconds \n", (double) (evalTime) * 1e-9);
 	 libff::leave_block("Parsing and Evaluating the circuit");
 }
 
