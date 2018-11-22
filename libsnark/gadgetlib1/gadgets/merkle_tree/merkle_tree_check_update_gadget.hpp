@@ -1,7 +1,7 @@
 /** @file
  *****************************************************************************
 
- Declaration of interfaces for the Merkle tree check read gadget.
+ Declaration of interfaces for the Merkle tree check update gadget.
 
  The gadget checks the following: given two roots R1 and R2, address A, two
  values V1 and V2, and authentication path P, check that
