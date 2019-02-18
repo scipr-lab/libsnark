@@ -92,10 +92,11 @@ private:
 	void addAssertionConstraint(char*, char*);
 
 	void addSplitConstraint(char*, char*, unsigned short);
-	void addPackConstraint(char*, char*, unsigned short);
+	// void addPackConstraint(char*, char*, unsigned short);
 	void addNonzeroCheckConstraint(char*, char*);
 
 	void handleAddition(char*, char*);
+	void handlePackOperation(char*, char*, unsigned short);
 	void handleMulConst(char*, char*, char*);
 	void handleMulNegConst(char*, char*, char*);
 

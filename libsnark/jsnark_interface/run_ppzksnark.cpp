@@ -69,7 +69,6 @@ int main(int argc, char **argv) {
 #endif
 
 	//assert(cs.is_valid());
-	//assert(cs.is_satisfied(primary_input, auxiliary_input));
 
 	// removed cs.is_valid() check due to a suspected (off by 1) issue in a newly added check in their method.
         // A follow-up will be added.

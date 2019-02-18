@@ -299,7 +299,9 @@ void CircuitReader::constructCircuit(char* arithFilepath) {
 				addSplitConstraint(inputStr, outputStr, numGateOutputs);
 			} else if (strstr(type, "pack")) {
 				assert(numGateOutputs == 1);
-				addPackConstraint(inputStr, outputStr, numGateInputs);
+				// addPackConstraint(inputStr, outputStr, numGateInputs);
+				handlePackOperation(inputStr, outputStr, numGateInputs);
+
 			}
 		} else {
 //			assert(0);
@@ -533,6 +535,7 @@ void CircuitReader::addSplitConstraint(char* inputStr, char* outputStr,
 	pb->addRank1Constraint(*l, 1, sum, "Split Constraint");
 }
 
+/*
 void CircuitReader::addPackConstraint(char* inputStr, char* outputStr,
 		unsigned short n) {
 
@@ -566,6 +569,7 @@ void CircuitReader::addPackConstraint(char* inputStr, char* outputStr,
 	pb->addRank1Constraint(*vptr, 1, sum, "Pack Constraint");
 
 }
+*/
 
 void CircuitReader::addNonzeroCheckConstraint(char* inputStr, char* outputStr) {
 
@@ -598,6 +602,29 @@ void CircuitReader::addNonzeroCheckConstraint(char* inputStr, char* outputStr) {
 	zeropMap[outputWireId] = currentVariableIdx;
 	currentVariableIdx++;
 
+}
+
+
+void CircuitReader::handlePackOperation(char* inputStr, char* outputStr, unsigned short n){
+
+	Wire outputWireId;
+	istringstream iss_o(outputStr, istringstream::in);
+	iss_o >> outputWireId;
+
+	istringstream iss_i(inputStr, istringstream::in);
+	LinearCombinationPtr sum;
+	Wire bitWireId;
+	iss_i >> bitWireId;
+	find(bitWireId, sum, true);	       
+	FElem two_i = libff::Fr<libff::default_ec_pp> ("1");
+	for (int i = 1; i < n; i++) {
+		iss_i >> bitWireId;
+		LinearCombinationPtr l;
+		find(bitWireId, l);
+		two_i += two_i;
+		*sum += two_i * (*l);
+	}
+	wireLinearCombinations[outputWireId] = sum;
 }
 
 void CircuitReader::handleAddition(char* inputStr, char* outputStr) {
