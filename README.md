@@ -16,7 +16,7 @@ For announcements and discussions, see the [libsnark mailing list](https://group
 [TOC]
 
 <!---
-  NOTE: the file you are reading is in Markdown format, which is is fairly readable
+  NOTE: the file you are reading is in Markdown format, which is fairly readable
   directly, but can be converted into an HTML file with much nicer formatting.
   To do so, run "make doc" (this requires the python-markdown package) and view
   the resulting file README.html. Alternatively, view the latest HTML version at
@@ -350,7 +350,7 @@ to control these (you can see the default at the top of CMakeLists.txt).
 *   `cmake -DMULTICORE=ON`
 
      Enable parallelized execution of the ppzkSNARK generator and prover, using OpenMP.
-     This will utilize all cores on the CPU for heavyweight parallelizabe operations such as
+     This will utilize all cores on the CPU for heavyweight parallelizable operations such as
      FFT and multiexponentiation. The default is single-core.
 
      To override the maximum number of cores used, set the environment variable `OMP_NUM_THREADS`
