@@ -26,9 +26,9 @@ namespace libsnark {
  * Gadget that represents a G1 variable.
  */
 template<typename ppT>
-class G1_variable : public gadget<libff::Fr<ppT> > {
+class G1_variable : public gadget<libff::Fq<ppT> > {
 public:
-    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fq<ppT> FieldT;
 
     pb_linear_combination<FieldT> X;
     pb_linear_combination<FieldT> Y;
@@ -53,9 +53,9 @@ public:
  * Gadget that creates constraints for the validity of a G1 variable.
  */
 template<typename ppT>
-class G1_checker_gadget : public gadget<libff::Fr<ppT> > {
+class G1_checker_gadget : public gadget<libff::Fq<ppT> > {
 public:
-    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fq<ppT> FieldT;
 
     G1_variable<ppT> P;
     pb_variable<FieldT> P_X_squared;
@@ -72,9 +72,9 @@ public:
  * Gadget that creates constraints for G1 addition.
  */
 template<typename ppT>
-class G1_add_gadget : public gadget<libff::Fr<ppT> > {
+class G1_add_gadget : public gadget<libff::Fq<ppT> > {
 public:
-    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fq<ppT> FieldT;
 
     pb_variable<FieldT> lambda;
     pb_variable<FieldT> inv;
@@ -96,9 +96,9 @@ public:
  * Gadget that creates constraints for G1 doubling.
  */
 template<typename ppT>
-class G1_dbl_gadget : public gadget<libff::Fr<ppT> > {
+class G1_dbl_gadget : public gadget<libff::Fq<ppT> > {
 public:
-    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fq<ppT> FieldT;
 
     pb_variable<FieldT> Xsquared;
     pb_variable<FieldT> lambda;
@@ -118,9 +118,9 @@ public:
  * Gadget that creates constraints for G1 multi-scalar multiplication.
  */
 template<typename ppT>
-class G1_multiscalar_mul_gadget : public gadget<libff::Fr<ppT> > {
+class G1_multiscalar_mul_gadget : public gadget<libff::Fq<ppT> > {
 public:
-    typedef libff::Fr<ppT> FieldT;
+    typedef libff::Fq<ppT> FieldT;
 
     std::vector<G1_variable<ppT> > computed_results;
     std::vector<G1_variable<ppT> > chosen_results;

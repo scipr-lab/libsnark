@@ -42,8 +42,8 @@ G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
     libff::G1<other_curve<ppT> > Pcopy = P;
     Pcopy.to_affine_coordinates();
 
-    X.assign(pb, Pcopy.X());
-    Y.assign(pb, Pcopy.Y());
+    X.assign(pb, Pcopy.X);
+    Y.assign(pb, Pcopy.Y);
     X.evaluate(pb);
     Y.evaluate(pb);
     all_vars.emplace_back(X);
@@ -316,8 +316,8 @@ void G1_multiscalar_mul_gadget<ppT>::generate_r1cs_witness()
     for (size_t i = 0; i < scalar_size; ++i)
     {
         adders[i].generate_r1cs_witness();
-        this->pb.lc_val(chosen_results[i+1].X) = (this->pb.val(scalars[i]) == libff::Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].X) : this->pb.lc_val(computed_results[i].X));
-        this->pb.lc_val(chosen_results[i+1].Y) = (this->pb.val(scalars[i]) == libff::Fr<ppT>::zero() ? this->pb.lc_val(chosen_results[i].Y) : this->pb.lc_val(computed_results[i].Y));
+        this->pb.lc_val(chosen_results[i+1].X) = (this->pb.val(scalars[i]) == libff::Fq<ppT>::zero() ? this->pb.lc_val(chosen_results[i].X) : this->pb.lc_val(computed_results[i].X));
+        this->pb.lc_val(chosen_results[i+1].Y) = (this->pb.val(scalars[i]) == libff::Fq<ppT>::zero() ? this->pb.lc_val(chosen_results[i].Y) : this->pb.lc_val(computed_results[i].Y));
     }
 }
 
