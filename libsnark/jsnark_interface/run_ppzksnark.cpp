@@ -46,11 +46,6 @@ int main(int argc, char **argv) {
 	const r1cs_auxiliary_input<FieldT> auxiliary_input(
 			full_assignment.begin() + cs.num_inputs(), full_assignment.end());
 
-	vector<FieldT>::const_iterator first = full_assignment.begin();
-	vector<FieldT>::const_iterator last = full_assignment.begin()
-			+ reader.getNumInputs() + reader.getNumOutputs();
-	vector<FieldT> newVec(first, last);
-
 
 	// only print the circuit output values if both flags MONTGOMERY and BINARY outputs are off (see CMakeLists file)
 	// In the default case, these flags should be ON for faster performance.
