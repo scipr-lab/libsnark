@@ -331,21 +331,35 @@ TEST(gadgetLib2,R1P_Comparison_Gadget_SimpleTest) {
     pb->val(wbs) = 8;
     pb->val(lhs) = 1;
     pb->val(rhs) = 2;
-    pb->val(less)= 1;
-    pb->val(lessOrEqual) = 1;
 
     // Positive test for satisfy less && lessOrEqual
     comparisonGadget->generateWitness();
     EXPECT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
 
-    // Negative test for satisfy not(less) && lessOrEqual
-    pb->val(less) = 0;
-    EXPECT_FALSE(pb->isSatisfied());
-
     // Positive test for satisfy not(less) && lessOrEqual
     pb->val(lhs) = 2;
     comparisonGadget->generateWitness();
+    ASSERT_EQ(pb->val(less), 0);
+    ASSERT_EQ(pb->val(lessOrEqual), 1);
     EXPECT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
+
+    // Positive test for satisfy not(less) && not(lessOrEqual)
+    pb->val(lhs) = 3;
+    comparisonGadget->generateWitness();
+    ASSERT_EQ(pb->val(less), 0);
+    ASSERT_EQ(pb->val(lessOrEqual), 0);
+    EXPECT_TRUE(pb->isSatisfied(PrintOptions::DBG_PRINT_IF_NOT_SATISFIED));
+
+    // Negative test for satisfy not(less) && not(lessOrEqual)
+    pb->val(less) = 1;
+    pb->val(lessOrEqual) = 1;
+    EXPECT_FALSE(pb->isSatisfied());
+    pb->val(less) = 1;
+    pb->val(lessOrEqual) = 0;
+    EXPECT_FALSE(pb->isSatisfied());
+    pb->val(less) = 0;
+    pb->val(lessOrEqual) = 1;
+    EXPECT_FALSE(pb->isSatisfied());
 }
 
 // TODO refactor this test --Shaul
