@@ -353,12 +353,15 @@ TEST(gadgetLib2,R1P_Comparison_Gadget_SimpleTest) {
     // Negative test for satisfy not(less) && not(lessOrEqual)
     pb->val(less) = 1;
     pb->val(lessOrEqual) = 1;
+    cerr << "NEGATIVE TEST CASE " << pb->isSatisfied() << endl;
     EXPECT_FALSE(pb->isSatisfied());
     pb->val(less) = 1;
     pb->val(lessOrEqual) = 0;
+    cerr << "NEGATIVE TEST CASE " << pb->isSatisfied() << endl;
     EXPECT_FALSE(pb->isSatisfied());
     pb->val(less) = 0;
     pb->val(lessOrEqual) = 1;
+    cerr << "NEGATIVE TEST CASE " << pb->isSatisfied() << endl;
     EXPECT_FALSE(pb->isSatisfied());
 }
 
