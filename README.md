@@ -67,6 +67,13 @@ The libsnark library currently provides a C++ implementation of:
        optimizes the approach described in \[BCTV14a], itself an extension of
        \[BCGTV13], following the approach of \[GGPR13] and \[BCIOP13]. (An alternative
        implementation of this approach is the _Pinocchio_ system of \[PGHR13].)
+
+       The library also implements a zk-SNARK for R1CS secure in the generic group model
+       \[Groth16]. Compared to \[BCTV14a] the \[Groth16] proof system is faster and
+       achieves shorter proofs, at expense of making stronger security assumptions.
+
+       We provide [detailed empirical and asymptotic comparison](https://github.com/scipr-lab/libsnark/blob/master/libsnark/zk_proof_systems/ppzksnark/README.md)
+       between these choices.
     2. A preprocessing SNARK for a language of arithmetic circuits, "BACS"
        (_Bilinear Arithmetic Circuit Satisfiability_). This simplifies the writing
        of NP statements when the additional flexibility of R1CS is not needed.
@@ -617,6 +624,12 @@ References
 ](https://eprint.iacr.org/2014/718),
   George Danezis, Cedric Fournet, Jens Groth, Markulf Kohlweiss,
   ASIACCS 2014
+
+\[Groth16] [
+  On the Size of Pairing-based Non-interactive Arguments
+](https://eprint.iacr.org/2016/260),
+  Jens Groth,
+  EUROCRYPT 2016
 
 \[GM17] [
   Snarky Signatures: Minimal Signatures of Knowledge from Simulation-Extractable
