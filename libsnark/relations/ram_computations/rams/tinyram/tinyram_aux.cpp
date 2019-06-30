@@ -117,7 +117,7 @@ void ensure_tinyram_opcode_value_map()
 std::vector<tinyram_instruction> generate_tinyram_prelude(const tinyram_architecture_params &ap)
 {
     std::vector<tinyram_instruction> result;
-    const size_t increment = libff::log2(ap.w)/8;
+    const size_t increment = ap.w/8;
     const size_t mem_start = 1ul<<(ap.w-1);
     result.emplace_back(tinyram_instruction(tinyram_opcode_STOREW,  true, 0, 0, 0));         // 0: store.w 0, r0
     result.emplace_back(tinyram_instruction(tinyram_opcode_MOV,     true, 0, 0, mem_start)); // 1: mov r0, 2^{W-1}
