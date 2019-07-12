@@ -293,6 +293,11 @@ To compile and run the tests for this library, run:
 
     $ make check
 
+To compile and run the gadgetlib2 tutorial, run:
+
+    $ make gadgetlib2_tutorial
+    $ ./libsnark/gadgetlib2_tutorial
+
 ### Using libsnark as a library
 
 To develop an application that uses libsnark, it's recommended to use your own build system that incorporates libsnark and dependencies. If you're using CMake, add libsnark as a git submodule, and then add it as a subdirectory. Then, add `snark` as a library dependency to the appropriate rules.

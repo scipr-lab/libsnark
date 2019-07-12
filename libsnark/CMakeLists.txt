@@ -473,6 +473,21 @@ target_link_libraries(
 )
 
 add_executable(
+  gadgetlib2_tutorial
+  EXCLUDE_FROM_ALL
+
+  gadgetlib2/examples/tutorial.cpp
+  gadgetlib2/examples/simple_example.cpp
+  gadgetlib2/examples/simple_example.hpp
+)
+target_link_libraries(
+  gadgetlib2_tutorial
+
+  snark
+  gtest_main
+)
+
+add_executable(
   relations_qap_test
   EXCLUDE_FROM_ALL
 
