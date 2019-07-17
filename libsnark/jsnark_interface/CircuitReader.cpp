@@ -88,9 +88,9 @@ void CircuitReader::parseAndEval(char* arithFilepath, char* inputsFilepath) {
 	FieldT zeroElement = FieldT::zero();
 	FieldT negOneElement = FieldT(-1);
 
-	long long evalTime;
-	long long begin, end;
-	evalTime = 0;
+	// long long evalTime;
+	// long long begin, end;
+	// evalTime = 0;
 
 	// Parse the circuit: few lines were imported from Pinocchio's code.
 
@@ -212,16 +212,23 @@ void CircuitReader::parseAndEval(char* arithFilepath, char* inputsFilepath) {
 	}
 	arithfs.close();
 
-	end = clock();
 	// printf("\t Evaluation Done in %lf seconds \n", (double) (evalTime) * 1e-9);
 	 libff::leave_block("Parsing and Evaluating the circuit");
 }
 
 void CircuitReader::constructCircuit(char* arithFilepath) {
 
-	struct proc_t usage1, usage2;
+
+
 	cout << "Translating Constraints ... " << endl;
+
+	
+	#ifndef NO_PROCPS
+	struct proc_t usage1, usage2;
 	look_up_our_self(&usage1);
+        #endif
+	
+
 	unsigned int i;
 
 	currentVariableIdx = currentLinearCombinationIdx = 0;
@@ -319,10 +326,15 @@ void CircuitReader::constructCircuit(char* arithFilepath) {
 	ifs2.close();
 
 	printf("\tConstraint translation done\n");
+
+
+	
+	#ifndef NO_PROCPS
 	look_up_our_self(&usage2);
 	unsigned long diff = usage2.vsize - usage1.vsize;
 	printf("\tMemory usage for constraint translation: %lu MB\n", diff >> 20);
-
+        #endif
+        
 }
 
 void CircuitReader::mapValuesToProtoboard() {
