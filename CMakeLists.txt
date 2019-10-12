@@ -166,6 +166,12 @@ if(${CURVE} STREQUAL "BN128")
   add_definitions(
     -DBN_SUPPORT_SNARK=1
   )
+  
+  install(
+    DIRECTORY "depends/ate-pairing/include/" DESTINATION "include/libff/algebra/curves/bn128/depends/ate-pairing/include"
+    FILES_MATCHING
+    PATTERN "*.h"
+  )  
 endif()
 
 if("${DEBUG}")
