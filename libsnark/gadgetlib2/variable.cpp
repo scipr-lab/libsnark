@@ -270,7 +270,7 @@ string Variable::name() const {
 FElem Variable::eval(const VariableAssignment& assignment) const {
     try {
         return assignment.at(*this);
-    } catch (::std::out_of_range) {
+    } catch (::std::out_of_range&) {
         GADGETLIB_FATAL(GADGETLIB2_FMT("Attempted to evaluate unassigned Variable \"%s\", idx:%lu", name().c_str(),
                         index_));
     }
