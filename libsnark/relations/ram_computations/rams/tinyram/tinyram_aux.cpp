@@ -215,7 +215,10 @@ size_t tinyram_architecture_params::reg_arg_or_imm_width() const
 
 size_t tinyram_architecture_params::dwaddr_len() const
 {
-    return w-(libff::log2(w)-2);
+    return w-(libff::log2(w)-2); // i.e. w - log(w) + 2; this matches
+                                 // subaddr_len() below and means we
+                                 // have 2^{addr_size}*value_size/8 =
+                                 // 2^w bytes of memory
 }
 
 size_t tinyram_architecture_params::subaddr_len() const
@@ -332,7 +335,7 @@ memory_store_trace tinyram_boot_trace_from_program_and_input(const tinyram_archi
                                                              const tinyram_program &program,
                                                              const tinyram_input_tape &primary_input)
 {
-    // TODO: document the reverse order here
+    // The order here is reversed; see comment in ram_universal_gadget.hpp for details.
 
     memory_store_trace result;
 

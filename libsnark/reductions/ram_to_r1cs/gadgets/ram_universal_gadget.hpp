@@ -65,7 +65,7 @@ namespace libsnark {
 
   Our memory handling technique has a technical requirement that
   address 0 must be accessed. We fulfill this by requiring the initial
-  execution line to act as "store 0 to address 0".
+  boot memory line to act as "store 0 to address 0".
 
   ---
 
