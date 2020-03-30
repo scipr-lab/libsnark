@@ -52,8 +52,8 @@ namespace libsnark {
 /*
   Memory layout for our reduction is as follows:
 
-  (1) An initial execution line carrying the initial state (set
-      to all zeros)
+  (1) An initial execution line carrying the initial state (to be set
+      by the user of this gadget)
   (2) program_size_bound + primary_input_size_bound memory lines for
       storing input and program (boot)
   (3) time_bound pairs for (fetch instruction memory line, execute

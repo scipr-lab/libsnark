@@ -153,10 +153,56 @@ size_t tinyram_architecture_params::initial_pc_addr() const
     return initial_pc_addr;
 }
 
-libff::bit_vector tinyram_architecture_params::initial_cpu_state() const
+libff::bit_vector tinyram_architecture_params::initial_cpu_state(const tinyram_input_tape &primary_input) const
 {
-    libff::bit_vector result(this->cpu_state_size(), false);
+    const size_t increment = w/8;
+    const size_t r0 = (1ull<<(w-1)) + primary_input.size() * increment;
+
+    libff::bit_vector result = libff::int_list_to_bits({ r0 }, w);
+    std::reverse(result.begin(), result.end());
+    result.resize(this->cpu_state_size(), false);
+    *(++result.rbegin()) = true; // set flag
+
     return result;
+}
+
+tinyram_input_tape tinyram_architecture_params::primary_input_from_boot_trace(const memory_store_trace &boot_trace) const
+{
+    /* This is inverse of tinyram_boot_trace_from_program_and_input below */
+    const memory_contents memory = boot_trace.as_memory_contents();
+
+    const size_t primary_input_base_addr_in_dwords = (1ul << (dwaddr_len() - 1));
+
+    auto it = memory.find(primary_input_base_addr_in_dwords);
+    assert(it != memory.end());
+
+    size_t latest_double_word = it->second;
+    const size_t primary_input_base_addr_in_bytes = 1ul << (w - 1);
+    const size_t increment = w/8;
+
+    const size_t input_size = ((latest_double_word & ((1ul << w) - 1)) - primary_input_base_addr_in_bytes)/increment;
+    latest_double_word >>= w;
+
+    tinyram_input_tape primary_input;
+
+    for (size_t i = 0; i < (input_size+1)/2; ++i)
+    {
+        primary_input.emplace_back(latest_double_word);
+
+        if (i < input_size / 2)
+        {
+            it = memory.find(primary_input_base_addr_in_dwords + i + 1);
+            assert(it != memory.end());
+
+            latest_double_word = it->second;
+            primary_input.emplace_back(latest_double_word & ((1ul << w) - 1));
+            latest_double_word >>= w;
+        }
+    }
+
+    assert(primary_input.size() == input_size);
+
+    return primary_input;
 }
 
 memory_contents tinyram_architecture_params::initial_memory_contents(const tinyram_program &program,

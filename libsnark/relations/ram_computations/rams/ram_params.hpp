@@ -73,7 +73,8 @@ using ram_input_tape = std::vector<size_t>;
   size_t value_size();
   size_t cpu_state_size();
   size_t initial_pc_addr();
-  libff::bit_vector initial_cpu_state();
+  libff::bit_vector initial_cpu_state(const ram_input_tape<ramT> &primary_input);
+  ram_input_tape<ramT> primary_input_from_boot_trace(const memory_store_trace &boot_trace);
 */
 
 } // libsnark

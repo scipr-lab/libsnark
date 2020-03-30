@@ -55,12 +55,22 @@ memory_contents fooram_architecture_params::initial_memory_contents(const fooram
     return m;
 }
 
-libff::bit_vector fooram_architecture_params::initial_cpu_state() const
+libff::bit_vector fooram_architecture_params::initial_cpu_state(const fooram_input_tape &primary_input) const
 {
+    libff::UNUSED(primary_input);
     libff::bit_vector state;
     state.resize(w, false);
     return state;
 }
+
+fooram_input_tape fooram_architecture_params::primary_input_from_boot_trace(const memory_store_trace &boot_trace) const
+{
+    /* fooram memory contents do not depend on program/input. */
+    libff::UNUSED(boot_trace);
+    fooram_input_tape tape;
+    return tape;
+}
+
 
 void fooram_architecture_params::print() const
 {
@@ -86,4 +96,3 @@ std::istream& operator>>(std::istream &in, fooram_architecture_params &ap)
 }
 
 } // libsnark
-
