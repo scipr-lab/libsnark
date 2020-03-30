@@ -22,10 +22,17 @@ namespace libsnark {
 template<typename FieldT>
 void ALU_jmp_gadget<FieldT>::generate_r1cs_constraints()
 {
+    /*
+      Note that instruction fetch semantics require program counter to
+      be aligned to the double word by rounding down, and pc_addr in
+      the outer reduction is expressed as a double word address. To
+      achieve this we just discard the first ap.subaddr_len() bits of
+      the byte address of the PC.
+    */
     this->pb.add_r1cs_constraint(
         r1cs_constraint<FieldT>(
             { ONE },
-            { this->argval2.packed },
+            { pb_packing_sum<FieldT>(pb_variable_array<FieldT>(this->argval2.bits.begin() + this->pb.ap.subaddr_len(), this->argval2.bits.end())) },
             { this->result }),
         FMT(this->annotation_prefix, " jmp_result"));
 }
@@ -33,7 +40,7 @@ void ALU_jmp_gadget<FieldT>::generate_r1cs_constraints()
 template<typename FieldT>
 void ALU_jmp_gadget<FieldT>::generate_r1cs_witness()
 {
-    this->pb.val(this->result) = this->pb.val(this->argval2.packed);
+    this->pb.val(this->result) = FieldT(this->pb.val(this->argval2.packed).as_ulong() >> this->pb.ap.subaddr_len());
 }
 
 template<typename FieldT>
@@ -61,7 +68,7 @@ void test_ALU_jmp_gadget()
 
     jmp.generate_r1cs_witness();
 
-    assert(pb.val(result) == FieldT(123));
+    assert(pb.val(result) == FieldT(123 >> ap.subaddr_len()));
     assert(pb.is_satisfied());
     libff::print_time("positive jmp test successful");
 
@@ -129,7 +136,7 @@ void test_ALU_cjmp_gadget()
     pb.val(flag) = FieldT(1);
     cjmp.generate_r1cs_witness();
 
-    assert(pb.val(result) == FieldT(123));
+    assert(pb.val(result) == FieldT(123 >> ap.subaddr_len()));
     assert(pb.is_satisfied());
     libff::print_time("positive cjmp test successful");
 
@@ -140,7 +147,7 @@ void test_ALU_cjmp_gadget()
     pb.val(flag) = FieldT(0);
     cjmp.generate_r1cs_witness();
 
-    assert(pb.val(result) == FieldT(456+2*ap.w/8));
+    assert(pb.val(result) == FieldT(456+1));
     assert(pb.is_satisfied());
     libff::print_time("positive cjmp test successful");
 
@@ -208,7 +215,7 @@ void test_ALU_cnjmp_gadget()
     pb.val(flag) = FieldT(0);
     cnjmp.generate_r1cs_witness();
 
-    assert(pb.val(result) == FieldT(123));
+    assert(pb.val(result) == FieldT(123 >> ap.subaddr_len()));
     assert(pb.is_satisfied());
     libff::print_time("positive cnjmp test successful");
 
@@ -219,7 +226,7 @@ void test_ALU_cnjmp_gadget()
     pb.val(flag) = FieldT(1);
     cnjmp.generate_r1cs_witness();
 
-    assert(pb.val(result) == FieldT(456 + (2*pb.ap.w/8)));
+    assert(pb.val(result) == FieldT(456 + 1));
     assert(pb.is_satisfied());
     libff::print_time("positive cnjmp test successful");
 
