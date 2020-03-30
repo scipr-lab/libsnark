@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
     default_tinyram_ppzksnark_pp::init_public_params();
 
 #ifdef MINDEPS
-    std::string processed_assembly_fn = "processed.txt";
+    std::string processed_assembly_fn = "processed_assembly.txt";
     std::string proving_key_fn = "proving_key.txt";
     std::string primary_input_fn = "primary_input.txt";
     std::string auxiliary_input_fn = "auxiliary_input.txt";
