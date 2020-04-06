@@ -39,8 +39,8 @@ G2_variable<ppT>::G2_variable(protoboard<FieldT> &pb,
     libff::G2<other_curve<ppT> > Q_copy = Q;
     Q_copy.to_affine_coordinates();
 
-    X.reset(new Fqe_variable<ppT>(pb, Q_copy.X(), FMT(annotation_prefix, " X")));
-    Y.reset(new Fqe_variable<ppT>(pb, Q_copy.Y(), FMT(annotation_prefix, " Y")));
+    X.reset(new Fqe_variable<ppT>(pb, Q_copy.X, FMT(annotation_prefix, " X")));
+    Y.reset(new Fqe_variable<ppT>(pb, Q_copy.Y, FMT(annotation_prefix, " Y")));
 
     all_vars.insert(all_vars.end(), X->all_vars.begin(), X->all_vars.end());
     all_vars.insert(all_vars.end(), Y->all_vars.begin(), Y->all_vars.end());
@@ -52,8 +52,8 @@ void G2_variable<ppT>::generate_r1cs_witness(const libff::G2<other_curve<ppT> > 
     libff::G2<other_curve<ppT> > Qcopy = Q;
     Qcopy.to_affine_coordinates();
 
-    X->generate_r1cs_witness(Qcopy.X());
-    Y->generate_r1cs_witness(Qcopy.Y());
+    X->generate_r1cs_witness(Qcopy.X);
+    Y->generate_r1cs_witness(Qcopy.Y);
 }
 
 template<typename ppT>
