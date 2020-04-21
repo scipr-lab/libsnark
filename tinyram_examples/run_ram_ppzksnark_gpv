@@ -11,14 +11,12 @@ BASE=$EXNAME/$EXNAME
     --proving_key=$BASE-proving_key.txt \
     --verification_key=$BASE-verification_key.txt
 ../build/libsnark/demo_ram_ppzksnark_prover \
-    --assembly=$BASE.s \
     --processed_assembly=$BASE-processed_assembly.txt \
     --proving_key=$BASE-proving_key.txt \
     --primary_input=$BASE-primary_input.txt \
     --auxiliary_input=$BASE-auxiliary_input.txt \
     --proof=$BASE-proof.txt
 ../build/libsnark/demo_ram_ppzksnark_verifier \
-    --assembly=$BASE.s \
     --processed_assembly=$BASE-processed_assembly.txt \
     --verification_key=$BASE-verification_key.txt \
     --proof=$BASE-proof.txt \
