@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
     default_tinyram_ppzksnark_pp::init_public_params();
 
 #ifdef MINDEPS
-    std::string processed_assembly_fn = "processed.txt";
+    std::string processed_assembly_fn = "processed_assembly.txt";
     std::string proving_key_fn = "proving_key.txt";
     std::string primary_input_fn = "primary_input.txt";
     std::string auxiliary_input_fn = "auxiliary_input.txt";
@@ -84,10 +84,12 @@ int main(int argc, const char * argv[])
     libff::start_profiling();
 
     /* load everything */
+    libff::enter_block("Deserialize proving key");
     ram_ppzksnark_proving_key<default_tinyram_ppzksnark_pp> pk;
     std::ifstream pk_file(proving_key_fn);
     pk_file >> pk;
     pk_file.close();
+    libff::leave_block("Deserialize proving key");
 
     std::ifstream processed(processed_assembly_fn);
     tinyram_program program = load_preprocessed_program(pk.ap, processed);
@@ -100,7 +102,9 @@ int main(int argc, const char * argv[])
     const ram_boot_trace<default_tinyram_ppzksnark_pp> boot_trace = tinyram_boot_trace_from_program_and_input(pk.ap, pk.primary_input_size_bound, program, primary_input);
     const ram_ppzksnark_proof<default_tinyram_ppzksnark_pp> proof = ram_ppzksnark_prover<default_tinyram_ppzksnark_pp>(pk, boot_trace,  auxiliary_input);
 
+    libff::enter_block("Serialize proof");
     std::ofstream proof_file(proof_fn);
     proof_file << proof;
     proof_file.close();
+    libff::leave_block("Serialize proof");
 }

@@ -156,9 +156,10 @@ public:
     size_t cpu_state_size() const;
     size_t initial_pc_addr() const;
 
-    libff::bit_vector initial_cpu_state() const;
+    libff::bit_vector initial_cpu_state(const tinyram_input_tape &primary_input) const;
     memory_contents initial_memory_contents(const tinyram_program &program,
                                             const tinyram_input_tape &primary_input) const;
+    tinyram_input_tape primary_input_from_boot_trace(const memory_store_trace &boot_trace) const;
 
     size_t opcode_width() const;
     size_t reg_arg_width() const;

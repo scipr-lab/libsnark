@@ -26,6 +26,13 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
                                                                 typename std::vector<FieldT>::const_iterator scalar_end,
                                                                 const size_t chunks)
 {
+    const size_t scalar_length = std::distance(scalar_start, scalar_end);
+#ifndef NDEBUG
+    assert((size_t)(scalar_length) <= vec.domain_size_);
+#else
+    libff::UNUSED(scalar_length);
+#endif
+
     libff::enter_block("Process scalar vector");
     auto index_it = std::lower_bound(vec.indices.begin(), vec.indices.end(), min_idx);
     const size_t offset = index_it - vec.indices.begin();
@@ -44,12 +51,12 @@ knowledge_commitment<T1, T2> kc_multi_exp_with_mixed_addition(const knowledge_co
     size_t num_add = 0;
     size_t num_other = 0;
 
-    const size_t scalar_length = std::distance(scalar_start, scalar_end);
-
     while (index_it != vec.indices.end() && *index_it < max_idx)
     {
         const size_t scalar_position = (*index_it) - min_idx;
+#ifdef DEBUG
         assert(scalar_position < scalar_length);
+#endif
 
         const FieldT scalar = *(scalar_start + scalar_position);
 

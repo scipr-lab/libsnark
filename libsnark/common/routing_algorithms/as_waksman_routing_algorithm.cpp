@@ -443,8 +443,10 @@ void as_waksman_route_inner(const size_t left,
                 const bool lhs_switch_setting = as_waksman_get_switch_setting_from_top_bottom_decision(lo, permutation_inv.get(to_route), use_top);
 
                 /* The value on the left-hand side is either the same or not set. */
+#ifdef DEBUG
                 auto it = routing[left].find(lhs_switch);
                 assert(it == routing[left].end() || it->second == lhs_switch_setting);
+#endif
                 routing[left][lhs_switch] = lhs_switch_setting;
 
                 const size_t t = as_waksman_switch_input(subnetwork_size, lo, rhs_switch, use_top);

@@ -166,7 +166,7 @@ currently provides three options:
         For example, on Fedora 20 at its default settings, you will get the error
         `zmInit ERR:can't protect` when running this code. To solve this,
         run `sudo setsebool -P allow_execheap 1` to allow execution,
-        or use `make CURVE=ALT_BN128` instead.
+        or use `cmake -DCURVE=ALT_BN128` instead.
 
 * "alt_bn128":
    an alternative to "bn128", somewhat slower but avoids dynamic code generation.
@@ -253,6 +253,10 @@ below. (If you port libsnark to additional platforms, please let us know!)
 
 Concretely, here are the requisite packages in some Linux distributions:
 
+* On Debian 10 (buster), Ubuntu 18.04 LTS, Ubuntu 20.04 LTS:
+
+        $ sudo apt install build-essential cmake git libgmp3-dev libprocps-dev python3-markdown libboost-program-options-dev libssl-dev python3 pkg-config
+
 * On Ubuntu 16.04 LTS:
 
         $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps4-dev python-markdown libboost-all-dev libssl-dev
@@ -260,6 +264,10 @@ Concretely, here are the requisite packages in some Linux distributions:
 * On Ubuntu 14.04 LTS:
 
         $ sudo apt-get install build-essential cmake git libgmp3-dev libprocps3-dev python-markdown libboost-all-dev libssl-dev
+
+* On Fedora 31:
+
+        $ sudo dnf install gcc-c++ cmake make git gmp-devel procps-ng-devel boost-devel openssl-devel python3-markdown
 
 * On Fedora 21 through 23:
 
@@ -292,6 +300,8 @@ and then view the resulting `README.html` (which contains the very text you are 
 To compile and run the tests for this library, run:
 
     $ make check
+
+For faster build times you might also consider ccache from `ccache` package and using Ninja build system from `ninja-build` package. For the latter CMake invocation above becomes `cmake -GNinja ..`; and instead of `make`/`make check`/etc you should run `ninja`/`ninja check`/etc.
 
 ### Using libsnark as a library
 

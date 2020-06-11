@@ -180,6 +180,7 @@ size_t merkle_tree_check_update_gadget<FieldT, HashT>::expected_constraints(cons
 template<typename FieldT, typename HashT>
 void test_merkle_tree_check_update_gadget()
 {
+#ifndef NDEBUG
     /* prepare test */
     const size_t digest_len = HashT::get_digest_len();
 
@@ -258,6 +259,9 @@ void test_merkle_tree_check_update_gadget()
     const size_t num_constraints = pb.num_constraints();
     const size_t expected_constraints = merkle_tree_check_update_gadget<FieldT, HashT>::expected_constraints(tree_depth);
     assert(num_constraints == expected_constraints);
+#else // NDEBUG
+    printf("All tests here depend on assert() which is disabled by -DNDEBUG. Please recompile and run again.\n");
+#endif // NDEBUG
 }
 
 } // libsnark

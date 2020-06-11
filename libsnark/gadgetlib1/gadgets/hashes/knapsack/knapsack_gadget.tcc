@@ -234,6 +234,7 @@ void knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(const size_t in
 template<typename FieldT>
 void test_knapsack_CRH_with_bit_out_gadget_internal(const size_t dimension, const libff::bit_vector &input_bits, const libff::bit_vector &digest_bits)
 {
+#ifndef NDEBUG
     assert(knapsack_dimension<FieldT>::dimension == dimension);
     knapsack_CRH_with_bit_out_gadget<FieldT>::sample_randomness(input_bits.size());
     protoboard<FieldT> pb;
@@ -252,6 +253,12 @@ void test_knapsack_CRH_with_bit_out_gadget_internal(const size_t dimension, cons
     const size_t num_constraints = pb.num_constraints();
     const size_t expected_constraints = knapsack_CRH_with_bit_out_gadget<FieldT>::expected_constraints();
     assert(num_constraints == expected_constraints);
+#else // NDEBUG
+    printf("All tests here depend on assert() which is disabled by -DNDEBUG. Please recompile and run again.\n");
+    libff::UNUSED(dimension);
+    libff::UNUSED(input_bits);
+    libff::UNUSED(digest_bits);
+#endif // NDEBUG
 }
 
 } // libsnark

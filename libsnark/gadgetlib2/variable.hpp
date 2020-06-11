@@ -179,6 +179,7 @@ class FConst : public FElemInterface {
 private:
     long contents_;
     explicit FConst(const long n) : contents_(n) {}
+    FConst(const FConst& c) = default;
 public:
     virtual FConst& operator=(const long n) {contents_ = n; return *this;}
     virtual FConst& operator=(const FConst& src) {contents_ = src.contents_; return *this;}

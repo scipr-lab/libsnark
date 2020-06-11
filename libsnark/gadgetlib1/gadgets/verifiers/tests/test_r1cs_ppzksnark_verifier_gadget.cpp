@@ -18,6 +18,8 @@
 
 using namespace libsnark;
 
+#ifndef NDEBUG
+
 template<typename FieldT>
 void dump_constraints(const protoboard<FieldT> &pb)
 {
@@ -374,7 +376,7 @@ void test_full_precomputed_pairing(const std::string &annotation)
     printf("number of constraints for full precomputed pairing (Fr is %s)  = %zu\n", annotation.c_str(), pb.num_constraints());
 }
 
-int main(void)
+int main()
 {
     libff::start_profiling();
     libff::mnt4_pp::init_public_params();
@@ -428,3 +430,11 @@ int main(void)
     test_hardcoded_verifier<libff::mnt4_pp, libff::mnt6_pp>("mnt4", "mnt6");
     test_hardcoded_verifier<libff::mnt6_pp, libff::mnt4_pp>("mnt6", "mnt4");
 }
+
+#else // NDEBUG
+
+int main()
+{
+    printf("All tests here depend on assert() which is disabled by -DNDEBUG. Please recompile and run again.\n");
+}
+#endif // NDEBUG
