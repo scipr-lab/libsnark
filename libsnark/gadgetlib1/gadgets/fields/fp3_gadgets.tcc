@@ -194,7 +194,7 @@ template<typename Fp3T>
 void Fp3_mul_gadget<Fp3T>::generate_r1cs_constraints()
 {
 /*
-    Tom-Cook-3x for Fp3:
+    Toom-Cook-3x for Fp3:
         v0 = A.c0 * B.c0
         v1 = (A.c0 + A.c1 + A.c2) * (B.c0 + B.c1 + B.c2)
         v2 = (A.c0 - A.c1 + A.c2) * (B.c0 - B.c1 + B.c2)
