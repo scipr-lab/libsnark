@@ -34,7 +34,7 @@ G1_precomputation<ppT>::G1_precomputation(protoboard<FieldT> &pb,
     libff::G1<other_curve<ppT> > P_val_copy = P_val;
     P_val_copy.to_affine_coordinates();
     P.reset(new G1_variable<ppT>(pb, P_val_copy, FMT(annotation_prefix, " P")));
-    PY_twist_squared.reset(new Fqe_variable<ppT>(pb, P_val_copy.Y() * libff::G2<other_curve<ppT> >::twist.squared(), " PY_twist_squared"));
+    PY_twist_squared.reset(new Fqe_variable<ppT>(pb, P_val_copy.Y * libff::G2<other_curve<ppT> >::twist.squared(), " PY_twist_squared"));
 }
 
 template<typename ppT>
