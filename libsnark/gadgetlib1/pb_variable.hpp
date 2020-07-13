@@ -32,7 +32,7 @@ public:
 };
 
 template<typename FieldT>
-class pb_variable_array : private std::vector<pb_variable<FieldT> >
+class pb_variable_array : public std::vector<pb_variable<FieldT> >
 {
     typedef std::vector<pb_variable<FieldT> > contents;
 public:
@@ -90,7 +90,7 @@ public:
 };
 
 template<typename FieldT>
-class pb_linear_combination_array : private std::vector<pb_linear_combination<FieldT> >
+class pb_linear_combination_array : public std::vector<pb_linear_combination<FieldT> >
 {
     typedef std::vector<pb_linear_combination<FieldT> > contents;
 public:
