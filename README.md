@@ -51,7 +51,7 @@ A prover who knows the witness for the NP statement (i.e., a satisfying input/as
     the proof attests not just that the NP statement is true, but also that the
     prover knows why (e.g., knows a valid _qux_).
 
-These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also knows as
+These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also known as
 _succinct non-interactive computationally-sound zero-knowledge proofs of knowledge_).
 For formal definitions and theoretical discussions about these, see
 \[BCCT12], \[BCIOP13], and the references therein.
