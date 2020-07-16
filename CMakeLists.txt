@@ -81,6 +81,12 @@ option(
   ON
 )
 
+option(
+  IS_LIBSNARK_PARENT
+  "Libsnark parent folder option"
+  ON
+)
+
 set(
   OPT_FLAGS
   ""
@@ -232,20 +238,24 @@ if("${USE_LINKED_LIBRARIES}")
   find_library(LIBFF_LIBRARIES NAMES ff libff)
 endif()
 
-find_program(
-  MARKDOWN
+if ("${IS_LIBSNARK_PARENT}")
+  find_program(
+    MARKDOWN
 
-  markdown_py
-  DOC "Path to markdown_py binary"
-)
-if(MARKDOWN-NOTFOUND)
-else()
-   add_custom_target(
-     doc
-     ${MARKDOWN} -f ${CMAKE_CURRENT_BINARY_DIR}/README.html -x toc -x extra --noisy ${CMAKE_CURRENT_SOURCE_DIR}/README.md
-     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-     COMMENT "Translating from markdown to HTML" VERBATIM
-   )
+    markdown_py
+    DOC "Path to markdown_py binary"
+  )
+  if(MARKDOWN-NOTFOUND)
+  else()
+    add_custom_target(
+      doc
+      ${MARKDOWN} -f ${CMAKE_CURRENT_BINARY_DIR}/README.html -x toc -x extra --noisy ${CMAKE_CURRENT_SOURCE_DIR}/README.md
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Translating from markdown to HTML" VERBATIM
+    )
+  endif()
+  # Add a `make check` target that builds and tests
+  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 endif()
 
 # Configure CCache if available
@@ -255,8 +265,6 @@ if(CCACHE_FOUND)
         set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif(CCACHE_FOUND)
 
-# Add a `make check` target that builds and tests
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
 
 add_subdirectory(depends)
 add_subdirectory(libsnark)
