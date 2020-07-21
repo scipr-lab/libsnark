@@ -194,6 +194,9 @@ public:
     // H^{gamma}
     libff::G2<ppT> H_gamma;
 
+    // e (G^{alpha}, H^{beta})
+    libff::Fqk<ppT> G_alpha_H_beta;
+
     // G^{gamma * A_i(t) + (alpha + beta) * A_i(t)}
     // for 0 <= i <= sap.num_inputs()
     libff::G1_vector<ppT> query;
@@ -210,7 +213,8 @@ public:
         H_beta(H_beta),
         G_gamma(G_gamma),
         H_gamma(H_gamma),
-        query(std::move(query))
+        query(std::move(query)),
+        G_alpha_H_beta(ppT::reduced_pairing(G_alpha, H_beta))
     {};
 
     size_t G1_size() const
@@ -223,10 +227,17 @@ public:
         return 3;
     }
 
+    size_t GT_size() const
+    {
+        return 1;
+    }
+
     size_t size_in_bits() const
     {
         return (G1_size() * libff::G1<ppT>::size_in_bits() +
                 G2_size() * libff::G2<ppT>::size_in_bits());
+                // TODO: This depends on a change in libff:
+                // + GT_size() * libff::Fqk<ppT>::size_in_bits()
     }
 
     void print_size() const
@@ -269,7 +280,7 @@ class r1cs_se_ppzksnark_processed_verification_key {
 public:
     libff::G1<ppT> G_alpha;
     libff::G2<ppT> H_beta;
-    libff::Fqk<ppT> G_alpha_H_beta_ml;
+    libff::Fqk<ppT> G_alpha_H_beta;
     libff::G1_precomp<ppT> G_gamma_pc;
     libff::G2_precomp<ppT> H_gamma_pc;
     libff::G2_precomp<ppT> H_pc;
