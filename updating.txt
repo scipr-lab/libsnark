@@ -1,0 +1,11 @@
+git checkout master
+git pull
+
+
+
+git remote add upstream https://github.com/whoever/whatever.git
+git fetch upstream
+
+git checkout master
+#git rebase upstream/master
+git merge upstream/master
