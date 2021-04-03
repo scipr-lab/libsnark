@@ -326,26 +326,31 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_witness_other(tinyram_input_tape
     }
 
     this->pb.val(read_not1) = this->pb.val(opcode_indicators[tinyram_opcode_READ]) * (FieldT::one() - this->pb.val(arg2val->packed));
-    if (this->pb.val(read_not1) != FieldT::one())
+
+    if (this->pb.val(opcode_indicators[tinyram_opcode_READ]) == FieldT::one())
     {
-        /* reading from tape other than 0 raises the flag */
-        this->pb.val(instruction_flags[tinyram_opcode_READ]) = FieldT::one();
-    }
-    else
-    {
-        /* otherwise perform the actual read */
-        if (aux_it != aux_end)
+        if (this->pb.val(read_not1) != FieldT::zero())
         {
-            this->pb.val(instruction_results[tinyram_opcode_READ]) = FieldT(*aux_it);
-            if (++aux_it == aux_end)
-            {
-                /* tape has ended! */
-                this->pb.val(next_tape1_exhausted) = FieldT::one();
-            }
+            /* reading from tape other than 1 raises the flag */
+            this->pb.val(instruction_flags[tinyram_opcode_READ]) = FieldT::one();
         }
         else
         {
-            /* handled above, so nothing to do here */
+            /* otherwise perform the actual read */
+            if (aux_it != aux_end)
+            {
+                this->pb.val(instruction_results[tinyram_opcode_READ]) = FieldT(*aux_it);
+                if (++aux_it == aux_end)
+                {
+                    /* tape has ended! */
+                    this->pb.val(next_tape1_exhausted) = FieldT::one();
+                }
+            }
+            else
+            {
+                /* we handled the case of tape exhausted above so
+                   there is nothing further to be done here */
+            }
         }
     }
 
@@ -372,9 +377,10 @@ void tinyram_cpu_checker<FieldT>::generate_r1cs_witness_other(tinyram_input_tape
 template<typename FieldT>
 void tinyram_cpu_checker<FieldT>::dump() const
 {
-    printf("   pc = %lu, flag = %lu\n",
-           this->pb.val(prev_pc_addr_as_word_variable->packed).as_ulong(),
-           this->pb.val(prev_flag).as_ulong());
+    printf("   pc_byteaddr = %lu, flag = %lu, tape1_exhausted = %lu\n",
+           this->pb.val(prev_pc_addr_as_word_variable->packed).as_ulong() << this->pb.ap.subaddr_len(),
+           this->pb.val(prev_flag).as_ulong(),
+           this->pb.val(prev_tape1_exhausted).as_ulong());
     printf("   ");
 
     for (size_t j = 0; j < this->pb.ap.k; ++j)
@@ -384,12 +390,68 @@ void tinyram_cpu_checker<FieldT>::dump() const
     printf("\n");
 
     const size_t opcode_val = opcode.get_field_element_from_bits(this->pb).as_ulong();
-    printf("   %s r%lu, r%lu, %s%lu\n",
-           tinyram_opcode_names[static_cast<tinyram_opcode>(opcode_val)].c_str(),
-           desidx.get_field_element_from_bits(this->pb).as_ulong(),
-           arg1idx.get_field_element_from_bits(this->pb).as_ulong(),
-           (this->pb.val(arg2_is_imm) == FieldT::one() ? "" : "r"),
-           arg2idx.get_field_element_from_bits(this->pb).as_ulong());
+
+    const char* opcode_name = tinyram_opcode_names[static_cast<tinyram_opcode>(opcode_val)].c_str();
+    const size_t desidx_val = desidx.get_field_element_from_bits(this->pb).as_ulong();
+    const size_t arg1idx_val = arg1idx.get_field_element_from_bits(this->pb).as_ulong();
+    const bool is_imm_val = this->pb.val(arg2_is_imm) == FieldT::one();
+    const size_t arg2idx_val = arg2idx.get_field_element_from_bits(this->pb).as_ulong();
+
+    switch (opcode_args[static_cast<tinyram_opcode>(opcode_val)])
+    {
+    case tinyram_opcode_args_des_arg1_arg2:
+        printf("  %s r%lu, r%lu, %s%lu\n", opcode_name, desidx_val, arg1idx_val, (is_imm_val ? "" : "r"), arg2idx_val);
+        break;
+    case tinyram_opcode_args_des_arg2:
+        printf("  %s r%lu, %s%lu\n"     , opcode_name, desidx_val, (is_imm_val ? "" : "r"), arg2idx_val);
+        if (arg1idx_val != 0)
+        {
+            printf("  // arg1 = r%lu (should be r0)\n", arg1idx_val);
+        }
+        break;
+    case tinyram_opcode_args_arg1_arg2:
+        printf("  %s r%lu, %s%lu\n"     , opcode_name, arg1idx_val, (is_imm_val ? "" : "r"), arg2idx_val);
+        if (desidx_val != 0)
+        {
+            printf("  // des = r%lu (should be r0)\n", desidx_val);
+        }
+        break;
+    case tinyram_opcode_args_arg2:
+        printf("  %s %s%lu\n"          , opcode_name, (is_imm_val ? "" : "r"), arg2idx_val);
+        if (desidx_val != 0)
+        {
+            printf("  // des = r%lu (should be r0)\n", desidx_val);
+        }
+        if (arg1idx_val != 0)
+        {
+            printf("  // arg1 = r%lu (should be r0)\n", arg1idx_val);
+        }
+        break;
+    case tinyram_opcode_args_none:
+        printf("  %s\n"                , opcode_name);
+        if (desidx_val != 0)
+        {
+            printf("  // des = r%lu (should be r0)\n", desidx_val);
+        }
+        if (arg1idx_val != 0)
+        {
+            printf("  // arg1 = r%lu (should be r0)\n", arg1idx_val);
+        }
+        if (arg2idx_val != 0 || is_imm_val)
+        {
+            printf("  // arg2 = %s%lu (should be 0)\n", (is_imm_val ? "": "r"), arg2idx_val);
+        }
+        break;
+    case tinyram_opcode_args_arg2_des:
+        printf("  %s %s%lu, r%lu\n"     , opcode_name, (is_imm_val ? "" : "r"), arg2idx_val, desidx_val);
+        if (arg1idx_val != 0)
+        {
+            printf("  // arg1 = r%lu (should be r0)\n", arg1idx_val);
+        }
+        break;
+    default:
+        printf("  (unrecognized opcode type)\n");
+    }
 }
 
 } // libsnark

@@ -154,12 +154,6 @@ void ram_universal_gadget<ramT>::generate_r1cs_constraints()
         unpack_boot_lines[i].generate_r1cs_constraints(false);
     }
 
-    /* ensure that we start with all zeros state */
-    for (size_t i = 0; i < this->pb.ap.cpu_state_size(); ++i)
-    {
-        generate_r1cs_equals_const_constraint<FieldT>(this->pb, execution_lines[0].cpu_state[i], FieldT::zero());
-    }
-
     /* ensure increasing timestamps */
     for (size_t i = 0; i < num_memory_lines; ++i)
     {
@@ -240,7 +234,8 @@ void ram_universal_gadget<ramT>::generate_r1cs_witness(const ram_boot_trace<ramT
     }
 
     /* fill in the initial state */
-    const ram_cpu_state<ramT> initial_state = this->pb.ap.initial_cpu_state();
+    const ram_input_tape<ramT> primary_input = this->pb.ap.primary_input_from_boot_trace(boot_trace);
+    const ram_cpu_state<ramT> initial_state = this->pb.ap.initial_cpu_state(primary_input);
     execution_lines[0].cpu_state.fill_with_bits(this->pb, initial_state);
 
     /* fill in the boot section */

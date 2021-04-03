@@ -18,6 +18,7 @@
 #include <libff/common/utils.hpp>
 
 #include <libsnark/relations/ram_computations/memory/memory_interface.hpp>
+#include <libsnark/relations/ram_computations/memory/memory_store_trace.hpp>
 
 namespace libsnark {
 
@@ -39,7 +40,9 @@ public:
     memory_contents initial_memory_contents(const fooram_program &program,
                                             const fooram_input_tape &primary_input) const;
 
-    libff::bit_vector initial_cpu_state() const;
+    libff::bit_vector initial_cpu_state(const fooram_input_tape &primary_input) const;
+    fooram_input_tape primary_input_from_boot_trace(const memory_store_trace &boot_trace) const;
+
     void print() const;
     bool operator==(const fooram_architecture_params &other) const;
 

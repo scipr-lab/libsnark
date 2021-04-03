@@ -1,0 +1,11 @@
+#!/bin/sh
+[ -z $1 ] && echo "Usage: $0 <example-name>" && exit 1
+set -x -e
+./process_assembly $1/$1.s $1/$1-processed_assembly.txt $1/$1-architecture_params.txt
+../build/libsnark/demo_arithmetization \
+    --architecture_params=$1/$1-architecture_params.txt \
+    --assembly=$1/$1.s \
+    --processed_assembly=$1/$1-processed_assembly.txt \
+    --computation_bounds=$1/$1-computation_bounds.txt \
+    --primary_input=$1/$1-primary_input.txt \
+    --auxiliary_input=$1/$1-auxiliary_input.txt

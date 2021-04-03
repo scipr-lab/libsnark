@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
     default_tinyram_ppzksnark_pp::init_public_params();
 
 #ifdef MINDEPS
-    std::string processed_assembly_fn = "processed.txt";
+    std::string processed_assembly_fn = "processed_assembly.txt";
     std::string verification_key_fn = "verification_key.txt";
     std::string proof_fn = "proof.txt";
     std::string primary_input_fn = "primary_input.txt";
@@ -82,10 +82,12 @@ int main(int argc, const char * argv[])
 #endif
     libff::start_profiling();
 
+    libff::enter_block("Deserialize verification key");
     ram_ppzksnark_verification_key<default_tinyram_ppzksnark_pp> vk;
     std::ifstream vk_file(verification_key_fn);
     vk_file >> vk;
     vk_file.close();
+    libff::leave_block("Deserialize verification key");
 
     std::ifstream processed(processed_assembly_fn);
     tinyram_program program = load_preprocessed_program(vk.ap, processed);
@@ -93,10 +95,12 @@ int main(int argc, const char * argv[])
     std::ifstream f_primary_input(primary_input_fn);
     tinyram_input_tape primary_input = load_tape(f_primary_input);
 
+    libff::enter_block("Deserialize proof");
     std::ifstream proof_file(proof_fn);
     ram_ppzksnark_proof<default_tinyram_ppzksnark_pp> pi;
     proof_file >> pi;
     proof_file.close();
+    libff::leave_block("Deserialize proof");
 
     const ram_boot_trace<default_tinyram_ppzksnark_pp> boot_trace = tinyram_boot_trace_from_program_and_input(vk.ap, vk.primary_input_size_bound, program, primary_input);
     const bool bit = ram_ppzksnark_verifier<default_tinyram_ppzksnark_pp>(vk, boot_trace, pi);

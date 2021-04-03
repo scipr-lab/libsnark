@@ -117,15 +117,16 @@ void ensure_tinyram_opcode_value_map()
 std::vector<tinyram_instruction> generate_tinyram_prelude(const tinyram_architecture_params &ap)
 {
     std::vector<tinyram_instruction> result;
-    const size_t increment = libff::log2(ap.w)/8;
+    const size_t increment = ap.w/8;
     const size_t mem_start = 1ul<<(ap.w-1);
+    const size_t i = 2*ap.w/8; /* PC increment */
     result.emplace_back(tinyram_instruction(tinyram_opcode_STOREW,  true, 0, 0, 0));         // 0: store.w 0, r0
     result.emplace_back(tinyram_instruction(tinyram_opcode_MOV,     true, 0, 0, mem_start)); // 1: mov r0, 2^{W-1}
     result.emplace_back(tinyram_instruction(tinyram_opcode_READ,    true, 1, 0, 0));         // 2: read r1, 0
-    result.emplace_back(tinyram_instruction(tinyram_opcode_CJMP,    true, 0, 0, 7));         // 3: cjmp 7
-    result.emplace_back(tinyram_instruction(tinyram_opcode_ADD,     true, 0, 0, increment)); // 4: add r0, r0, INCREMENT
+    result.emplace_back(tinyram_instruction(tinyram_opcode_CJMP,    true, 0, 0, 7 * i));     // 3: cjmp I_7
+    result.emplace_back(tinyram_instruction(tinyram_opcode_ADD,     true, 0, 0, increment)); // 4: add r0, r0, (W/8)
     result.emplace_back(tinyram_instruction(tinyram_opcode_STOREW, false, 1, 0, 0));         // 5: store.w r0, r1
-    result.emplace_back(tinyram_instruction(tinyram_opcode_JMP,     true, 0, 0, 2));         // 6: jmp 2
+    result.emplace_back(tinyram_instruction(tinyram_opcode_JMP,     true, 0, 0, 2 * i));     // 6: jmp I_2
     result.emplace_back(tinyram_instruction(tinyram_opcode_STOREW,  true, 0, 0, mem_start)); // 7: store.w 2^{W-1}, r0
     return result;
 }
@@ -152,10 +153,56 @@ size_t tinyram_architecture_params::initial_pc_addr() const
     return initial_pc_addr;
 }
 
-libff::bit_vector tinyram_architecture_params::initial_cpu_state() const
+libff::bit_vector tinyram_architecture_params::initial_cpu_state(const tinyram_input_tape &primary_input) const
 {
-    libff::bit_vector result(this->cpu_state_size(), false);
+    const size_t increment = w/8;
+    const size_t r0 = (1ull<<(w-1)) + primary_input.size() * increment;
+
+    libff::bit_vector result = libff::int_list_to_bits({ r0 }, w);
+    std::reverse(result.begin(), result.end());
+    result.resize(this->cpu_state_size(), false);
+    *(++result.rbegin()) = true; // set flag
+
     return result;
+}
+
+tinyram_input_tape tinyram_architecture_params::primary_input_from_boot_trace(const memory_store_trace &boot_trace) const
+{
+    /* This is inverse of tinyram_boot_trace_from_program_and_input below */
+    const memory_contents memory = boot_trace.as_memory_contents();
+
+    const size_t primary_input_base_addr_in_dwords = (1ul << (dwaddr_len() - 1));
+
+    auto it = memory.find(primary_input_base_addr_in_dwords);
+    assert(it != memory.end());
+
+    size_t latest_double_word = it->second;
+    const size_t primary_input_base_addr_in_bytes = 1ul << (w - 1);
+    const size_t increment = w/8;
+
+    const size_t input_size = ((latest_double_word & ((1ul << w) - 1)) - primary_input_base_addr_in_bytes)/increment;
+    latest_double_word >>= w;
+
+    tinyram_input_tape primary_input;
+
+    for (size_t i = 0; i < (input_size+1)/2; ++i)
+    {
+        primary_input.emplace_back(latest_double_word);
+
+        if (i < input_size / 2)
+        {
+            it = memory.find(primary_input_base_addr_in_dwords + i + 1);
+            assert(it != memory.end());
+
+            latest_double_word = it->second;
+            primary_input.emplace_back(latest_double_word & ((1ul << w) - 1));
+            latest_double_word >>= w;
+        }
+    }
+
+    assert(primary_input.size() == input_size);
+
+    return primary_input;
 }
 
 memory_contents tinyram_architecture_params::initial_memory_contents(const tinyram_program &program,
@@ -170,7 +217,9 @@ memory_contents tinyram_architecture_params::initial_memory_contents(const tinyr
     }
 
     const size_t input_addr = 1ul << (dwaddr_len() - 1);
-    size_t latest_double_word = (1ull<<(w-1)) + primary_input.size(); // the first word will contain 2^{w-1} + input_size (the location where the last input word was stored)
+    const size_t increment = w/8;
+    // the first word will contain 2^{w-1} + input_size * inc (the location where the last input word was stored)
+    size_t latest_double_word = (1ull<<(w-1)) + primary_input.size() * increment;
 
     for (size_t i = 0; i < primary_input.size()/2 + 1; ++i)
     {
@@ -212,7 +261,10 @@ size_t tinyram_architecture_params::reg_arg_or_imm_width() const
 
 size_t tinyram_architecture_params::dwaddr_len() const
 {
-    return w-(libff::log2(w)-2);
+    return w-(libff::log2(w)-2); // i.e. w - log(w) + 2; this matches
+                                 // subaddr_len() below and means we
+                                 // have 2^{addr_size}*value_size/8 =
+                                 // 2^w bytes of memory
 }
 
 size_t tinyram_architecture_params::subaddr_len() const
@@ -329,7 +381,7 @@ memory_store_trace tinyram_boot_trace_from_program_and_input(const tinyram_archi
                                                              const tinyram_program &program,
                                                              const tinyram_input_tape &primary_input)
 {
-    // TODO: document the reverse order here
+    // The order here is reversed; see comment in ram_universal_gadget.hpp for details.
 
     memory_store_trace result;
 
@@ -339,12 +391,24 @@ memory_store_trace tinyram_boot_trace_from_program_and_input(const tinyram_archi
         result.set_trace_entry(boot_pos--, std::make_pair(i, program.instructions[i].as_dword(ap)));
     }
 
-    const size_t primary_input_base_addr = (1ul << (ap.dwaddr_len()-1));
+    const size_t primary_input_base_addr = 1ul << (ap.dwaddr_len() - 1);
+    const size_t increment = ap.w/8;
+    // the first word will contain 2^{w-1} + input_size * inc (the location where the last input word was stored)
+    size_t latest_double_word = (1ull<<(ap.w-1)) + primary_input.size() * increment;
 
-    for (size_t j = 0; j < primary_input.size(); j += 2)
+    for (size_t i = 0; i < primary_input.size()/2 + 1; ++i)
     {
-        const size_t memory_dword = primary_input[j] + ((j+1 < primary_input.size() ? primary_input[j+1] : 0) << ap.w);
-        result.set_trace_entry(boot_pos--, std::make_pair(primary_input_base_addr + j, memory_dword));
+        if (2*i < primary_input.size())
+        {
+            latest_double_word += (primary_input[2*i] << ap.w);
+        }
+
+        result.set_trace_entry(boot_pos--, std::make_pair(primary_input_base_addr + i, latest_double_word));
+
+        if (2*i + 1 < primary_input.size())
+        {
+            latest_double_word = primary_input[2*i+1];
+        }
     }
 
     return result;

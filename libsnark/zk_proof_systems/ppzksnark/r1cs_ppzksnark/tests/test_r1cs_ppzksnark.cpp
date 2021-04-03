@@ -20,6 +20,7 @@
 
 using namespace libsnark;
 
+#ifndef NDEBUG
 template<typename ppT>
 void test_r1cs_ppzksnark(size_t num_constraints,
                          size_t input_size)
@@ -41,3 +42,9 @@ int main()
 
     test_r1cs_ppzksnark<default_r1cs_ppzksnark_pp>(1000, 100);
 }
+#else // NDEBUG
+int main()
+{
+    printf("All tests here depend on assert() which is disabled by -DNDEBUG. Please recompile and run again.\n");
+}
+#endif // NDEBUG

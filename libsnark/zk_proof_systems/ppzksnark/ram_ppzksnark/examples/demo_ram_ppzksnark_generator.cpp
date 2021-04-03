@@ -91,11 +91,15 @@ int main(int argc, const char * argv[])
 
     const ram_ppzksnark_keypair<default_ram_ppzksnark_pp> keypair = ram_ppzksnark_generator<default_ram_ppzksnark_pp>(ap, boot_trace_size_bound, time_bound);
 
+    libff::enter_block("Serialize proving key");
     std::ofstream pk(proving_key_fn);
     pk << keypair.pk;
     pk.close();
+    libff::leave_block("Serialize proving key");
 
+    libff::enter_block("Serialize verification key");
     std::ofstream vk(verification_key_fn);
     vk << keypair.vk;
     vk.close();
+    libff::leave_block("Serialize verification key");
 }

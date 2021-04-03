@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+import sys
+import re
+
+instruction_types = {
+    "and":          ['des', 'arg1', 'arg2'],
+    "or":           ['des', 'arg1', 'arg2'],
+    "xor":          ['des', 'arg1', 'arg2'],
+    "not":          ['des', 'arg2'],
+    "add":          ['des', 'arg1', 'arg2'],
+    "sub":          ['des', 'arg1', 'arg2'],
+    "mull":         ['des', 'arg1', 'arg2'],
+    "umulh":        ['des', 'arg1', 'arg2'],
+    "smulh":        ['des', 'arg1', 'arg2'],
+    "udiv":         ['des', 'arg1', 'arg2'],
+    "umod":         ['des', 'arg1', 'arg2'],
+    "shl":          ['des', 'arg1', 'arg2'],
+    "shr":          ['des', 'arg1', 'arg2'],
+    "cmpe":         ['arg1', 'arg2'],
+    "cmpa":         ['arg1', 'arg2'],
+    "cmpae":        ['arg1', 'arg2'],
+    "cmpg":         ['arg1', 'arg2'],
+    "cmpge":        ['arg1', 'arg2'],
+    "mov":          ['des', 'arg2'],
+    "cmov":         ['des', 'arg2'],
+    "jmp":          ['arg2'],
+    "cjmp":         ['arg2'],
+    "cnjmp":        ['arg2'],
+    "opcode_10111": [],
+    "opcode_11000": [],
+    "opcode_11001": [],
+    "store.b":      ['arg2', 'des'],
+    "load.b":       ['des', 'arg2'],
+    "store.w":      ['arg2', 'des'],
+    "load.w":       ['des', 'arg2'],
+    "read":         ['des', 'arg2'],
+    "answer":       ['arg2']
+    }
+
+if len(sys.argv) != 4:
+    print("usage: %s <prog.s> <prog-processed_assembly.txt> <prog-architecture_params.txt>" % sys.argv[0])
+    sys.exit(1)
+
+def parse_reg(s):
+    return int(s[1:])
+
+def parse_arg2(s):
+    if s[0] == "_":
+        return True, labels[s]
+    elif s[0] == "r":
+        return False, parse_reg(s)
+    else:
+        return True, int(s)
+
+tinyram_comment_re = re.compile("^; TinyRAM V=2.000 M=vn W=([0-9]+) K=([0-9]+)$")
+num = 0
+inp = open(sys.argv[1])
+out = open(sys.argv[2], "w")
+first = inp.readline()
+m = tinyram_comment_re.match(first)
+if m:
+    w, k = m.groups()
+    w, k = int(w), int(k)
+    ap = open(sys.argv[3], "w")
+    ap.write("%d %d\n" % (w,k))
+    ap.close()
+else:
+    print("Malformed first line (see the spec)")
+    sys.exit(1)
+
+lines = []
+
+
+# first pass: read the lines and resolve labels
+addr = 0
+labels = {}
+for l in inp:
+    if ';' in l:
+        l = l.split(';', 1)[0]
+    l = l.strip()
+    if not l:
+        continue
+    if ':' in l:
+        label, l = l.split(':', 1)
+        l = l.strip()
+        labels[label] = addr
+        print("label %s corresponds to instruction at byte address %d" % (label, addr))
+    if l:
+        lines.append(l)
+        addr += 2 * (w//8)
+
+for l in lines:
+    if ' ' in l:
+        l = l.replace(",", " ")
+        while "  " in l:
+            l = l.replace("  ", " ")
+        instr, args = l.split(" ", 1)
+        args = args.split(" ")
+    else:
+        instr, args = l, []
+
+    d = {'arg1': 0, 'arg2': 0, 'immflag': False, 'des': 0}
+
+    assert len(instruction_types[instr]) == len(args)
+    for t, v in zip(instruction_types[instr], args):
+        if t == 'arg2':
+            d['immflag'], d['arg2'] = parse_arg2(v)
+        else:
+            d[t] = parse_reg(v)
+    out.write("%s %d %s %s %s\n" % (instr, 1 if d['immflag'] else 0, d['des'], d['arg1'], d['arg2']))
+    num += 1
+out.close()

@@ -169,7 +169,7 @@ Fp4_direct_mul_gadget<Fp4T>::Fp4_direct_mul_gadget(protoboard<FieldT> &pb,
     gadget<FieldT>(pb, annotation_prefix), A(A), B(B), result(result)
 {
 /*
-    Tom-Cook-4x for Fp4 (beta is the quartic non-residue):
+    Toom-Cook-4x for Fp4 (beta is the quartic non-residue):
         v0 = a0*b0,
         v1 = (a0+a1+a2+a3)*(b0+b1+b2+b3),
         v2 = (a0-a1+a2-a3)*(b0-b1+b2-b3),

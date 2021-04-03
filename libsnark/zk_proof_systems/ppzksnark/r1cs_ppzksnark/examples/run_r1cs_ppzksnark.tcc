@@ -106,7 +106,7 @@ bool run_r1cs_ppzksnark(const r1cs_example<libff::Fr<ppT> > &example,
 
     libff::leave_block("Call to run_r1cs_ppzksnark");
 
-    return ans;
+    return (ans && ans2);
 }
 
 } // libsnark

@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
     default_tinyram_ppzksnark_pp::init_public_params();
 #ifdef MINDEPS
     std::string assembly_fn = "assembly.s";
-    std::string processed_assembly_fn = "processed.txt";
+    std::string processed_assembly_fn = "processed_assembly.txt";
     std::string architecture_params_fn = "architecture_params.txt";
     std::string computation_bounds_fn = "computation_bounds.txt";
     std::string primary_input_fn = "primary_input.txt";

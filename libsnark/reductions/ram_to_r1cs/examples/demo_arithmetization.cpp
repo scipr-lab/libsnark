@@ -76,7 +76,7 @@ int main(int argc, const char * argv[])
 
 #ifdef MINDEPS
     std::string assembly_fn = "assembly.s";
-    std::string processed_assembly_fn = "processed.txt";
+    std::string processed_assembly_fn = "processed_assembly.txt";
     std::string architecture_params_fn = "architecture_params.txt";
     std::string computation_bounds_fn = "computation_bounds.txt";
     std::string primary_input_fn = "primary_input.txt";
@@ -142,5 +142,10 @@ int main(int argc, const char * argv[])
     const r1cs_constraint_system<FieldT> constraint_system = r.get_constraint_system();
 
     r.print_execution_trace();
-    assert(constraint_system.is_satisfied(r1cs_primary_input, r1cs_auxiliary_input));
+
+    const bool bit = constraint_system.is_satisfied(r1cs_primary_input, r1cs_auxiliary_input);
+
+    printf("================================================================================\n");
+    printf("The verification result is: %s\n", (bit ? "PASS" : "FAIL"));
+    printf("================================================================================\n");
 }

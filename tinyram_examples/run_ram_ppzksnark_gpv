@@ -1,0 +1,24 @@
+#!/bin/sh
+[ -z $1 ] && echo "Usage: $0 <example-name>" && exit 1
+set -x -e
+EXNAME=$1
+BASE=$EXNAME/$EXNAME
+
+./process_assembly $BASE.s $BASE-processed_assembly.txt $BASE-architecture_params.txt
+../build/libsnark/demo_ram_ppzksnark_generator \
+    --architecture_params=$BASE-architecture_params.txt \
+    --computation_bounds=$BASE-computation_bounds.txt \
+    --proving_key=$BASE-proving_key.txt \
+    --verification_key=$BASE-verification_key.txt
+../build/libsnark/demo_ram_ppzksnark_prover \
+    --processed_assembly=$BASE-processed_assembly.txt \
+    --proving_key=$BASE-proving_key.txt \
+    --primary_input=$BASE-primary_input.txt \
+    --auxiliary_input=$BASE-auxiliary_input.txt \
+    --proof=$BASE-proof.txt
+../build/libsnark/demo_ram_ppzksnark_verifier \
+    --processed_assembly=$BASE-processed_assembly.txt \
+    --verification_key=$BASE-verification_key.txt \
+    --proof=$BASE-proof.txt \
+    --primary_input=$BASE-primary_input.txt \
+    --verification_result=$BASE-verification_result.txt

@@ -18,6 +18,8 @@
 
 using namespace libsnark;
 
+#ifndef NDEBUG
+
 template<typename ppT>
 void test_ram_ppzksnark(const size_t w,
                         const size_t k,
@@ -56,3 +58,11 @@ int main()
     // 32-bit TinyRAM with 16 registers
     test_ram_ppzksnark<default_ram_ppzksnark_pp>(32, 16, program_size, input_size, time_bound);
 }
+
+#else // NDEBUG
+
+int main()
+{
+    printf("All tests here depend on assert() which is disabled by -DNDEBUG. Please recompile and run again.\n");
+}
+#endif // NDEBUG
