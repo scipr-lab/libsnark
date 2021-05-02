@@ -148,7 +148,7 @@ r1cs_ppzksnark_verification_key_variable<ppT>::r1cs_ppzksnark_verification_key_v
     assert(all_G2_vars.size() == num_G2);
     assert(all_vars.size() == (num_G1 * G1_variable<ppT>::num_variables() + num_G2 * G2_variable<ppT>::num_variables()));
 
-    packer.reset(new multipacking_gadget<FieldT>(pb, all_bits, all_vars, FieldT::size_in_bits(), FMT(annotation_prefix, " packer")));
+    packer.reset(new multipacking_gadget<FieldT>(pb, all_bits, all_vars, FieldT::ceil_size_in_bits(), FMT(annotation_prefix, " packer")));
 }
 
 template<typename ppT>

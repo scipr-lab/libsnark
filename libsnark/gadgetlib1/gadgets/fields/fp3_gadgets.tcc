@@ -169,7 +169,7 @@ bool Fp3_variable<Fp3T>::is_constant() const
 template<typename Fp3T>
 size_t Fp3_variable<Fp3T>::size_in_bits()
 {
-    return 3 * FieldT::size_in_bits();
+    return 3 * FieldT::ceil_size_in_bits();
 }
 
 template<typename Fp3T>

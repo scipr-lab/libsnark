@@ -281,7 +281,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
            G_window = libff::get_exp_window_size<libff::G1<ppT> >(G_exp_count);
     libff::print_indent(); printf("* G window: %zu\n", G_window);
     libff::window_table<libff::G1<ppT> > G_table = get_window_table(
-        libff::Fr<ppT>::size_in_bits(), G_window, G);
+        libff::Fr<ppT>::ceil_size_in_bits(), G_window, G);
     libff::leave_block("Generating G multiexp table");
 
     libff::enter_block("Generating H_gamma multiexp table");
@@ -290,7 +290,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
            H_gamma_window = libff::get_exp_window_size<libff::G2<ppT> >(H_gamma_exp_count);
     libff::print_indent(); printf("* H_gamma window: %zu\n", H_gamma_window);
     libff::window_table<libff::G2<ppT> > H_gamma_table = get_window_table(
-        libff::Fr<ppT>::size_in_bits(), H_gamma_window, H_gamma);
+        libff::Fr<ppT>::ceil_size_in_bits(), H_gamma_window, H_gamma);
     libff::leave_block("Generating H_gamma multiexp table");
 
     libff::enter_block("Generate R1CS verification key");
@@ -305,7 +305,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     }
     libff::G1_vector<ppT> verifier_query = libff::batch_exp<libff::G1<ppT>,
                                                             libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         G_window,
         G_table,
         tmp_exponents);
@@ -324,7 +324,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
 
     libff::G1_vector<ppT> A_query = libff::batch_exp<libff::G1<ppT>,
                                                      libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         G_window,
         G_table,
         tmp_exponents);
@@ -337,7 +337,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     libff::enter_block("Compute the B-query", false);
     libff::G2_vector<ppT> B_query = libff::batch_exp<libff::G2<ppT>,
                                                      libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         H_gamma_window,
         H_gamma_table,
         At);
@@ -364,7 +364,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     }
     libff::G1_vector<ppT> G_gamma2_Z_t = libff::batch_exp<libff::G1<ppT>,
                                                           libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         G_window,
         G_table,
         tmp_exponents);
@@ -385,7 +385,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     }
     libff::G1_vector<ppT> C_query_1 = libff::batch_exp<libff::G1<ppT>,
                                                        libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         G_window,
         G_table,
         tmp_exponents);
@@ -405,7 +405,7 @@ r1cs_se_ppzksnark_keypair<ppT> r1cs_se_ppzksnark_generator(const r1cs_se_ppzksna
     }
     libff::G1_vector<ppT> C_query_2 = libff::batch_exp<libff::G1<ppT>,
                                                        libff::Fr<ppT> >(
-        libff::Fr<ppT>::size_in_bits(),
+        libff::Fr<ppT>::ceil_size_in_bits(),
         G_window,
         G_table,
         tmp_exponents);

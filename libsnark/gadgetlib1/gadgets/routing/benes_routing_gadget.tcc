@@ -34,7 +34,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
     routing_output_bits(routing_output_bits),
     lines_to_unpack(lines_to_unpack),
     packet_size(routing_input_bits[0].size()),
-    num_subpackets(libff::div_ceil(packet_size, FieldT::capacity()))
+    num_subpackets(libff::div_ceil(packet_size, FieldT::floor_size_in_bits()))
 {
     assert(lines_to_unpack <= routing_input_bits.size());
     assert(num_packets == 1ul<<libff::log2(num_packets));
@@ -61,7 +61,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
             multipacking_gadget<FieldT>(pb,
                                         pb_variable_array<FieldT>(routing_input_bits[packet_idx].begin(), routing_input_bits[packet_idx].end()),
                                         routed_packets[0][packet_idx],
-                                        FieldT::capacity(),
+                                        FieldT::floor_size_in_bits(),
                                         FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
         if (packet_idx < lines_to_unpack)
         {
@@ -69,7 +69,7 @@ benes_routing_gadget<FieldT>::benes_routing_gadget(protoboard<FieldT> &pb,
                 multipacking_gadget<FieldT>(pb,
                                             pb_variable_array<FieldT>(routing_output_bits[packet_idx].begin(), routing_output_bits[packet_idx].end()),
                                             routed_packets[num_columns][packet_idx],
-                                            FieldT::capacity(),
+                                            FieldT::floor_size_in_bits(),
                                             FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
         }
     }
@@ -196,7 +196,7 @@ void test_benes_routing_gadget(const size_t num_packets, const size_t packet_siz
     const size_t dimension = libff::log2(num_packets);
     assert(num_packets == 1ul<<dimension);
 
-    printf("testing benes_routing_gadget by routing 2^%zu-entry vector of %zu bits (Fp fits all %zu bit integers)\n", dimension, packet_size, FieldT::capacity());
+    printf("testing benes_routing_gadget by routing 2^%zu-entry vector of %zu bits (Fp fits all %zu bit integers)\n", dimension, packet_size, FieldT::floor_size_in_bits());
 
     protoboard<FieldT> pb;
     integer_permutation permutation(num_packets);

@@ -284,7 +284,7 @@ public:
 
     size_t size_in_bits() const
     {
-        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + libff::size_in_bits(H_query) + libff::size_in_bits(K_query) + libff::G1<snark_pp<ppT>>::size_in_bits();
+        return A_query.size_in_bits() + B_query.size_in_bits() + C_query.size_in_bits() + libff::curve_size_in_bits(H_query) + libff::curve_size_in_bits(K_query) + libff::G1<snark_pp<ppT>>::size_in_bits();
     }
 
     void print_size() const

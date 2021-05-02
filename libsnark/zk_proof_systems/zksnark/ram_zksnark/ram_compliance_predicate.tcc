@@ -128,7 +128,7 @@ ram_pcd_message_variable<ramT>::ram_pcd_message_variable(protoboard<FieldT> &pb,
     r1cs_pcd_message_variable<ram_base_field<ramT> >(pb, annotation_prefix), ap(ap)
 {
     const size_t unpacked_payload_size_in_bits = ram_pcd_message<ramT>::unpacked_payload_size_in_bits(ap);
-    const size_t packed_payload_size = libff::div_ceil(unpacked_payload_size_in_bits, FieldT::capacity());
+    const size_t packed_payload_size = libff::div_ceil(unpacked_payload_size_in_bits, FieldT::floor_size_in_bits());
     packed_payload.allocate(pb, packed_payload_size, FMT(annotation_prefix, " packed_payload"));
 
     this->update_all_vars();
@@ -157,7 +157,7 @@ void ram_pcd_message_variable<ramT>::allocate_unpacked_part()
     all_unpacked_vars.insert(all_unpacked_vars.end(), cpu_state_initial.begin(), cpu_state_initial.end());
     all_unpacked_vars.insert(all_unpacked_vars.end(), has_accepted);
 
-    unpack_payload.reset(new multipacking_gadget<FieldT>(this->pb, all_unpacked_vars, packed_payload, FieldT::capacity(), FMT(this->annotation_prefix, " unpack_payload")));
+    unpack_payload.reset(new multipacking_gadget<FieldT>(this->pb, all_unpacked_vars, packed_payload, FieldT::floor_size_in_bits(), FMT(this->annotation_prefix, " unpack_payload")));
 }
 
 template<typename ramT>
@@ -296,7 +296,7 @@ ram_compliance_predicate_handler<ramT>::ram_compliance_predicate_handler(const r
     temp_next_pc_addr.allocate(this->pb, addr_size, "temp_next_pc_addr");
     temp_next_cpu_state.allocate(this->pb, ap.cpu_state_size(), "temp_next_cpu_state");
 
-    const size_t chunk_size = FieldT::capacity();
+    const size_t chunk_size = FieldT::floor_size_in_bits();
 
     /*
       Always:

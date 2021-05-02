@@ -150,7 +150,7 @@ bool Fp2_variable<Fp2T>::is_constant() const
 template<typename Fp2T>
 size_t Fp2_variable<Fp2T>::size_in_bits()
 {
-    return 2 * FieldT::size_in_bits();
+    return 2 * FieldT::ceil_size_in_bits();
 }
 
 template<typename Fp2T>
