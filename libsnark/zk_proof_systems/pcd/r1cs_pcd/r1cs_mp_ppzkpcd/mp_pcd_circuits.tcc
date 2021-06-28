@@ -483,7 +483,7 @@ void mp_compliance_step_pcd_circuit_maker<ppT>::generate_r1cs_witness(const set_
 template<typename ppT>
 size_t mp_compliance_step_pcd_circuit_maker<ppT>::field_logsize()
 {
-    return libff::Fr<ppT>::size_in_bits();
+    return libff::Fr<ppT>::ceil_size_in_bits();
 }
 
 template<typename ppT>
@@ -597,7 +597,7 @@ r1cs_auxiliary_input<libff::Fr<ppT> > mp_translation_step_pcd_circuit_maker<ppT>
 template<typename ppT>
 size_t mp_translation_step_pcd_circuit_maker<ppT>::field_logsize()
 {
-    return libff::Fr<ppT>::size_in_bits();
+    return libff::Fr<ppT>::ceil_size_in_bits();
 }
 
 template<typename ppT>

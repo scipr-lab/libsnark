@@ -130,8 +130,8 @@ public:
 
     size_t size_in_bits() const
     {
-        return (libff::size_in_bits(A_query) + B_query.size_in_bits() +
-                libff::size_in_bits(H_query) + libff::size_in_bits(L_query) +
+        return (libff::curve_size_in_bits(A_query) + B_query.size_in_bits() +
+                libff::curve_size_in_bits(H_query) + libff::curve_size_in_bits(L_query) +
                 1 * libff::G1<ppT>::size_in_bits() + 1 * libff::G2<ppT>::size_in_bits());
     }
 

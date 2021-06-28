@@ -14,7 +14,7 @@
 #ifndef RAM_UNIVERSAL_GADGET_TCC_
 #define RAM_UNIVERSAL_GADGET_TCC_
 
-#include <libff/algebra/fields/field_utils.hpp>
+#include <libff/algebra/field_utils/field_utils.hpp>
 #include <libff/common/profiling.hpp>
 #include <libff/common/utils.hpp>
 
@@ -69,7 +69,7 @@ ram_universal_gadget<ramT>::ram_universal_gadget(ram_protoboard<ramT> &pb,
     /* deal with packing of the input */
     libff::enter_block("Pack input");
     const size_t line_size_bits = pb.ap.address_size() + pb.ap.value_size();
-    const size_t max_chunk_size = FieldT::capacity();
+    const size_t max_chunk_size = FieldT::floor_size_in_bits();
     const size_t packed_line_size = libff::div_ceil(line_size_bits, max_chunk_size);
     assert(packed_input.size() == packed_line_size * boot_trace_size_bound);
 
@@ -411,7 +411,7 @@ template<typename ramT>
 size_t ram_universal_gadget<ramT>::packed_input_element_size(const ram_architecture_params<ramT> &ap)
 {
     const size_t line_size_bits = ap.address_size() + ap.value_size();
-    const size_t max_chunk_size = FieldT::capacity();
+    const size_t max_chunk_size = FieldT::floor_size_in_bits();
     const size_t packed_line_size = libff::div_ceil(line_size_bits, max_chunk_size);
 
     return packed_line_size;

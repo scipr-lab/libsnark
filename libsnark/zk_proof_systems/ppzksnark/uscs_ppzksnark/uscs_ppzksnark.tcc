@@ -256,38 +256,38 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constr
     libff::print_indent(); printf("* G2 window: %zu\n", g2_window);
 
     libff::enter_block("Generating G1 multiexp table");
-    libff::window_table<libff::G1<ppT> > g1_table = get_window_table(libff::Fr<ppT>::size_in_bits(), g1_window, libff::G1<ppT>::one());
+    libff::window_table<libff::G1<ppT> > g1_table = get_window_table(libff::Fr<ppT>::ceil_size_in_bits(), g1_window, libff::G1<ppT>::one());
     libff::leave_block("Generating G1 multiexp table");
 
     libff::enter_block("Generating G2 multiexp table");
-    libff::window_table<libff::G2<ppT> > g2_table = get_window_table(libff::Fr<ppT>::size_in_bits(), g2_window, libff::G2<ppT>::one());
+    libff::window_table<libff::G2<ppT> > g2_table = get_window_table(libff::Fr<ppT>::ceil_size_in_bits(), g2_window, libff::G2<ppT>::one());
     libff::leave_block("Generating G2 multiexp table");
 
     libff::enter_block("Generate proof components");
 
     libff::enter_block("Compute the query for V_g1", false);
-    libff::G1_vector<ppT> V_g1_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, Vt_table_minus_Xt_table);
+    libff::G1_vector<ppT> V_g1_query = batch_exp(libff::Fr<ppT>::ceil_size_in_bits(), g1_window, g1_table, Vt_table_minus_Xt_table);
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(V_g1_query);
 #endif
     libff::leave_block("Compute the query for V_g1", false);
 
     libff::enter_block("Compute the query for alpha_V_g1", false);
-    libff::G1_vector<ppT> alpha_V_g1_query = batch_exp_with_coeff(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
+    libff::G1_vector<ppT> alpha_V_g1_query = batch_exp_with_coeff(libff::Fr<ppT>::ceil_size_in_bits(), g1_window, g1_table, alpha, Vt_table_minus_Xt_table);
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(alpha_V_g1_query);
 #endif
     libff::leave_block("Compute the query for alpha_V_g1", false);
 
     libff::enter_block("Compute the query for H_g1", false);
-    libff::G1_vector<ppT> H_g1_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, Ht_table);
+    libff::G1_vector<ppT> H_g1_query = batch_exp(libff::Fr<ppT>::ceil_size_in_bits(), g1_window, g1_table, Ht_table);
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G1<ppT> >(H_g1_query);
 #endif
     libff::leave_block("Compute the query for H_g1", false);
 
     libff::enter_block("Compute the query for V_g2", false);
-    libff::G2_vector<ppT> V_g2_query = batch_exp(libff::Fr<ppT>::size_in_bits(), g2_window, g2_table, Vt_table);
+    libff::G2_vector<ppT> V_g2_query = batch_exp(libff::Fr<ppT>::ceil_size_in_bits(), g2_window, g2_table, Vt_table);
 #ifdef USE_MIXED_ADDITION
     libff::batch_to_special<libff::G2<ppT> >(V_g2_query);
 #endif
@@ -306,7 +306,7 @@ uscs_ppzksnark_keypair<ppT> uscs_ppzksnark_generator(const uscs_ppzksnark_constr
 
     libff::enter_block("Encode IC query for USCS verification key");
     libff::G1<ppT> encoded_IC_base = Xt_table[0] * libff::G1<ppT>::one();
-    libff::G1_vector<ppT> encoded_IC_values = batch_exp(libff::Fr<ppT>::size_in_bits(), g1_window, g1_table, libff::Fr_vector<ppT>(Xt_table.begin() + 1, Xt_table.end()));
+    libff::G1_vector<ppT> encoded_IC_values = batch_exp(libff::Fr<ppT>::ceil_size_in_bits(), g1_window, g1_table, libff::Fr_vector<ppT>(Xt_table.begin() + 1, Xt_table.end()));
     libff::leave_block("Encode IC query for USCS verification key");
 
     libff::leave_block("Generate USCS verification key");

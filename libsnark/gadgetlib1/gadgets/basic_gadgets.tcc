@@ -108,7 +108,7 @@ void multipacking_gadget<FieldT>::generate_r1cs_witness_from_bits()
 template<typename FieldT>
 size_t multipacking_num_chunks(const size_t num_bits)
 {
-    return libff::div_ceil(num_bits, FieldT::capacity());
+    return libff::div_ceil(num_bits, FieldT::floor_size_in_bits());
 }
 
 template<typename FieldT>

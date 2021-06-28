@@ -42,8 +42,8 @@ G1_variable<ppT>::G1_variable(protoboard<FieldT> &pb,
     libff::G1<other_curve<ppT> > Pcopy = P;
     Pcopy.to_affine_coordinates();
 
-    X.assign(pb, Pcopy.X());
-    Y.assign(pb, Pcopy.Y());
+    X.assign(pb, Pcopy.X);
+    Y.assign(pb, Pcopy.Y);
     X.evaluate(pb);
     Y.evaluate(pb);
     all_vars.emplace_back(X);
@@ -56,14 +56,14 @@ void G1_variable<ppT>::generate_r1cs_witness(const libff::G1<other_curve<ppT> > 
     libff::G1<other_curve<ppT> > el_normalized = el;
     el_normalized.to_affine_coordinates();
 
-    this->pb.lc_val(X) = el_normalized.X();
-    this->pb.lc_val(Y) = el_normalized.Y();
+    this->pb.lc_val(X) = el_normalized.X;
+    this->pb.lc_val(Y) = el_normalized.Y;
 }
 
 template<typename ppT>
 size_t G1_variable<ppT>::size_in_bits()
 {
-    return 2 * FieldT::size_in_bits();
+    return 2 * FieldT::ceil_size_in_bits();
 }
 
 template<typename ppT>
