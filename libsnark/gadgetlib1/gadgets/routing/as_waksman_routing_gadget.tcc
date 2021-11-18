@@ -34,7 +34,7 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
     routing_input_bits(routing_input_bits),
     routing_output_bits(routing_output_bits),
     packet_size(routing_input_bits[0].size()),
-    num_subpackets(libff::div_ceil(packet_size, FieldT::capacity()))
+    num_subpackets(libff::div_ceil(packet_size, FieldT::floor_size_in_bits()))
 {
     neighbors = generate_as_waksman_topology(num_packets);
     routed_packets.resize(num_columns+1);
@@ -78,13 +78,13 @@ as_waksman_routing_gadget<FieldT>::as_waksman_routing_gadget(protoboard<FieldT> 
             multipacking_gadget<FieldT>(pb,
                                         pb_variable_array<FieldT>(routing_input_bits[packet_idx].begin(), routing_input_bits[packet_idx].end()),
                                         routed_packets[0][packet_idx],
-                                        FieldT::capacity(),
+                                        FieldT::floor_size_in_bits(),
                                         FMT(this->annotation_prefix, " pack_inputs_%zu", packet_idx)));
         unpack_outputs.emplace_back(
             multipacking_gadget<FieldT>(pb,
                                         pb_variable_array<FieldT>(routing_output_bits[packet_idx].begin(), routing_output_bits[packet_idx].end()),
                                         routed_packets[num_columns][packet_idx],
-                                        FieldT::capacity(),
+                                        FieldT::floor_size_in_bits(),
                                         FMT(this->annotation_prefix, " unpack_outputs_%zu", packet_idx)));
     }
 
@@ -245,7 +245,7 @@ void as_waksman_routing_gadget<FieldT>::generate_r1cs_witness(const integer_perm
 template<typename FieldT>
 void test_as_waksman_routing_gadget(const size_t num_packets, const size_t packet_size)
 {
-    printf("testing as_waksman_routing_gadget by routing %zu element vector of %zu bits (Fp fits all %zu bit integers)\n", num_packets, packet_size, FieldT::capacity());
+    printf("testing as_waksman_routing_gadget by routing %zu element vector of %zu bits (Fp fits all %zu bit integers)\n", num_packets, packet_size, FieldT::floor_size_in_bits());
     protoboard<FieldT> pb;
     integer_permutation permutation(num_packets);
     permutation.random_shuffle();

@@ -74,7 +74,7 @@ merkle_tree_check_update_gadget<FieldT, HashT>::merkle_tree_check_update_gadget(
                                                                      FMT(this->annotation_prefix, " next_propagators_%zu", i)));
     }
 
-    check_next_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_next_root->bits, next_root_digest.bits, update_successful, FieldT::capacity(), FMT(annotation_prefix, " check_next_root")));
+    check_next_root.reset(new bit_vector_copy_gadget<FieldT>(pb, computed_next_root->bits, next_root_digest.bits, update_successful, FieldT::floor_size_in_bits(), FMT(annotation_prefix, " check_next_root")));
 }
 
 template<typename FieldT, typename HashT>
@@ -169,7 +169,7 @@ size_t merkle_tree_check_update_gadget<FieldT, HashT>::expected_constraints(cons
     const size_t prev_authentication_path_constraints = 2 * tree_depth * HashT::get_digest_len();
     const size_t prev_propagator_constraints = tree_depth * HashT::get_digest_len();
     const size_t next_propagator_constraints = tree_depth * HashT::get_digest_len();
-    const size_t check_next_root_constraints = 3 * libff::div_ceil(HashT::get_digest_len(), FieldT::capacity());
+    const size_t check_next_root_constraints = 3 * libff::div_ceil(HashT::get_digest_len(), FieldT::floor_size_in_bits());
     const size_t aux_equality_constraints = tree_depth * HashT::get_digest_len();
 
     return (prev_hasher_constraints + next_hasher_constraints + prev_authentication_path_constraints +

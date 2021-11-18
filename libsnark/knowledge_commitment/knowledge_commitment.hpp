@@ -14,7 +14,7 @@
 #ifndef KNOWLEDGE_COMMITMENT_HPP_
 #define KNOWLEDGE_COMMITMENT_HPP_
 
-#include <libff/algebra/fields/fp.hpp>
+#include <libff/algebra/fields/prime_base/fp.hpp>
 
 #include <libsnark/common/data_structures/sparse_vector.hpp>
 
