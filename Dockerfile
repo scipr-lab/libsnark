@@ -4,12 +4,12 @@ WORKDIR /root
 
 RUN apt-get update && \
     apt-get install -y \
-    wget unzip curl \
+    wget unzip curl nano\
     build-essential cmake git libgmp3-dev libprocps4-dev python-markdown libboost-all-dev libssl-dev pkg-config
 
 RUN git clone https://github.com/scipr-lab/libsnark/ \
   && cd libsnark \
-  && git submodule init && git submodule update \
+  && git submodule update --init --recursive\
   && mkdir build && cd build && cmake .. \
   && make \
   && DESTDIR=/usr/local make install \
