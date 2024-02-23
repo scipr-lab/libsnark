@@ -120,8 +120,10 @@ bool r1cs_ppzkadsnark_auth_data<ppT>::operator==(const r1cs_ppzkadsnark_auth_dat
 template<typename ppT>
 std::ostream& operator<<(std::ostream &out, const r1cs_ppzkadsnark_auth_data<ppT> &data)
 {
-    out << data.mu;
+    //A libff::Fr instance cannot be correctly parsed if placed in front of a libff::G2 instance
+    //This is a ad hoc fix
     out << data.Lambda;
+    out << data.mu;
     out << data.sigma;
 
     return out;
@@ -130,9 +132,11 @@ std::ostream& operator<<(std::ostream &out, const r1cs_ppzkadsnark_auth_data<ppT
 template<typename ppT>
 std::istream& operator>>(std::istream &in, r1cs_ppzkadsnark_auth_data<ppT> &data)
 {
-    in >> data.mu;
+    //A libff::Fr instance cannot be correctly parsed if placed in front of a libff::G2 instance
+    //This is a ad hoc fix
     in >> data.Lambda;
-    data.sigma;
+    in >> data.mu;
+    in >> data.sigma;
 
     return in;
 }
