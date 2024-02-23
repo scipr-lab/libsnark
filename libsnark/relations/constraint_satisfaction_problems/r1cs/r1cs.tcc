@@ -224,7 +224,10 @@ void r1cs_constraint_system<FieldT>::swap_AB_if_beneficial()
     }
     else
     {
+        if (!libff::inhibit_profiling_info)
+        {
         libff::print_indent(); printf("Swap is not beneficial, not performing\n");
+        }
     }
 
     libff::leave_block("Call to r1cs_constraint_system::swap_AB_if_beneficial");
