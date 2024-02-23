@@ -73,6 +73,8 @@ else()
   )
 endif()
 
+target_include_directories(snark INTERFACE ..)
+
 install(
   DIRECTORY "" DESTINATION "include/libsnark"
   FILES_MATCHING
