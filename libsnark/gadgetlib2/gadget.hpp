@@ -467,7 +467,7 @@ CREATE_GADGET_FACTORY_CLASS_3(IntegerPacking_Gadget, VariableArray, unpacked, Va
 /*************************************************************************************************/
 
 /*
-    Gadgets recieve a constant field element n, and an input.
+    Gadgets receive a constant field element n, and an input.
     input == n ==> result = 1
     input != n ==> result = 0
 */
