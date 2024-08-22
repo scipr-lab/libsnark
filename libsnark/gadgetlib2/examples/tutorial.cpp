@@ -411,7 +411,7 @@ void R1P_VerifyTransactionAmounts_Gadget::generateConstraints() {
     // equation over the field modulus. In fact, for every input/output sum we will always find a
     // miners' fee which will satisfy this constraint!
     // It is left as an exercise for the reader to implement additional constraints (and witness)
-    // to check that each of the amounts (inputs, outputs, fee) are between 0 and 21,000,000 * 1E8
+    // to check that each of the amounts (inputs, outputs, fee) is between 0 and 21,000,000 * 1E8
     // satoshis. Combine this with a maximum amount of inputs/outputs to disallow field overflow.
     //
     // Hint: use Comparison_Gadget to create a gadget which compares a variable's assigned value
