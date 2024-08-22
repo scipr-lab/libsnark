@@ -40,7 +40,7 @@ A computation can be expressed as an NP statement, in forms such as the followin
 A prover who knows the witness for the NP statement (i.e., a satisfying input/assignment) can produce a short proof attesting to the truth of the NP statement. This proof can be verified by anyone, and offers the following properties.
 
 -   __Zero knowledge:__
-    the verifier learns nothing from the proof beside the truth of the statement (i.e., the value _qux_, in the above examples, remains secret).
+    the verifier learns nothing from the proof besides the truth of the statement (i.e., the value _qux_, in the above examples, remains secret).
 -   __Succinctness:__
     the proof is short and easy to verify.
 -   __Non-interactivity:__
@@ -51,7 +51,7 @@ A prover who knows the witness for the NP statement (i.e., a satisfying input/as
     the proof attests not just that the NP statement is true, but also that the
     prover knows why (e.g., knows a valid _qux_).
 
-These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also knows as
+These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also known as
 _succinct non-interactive computationally-sound zero-knowledge proofs of knowledge_).
 For formal definitions and theoretical discussions about these, see
 \[BCCT12], \[BCIOP13], and the references therein.
