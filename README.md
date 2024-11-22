@@ -51,7 +51,7 @@ A prover who knows the witness for the NP statement (i.e., a satisfying input/as
     the proof attests not just that the NP statement is true, but also that the
     prover knows why (e.g., knows a valid _qux_).
 
-These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also knows as
+These properties are summarized by the _zkSNARK_ acronym, which stands for _Zero-Knowledge Succinct Non-interactive ARgument of Knowledge_ (though zkSNARKs are also known as
 _succinct non-interactive computationally-sound zero-knowledge proofs of knowledge_).
 For formal definitions and theoretical discussions about these, see
 \[BCCT12], \[BCIOP13], and the references therein.
@@ -102,7 +102,7 @@ The libsnark library currently provides a C++ implementation of:
        This is easily adapted to any other Random Access Machine that satisfies a
        simple load-store interface.
     3. A scalable for TinyRAM using Proof-Carrying Data, as explained in \[BCTV14b]
-    4. Zero-knowldge cluster MapReduce, as explained in \[CTV15].
+    4. Zero-knowledge cluster MapReduce, as explained in \[CTV15].
 
 See the above references for discussions of efficiency aspects that arise in
 practical use of such constructions, as well as security and trust
@@ -525,7 +525,7 @@ Tested configurations include:
 * Ubuntu 14.04 LTS with g++ 4.8 on x86-32, for non-BN128 curves (`-DWITH_SUPERCOP=OFF`)
 * Ubuntu 15.04/16.04 LTS with g++ 4.9.2/5.3.1 on ARM AArch32/AArch64, for non-BN128 curve choices
 * Debian wheezy with g++ 4.7 on ARM little endian (Debian armel port) inside QEMU, for EDWARDS and ALT_BN128 curve choices
-* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`-DWITH_PROCPS=OFF` and GTestdisabled)
+* Windows 7 with g++ 4.8.3 under Cygwin 1.7.30 on x86-64 for EDWARDS and ALT_BN128 curve choices (`-DWITH_PROCPS=OFF` and GTest disabled)
 * Mac OS X 10.9.4 (Mavericks) with Apple LLVM version 5.1 (based on LLVM 3.4svn) on x86-64 (`-DWITH_PROCPS=OFF` and GTest disabled)
 
 
