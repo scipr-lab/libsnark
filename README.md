@@ -102,7 +102,7 @@ The libsnark library currently provides a C++ implementation of:
        This is easily adapted to any other Random Access Machine that satisfies a
        simple load-store interface.
     3. A scalable for TinyRAM using Proof-Carrying Data, as explained in \[BCTV14b]
-    4. Zero-knowldge cluster MapReduce, as explained in \[CTV15].
+    4. Zero-knowledge cluster MapReduce, as explained in \[CTV15].
 
 See the above references for discussions of efficiency aspects that arise in
 practical use of such constructions, as well as security and trust

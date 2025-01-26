@@ -1308,7 +1308,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_constraints()
 
           old_result =
           (shifted_result * 2^(i+1) + shifted_out_part) * need_to_shift +
-          (shfited_result) * (1-need_to_shift)
+          (shifted_result) * (1-need_to_shift)
 
           old_result - shifted_result = (shifted_result * (2^(i+1) - 1) + shifted_out_part) * need_to_shift
         */
@@ -1396,7 +1396,7 @@ void ALU_shr_shl_gadget<FieldT>::generate_r1cs_witness()
 
       old_result =
       (shifted_result * 2^i + shifted_out_part) * need_to_shift +
-      (shfited_result) * (1-need_to_shift)
+      (shifted_result) * (1-need_to_shift)
     */
 
     for (size_t i = 0; i < logw; ++i)

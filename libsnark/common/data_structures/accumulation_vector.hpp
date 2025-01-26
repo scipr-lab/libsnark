@@ -29,7 +29,7 @@ std::istream& operator>>(std::istream &in, accumulation_vector<T> &v);
 
 /**
  * An accumulation vector comprises an accumulation value and a sparse vector.
- * The method "accumulate_chunk" allows one to accumlate portions of the sparse
+ * The method "accumulate_chunk" allows one to accumulate portions of the sparse
  * vector into the accumualation value.
  */
 template<typename T>

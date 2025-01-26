@@ -196,7 +196,7 @@ std::pair<T, sparse_vector<T> > sparse_vector<T>::accumulate(const typename std:
 
     const size_t range_len = it_end - it_begin;
     bool in_block = false;
-    size_t first_pos = -1, last_pos = -1; // g++ -flto emits unitialized warning, even though in_block guards for such cases.
+    size_t first_pos = -1, last_pos = -1; // g++ -flto emits uninitialized warning, even though in_block guards for such cases.
 
     for (size_t i = 0; i < indices.size(); ++i)
     {

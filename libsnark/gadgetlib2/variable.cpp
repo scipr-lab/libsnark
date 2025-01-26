@@ -227,7 +227,7 @@ FElemInterfacePtr R1P_Elem::inverse() const {
 }
 
 long R1P_Elem::asLong() const {
-    //GADGETLIB_ASSERT(elem_.as_ulong() <= LONG_MAX, "long overflow occured.");
+    //GADGETLIB_ASSERT(elem_.as_ulong() <= LONG_MAX, "long overflow occurred.");
     return long(elem_.as_ulong());
 }
 
@@ -246,13 +246,13 @@ VarIndex_t Variable::nextFreeIndex_ = 0;
 
 #ifdef DEBUG
 Variable::Variable(const string& name) : index_(nextFreeIndex_++), name_(name) {
-    GADGETLIB_ASSERT(nextFreeIndex_ > 0, GADGETLIB2_FMT("Variable index overflow has occured, maximum number of "
+    GADGETLIB_ASSERT(nextFreeIndex_ > 0, GADGETLIB2_FMT("Variable index overflow has occurred, maximum number of "
                                          "Variables is %lu", ULONG_MAX));
 }
 #else
 Variable::Variable(const string& name) : index_(nextFreeIndex_++) {
     libff::UNUSED(name);
-    GADGETLIB_ASSERT(nextFreeIndex_ > 0, GADGETLIB2_FMT("Variable index overflow has occured, maximum number of "
+    GADGETLIB_ASSERT(nextFreeIndex_ > 0, GADGETLIB2_FMT("Variable index overflow has occurred, maximum number of "
                                          "Variables is %lu", ULONG_MAX));
 }
 #endif
