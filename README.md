@@ -40,7 +40,7 @@ A computation can be expressed as an NP statement, in forms such as the followin
 A prover who knows the witness for the NP statement (i.e., a satisfying input/assignment) can produce a short proof attesting to the truth of the NP statement. This proof can be verified by anyone, and offers the following properties.
 
 -   __Zero knowledge:__
-    the verifier learns nothing from the proof beside the truth of the statement (i.e., the value _qux_, in the above examples, remains secret).
+    the verifier learns nothing from the proof besides the truth of the statement (i.e., the value _qux_, in the above examples, remains secret).
 -   __Succinctness:__
     the proof is short and easy to verify.
 -   __Non-interactivity:__
