@@ -31,7 +31,7 @@ sha256_compression_function_gadget<FieldT>::sha256_compression_function_gadget(p
     packed_W.allocate(pb, 64, FMT(this->annotation_prefix, " packed_W"));
     message_schedule.reset(new sha256_message_schedule_gadget<FieldT>(pb, new_block, packed_W, FMT(this->annotation_prefix, " message_schedule")));
 
-    /* initalize */
+    /* initialize */
     round_a.push_back(pb_linear_combination_array<FieldT>(prev_output.rbegin() + 7*32, prev_output.rbegin() + 8*32));
     round_b.push_back(pb_linear_combination_array<FieldT>(prev_output.rbegin() + 6*32, prev_output.rbegin() + 7*32));
     round_c.push_back(pb_linear_combination_array<FieldT>(prev_output.rbegin() + 5*32, prev_output.rbegin() + 6*32));
