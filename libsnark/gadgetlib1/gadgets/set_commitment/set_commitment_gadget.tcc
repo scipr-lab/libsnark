@@ -96,7 +96,7 @@ void test_set_commitment_gadget()
     element_bits.allocate(pb, value_size, "element_bits");
     set_commitment_variable<FieldT, HashT> root_digest(pb, digest_len, "root_digest");
 
-    pb_variable<FieldT> check_succesful;
+    pb_variable<FieldT> check_successful;
     check_succesful.allocate(pb, "check_succesful");
 
     set_membership_proof_variable<FieldT, HashT> proof(pb, max_set_size, "proof");
