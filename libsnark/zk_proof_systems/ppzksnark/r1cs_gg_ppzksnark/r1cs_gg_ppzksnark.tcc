@@ -229,10 +229,13 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     /* A quadratic arithmetic program evaluated at t. */
     qap_instance_evaluation<libff::Fr<ppT> > qap = r1cs_to_qap_instance_map_with_evaluation(r1cs_copy, t);
 
+    if (!libff::inhibit_profiling_info)
+    {
     libff::print_indent(); printf("* QAP number of variables: %zu\n", qap.num_variables());
     libff::print_indent(); printf("* QAP pre degree: %zu\n", r1cs_copy.constraints.size());
     libff::print_indent(); printf("* QAP degree: %zu\n", qap.degree());
     libff::print_indent(); printf("* QAP number of input variables: %zu\n", qap.num_inputs());
+    }
 
     libff::enter_block("Compute query densities");
     size_t non_zero_At = 0;
@@ -299,7 +302,10 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     const size_t g1_scalar_size = libff::Fr<ppT>::size_in_bits();
     const size_t g1_window_size = libff::get_exp_window_size<libff::G1<ppT> >(g1_scalar_count);
 
+    if (!libff::inhibit_profiling_info)
+    {    
     libff::print_indent(); printf("* G1 window: %zu\n", g1_window_size);
+    }
     libff::window_table<libff::G1<ppT> > g1_table = libff::get_window_table(g1_scalar_size, g1_window_size, g1_generator);
     libff::leave_block("Generating G1 MSM window table");
 
@@ -309,7 +315,10 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
     const size_t g2_scalar_size = libff::Fr<ppT>::size_in_bits();
     size_t g2_window_size = libff::get_exp_window_size<libff::G2<ppT> >(g2_scalar_count);
 
+    if (!libff::inhibit_profiling_info)
+    {
     libff::print_indent(); printf("* G2 window: %zu\n", g2_window_size);
+    }
     libff::window_table<libff::G2<ppT> > g2_table = libff::get_window_table(g2_scalar_size, g2_window_size, G2_gen);
     libff::leave_block("Generating G2 MSM window table");
 
@@ -381,8 +390,11 @@ r1cs_gg_ppzksnark_keypair<ppT> r1cs_gg_ppzksnark_generator(const r1cs_gg_ppzksna
                                                                                std::move(L_query),
                                                                                std::move(r1cs_copy));
 
+    if (!libff::inhibit_profiling_info)
+    {
     pk.print_size();
     vk.print_size();
+    }
 
     return r1cs_gg_ppzksnark_keypair<ppT>(std::move(pk), std::move(vk));
 }
@@ -499,7 +511,10 @@ r1cs_gg_ppzksnark_proof<ppT> r1cs_gg_ppzksnark_prover(const r1cs_gg_ppzksnark_pr
     libff::leave_block("Call to r1cs_gg_ppzksnark_prover");
 
     r1cs_gg_ppzksnark_proof<ppT> proof = r1cs_gg_ppzksnark_proof<ppT>(std::move(g1_A), std::move(g2_B), std::move(g1_C));
+    if (!libff::inhibit_profiling_info)
+    {
     proof.print_size();
+    }
 
     return proof;
 }

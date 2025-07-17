@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 project (libsnark)
 
@@ -105,7 +105,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # Common compilation flags and warning configuration
   set(
     CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wfatal-errors"
+    "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-unused-variable -Wfatal-errors"
   )
   if("${MULTICORE}")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
@@ -118,6 +118,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     )
   endif()
 endif()
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(
   CMAKE_CXX_FLAGS
@@ -166,6 +168,12 @@ if(${CURVE} STREQUAL "BN128")
   add_definitions(
     -DBN_SUPPORT_SNARK=1
   )
+  
+  install(
+    DIRECTORY "depends/ate-pairing/include/" DESTINATION "include/libff/algebra/curves/bn128/depends/ate-pairing/include"
+    FILES_MATCHING
+    PATTERN "*.h"
+  )  
 endif()
 
 if("${DEBUG}")
