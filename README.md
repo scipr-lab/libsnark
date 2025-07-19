@@ -13,7 +13,31 @@ Copyright (c) 2012-2017 SCIPR Lab and contributors (see [AUTHORS] file).
 For announcements and discussions, see the [libsnark mailing list](https://groups.google.com/forum/#!forum/libsnark).
 
 --------------------------------------------------------------------------------
-[TOC]
+Table of Contents
+--------------------------------------------------------------------------------
+
+* [Overview](#overview)
+* [The NP-complete language R1CS](#the-np-complete-language-r1cs)
+* [Elliptic curve choices](#elliptic-curve-choices)
+* [Gadget libraries](#gadget-libraries)
+  * [gadgetlib1](#gadgetlib1)
+  * [gadgetlib2](#gadgetlib2)
+* [Security](#security)
+* [Build instructions](#build-instructions)
+  * [Dependencies](#dependencies)
+  * [Building](#building)
+  * [Using libsnark as a library](#using-libsnark-as-a-library)
+  * [Building on Windows using Cygwin](#building-on-windows-using-cygwin)
+  * [Building on Mac OS X](#building-on-mac-os-x)
+* [Build options](#build-options)
+* [Docker](#docker)
+* [Tutorials](#tutorials)
+* [Executing profiling example](#executing-profiling-example)
+* [Portability](#portability)
+* [Directory structure](#directory-structure)
+* [Further considerations](#further-considerations)
+  * [Multiexponentiation window size](#multiexponentiation-window-size)
+* [References](#references)
 
 <!---
   NOTE: the file you are reading is in Markdown format, which is fairly readable
