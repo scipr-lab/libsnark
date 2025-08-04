@@ -63,12 +63,6 @@ public:
 
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream &out, const accumulation_vector<T> &v);
-
-template<typename T>
-std::istream& operator>>(std::istream &in, accumulation_vector<T> &v);
-
 } // libsnark
 
 #include <libsnark/common/data_structures/accumulation_vector.tcc>
