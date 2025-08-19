@@ -337,462 +337,464 @@ target_link_libraries(
 )
 
 # Tests
-add_executable(
-  common_routing_algorithms_test
-  EXCLUDE_FROM_ALL
-
-  common/routing_algorithms/tests/test_routing_algorithms.cpp
-)
-target_link_libraries(
-  common_routing_algorithms_test
-
-  snark
-)
-
-add_executable(
-  gadgetlib1_simple_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/tests/gadgetlib1_test.cpp
-)
-target_link_libraries(
-  gadgetlib1_simple_test
-
-  snark
-  gtest_main
-)
-
-add_executable(
-  gadgetlib1_fooram_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram.cpp
-)
-target_link_libraries(
-  gadgetlib1_fooram_test
-
-  snark
-)
-
-add_executable(
-  gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget.cpp
-)
-target_link_libraries(
-  gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
-
-  snark
-)
-
-add_executable(
-  gadgetlib2_adapters_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib2/tests/adapters_UTEST.cpp
-)
-target_link_libraries(
-  gadgetlib2_adapters_test
-
-  snark
-  gtest_main
-)
-
-add_executable(
-  gadgetlib2_constraint_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib2/tests/constraint_UTEST.cpp
-)
-target_link_libraries(
-  gadgetlib2_constraint_test
-
-  snark
-  gtest_main
-)
-
-add_executable(
-  gadgetlib2_gadget_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib2/tests/gadget_UTEST.cpp
-)
-target_link_libraries(
-  gadgetlib2_gadget_test
-
-  snark
-  gtest_main
-)
-
-add_executable(
-  gadgetlib2_integration_test
-  EXCLUDE_FROM_ALL
-
-  gadgetlib2/examples/simple_example.hpp
-  gadgetlib2/tests/integration_UTEST.cpp
-  relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp
-  relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.tcc
-  zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp
-  zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.tcc
-  gadgetlib2/examples/simple_example.cpp
-  gadgetlib2/examples/simple_example.hpp
-)
-target_link_libraries(
-  gadgetlib2_integration_test
-
-  snark
-  gtest_main
-)
+if ("${IS_LIBSNARK_PARENT}")
+  add_executable(
+    common_routing_algorithms_test
+    EXCLUDE_FROM_ALL
+
+    common/routing_algorithms/tests/test_routing_algorithms.cpp
+  )
+  target_link_libraries(
+    common_routing_algorithms_test
+
+    snark
+  )
+
+  add_executable(
+    gadgetlib1_simple_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/tests/gadgetlib1_test.cpp
+  )
+  target_link_libraries(
+    gadgetlib1_simple_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    gadgetlib1_fooram_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/cpu_checkers/fooram/examples/test_fooram.cpp
+  )
+  target_link_libraries(
+    gadgetlib1_fooram_test
+
+    snark
+  )
+
+  add_executable(
+    gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/verifiers/tests/test_r1cs_ppzksnark_verifier_gadget.cpp
+  )
+  target_link_libraries(
+    gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
+
+    snark
+  )
+
+  add_executable(
+    gadgetlib2_adapters_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib2/tests/adapters_UTEST.cpp
+  )
+  target_link_libraries(
+    gadgetlib2_adapters_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    gadgetlib2_constraint_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib2/tests/constraint_UTEST.cpp
+  )
+  target_link_libraries(
+    gadgetlib2_constraint_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    gadgetlib2_gadget_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib2/tests/gadget_UTEST.cpp
+  )
+  target_link_libraries(
+    gadgetlib2_gadget_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    gadgetlib2_integration_test
+    EXCLUDE_FROM_ALL
+
+    gadgetlib2/examples/simple_example.hpp
+    gadgetlib2/tests/integration_UTEST.cpp
+    relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.hpp
+    relations/constraint_satisfaction_problems/r1cs/examples/r1cs_examples.tcc
+    zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.hpp
+    zk_proof_systems/ppzksnark/r1cs_ppzksnark/examples/run_r1cs_ppzksnark.tcc
+    gadgetlib2/examples/simple_example.cpp
+    gadgetlib2/examples/simple_example.hpp
+  )
+  target_link_libraries(
+    gadgetlib2_integration_test
+
+    snark
+    gtest_main
+  )
 
-add_executable(
-  gadgetlib2_protoboard_test
-  EXCLUDE_FROM_ALL
+  add_executable(
+    gadgetlib2_protoboard_test
+    EXCLUDE_FROM_ALL
 
-  gadgetlib2/tests/protoboard_UTEST.cpp
-)
-target_link_libraries(
-  gadgetlib2_protoboard_test
+    gadgetlib2/tests/protoboard_UTEST.cpp
+  )
+  target_link_libraries(
+    gadgetlib2_protoboard_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    gadgetlib2_variable_test
+    EXCLUDE_FROM_ALL
+
+
+    gadgetlib2/tests/variable_UTEST.cpp
+  )
+  target_link_libraries(
+    gadgetlib2_variable_test
+
+    snark
+    gtest_main
+  )
+
+  add_executable(
+    relations_qap_test
+    EXCLUDE_FROM_ALL
+
+    relations/arithmetic_programs/qap/tests/test_qap.cpp
+  )
+  target_link_libraries(
+    relations_qap_test
 
-  snark
-  gtest_main
-)
+    snark
+  )
+
+  add_executable(
+    relations_sap_test
+    EXCLUDE_FROM_ALL
+
+    relations/arithmetic_programs/sap/tests/test_sap.cpp
+  )
+  target_link_libraries(
+    relations_sap_test
 
-add_executable(
-  gadgetlib2_variable_test
-  EXCLUDE_FROM_ALL
-
-
-  gadgetlib2/tests/variable_UTEST.cpp
-)
-target_link_libraries(
-  gadgetlib2_variable_test
-
-  snark
-  gtest_main
-)
-
-add_executable(
-  relations_qap_test
-  EXCLUDE_FROM_ALL
-
-  relations/arithmetic_programs/qap/tests/test_qap.cpp
-)
-target_link_libraries(
-  relations_qap_test
-
-  snark
-)
-
-add_executable(
-  relations_sap_test
-  EXCLUDE_FROM_ALL
-
-  relations/arithmetic_programs/sap/tests/test_sap.cpp
-)
-target_link_libraries(
-  relations_sap_test
-
-  snark
-)
-
-add_executable(
-  relations_ssp_test
-  EXCLUDE_FROM_ALL
-
-  relations/arithmetic_programs/ssp/tests/test_ssp.cpp
-)
-target_link_libraries(
-  relations_ssp_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_r1cs_mp_ppzkpcd_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd.cpp
-)
-target_link_libraries(
-  zk_proof_systems_r1cs_mp_ppzkpcd_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_r1cs_sp_ppzkpcd_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd.cpp
-)
-target_link_libraries(
-  zk_proof_systems_r1cs_sp_ppzkpcd_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_bacs_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_bacs_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_r1cs_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_r1cs_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_r1cs_se_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/r1cs_se_ppzksnark/tests/test_r1cs_se_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_r1cs_se_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_r1cs_gg_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/tests/test_r1cs_gg_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_r1cs_gg_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_ram_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_ram_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_tbcs_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp
-  zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_tbcs_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_uscs_ppzksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_uscs_ppzksnark_test
-
-  snark
-)
-
-add_executable(
-  zk_proof_systems_ram_zksnark_test
-  EXCLUDE_FROM_ALL
-
-  zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark.cpp
-)
-target_link_libraries(
-  zk_proof_systems_ram_zksnark_test
-
-  snark
-)
-add_executable(
-  test_knapsack_gadget
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget.cpp
-)
-target_link_libraries(
-  test_knapsack_gadget
-
-  snark
-)
-
-add_executable(
-  test_merkle_tree_gadgets
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets.cpp
-)
-target_link_libraries(
-  test_merkle_tree_gadgets
-
-  snark
-)
-
-add_executable(
-  test_set_commitment_gadget
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget.cpp
-)
-target_link_libraries(
-  test_set_commitment_gadget
-
-  snark
-)
-
-add_executable(
-  test_sha256_gadget
-  EXCLUDE_FROM_ALL
-
-  gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget.cpp
-)
-target_link_libraries(
-  test_sha256_gadget
-
-  snark
-)
-
-include(CTest)
-add_test(
-  NAME common_routing_algorithms_test
-  COMMAND common_routing_algorithms_test
-)
-add_test(
-  NAME gadgetlib1_simple_test
-  COMMAND gadgetlib1_simple_test
-)
-add_test(
-  NAME gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
-  COMMAND gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
-)
-add_test(
-  NAME gadgetlib2_adapters_test
-  COMMAND gadgetlib2_adapters_test
-)
-add_test(
-  NAME gadgetlib2_constraint_test
-  COMMAND gadgetlib2_constraint_test
-)
-add_test(
-  NAME gadgetlib2_gadget_test
-  COMMAND gadgetlib2_gadget_test
-)
-add_test(
-  NAME gadgetlib2_integration_test
-  COMMAND gadgetlib2_integration_test
-)
-add_test(
-  NAME gadgetlib2_protoboard_test
-  COMMAND gadgetlib2_protoboard_test
-)
-add_test(
-  NAME gadgetlib2_variable_test
-  COMMAND gadgetlib2_variable_test
-)
-add_test(
-  NAME relations_qap_test
-  COMMAND relations_qap_test
-)
-add_test(
-  NAME relations_sap_test
-  COMMAND relations_sap_test
-)
-add_test(
-  NAME relations_ssp_test
-  COMMAND relations_ssp_test
-)
-add_test(
-  NAME zk_proof_systems_bacs_ppzksnark_test
-  COMMAND zk_proof_systems_bacs_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_r1cs_ppzksnark_test
-  COMMAND zk_proof_systems_r1cs_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_r1cs_se_ppzksnark_test
-  COMMAND zk_proof_systems_r1cs_se_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_r1cs_gg_ppzksnark_test
-  COMMAND zk_proof_systems_r1cs_gg_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_ram_ppzksnark_test
-  COMMAND zk_proof_systems_ram_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_tbcs_ppzksnark_test
-  COMMAND zk_proof_systems_tbcs_ppzksnark_test
-)
-add_test(
-  NAME zk_proof_systems_uscs_ppzksnark_test
-  COMMAND zk_proof_systems_uscs_ppzksnark_test
-)
-add_test(
-  NAME test_knapsack_gadget
-  COMMAND test_knapsack_gadget
-)
-add_test(
-  NAME test_merkle_tree_gadgets
-  COMMAND test_merkle_tree_gadgets
-)
-add_test(
-  NAME test_set_commitment_gadget
-  COMMAND test_set_commitment_gadget
-)
-add_test(
-  NAME test_sha256_gadget
-  COMMAND test_sha256_gadget
-)
-
-add_dependencies(check common_routing_algorithms_test)
-add_dependencies(check gadgetlib1_simple_test)
-add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
-add_dependencies(check gadgetlib2_adapters_test)
-add_dependencies(check gadgetlib2_constraint_test)
-add_dependencies(check gadgetlib2_gadget_test)
-add_dependencies(check gadgetlib2_integration_test)
-add_dependencies(check gadgetlib2_protoboard_test)
-add_dependencies(check gadgetlib2_variable_test)
-add_dependencies(check relations_qap_test)
-add_dependencies(check relations_sap_test)
-add_dependencies(check relations_ssp_test)
-add_dependencies(check zk_proof_systems_bacs_ppzksnark_test)
-add_dependencies(check zk_proof_systems_r1cs_ppzksnark_test)
-add_dependencies(check zk_proof_systems_r1cs_se_ppzksnark_test)
-add_dependencies(check zk_proof_systems_r1cs_gg_ppzksnark_test)
-add_dependencies(check zk_proof_systems_ram_ppzksnark_test)
-add_dependencies(check zk_proof_systems_tbcs_ppzksnark_test)
-add_dependencies(check zk_proof_systems_uscs_ppzksnark_test)
-add_dependencies(check test_knapsack_gadget)
-add_dependencies(check test_merkle_tree_gadgets)
-add_dependencies(check test_set_commitment_gadget)
-add_dependencies(check test_sha256_gadget)
+    snark
+  )
+
+  add_executable(
+    relations_ssp_test
+    EXCLUDE_FROM_ALL
+
+    relations/arithmetic_programs/ssp/tests/test_ssp.cpp
+  )
+  target_link_libraries(
+    relations_ssp_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_r1cs_mp_ppzkpcd_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/pcd/r1cs_pcd/r1cs_mp_ppzkpcd/tests/test_r1cs_mp_ppzkpcd.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_r1cs_mp_ppzkpcd_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_r1cs_sp_ppzkpcd_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/pcd/r1cs_pcd/r1cs_sp_ppzkpcd/tests/test_r1cs_sp_ppzkpcd.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_r1cs_sp_ppzkpcd_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_bacs_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/bacs_ppzksnark/tests/test_bacs_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_bacs_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_r1cs_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/r1cs_ppzksnark/tests/test_r1cs_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_r1cs_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_r1cs_se_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/r1cs_se_ppzksnark/tests/test_r1cs_se_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_r1cs_se_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_r1cs_gg_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/r1cs_gg_ppzksnark/tests/test_r1cs_gg_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_r1cs_gg_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_ram_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/ram_ppzksnark/tests/test_ram_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_ram_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_tbcs_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    relations/circuit_satisfaction_problems/tbcs/examples/tbcs_examples.cpp
+    zk_proof_systems/ppzksnark/tbcs_ppzksnark/tests/test_tbcs_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_tbcs_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_uscs_ppzksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/ppzksnark/uscs_ppzksnark/tests/test_uscs_ppzksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_uscs_ppzksnark_test
+
+    snark
+  )
+
+  add_executable(
+    zk_proof_systems_ram_zksnark_test
+    EXCLUDE_FROM_ALL
+
+    zk_proof_systems/zksnark/ram_zksnark/tests/test_ram_zksnark.cpp
+  )
+  target_link_libraries(
+    zk_proof_systems_ram_zksnark_test
+
+    snark
+  )
+  add_executable(
+    test_knapsack_gadget
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/hashes/knapsack/tests/test_knapsack_gadget.cpp
+  )
+  target_link_libraries(
+    test_knapsack_gadget
+
+    snark
+  )
+
+  add_executable(
+    test_merkle_tree_gadgets
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/merkle_tree/tests/test_merkle_tree_gadgets.cpp
+  )
+  target_link_libraries(
+    test_merkle_tree_gadgets
+
+    snark
+  )
+
+  add_executable(
+    test_set_commitment_gadget
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/set_commitment/tests/test_set_commitment_gadget.cpp
+  )
+  target_link_libraries(
+    test_set_commitment_gadget
+
+    snark
+  )
+
+  add_executable(
+    test_sha256_gadget
+    EXCLUDE_FROM_ALL
+
+    gadgetlib1/gadgets/hashes/sha256/tests/test_sha256_gadget.cpp
+  )
+  target_link_libraries(
+    test_sha256_gadget
+
+    snark
+  )
+
+  include(CTest)
+  add_test(
+    NAME common_routing_algorithms_test
+    COMMAND common_routing_algorithms_test
+  )
+  add_test(
+    NAME gadgetlib1_simple_test
+    COMMAND gadgetlib1_simple_test
+  )
+  add_test(
+    NAME gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
+    COMMAND gadgetlib1_r1cs_ppzksnark_verifier_gadget_test
+  )
+  add_test(
+    NAME gadgetlib2_adapters_test
+    COMMAND gadgetlib2_adapters_test
+  )
+  add_test(
+    NAME gadgetlib2_constraint_test
+    COMMAND gadgetlib2_constraint_test
+  )
+  add_test(
+    NAME gadgetlib2_gadget_test
+    COMMAND gadgetlib2_gadget_test
+  )
+  add_test(
+    NAME gadgetlib2_integration_test
+    COMMAND gadgetlib2_integration_test
+  )
+  add_test(
+    NAME gadgetlib2_protoboard_test
+    COMMAND gadgetlib2_protoboard_test
+  )
+  add_test(
+    NAME gadgetlib2_variable_test
+    COMMAND gadgetlib2_variable_test
+  )
+  add_test(
+    NAME relations_qap_test
+    COMMAND relations_qap_test
+  )
+  add_test(
+    NAME relations_sap_test
+    COMMAND relations_sap_test
+  )
+  add_test(
+    NAME relations_ssp_test
+    COMMAND relations_ssp_test
+  )
+  add_test(
+    NAME zk_proof_systems_bacs_ppzksnark_test
+    COMMAND zk_proof_systems_bacs_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_r1cs_ppzksnark_test
+    COMMAND zk_proof_systems_r1cs_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_r1cs_se_ppzksnark_test
+    COMMAND zk_proof_systems_r1cs_se_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_r1cs_gg_ppzksnark_test
+    COMMAND zk_proof_systems_r1cs_gg_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_ram_ppzksnark_test
+    COMMAND zk_proof_systems_ram_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_tbcs_ppzksnark_test
+    COMMAND zk_proof_systems_tbcs_ppzksnark_test
+  )
+  add_test(
+    NAME zk_proof_systems_uscs_ppzksnark_test
+    COMMAND zk_proof_systems_uscs_ppzksnark_test
+  )
+  add_test(
+    NAME test_knapsack_gadget
+    COMMAND test_knapsack_gadget
+  )
+  add_test(
+    NAME test_merkle_tree_gadgets
+    COMMAND test_merkle_tree_gadgets
+  )
+  add_test(
+    NAME test_set_commitment_gadget
+    COMMAND test_set_commitment_gadget
+  )
+  add_test(
+    NAME test_sha256_gadget
+    COMMAND test_sha256_gadget
+  )
+
+  add_dependencies(check common_routing_algorithms_test)
+  add_dependencies(check gadgetlib1_simple_test)
+  add_dependencies(check gadgetlib1_r1cs_ppzksnark_verifier_gadget_test)
+  add_dependencies(check gadgetlib2_adapters_test)
+  add_dependencies(check gadgetlib2_constraint_test)
+  add_dependencies(check gadgetlib2_gadget_test)
+  add_dependencies(check gadgetlib2_integration_test)
+  add_dependencies(check gadgetlib2_protoboard_test)
+  add_dependencies(check gadgetlib2_variable_test)
+  add_dependencies(check relations_qap_test)
+  add_dependencies(check relations_sap_test)
+  add_dependencies(check relations_ssp_test)
+  add_dependencies(check zk_proof_systems_bacs_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_r1cs_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_r1cs_se_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_r1cs_gg_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_ram_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_tbcs_ppzksnark_test)
+  add_dependencies(check zk_proof_systems_uscs_ppzksnark_test)
+  add_dependencies(check test_knapsack_gadget)
+  add_dependencies(check test_merkle_tree_gadgets)
+  add_dependencies(check test_set_commitment_gadget)
+  add_dependencies(check test_sha256_gadget)
+endif()
 
 # TODO (howardwu): Resolve runtime on targets:
 # gadgetlib1_fooram_test, zk_proof_systems_r1cs_mp_ppzkpcd_test, zk_proof_systems_r1cs_sp_ppzkpcd_test, zk_proof_systems_ram_zksnark_test
