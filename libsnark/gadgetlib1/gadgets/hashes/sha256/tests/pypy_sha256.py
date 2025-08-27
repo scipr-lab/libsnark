@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # SHA256 compression function implementation below is a verbatim copy of PyPy's implementation from
-# https://bitbucket.org/pypy/pypy/raw/f1f064b3faf1e012f7a9a9ab08f18074637ebe8a/lib_pypy/_sha256.py .
+# https://github.com/pypy/pypy/blob/main/lib_pypy/_sha256.py .
 #
 # It is licensed under the MIT license and copyright PyPy Copyright holders 2003-2015
 # See https://bitbucket.org/pypy/pypy/src/tip/LICENSE for the full copyright notice.
