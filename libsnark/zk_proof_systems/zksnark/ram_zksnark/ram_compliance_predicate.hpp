@@ -74,12 +74,12 @@ public:
     ram_pcd_message(const size_t type,
                     const ram_architecture_params<ramT> &ap,
                     const size_t timestamp,
-                    const libff::bit_vector root_initial,
-                    const libff::bit_vector root,
+                    const libff::bit_vector &root_initial,
+                    const libff::bit_vector &root,
                     const size_t pc_addr,
-                    const libff::bit_vector cpu_state,
+                    const libff::bit_vector &cpu_state,
                     const size_t pc_addr_initial,
-                    const libff::bit_vector cpu_state_initial,
+                    const libff::bit_vector &cpu_state_initial,
                     const bool has_accepted);
 
     libff::bit_vector unpacked_payload_as_bits() const;
