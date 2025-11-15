@@ -197,7 +197,7 @@ qap_instance_evaluation<FieldT> r1cs_to_qap_instance_map_with_evaluation(const r
  *  (3) compute evaluations of A,B,C on T = "coset of S"
  *  (4) compute evaluation of H on T
  *  (5) compute coefficients of H
- *  (6) patch H to account for d1,d2,d3 (i.e., add coefficients of the polynomial (A d2 + B d1 - d3) + d1*d2*Z )
+ *  (6) patch H to account for d1,d2,d3 (i.e., add coefficients of the polynomial (d2*A + d1*B - d3) + d1*d2*Z )
  *
  * The code below is not as simple as the above high-level description due to
  * some reshuffling to save space.
